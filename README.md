@@ -1,3 +1,3 @@
 # kazuku
 
-> A cms.
+> A  nifty cms.
