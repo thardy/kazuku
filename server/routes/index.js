@@ -9,10 +9,10 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Kazuku' });
 });
 
-router.get('/marktest', function(req, res) {
+router.get('/marktest/:file', function(req, res) {
     //var markdownString = '# This is an H1\n## This is an H2\n### This is an H3';
-    var filename = "./public/markdown/somemarkdown.md";
-    fs.readFile(filename, 'utf8', function(err, data) {
+    //var filename = "./public/markdown/somemarkdown.md";
+    fs.readFile("./public/markdown/{0}.md".format(req.param("file")), 'utf8', function(err, data) {
         if (err) {
             return console.log(err);
         }
