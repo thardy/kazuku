@@ -1,0 +1,6 @@
+{
+  "generator-ngbp": {
+    "projectName": "kazuku",
+    "useCoffeescript": false
+  }
+}
