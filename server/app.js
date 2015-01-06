@@ -4,9 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var controllers = require("./controllers");
+var utils = require("./utils");
+var config = require("./env-config");
+var url = require('url');
 
 var app = express();
 
@@ -22,8 +23,49 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+// Map the routes
+controllers.init(app);
+
+var oauth2 = require('simple-oauth2')({
+    clientID: config.githubClientId,
+    clientSecret: config.githubClientSecret,
+    site: 'https://github.com/login',
+    tokenPath: '/oauth/access_token'
+});
+
+// Authorization uri definition
+var authorization_uri = oauth2.authCode.authorizeURL({
+    redirect_uri: 'http://localhost:3000/gitcallback',
+    scope: 'repo',
+    state: '0#a9!5)72J#0/!L~'
+});
+
+// Initial page redirecting to Github
+app.get('/auth', function (req, res) {
+    res.redirect(authorization_uri);
+});
+
+// Callback service parsing the authorization token and asking for the access token
+app.get('/gitcallback', function (req, res) {
+    var code = req.query.code;
+    console.log('/gitcallback');
+    oauth2.authCode.getToken({
+        code: code,
+        redirect_uri: 'http://localhost:3000/gitcallback'
+    }, saveToken);
+
+    function saveToken(error, result) {
+        if (error) { console.log('Access Token Error', error.message); }
+        token = oauth2.accessToken.create(result);
+    }
+});
+
+app.get('/', function (req, res) {
+    res.send('Hello<br><a href="/auth">Log in with Github</a>');
+});
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -33,7 +75,6 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
@@ -56,18 +97,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
-// utility functions
-// First, checks if it isn't implemented yet.
-if (!String.prototype.format) {
-    String.prototype.format = function() {
-        var args = arguments;
-        return this.replace(/{(\d+)}/g, function(match, number) {
-            return typeof args[number] != 'undefined'
-                ? args[number]
-                : match
-                ;
-        });
-    };
-}
+//console.log("test string is {0}".format('SUCKA'));
+
 
 module.exports = app;

@@ -81,7 +81,8 @@ module.exports = function(grunt) {
                 'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
                 'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
                 'vendor/angular-ui-router/release/angular-ui-router.js',
-                'vendor/angular-ui-utils/modules/route/route.js'
+                'vendor/angular-ui-utils/modules/route/route.js',
+                'vendor/angular-github-adapter/angular-github-adapter.min.js'
             ],
             css: [
             ],
@@ -112,10 +113,16 @@ module.exports = function(grunt) {
         /**
          * The directories to delete when 'grunt clean' is executed.
          */
-        clean: [
-            '<%= build_dir %>',
-            '<%= compile_dir %>'
-        ],
+        clean: {
+            all: [
+                '<%= build_dir %>',
+                '<%= compile_dir %>'
+            ],
+            vendor: [
+                '<%= build_dir %>/vendor/'
+            ],
+            index: [ '<%= build_dir %>/index.html' ]
+        },
 
         /**
          * The 'copy' task just copies files from A to B. We use it here to copy
@@ -462,10 +469,12 @@ module.exports = function(grunt) {
             /**
              * When the Gruntfile changes, we just want to lint it. In fact, when
              * your Gruntfile changes, it will automatically be reloaded!
+             * We also want to copy vendor files and rebuild index.html in case
+             * vendor_files.js was altered (list of 3rd party vendor files installed by bower)
              */
             gruntfile: {
                 files: 'Gruntfile.js',
-                tasks: [ 'jshint:gruntfile' ],
+                tasks: [ 'jshint:gruntfile', 'clean:vendor', 'copy:build_vendorjs', 'index:build' ],
                 options: {
                     livereload: false
                 }
@@ -490,7 +499,7 @@ module.exports = function(grunt) {
                 files: [
                     '<%= app_files.coffee %>'
                 ],
-                tasks: [ 'coffeelint:src', 'coffee:source', 'karma:unit:run', 'copy:build_appjs' ]
+                tasks: [ 'coffeelint:src', 'coffee:source', 'karma:unit:run', 'copy:build_appjs', 'index:build' ]
             },
 
             /**
@@ -579,7 +588,7 @@ module.exports = function(grunt) {
 
     // The 'build' task gets your app ready to run for development and testing.
     grunt.registerTask('build', [
-        'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'less:build',
+        'clean:all', 'html2js', 'jshint', 'coffeelint', 'coffee', 'less:build',
         'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
         'copy:build_appjs', 'copy:build_vendorjs', 'ngAnnotate:build', 'index:build', 'karmaconfig',
         'karma:continuous'
