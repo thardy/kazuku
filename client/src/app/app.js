@@ -17,4 +17,6 @@
     'templates-common',
     'ui.router.state',
     'ui.router',
+    'kazuku.sites',
+    'kazuku.pages',
 ])));
