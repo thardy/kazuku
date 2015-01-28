@@ -7,10 +7,10 @@
 (function(module) {
 
     module.config(function ($stateProvider) {
-        $stateProvider.state('home', {
+        $stateProvider.state('root.home', {
             url: '/home',
             views: {
-                "main": {
+                "main@": {
                     controller: 'HomeController as model',
                     templateUrl: 'home/home.tpl.html'
                 }

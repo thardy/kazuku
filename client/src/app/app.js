@@ -11,12 +11,13 @@
     });
 
 }(angular.module("kazuku", [
+    'kazuku.layout',
     'kazuku.home',
+    'kazuku.sites',
+    'kazuku.pages',
     'kazuku.about',
     'templates-app',
     'templates-common',
     'ui.router.state',
     'ui.router',
-    'kazuku.sites',
-    'kazuku.pages',
 ])));

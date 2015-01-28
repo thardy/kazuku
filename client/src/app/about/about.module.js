@@ -1,10 +1,10 @@
 (function(module) {
 
     module.config(function ($stateProvider) {
-        $stateProvider.state('about', {
+        $stateProvider.state('root.about', {
             url: '/about',
             views: {
-                "main": {
+                "main@": {
                     controller: 'AboutController as model',
                     templateUrl: 'about/about.tpl.html'
                 }

@@ -5,13 +5,14 @@
             url: '',
             abstract: true,
             views: {
-                'header': {
-                    controller: 'HeaderController as model',
-                    templateUrl: 'layout/header.tpl.html'
-                },
+//                'header': {
+//                    controller: 'HeaderController as model',
+//                    templateUrl: 'layout/header.tpl.html'
+//                },
                 'navigation': {
                     controller: 'NavigationController as model',
-                    templateUrl: 'layout/navigation.tpl.html'
+                    templateUrl: 'layout/navigation.tpl.html',
+                    transclude: true
                 }
             }
         });
