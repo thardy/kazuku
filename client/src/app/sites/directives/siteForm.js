@@ -3,19 +3,22 @@
         var linker = function(scope, element, attrs) {
             // do DOM Manipulation here
         };
-        var controller = function() {
-
-        };
-
         return {
             restrict: 'A',
             templateUrl: 'sites/directives/siteForm.tpl.html',
             link: linker,
-            controller: controller,
+            controller: 'SiteFormController as ctrl',
+            bindToController: true,
             scope: {
-                site: '='
+                site: '=siteForm',
+                lookups: '=siteLookups'
             }
         };
+    });
+
+    module.controller('SiteFormController', function() {
+        var model = this;
 
     });
 })(angular.module('kazuku.sites'));
+

@@ -3,19 +3,21 @@
         var linker = function(scope, element, attrs) {
             // do DOM Manipulation here
         };
-        var controller = function() {
-
-        };
-
         return {
             restrict: 'A',
             templateUrl: 'pages/directives/pageForm.tpl.html',
             link: linker,
-            controller: controller,
+            controller: 'PageFormController as ctrl',
+            bindToController: true,
             scope: {
-                page: '='
+                page: '=pageForm',
+                lookups: '=pageLookups'
             }
         };
+    });
+
+    module.controller('PageFormController', function() {
+        var model = this;
 
     });
 })(angular.module('kazuku.pages'));
