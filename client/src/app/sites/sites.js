@@ -1,7 +1,8 @@
 (function(module) {
 
-    module.controller('SitesController', function () {
+    module.controller('SitesController', function (Site) {
         var model = this;
+        model.loadingSites = false;
         model.sites = [];
 
         init();
@@ -11,20 +12,11 @@
         }
 
         function getSites() {
-            return [
-                {
-                    name: 'Bob\'s Chicken',
-                    description: 'A restaurant'
-                },
-                {
-                    name: 'Jack & Jane',
-                    description: 'Knick knack boutique'
-                },
-                {
-                    name: 'El Dorado Apartments',
-                    description: 'Apartment complex'
-                },
-            ];
+            model.loadingSites = true;
+            Site.query().$promise.then(function(sites) {
+                model.sites = sites;
+                model.loadingSites = false;
+            });
         }
     });
 

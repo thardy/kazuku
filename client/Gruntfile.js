@@ -170,6 +170,16 @@ module.exports = function(grunt) {
                     }
                 ]
             },
+            buildmock_vendorjs: {
+                files: [
+                    {
+                        src: [ '<%= vendor_files.js %>', '<%= test_files.js %>' ],
+                        dest: '<%= build_dir %>/',
+                        cwd: '.',
+                        expand: true
+                    }
+                ]
+            },
             compile_assets: {
                 files: [
                     {
@@ -375,9 +385,28 @@ module.exports = function(grunt) {
              * 'src' property contains the list of included files.
              */
             build: {
+                appName: 'kazuku',
                 dir: '<%= build_dir %>',
                 src: [
                     '<%= vendor_files.js %>',
+                    '<%= build_dir %>/src/**/*.module.js',
+                    '<%= build_dir %>/src/**/*.js',
+                    '<%= html2js.common.dest %>',
+                    '<%= html2js.app.dest %>',
+                    '<%= vendor_files.css %>',
+                    '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+                ]
+            },
+            /**
+             * Identical to above, but with test_files included.
+             * Good for using a mocked backend like $httpBackend.
+             */
+            mock: {
+                appName: 'kazuku.mock',
+                dir: '<%= build_dir %>',
+                src: [
+                    '<%= vendor_files.js %>',
+                    '<%= test_files.js %>',
                     '<%= build_dir %>/src/**/*.module.js',
                     '<%= build_dir %>/src/**/*.js',
                     '<%= html2js.common.dest %>',
@@ -471,7 +500,8 @@ module.exports = function(grunt) {
              * When the Gruntfile changes, we just want to lint it. In fact, when
              * your Gruntfile changes, it will automatically be reloaded!
              * We also want to copy vendor files and rebuild index.html in case
-             * vendor_files.js was altered (list of 3rd party vendor files installed by bower)
+             * vendor_files.js was altered (list of 3rd party vendor files installed by bower).
+             * This won't get the test files if you're running "grunt watchmock". Todo - fix.
              */
             gruntfile: {
                 files: 'Gruntfile.js',
@@ -583,6 +613,8 @@ module.exports = function(grunt) {
     // before watching for changes.
     grunt.renameTask('watch', 'delta');
     grunt.registerTask('watch', [ 'build', 'karma:unit', 'express', 'delta' ]);
+    // watchmock is just like watch, but includes testing resources for using $httpBackend
+    grunt.registerTask('watchmock', [ 'buildmock', 'karma:unit', 'express', 'delta' ]);
 
     // The default task is to build and compile.
     grunt.registerTask('default', [ 'build', 'compile' ]);
@@ -592,6 +624,14 @@ module.exports = function(grunt) {
         'clean:all', 'html2js', 'jshint', 'coffeelint', 'coffee', 'less:build',
         'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
         'copy:build_appjs', 'copy:build_vendorjs', 'ngAnnotate:build', 'index:build', 'karmaconfig',
+        'karma:continuous'
+    ]);
+
+    // just like build, but includes testing resources for using $httpBackend and switches to mock application in index.html
+    grunt.registerTask('buildmock', [
+        'clean:all', 'html2js', 'jshint', 'coffeelint', 'coffee', 'less:build',
+        'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
+        'copy:build_appjs', 'copy:buildmock_vendorjs', 'ngAnnotate:build', 'index:mock', 'karmaconfig',
         'karma:continuous'
     ]);
 
@@ -631,6 +671,8 @@ module.exports = function(grunt) {
             return file.replace(dirRE, '');
         });
 
+        var app = this.data.appName;
+
         // this.data.dir comes from either build:dir, compile:dir, or karmaconfig:dir in the index config defined above
         // see - http://gruntjs.com/api/inside-tasks#this.data for documentation
         grunt.file.copy('src/index.html', this.data.dir + '/index.html', {
@@ -638,6 +680,7 @@ module.exports = function(grunt) {
                 // These are the variables looped over in our index.html exposed as "scripts", "styles", and "version"
                 return grunt.template.process(contents, {
                     data: {
+                        appName: app,
                         scripts: jsFiles,
                         styles: cssFiles,
                         version: grunt.config('pkg.version'),

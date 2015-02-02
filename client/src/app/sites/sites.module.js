@@ -34,6 +34,7 @@
             });
     });
 
-}(angular.module("kazuku.sites", [
-    'ui.router'
+}(angular.module('kazuku.sites', [
+    'ui.router',
+    'ngResource'
 ])));
