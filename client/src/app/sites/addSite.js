@@ -1,8 +1,8 @@
 (function(module) {
 
-    module.controller('AddSiteController', function () {
+    module.controller('AddSiteController', function ($window, Site) {
         var model = this;
-        model.site = {};
+        model.site = new Site();
         model.saveSite = saveSite;
 
         init();
@@ -12,7 +12,14 @@
         }
 
         function saveSite() {
-
+            model.site.$save()
+                .then(function (data) {
+                    $window.location = '#/sites';
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .finally();
         }
     });
 

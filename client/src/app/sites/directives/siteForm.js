@@ -7,7 +7,7 @@
             restrict: 'A',
             templateUrl: 'sites/directives/siteForm.tpl.html',
             link: linker,
-            controller: 'SiteFormController as ctrl',
+            controller: 'SiteFormController as model',
             bindToController: true,
             scope: {
                 site: '=siteForm',

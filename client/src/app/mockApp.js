@@ -29,5 +29,5 @@
         $httpBackend.whenPOST(/.+/).passThrough();
         $httpBackend.whenPUT(/.+/).passThrough();
     });
-})(angular.module('kazuku.mock', ['kazuku', 'ngMockE2E']));
+})(angular.module('mockApp', ['kazuku', 'ngMockE2E']));
 

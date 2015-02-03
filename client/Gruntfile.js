@@ -402,7 +402,7 @@ module.exports = function(grunt) {
              * Good for using a mocked backend like $httpBackend.
              */
             mock: {
-                appName: 'kazuku.mock',
+                appName: 'mockApp',
                 dir: '<%= build_dir %>',
                 src: [
                     '<%= vendor_files.js %>',
@@ -422,6 +422,7 @@ module.exports = function(grunt) {
              * file. Now we're back!
              */
             compile: {
+                appName: 'kazuku',
                 dir: '<%= compile_dir %>',
                 src: [
                     '<%= concat.compile_js.dest %>',
