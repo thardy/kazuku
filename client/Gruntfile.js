@@ -1,5 +1,5 @@
+var taskName = '';
 module.exports = function(grunt) {
-
     var _ = require('lodash');
 
     // Load required Grunt tasks. These are installed based on the versions listed
@@ -494,7 +494,8 @@ module.exports = function(grunt) {
              * plugin should auto-detect.
              */
             options: {
-                livereload: true
+                livereload: true//,
+                //spawn: false
             },
 
             /**
@@ -502,11 +503,11 @@ module.exports = function(grunt) {
              * your Gruntfile changes, it will automatically be reloaded!
              * We also want to copy vendor files and rebuild index.html in case
              * vendor_files.js was altered (list of 3rd party vendor files installed by bower).
-             * This won't get the test files if you're running "grunt watchmock". Todo - fix.
              */
             gruntfile: {
                 files: 'Gruntfile.js',
                 tasks: [ 'jshint:gruntfile', 'clean:vendor', 'copy:build_vendorjs', 'index:build' ],
+
                 options: {
                     livereload: false
                 }
@@ -605,7 +606,21 @@ module.exports = function(grunt) {
 
     /** ********************************************************************************* */
     /** **************************** Project Configuration ****************************** */
-    grunt.initConfig(_.extend(taskConfig, fileConfig));
+    // The following chooses some watch tasks based on whether we're running in mock mode or not.
+    //  Our watch (delta above) needs to run a different index task and copyVendorJs task
+    //  in several places if "grunt watchmock" is run.
+    taskName = grunt.cli.tasks[0]; // the name of the task from the command line (e.g. "grunt watch" => "watch")
+    var indexTask = taskName === 'watchmock' ? 'index:mock' : 'index:build';
+    var copyVendorJsTask = taskName === 'watchmock' ? 'copy:buildmock_vendorjs' : 'copy:build_vendorjs';
+    taskConfig.delta.gruntfile.tasks = [ 'jshint:gruntfile', 'clean:vendor', copyVendorJsTask, indexTask ];
+    taskConfig.delta.jssrc.tasks = [ 'jshint:src', 'copy:build_appjs', indexTask ];
+    taskConfig.delta.coffeesrc.tasks = [ 'coffeelint:src', 'coffee:source', 'karma:unit:run', 'copy:build_appjs', indexTask ];
+    taskConfig.delta.html.tasks = [ indexTask ];
+
+
+    // Take the big config objects we defined above, combine them, and feed them into grunt
+    grunt.initConfig(_.assign(taskConfig, fileConfig));
+
 
     // In order to make it safe to just compile or copy *only* what was changed,
     // we need to ensure we are starting from a clean, fresh build. So we rename

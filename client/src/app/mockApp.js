@@ -13,9 +13,12 @@
 
         var indentSpacing = 2;
         // Sites GET
-        $httpBackend.whenGET(/api\/sites/).respond($filter('json')(sites, indentSpacing));
+        //$httpBackend.whenGET(/api\/sites/).respond($filter('json')(sites, indentSpacing));
+        $httpBackend.whenGET(/api\/sites/).respond(function(method, url, data) {
+            return [200, $filter('json')(sites, indentSpacing), { 'Cache-control': 'no-cache' }];
+        });
         // Sites POST
-        $httpBackend.whenPOST('/api\/sites/').respond(function(method, url, data) {
+        $httpBackend.whenPOST(/api\/sites/).respond(function(method, url, data) {
             // Add to our sites array, which is acting like a fake database
             var newSite = angular.fromJson(data);
             newSite.Id = sites.push(newSite); // data should be the json site that was posted to us,
