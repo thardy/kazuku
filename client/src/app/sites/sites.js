@@ -13,8 +13,8 @@
 
         function getSites() {
             model.loadingSites = true;
-            Site.query().$promise.then(function(sites) {
-                model.sites = sites;
+            Site.query().$promise.then(function(response) {
+                model.sites = response;
                 model.loadingSites = false;
             });
         }

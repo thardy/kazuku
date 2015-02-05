@@ -1,8 +1,11 @@
 (function(module) {
 
-    module.controller('EditSiteController', function () {
+    module.controller('EditSiteController', function ($state, $window, Site) {
         var model = this;
         model.site = {};
+        model.loadingSite = false;
+        model.getSite = getSite;
+        model.updateSite = updateSite;
 
         init();
 
@@ -11,10 +14,19 @@
         }
 
         function getSite() {
-            return {
-                name: 'Site1',
-                description: 'This is Site1'
-            };
+            model.loadingSite = true;
+            Site.get({ siteId: $state.params.siteId }).$promise
+                .then(function(response) {
+                    model.site = response;
+                    model.loadingSite = false;
+                });
+        }
+
+        function updateSite() {
+            model.site.$update()
+                .then(function(response) {
+                    $window.location = '#/sites';
+                });
         }
     });
 
