@@ -7,7 +7,7 @@
             restrict: 'A',
             templateUrl: 'pages/directives/pageForm.tpl.html',
             link: linker,
-            controller: 'PageFormController as ctrl',
+            controller: 'PageFormController as model',
             bindToController: true,
             scope: {
                 page: '=pageForm',

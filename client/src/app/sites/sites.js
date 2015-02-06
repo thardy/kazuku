@@ -2,7 +2,7 @@
 
     module.controller('SitesController', function (Site) {
         var model = this;
-        model.loadingSites = false;
+        model.loading = false;
         model.sites = [];
 
         init();
@@ -12,10 +12,10 @@
         }
 
         function getSites() {
-            model.loadingSites = true;
+            model.loading = true;
             Site.query().$promise.then(function(response) {
                 model.sites = response;
-                model.loadingSites = false;
+                model.loading = false;
             });
         }
     });

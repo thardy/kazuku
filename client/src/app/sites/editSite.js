@@ -3,9 +3,8 @@
     module.controller('EditSiteController', function ($state, $window, Site) {
         var model = this;
         model.site = {};
-        model.loadingSite = false;
-        model.getSite = getSite;
-        model.updateSite = updateSite;
+        model.loading = false;
+        model.update = update;
 
         init();
 
@@ -14,15 +13,15 @@
         }
 
         function getSite() {
-            model.loadingSite = true;
+            model.loading = true;
             Site.get({ siteId: $state.params.siteId }).$promise
                 .then(function(response) {
                     model.site = response;
-                    model.loadingSite = false;
+                    model.loading = false;
                 });
         }
 
-        function updateSite() {
+        function update() {
             model.site.$update()
                 .then(function(response) {
                     $window.location = '#/sites';

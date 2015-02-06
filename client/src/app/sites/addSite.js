@@ -3,7 +3,7 @@
     module.controller('AddSiteController', function ($window, Site) {
         var model = this;
         model.site = new Site();
-        model.saveSite = saveSite;
+        model.save = save;
 
         init();
 
@@ -11,7 +11,7 @@
 
         }
 
-        function saveSite() {
+        function save() {
             model.site.$save()
                 .then(function (data) {
                     $window.location = '#/sites';
