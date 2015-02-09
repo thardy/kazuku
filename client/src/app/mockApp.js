@@ -44,12 +44,14 @@
         // ***************************************************************************************************
 
         // *** Pages *****************************************************************************************
+        // todo: test actual templating engine, especially with includes (how do they work?) - if content contains another
+        //  template, how does it find that template?
         var pages = [
-            { id: 1, siteId: 4, name: 'Home', description: 'Welcome to our wonderful site!', stateName: 'root.home', url: '#/home' },
-            { id: 2, siteId: 4, name: 'Floor Plans', description: 'Floor Plans.', stateName: 'root.floorPlans', url: '#/floorplans' },
-            { id: 3, siteId: 4, name: 'Amenities', description: 'Amenities.', stateName: 'root.amenities', url: '#/amenities' },
-            { id: 3, siteId: 4, name: 'Gallery', description: 'Gallery.', stateName: 'root.gallery', url: '#/gallery' },
-            { id: 4, siteId: 4, name: 'About', description: 'About.', stateName: 'root.about', url: '#/about' }
+            { id: 1, siteId: 4, name: 'Home', description: 'Welcome to our wonderful site!', stateName: 'root.home', url: '#/home', content: '#Home Page' },
+            { id: 2, siteId: 4, name: 'Floor Plans', description: 'Floor Plans.', stateName: 'root.floorPlans', url: '#/floorplans', content: '#Floor Plans' },
+            { id: 3, siteId: 4, name: 'Amenities', description: 'Amenities.', stateName: 'root.amenities', url: '#/amenities', content: '#Amenities' },
+            { id: 3, siteId: 4, name: 'Gallery', description: 'Gallery.', stateName: 'root.gallery', url: '#/gallery', content: '#Gallery' },
+            { id: 4, siteId: 4, name: 'About', description: 'About.', stateName: 'root.about', url: '#/about', content: '#About' }
         ];
 
         // Pages GET with id - these tend to be greedy so the more specific GET with parm HAS to be listed
