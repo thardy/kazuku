@@ -1,5 +1,5 @@
 (function (pagesController) {
-    var authService = require('../services/authService');
+    var authService = require('../authentication/authService');
     // http://mikedeboer.github.io/node-github/
     var GitHubApi  = require('github');
     var github = new GitHubApi({

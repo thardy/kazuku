@@ -1,7 +1,7 @@
 (function (authController) {
     var request = require('request');
     var config = require("../env-config");
-    var authService = require('../services/authService');
+    var authService = require('../authentication/authService');
 
     authController.init = function (app) {
 
