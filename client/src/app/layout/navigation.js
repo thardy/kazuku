@@ -2,31 +2,40 @@
 
     module.controller('NavigationController', function () {
         var model = this;
-        model.pages = [];
+        model.navItems = [];
 
         init();
 
         function init() {
-            model.pages = getNavItems();
+            model.navItems = getNavItems();
         }
 
         function getNavItems() {
             return [
                 {
-                    name: 'Google',
-                    description: 'This is Google',
-                    url: 'http://google.com'
+                    name: 'Home',
+                    description: 'Home',
+                    stateName: 'root.home',
+                    url: '#/home'
                 },
                 {
-                    name: 'Amazon',
-                    description: 'This is Amazon',
-                    url: 'http://amazon.com'
+                    name: 'Sites',
+                    description: 'Site management',
+                    stateName: 'root.sites',
+                    url: '#/sites'
                 },
                 {
-                    name: 'Twitter',
-                    description: 'Twitter is nice',
-                    url: 'http://twitter.com'
+                    name: 'Pages',
+                    description: 'Page management',
+                    stateName: 'root.pages',
+                    url: '#/pages'
                 },
+                {
+                    name: 'Account',
+                    description: 'Account management',
+                    stateName: 'root.account',
+                    url: '#/account'
+                }
             ];
         }
     });

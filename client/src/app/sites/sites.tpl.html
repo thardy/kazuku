@@ -2,5 +2,9 @@
 <ul>
     <li ng-repeat="site in model.sites">
         {{site.name}}
+        <a class="btn btn-default" ng-href="#/sites/edit-site/{{site.id}}">
+            Edit <i class="fa fa-pencil"></i>
+        </a>
     </li>
 </ul>
+<a ng-href="#/sites/add-site" class="btn btn-default">Add a Site</a>

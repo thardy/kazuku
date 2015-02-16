@@ -2,5 +2,9 @@
 <ul>
     <li ng-repeat="page in model.pages">
         {{page.name}}
+        <a class="btn btn-default" ng-href="#/pages/edit-page/{{page.id}}">
+            Edit <i class="fa fa-pencil"></i>
+        </a>
     </li>
 </ul>
+<a ng-href="#/pages/add-page" class="btn btn-default">Add a Page</a>

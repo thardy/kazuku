@@ -1,15 +1,14 @@
 {
-    "name": "kazuku",
-    "version": "0.0.1",
-    "_comment": "Any dependencies added here require a manual edit to vendor_files in /Gruntfile.js and (??? verify the following) /build/karma-unit.js (e.g 'vendor/angular-resource/angular-resource.js')",
-    "devDependencies": {
-        "angular": "~1.3.10",
-        "angular-resource": "~1.3.10",
-        "angular-mocks": "~1.3.10",
-        "bootstrap": "~3.3",
-        "angular-bootstrap": "~0.12.0",
-        "angular-ui-router": "~0.2.13"
-    },
-    "dependencies": {}
+  "name": "kazuku",
+  "version": "0.0.1",
+  "_comment": "Any dependencies added here require a manual edit to vendor_files in /Gruntfile.js and (??? verify the following) /buld/karma-unit.js (e.g 'vendor/angular-resource/angular-resource.js')",
+  "devDependencies": {
+    "angular": "~1.3.10",
+    "angular-resource": "~1.3.10",
+    "angular-mocks": "~1.3.10",
+    "bootstrap": "~3.3",
+    "angular-bootstrap": "~0.12.0",
+    "angular-ui-router": "~0.2.13"
+  },
+  "dependencies": {}
 }
-

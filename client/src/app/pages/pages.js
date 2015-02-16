@@ -1,7 +1,8 @@
 (function(module) {
 
-    module.controller('PagesController', function () {
+    module.controller('PagesController', function (Page) {
         var model = this;
+        model.loading = false;
         model.pages = [];
 
         init();
@@ -11,20 +12,11 @@
         }
 
         function getPages() {
-            return [
-                {
-                    name: 'Page1',
-                    description: 'This is Page1'
-                },
-                {
-                    name: 'Page2',
-                    description: 'This is Page2'
-                },
-                {
-                    name: 'Page3',
-                    description: 'This is Page3'
-                },
-            ];
+            model.loading = true;
+            Page.query().$promise.then(function(response) {
+                model.pages = response;
+                model.loading = false;
+            });
         }
     });
 

@@ -1,10 +1,7 @@
 <nav class="container navbar-default">
     <ul class="nav navbar-nav">
-        <li ui-sref-active="active">
-            <a ui-sref="root.home">Home</a>
-        </li>
-        <li ui-sref-active="active">
-            <a ui-sref="root.about">About</a>
+        <li ng-repeat="navItem in model.navItems" ui-sref-active="active">
+            <a ui-sref="{{navItem.stateName}}">{{navItem.name}}</a>
         </li>
     </ul>
 </nav>
