@@ -1,44 +1,47 @@
-(function (pagesController) {
-    var authService = require('../authentication/authService');
-    // http://mikedeboer.github.io/node-github/
-    var GitHubApi  = require('github');
-    var github = new GitHubApi({
-        // required
-        version: "3.0.0",
-        // optional
-        debug: true,
-        protocol: "https",
-        host: "api.github.com",
-        timeout: 5000,
-        headers: {
-            "user-agent": "kazuku" // GitHub is happy with a unique user agent
-        }
-    });
+//(function (pagesController) {
+var authService = require('../authentication/authService');
+// http://mikedeboer.github.io/node-github/
+var GitHubApi  = require('github');
 
-    pagesController.init = function (app) {
-        app.get("/api/:siteCode/pages/:path", function (req, res) {
-            var siteCode = req.params.siteCode;
+var github = new GitHubApi({
+    // required
+    version: "3.0.0",
+    // optional
+    debug: true,
+    protocol: "https",
+    host: "api.github.com",
+    timeout: 5000,
+    headers: {
+        "user-agent": "kazuku" // GitHub is happy with a unique user agent
+    }
+});
 
-            github.authenticate({
-                type: 'oauth',
-                token: authService.token
-            });
+var pagesController = {};
 
-            var msg = {
-                user: 'thardy',
-                repo: 'MarkdownTest',
-                path: req.params.path
-            };
+pagesController.init = function (app) {
+    app.get("/api/:siteCode/pages/:path", function (req, res) {
+        var siteCode = req.params.siteCode;
 
-            github.repos.getContent(msg, function(err, githubResult) {
-                if (err) {
-                    console.log(err);
-                }
-                res.set("Content-Type", "application/json");
-                var content = new Buffer(githubResult.content, 'base64').toString('utf8');
-                res.send(content);
-            });
+        github.authenticate({
+            type: 'oauth',
+            token: authService.token
         });
+
+        var msg = {
+            user: 'thardy',
+            repo: 'MarkdownTest',
+            path: req.params.path
+        };
+
+        github.repos.getContent(msg, function(err, githubResult) {
+            if (err) {
+                console.log(err);
+            }
+            res.set("Content-Type", "application/json");
+            var content = new Buffer(githubResult.content, 'base64').toString('utf8');
+            res.send(content);
+        });
+    });
 
 //        app.get('/do', function(req, res) {
 //            var username = 'thardy';
@@ -58,7 +61,7 @@
 //            res.send('tried to do something');
 //            //repo.show(function(err, repo) {});
 //        });
-    };
+};
 
-
-})(module.exports);
+module.exports = pagesController;
+//})(module.exports);
