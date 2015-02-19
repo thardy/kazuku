@@ -1,12 +1,12 @@
 var database = require("../database/database");
+var Page = require("./page");
 
 var PageService = function(db) {
     var self = this;
 
     // Public functions
     self.getAll = function(next) {
-        var pages = db.pages;
-        next(null, pages);
+        db.pages.find({}, next);
     };
 
     self.getById = function(id, next) {
@@ -20,6 +20,15 @@ var PageService = function(db) {
             else {
 
             }
+        });
+    };
+
+    self.create = function(page, next) {
+        db.pages.insert(page, function (err, doc) {
+            if (err) next(err);
+
+            var page = doc ? new Page(doc) : null;
+            next(null, page);
         });
     };
 

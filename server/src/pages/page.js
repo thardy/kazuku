@@ -7,8 +7,11 @@ var Page = function(args) {
     if (args.id) {
         page.id = args.id;
     }
-    page.name = args.name;
+    if (args._id) {
+        page.id = args._id;
+    }
     page.siteId = args.siteId;
+    page.name = args.name;
     page.url = args.url;
     page.content = args.content;
     page.description = args.description || null;
