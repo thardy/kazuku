@@ -6,10 +6,8 @@ describe("database", function () {
     after(function (done) {
         // Remove all documents we added
         database.pages.remove({name: /^\$Test.*/, siteId: 1}, function (err) {
-            if(err) {
-                database.close();
-                return done(err);
-            }
+            if(err) return done(err);
+
             done();
         });
     });

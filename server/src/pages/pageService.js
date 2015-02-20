@@ -1,25 +1,35 @@
 var database = require("../database/database");
 var Page = require("./page");
+var _ = require("lodash");
+
 
 var PageService = function(db) {
     var self = this;
 
     // Public functions
     self.getAll = function(next) {
-        db.pages.find({}, next);
+        db.pages.find({}, function(err, docs) {
+            if (err) next(err);
+
+            var pages = null;
+            if (docs) {
+                pages = [];
+                _.forEach(docs, function(doc) {
+                    var page = new Page(doc);
+                    pages.push(page);
+                });
+            }
+
+            next(null, pages);
+        });
     };
 
     self.getById = function(id, next) {
-        db.findOne({_id: id}, function(err, doc) {
-            if (err) {
-                // todo: handle error
-            }
-            if (doc) {
-                page = new Page(doc);
-            }
-            else {
+        db.pages.findOne({_id: id}, function(err, doc) {
+            if (err) next(err);
 
-            }
+            var page = doc ? new Page(doc) : null;
+            next(null, page);
         });
     };
 
@@ -29,6 +39,34 @@ var PageService = function(db) {
 
             var page = doc ? new Page(doc) : null;
             next(null, page);
+        });
+    };
+
+    self.updateById = function(id, updatedPage, next) {
+        var clone = _.clone(updatedPage);
+        delete clone.id;
+        db.pages.updateById(id, clone, function (err, numAffected) {
+            if (err) next(err);
+
+            next(null, numAffected);
+        });
+    };
+
+    self.update = function(queryObject, updatedPage, next) {
+        var clone = _.clone(updatedPage);
+        delete clone.id;
+        db.pages.update(queryObject, clone, function (err, numAffected) {
+            if (err) next(err);
+
+            next(null, numAffected);
+        });
+    };
+
+    self.delete = function(id, next) {
+        db.pages.remove({_id: id}, function (err) {
+            if (err) next(err);
+
+            next(null);
         });
     };
 

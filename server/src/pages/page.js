@@ -4,12 +4,13 @@ var Page = function(args) {
     assert.ok(args.name && args.siteId && args.url && args.content, "Need siteId, name, url, and content");
     var page = {};
 
-    if (args.id) {
+    if (args._id) {
+        page.id = args._id.toHexString();
+    }
+    else if (args.id) {
         page.id = args.id;
     }
-    if (args._id) {
-        page.id = args._id;
-    }
+
     page.siteId = args.siteId;
     page.name = args.name;
     page.url = args.url;
