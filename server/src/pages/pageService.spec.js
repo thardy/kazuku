@@ -3,6 +3,7 @@ var database = require("../database/database");
 var PageService = require("./pageService");
 var Page = require("./page");
 var _ = require("lodash");
+var async = require("async");
 
 describe("PageService", function () {
     var pageService = {};
@@ -18,25 +19,33 @@ describe("PageService", function () {
 
         deleteAllTestPages(function() {
             // Insert a doc to be present before all tests start
-            database.pages.insert({name: '$Test Page 1 - existing', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'},
-                function (err, doc) {
-                    if(err) return done(err);
+            var newPage = {name: '$Test Page 1 - existing', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'};
+            var newPage2 = {name: '$Test Page 2 - existing', siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'};
+            async.parallel([
+                function(callback) {
+                    database.pages.insert(newPage, function(err, doc) {
+                        if (err) return callback(err);
 
-                    existingPage1IdString = doc._id.toHexString();
-                    existingPage1Name = doc.name;
+                        existingPage1IdString = doc._id.toHexString();
+                        existingPage1Name = doc.name;
+                        callback();
+                    });
+                },
+                function(callback) {
+                    database.pages.insert(newPage2, function(err, doc) {
+                        if (err) return callback(err);
 
-                    database.pages.insert({name: '$Test Page 2 - existing', siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'},
-                        function (err, doc) {
-                            if(err) return done(err);
-
-                            existingPage2IdString = doc._id.toHexString();
-                            existingPage2Name = doc.name;
-                            existingPage2Url = doc.url;
-                            done();
-                        }
-                    );
+                        existingPage2IdString = doc._id.toHexString();
+                        existingPage2Name = doc.name;
+                        existingPage2Url = doc.url;
+                        callback();
+                    });
                 }
-            );
+            ], function (err) {
+                if (err) return done(err);
+
+                done();
+            });
         });
     });
 
@@ -76,6 +85,8 @@ describe("PageService", function () {
             done();
         });
     });
+
+    it("validates Page on create");
 
     it("can update a Page by id", function (done) {
         var newUrl = '#/newtest';

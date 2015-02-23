@@ -1,11 +1,9 @@
 //(function (authController) {
 var request = require('request');
 var config = require("../env-config");
-var authService = require('../authentication/authService');
+var authService = require('authService');
 
-var authController = {};
-
-authController.init = function (app) {
+exports.init = function (app) {
 
     app.get('/auth', function (req, res) {
         var auth_uri = 'https://github.com/login/oauth/authorize?client_id={0}&redirect_uri={1}&scope={2}&state={3}'.format(
@@ -42,6 +40,3 @@ authController.init = function (app) {
         );
     });
 };
-
-module.exports = authController;
-//})(module.exports);

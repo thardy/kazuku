@@ -1,3 +1,6 @@
+// just ripped this out of a controller it used to be in
+// todo: clean this up into a service
+
 //(function (pagesController) {
 var authService = require('../authentication/authService');
 // http://mikedeboer.github.io/node-github/
