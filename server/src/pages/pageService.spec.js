@@ -1,4 +1,5 @@
-var should = require("should");
+var chai = require("chai");
+var should = chai.Should();
 var database = require("../database/database");
 var PageService = require("./pageService");
 var Page = require("./page");
@@ -49,14 +50,16 @@ describe("PageService", function () {
         });
     });
 
-    after(function () {
+    after(function (done) {
         // Remove all Test documents
-        deleteAllTestPages();
+        deleteAllTestPages(function() {
+            done();
+        });
     });
 
     it("can get all Pages", function (done) {
         pageService.getAll(function (err, pages) {
-            if (err) done(err);
+            if (err) return done(err);
 
             pages.should.be.instanceOf(Array);
             pages.length.should.be.greaterThan(1);
@@ -66,18 +69,18 @@ describe("PageService", function () {
 
     it("can get a Page by id", function (done) {
         pageService.getById(existingPage1IdString, function(err, page) {
-            if (err) done(err);
+            if (err) return done(err);
 
             should.exist(page);
             page.name.should.equal(existingPage1Name);
+            done();
         });
-        done();
     });
 
     it("can create a Page", function (done) {
         var page = { siteId: 1, name: '$Test - create page', url: '#/test', content: '#Test' };
         pageService.create(page, function (err, page) {
-            if (err) done(err);
+            if (err) return done(err);
 
             should.exist(page);
             should.exist(page.id);
@@ -86,20 +89,27 @@ describe("PageService", function () {
         });
     });
 
-    it("validates Page on create");
+    it("validates Page on create", function (done) {
+        var invalidPage = { name: '$Test - create page', url: '#/test', content: '#Test' };
+        pageService.create(invalidPage, function (err, page) {
+            should.exist(err);
+            should.not.exist(page);
+            done();
+        });
+    });
 
     it("can update a Page by id", function (done) {
         var newUrl = '#/newtest';
         var newContent = '#New Test Content';
         _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, url: newUrl, content: newContent });
         pageService.updateById(existingPage1IdString, theUpdatedPage, function (err, numAffected) {
-            if (err) done(err);
+            if (err) return done(err);
 
             numAffected.should.equal(1);
 
             // verify page was updated
             pageService.getById(existingPage1IdString, function(err, retrievedPage) {
-                if (err) done(err);
+                if (err) return done(err);
 
                 should.exist(retrievedPage);
                 retrievedPage.url.should.be.equal(newUrl);
@@ -115,13 +125,13 @@ describe("PageService", function () {
         var updatedPage = { id: existingPage2IdString, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
         var queryObject = { name: existingPage2Name, url: existingPage2Url};
         pageService.update(queryObject, updatedPage, function (err, numAffected) {
-            if (err) done(err);
+            if (err) return done(err);
 
             numAffected.should.equal(1);
 
             // verify page was updated
             pageService.getById(existingPage2IdString, function(err, retrievedPage) {
-                if (err) done(err);
+                if (err) return done(err);
 
                 should.exist(retrievedPage);
                 retrievedPage.url.should.be.equal(newUrl);
@@ -134,13 +144,13 @@ describe("PageService", function () {
     it("can delete a Page by id", function (done) {
         var newPage = { siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
         pageService.create(newPage, function(err, page) {
-            if (err) done(err);
+            if (err) return done(err);
 
             pageService.delete(page.id, function(err) {
-                if (err) done(err);
+                if (err) return done(err);
 
                 pageService.getById(page.id, function(err, retrievedPage) {
-                    if (err) done(err);
+                    if (err) return done(err);
 
                     should.not.exist(retrievedPage);
                     done();
@@ -158,11 +168,3 @@ describe("PageService", function () {
     }
 });
 
-describe("Page", function () {
-    it("can accept an argument object", function (done) {
-        var args = { siteId: 1, name: 'chicken', url: '#/mypage', content: '#My Content' };
-        var page = Page(args);
-        page.url.should.be.equal('#/mypage');
-        done();
-    });
-});

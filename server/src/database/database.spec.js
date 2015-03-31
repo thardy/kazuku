@@ -1,4 +1,5 @@
-var should = require("should");
+var chai = require("chai");
+var should = chai.Should();
 var database = require("./database");
 
 describe("database", function () {
@@ -24,7 +25,7 @@ describe("database", function () {
         database.pages.insert({name: '$Test Page', siteId: 1, url: '#/test', content: '#Test Page'},
             function (err, doc) {
                 if(err) return done(err);
-                should.exists(doc);
+                should.exist(doc);
                 done();
             }
         );

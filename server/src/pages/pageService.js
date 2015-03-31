@@ -1,5 +1,4 @@
 var database = require("../database/database");
-var Page = require("./page");
 var _ = require("lodash");
 
 
@@ -9,16 +8,13 @@ var PageService = function(db) {
     // Public functions
     self.getAll = function(next) {
         db.pages.find({}, function(err, docs) {
-            if (err) next(err);
+            if (err) return next(err);
 
-            var pages = null;
-            if (docs) {
-                pages = [];
-                _.forEach(docs, function(doc) {
-                    var page = new Page(doc);
-                    pages.push(page);
-                });
-            }
+            var pages = [];
+            _.forEach(docs, function(doc) {
+                useFriendlyId(doc);
+                pages.push(doc);
+            });
 
             next(null, pages);
         });
@@ -26,27 +22,31 @@ var PageService = function(db) {
 
     self.getById = function(id, next) {
         db.pages.findOne({_id: id}, function(err, doc) {
-            if (err) next(err);
+            if (err) return next(err);
 
-            var page = doc ? new Page(doc) : null;
-            next(null, page);
+            useFriendlyId(doc);
+            next(null, doc);
         });
     };
 
     self.create = function(page, next) {
+
+        var valError = validate(page);
+        if (valError) return next(valError);
+
         db.pages.insert(page, function (err, doc) {
             if (err) next(err);
 
-            var page = doc ? new Page(doc) : null;
-            next(null, page);
+            useFriendlyId(doc);
+            next(null, doc);
         });
     };
 
     self.updateById = function(id, updatedPage, next) {
         var clone = _.clone(updatedPage);
-        delete clone.id;
+        delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         db.pages.updateById(id, clone, function (err, numAffected) {
-            if (err) next(err);
+            if (err) return next(err);
 
             next(null, numAffected);
         });
@@ -71,8 +71,20 @@ var PageService = function(db) {
     };
 
     // Private functions
-    var someFunction = function(){
+    var validate = function(doc) {
+        if (doc.name && doc.siteId && doc.url && doc.content) {
+            // simply do nothing if valid
+            return;
+        }
+        else {
+            return "Need siteId, name, url, and content";
+        }
+    };
 
+    var useFriendlyId = function(doc) {
+        if (doc && doc._id) {
+            doc.id = doc._id.toHexString();
+        }
     };
 
     //find the user
