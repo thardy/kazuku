@@ -35,7 +35,7 @@ var PageService = function(db) {
         if (valError) return next(valError);
 
         db.pages.insert(page, function (err, doc) {
-            if (err) next(err);
+            if (err) return next(err);
 
             useFriendlyId(doc);
             next(null, doc);
@@ -45,7 +45,8 @@ var PageService = function(db) {
     self.updateById = function(id, updatedPage, next) {
         var clone = _.clone(updatedPage);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
-        db.pages.updateById(id, clone, function (err, numAffected) {
+        // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+        db.pages.updateById(id, {$set: clone}, function (err, numAffected) {
             if (err) return next(err);
 
             next(null, numAffected);
@@ -55,8 +56,8 @@ var PageService = function(db) {
     self.update = function(queryObject, updatedPage, next) {
         var clone = _.clone(updatedPage);
         delete clone.id;
-        db.pages.update(queryObject, clone, function (err, numAffected) {
-            if (err) next(err);
+        db.pages.update(queryObject, {$set: clone}, function (err, numAffected) {
+            if (err) return next(err);
 
             next(null, numAffected);
         });
@@ -64,7 +65,7 @@ var PageService = function(db) {
 
     self.delete = function(id, next) {
         db.pages.remove({_id: id}, function (err) {
-            if (err) next(err);
+            if (err) return next(err);
 
             next(null);
         });

@@ -8,6 +8,7 @@ var async = require("async");
 
 describe("PageService", function () {
     var pageService = {};
+    var existingPage1 = {};
     var existingPage1IdString = {};
     var existingPage2IdString = {};
     var existingPage1Name = '';
@@ -27,6 +28,7 @@ describe("PageService", function () {
                     database.pages.insert(newPage, function(err, doc) {
                         if (err) return callback(err);
 
+                        existingPage1 = doc;
                         existingPage1IdString = doc._id.toHexString();
                         existingPage1Name = doc.name;
                         callback();
@@ -78,19 +80,19 @@ describe("PageService", function () {
     });
 
     it("can create a Page", function (done) {
-        var page = { siteId: 1, name: '$Test - create page', url: '#/test', content: '#Test' };
+        var page = { siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
         pageService.create(page, function (err, page) {
             if (err) return done(err);
 
             should.exist(page);
             should.exist(page.id);
-            page.url.should.equal('#/test');
+            page.url.should.equal('#/created');
             done();
         });
     });
 
     it("validates Page on create", function (done) {
-        var invalidPage = { name: '$Test - create page', url: '#/test', content: '#Test' };
+        var invalidPage = { name: '$Test - create page', url: '#/invalid-page', content: '#Test' };
         pageService.create(invalidPage, function (err, page) {
             should.exist(err);
             should.not.exist(page);
@@ -99,9 +101,8 @@ describe("PageService", function () {
     });
 
     it("can update a Page by id", function (done) {
-        var newUrl = '#/newtest';
         var newContent = '#New Test Content';
-        _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, url: newUrl, content: newContent });
+        _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, content: newContent });
         pageService.updateById(existingPage1IdString, theUpdatedPage, function (err, numAffected) {
             if (err) return done(err);
 
@@ -112,7 +113,6 @@ describe("PageService", function () {
                 if (err) return done(err);
 
                 should.exist(retrievedPage);
-                retrievedPage.url.should.be.equal(newUrl);
                 retrievedPage.content.should.be.equal(newContent);
                 done();
             });
@@ -120,7 +120,7 @@ describe("PageService", function () {
     });
 
     it("can update a Page by query object", function (done) {
-        var newUrl = '#/newtest2';
+        var newUrl = '#/updated-url2';
         var newContent = '#New Test Content for query by object';
         var updatedPage = { id: existingPage2IdString, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
         var queryObject = { name: existingPage2Name, url: existingPage2Url};
@@ -156,6 +156,15 @@ describe("PageService", function () {
                     done();
                 });
             });
+        });
+    });
+
+    it("has a unique index on siteId and url", function (done) {
+        var newPage = { siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
+        pageService.create(newPage, function(err, page) {
+            if (err) return done();
+            should.fail();
+            done('did not prevent dupe');
         });
     });
 
