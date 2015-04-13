@@ -3,6 +3,7 @@ var BPromise = require("bluebird");
 //var swig = require('swig');
 var Liquid = require('liquid-node');
 var util = require('util');
+var _ = require("lodash");
 
 // Constructor
 var TemplateEngine = function(args) {
@@ -11,24 +12,43 @@ var TemplateEngine = function(args) {
     templateEngine.engineType = args.engineType;
     templateEngine.engine = new Liquid.Engine();
 
+    var templateObjects = [];
+    templateObjects.push({
+        name: 'master',
+        content: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
+    });
+    templateObjects.push({
+        name: 'dog',
+        content: "dogs are nice"
+    });
+    templateObjects.push({
+        name: 'cat',
+        content: "cats are ok"
+    });
+    templateObjects.push({
+        name: 'chicken',
+        content: "chickens are {{disposition}}"
+    });
+
+    templateEngine.getTemplate = function (templateName) {
+        var templateObject = _.find(templateObjects, {name: templateName});
+        return templateObject;
+    };
+
     // Override Liquid's filesystem lookup to use our own mechanism for getting templates by name
     var CustomFileSystem = function() {};
     util.inherits(CustomFileSystem, Liquid.BlankFileSystem);
 
     CustomFileSystem.prototype.readTemplateFile = function(path) {
         return new BPromise(function(resolve, reject) {
-            if (path === 'dog') {
-                return resolve('dogs are nice');
-            } else if (path === 'cat') {
-                return resolve('cats are ok');
-            } else if (path === 'chicken') {
-                return resolve('chickens are {{disposition}}');
+            var templateObject = templateEngine.getTemplate(path);
+            if (templateObject && templateObject.content) {
+                return resolve(templateObject.content);
             } else {
-                return reject('not dog or cat');
+                return reject('template not found');
             }
         });
     };
-
 
     templateEngine.engine.fileSystem = new CustomFileSystem();
 

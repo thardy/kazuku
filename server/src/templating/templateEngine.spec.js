@@ -5,7 +5,7 @@ var expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe('TemplateEngine', function() {
+describe('TemplateEngine basics', function() {
     var templateEngine = {};
     var engineType = 'liquid';
 
@@ -31,7 +31,7 @@ describe('TemplateEngine', function() {
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('');
     });
 
-    it('can use a CustomFileSystem', function () {
+    it('can use a CustomFileSystem to embed templates', function () {
         var templateString = '{% include dog %}. Hello World {{foo}}. {% include cat %}.';
         var model = { foo: true };
 
@@ -45,7 +45,5 @@ describe('TemplateEngine', function() {
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('I think chickens are awesome.');
     });
 
-//    it("can embed templates");
-//
 //    it('does not blow up with malicious input');
 });
