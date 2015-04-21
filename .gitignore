@@ -23,10 +23,10 @@ _[Uu]pgrade[Rr]eport_[Ff]iles
 *.log
 *.log.*
 *node_modules*
-!/client/vendor/
-!/client/vendor/*
-!/client/vendor/*/*
-!/client/vendor/*/*/*
-!/client/vendor/*/*/*/*
+client/vendor/
+client/vendor/*
+client/vendor/*/*
+client/vendor/*/*/*
+client/vendor/*/*/*/*
 env-config.js
 
