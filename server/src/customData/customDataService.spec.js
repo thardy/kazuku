@@ -1,29 +1,31 @@
-var chai = require("chai");
-var should = chai.Should();
+var CustomDataService = require("./customDataService");
 var database = require("../database/database");
-var PageService = require("./pageService");
-var Page = require("./page");
 var _ = require("lodash");
-var async = require("async");
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+var expect = chai.expect;
 
-describe("PageService", function () {
-    var pageService = {};
-    var existingPage1 = {};
+chai.use(chaiAsPromised);
+
+describe("CustomDataService CRUD", function () {
+    var customDataService = {};
+    var existingContent1 = {};
     var existingPage1IdString = {};
     var existingPage2IdString = {};
-    var existingPage1Name = '';
+    var existingContent1Name = '';
     var existingPage2Name = '';
     var existingPage2Url = '';
     var theUpdatedPage = {};
+    var testOrgId = 1;
 
     before(function (done) {
-        pageService = new PageService(database);
+        customDataService = new CustomDataService(database);
 
-        // todo: consider adding orgId to pages
-        deleteAllTestPages(function() {
+        deleteAllTestData(function() {
             // Insert a doc to be present before all tests start
-            var newPage = {name: '$Test Page 1 - existing', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'};
-            var newPage2 = {name: '$Test Page 2 - existing', siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'};
+            // All test data should belong to a specific orgId (a test org)
+            var existingContent1 = { orgId: testOrgId, contentType: 'Blog Post', title: 'My First Blog Post', blogContent: 'Imagine a well written blog here.'};
+            var existingContent2 = { orgId: testOrgId, contentType: 'News', title: 'A Dog Ate My Homework', newsContent: 'It was a dark and rainy night...'};
             async.parallel([
                 function(callback) {
                     database.pages.insert(newPage, function(err, doc) {
@@ -59,6 +61,17 @@ describe("PageService", function () {
             done();
         });
     });
+
+    it("can create customData of a specified ContentType");
+
+    it("can get all data of a specified ContentType");
+
+    it("can get customData by Id");
+
+    it("can update customData");
+
+    it("can delete customData");
+
 
     it("can get all Pages", function (done) {
         pageService.getAll(function (err, pages) {
@@ -187,3 +200,14 @@ describe("PageService", function () {
     }
 });
 
+describe("CustomDataService Queries", function () {
+    it("can query custom string fields by value");
+
+    it("can query custom number fields by value");
+    it("can query custom number fields greater than value");
+    it("can query custom number fields in range");
+
+    it("can query custom date fields by value");
+    it("can query custom date fields greater than value");
+    it("can query custom date fields within range");
+});

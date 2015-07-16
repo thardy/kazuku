@@ -101,7 +101,13 @@ describe("TemplateService Layouts", function () {
         return expect(templateService.RenderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
     });
 
-    it("can convert 'pure content' template strings with front matter into template objects"); // front matter
+    // Need to convert front matter into properties and create a template object containing those properties as well as a
+    //  content property with the template in it.
+    it("can convert 'pure content' template strings with simple front matter into template objects"); // front matter
 
+    // Need to convert front matter queries into datasets in template object
+    it("can convert 'pure content' template strings with front matter queries into template objects"); // front matter
+
+    // same as above but queries not defined in front matter, but in the content object itself
     it("can declare model queries in templates");
 });
