@@ -11,13 +11,13 @@ var GenericService = function(db, collectionName) {
         self.collection.find({}, function(err, docs) {
             if (err) return next(err);
 
-            var pages = [];
+            var transformedDocs = [];
             _.forEach(docs, function(doc) {
-                useFriendlyId(doc);
-                pages.push(doc);
+                self.useFriendlyId(doc);
+                transformedDocs.push(doc);
             });
 
-            next(null, pages);
+            next(null, transformedDocs);
         });
     };
 
@@ -25,7 +25,7 @@ var GenericService = function(db, collectionName) {
         self.collection.findOne({_id: id}, function(err, doc) {
             if (err) return next(err);
 
-            useFriendlyId(doc);
+            self.useFriendlyId(doc);
             next(null, doc);
         });
     };
@@ -38,7 +38,7 @@ var GenericService = function(db, collectionName) {
         self.collection.insert(page, function (err, doc) {
             if (err) return next(err);
 
-            useFriendlyId(doc);
+            self.useFriendlyId(doc);
             next(null, doc);
         });
     };
@@ -72,24 +72,29 @@ var GenericService = function(db, collectionName) {
         });
     };
 
-    // Virtual functions
-    GenericService.prototype.validate = function(doc) {
-        if (doc.siteId) {
-            // simply do nothing if valid
-            return;
-        }
-        else {
-            return "Need siteId";
-        }
-    };
-
-
-    // Private functions
-    var useFriendlyId = function(doc) {
+    self.useFriendlyId = function(doc) {
         if (doc && doc._id) {
             doc.id = doc._id.toHexString();
         }
     };
+
+    // Virtual functions
+    GenericService.prototype.validate = function(doc) {
+        if (doc.orgId) {
+            // simply do nothing if valid
+            return;
+        }
+        else {
+            return "Need orgId";
+        }
+    };
+
+    // Private functions
+//    var useFriendlyId = function(doc) {
+//        if (doc && doc._id) {
+//            doc.id = doc._id.toHexString();
+//        }
+//    };
 };
 
 module.exports = GenericService;

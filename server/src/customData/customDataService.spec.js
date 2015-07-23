@@ -2,21 +2,25 @@ var CustomDataService = require("./customDataService");
 var database = require("../database/database");
 var _ = require("lodash");
 var chai = require("chai");
+var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
+var queue = require("queue");
+var q = queue();
 
 chai.use(chaiAsPromised);
 
 describe("CustomDataService CRUD", function () {
     var customDataService = {};
-    var existingContent1 = {};
-    var existingPage1IdString = {};
-    var existingPage2IdString = {};
-    var existingContent1Name = '';
-    var existingPage2Name = '';
-    var existingPage2Url = '';
-    var theUpdatedPage = {};
+    var existingCustomData1 = {};
+    var existingCustomData1IdString = {};
+    var existingCustomData2IdString = {};
+    var existingCustomData1Title = '';
+    var existingCustomData2Title = '';
+    var existingCustomData2Content = '';
+    var theUpdatedCustomData = {};
     var testOrgId = 1;
+    var testContentType = 'testType';
 
     before(function (done) {
         customDataService = new CustomDataService(database);
@@ -24,30 +28,33 @@ describe("CustomDataService CRUD", function () {
         deleteAllTestData(function() {
             // Insert a doc to be present before all tests start
             // All test data should belong to a specific orgId (a test org)
-            var existingContent1 = { orgId: testOrgId, contentType: 'Blog Post', title: 'My First Blog Post', blogContent: 'Imagine a well written blog here.'};
-            var existingContent2 = { orgId: testOrgId, contentType: 'News', title: 'A Dog Ate My Homework', newsContent: 'It was a dark and rainy night...'};
-            async.parallel([
+            var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
+            var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', content: 'It was a dark and rainy night...'};
+
+            // switched from async to q - https://github.com/jessetane/queue
+            q.push(
                 function(callback) {
-                    database.pages.insert(newPage, function(err, doc) {
+                    database.customData.insert(newCustomData1, function(err, doc) {
                         if (err) return callback(err);
 
-                        existingPage1 = doc;
-                        existingPage1IdString = doc._id.toHexString();
-                        existingPage1Name = doc.name;
+                        existingCustomData1 = doc;
+                        existingCustomData1IdString = doc._id.toHexString();
+                        existingCustomData1Title = doc.title;
                         callback();
                     });
                 },
                 function(callback) {
-                    database.pages.insert(newPage2, function(err, doc) {
+                    database.customData.insert(newCustomData2, function(err, doc) {
                         if (err) return callback(err);
 
-                        existingPage2IdString = doc._id.toHexString();
-                        existingPage2Name = doc.name;
-                        existingPage2Url = doc.url;
+                        existingCustomData2IdString = doc._id.toHexString();
+                        existingCustomData2Title = doc.title;
+                        existingCustomData2Content = doc.content;
                         callback();
                     });
                 }
-            ], function (err) {
+            );
+            q.start(function (err) {
                 if (err) return done(err);
 
                 done();
@@ -57,142 +64,83 @@ describe("CustomDataService CRUD", function () {
 
     after(function (done) {
         // Remove all Test documents
-        deleteAllTestPages(function() {
+        deleteAllTestData(function() {
             done();
         });
     });
 
-    it("can create customData of a specified ContentType");
-
-    it("can get all data of a specified ContentType");
-
-    it("can get customData by Id");
-
-    it("can update customData");
-
-    it("can delete customData");
-
-
-    it("can get all Pages", function (done) {
-        pageService.getAll(function (err, pages) {
+    it("can create customData of a specified ContentType", function (done) {
+        var testBlogContent = 'Test blog post here.';
+        var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', content: testBlogContent };;
+        customDataService.create(customData, function(err, createdCustomData) {
             if (err) return done(err);
 
-            pages.should.be.instanceOf(Array);
-            pages.length.should.be.greaterThan(1);
+            should.exist(createdCustomData);
+            should.exist(createdCustomData.id);
+            createdCustomData.content.should.equal(testBlogContent);
             done();
         });
     });
 
-    it("can get a Page by id", function (done) {
-        pageService.getById(existingPage1IdString, function(err, page) {
+    it("can get all data of a specified ContentType", function (done) {
+        customDataService.getByContentType(testContentType, function (err, docs) {
             if (err) return done(err);
 
-            should.exist(page);
-            page.name.should.equal(existingPage1Name);
+            docs.should.be.instanceOf(Array);
+            docs.length.should.be.greaterThan(1);
             done();
         });
     });
 
-    it("can create a Page", function (done) {
-        var page = { siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
-        pageService.create(page, function (err, page) {
+    it("can get customData by Id", function (done) {
+        customDataService.getById(existingCustomData1IdString, function(err, customData) {
             if (err) return done(err);
 
-            should.exist(page);
-            should.exist(page.id);
-            page.url.should.equal('#/created');
+            should.exist(customData);
+            customData.title.should.equal(existingCustomData1Title);
             done();
         });
     });
 
-    it("validates Page on create using base validation - siteId", function (done) {
-        var invalidPage = { name: '$Test - create page', url: '#/invalid-page', content: '#Test' };
-        pageService.create(invalidPage, function (err, page) {
-            should.exist(err);
-            should.not.exist(page);
-            done();
-        });
-    });
-
-    it("validates Page on create using extended validation - name, url, content", function (done) {
-        var invalidPage = { siteId: 1, name: '$Test - create page', url: '#/invalid-page' };
-        pageService.create(invalidPage, function (err, page) {
-            should.exist(err);
-            should.not.exist(page);
-            done();
-        });
-    });
-
-    it("can update a Page by id", function (done) {
+    it("can update customData by id", function (done) {
         var newContent = '#New Test Content';
-        _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, content: newContent });
-        pageService.updateById(existingPage1IdString, theUpdatedPage, function (err, numAffected) {
+        theUpdatedCustomData = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: newContent };
+        customDataService.updateById(existingCustomData1IdString, theUpdatedCustomData, function (err, numAffected) {
             if (err) return done(err);
 
             numAffected.should.equal(1);
 
-            // verify page was updated
-            pageService.getById(existingPage1IdString, function(err, retrievedPage) {
+            // verify customData was updated
+            customDataService.getById(existingCustomData1IdString, function(err, retrievedCustomData) {
                 if (err) return done(err);
 
-                should.exist(retrievedPage);
-                retrievedPage.content.should.be.equal(newContent);
+                should.exist(retrievedCustomData);
+                retrievedCustomData.content.should.be.equal(newContent);
                 done();
             });
         });
     });
 
-    it("can update a Page by query object", function (done) {
-        var newUrl = '#/updated-url2';
-        var newContent = '#New Test Content for query by object';
-        var updatedPage = { id: existingPage2IdString, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
-        var queryObject = { name: existingPage2Name, url: existingPage2Url};
-        pageService.update(queryObject, updatedPage, function (err, numAffected) {
+    it("can delete customData by id", function (done) {
+        var newCustomData = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', content: 'this customData is to be deleted'};
+        customDataService.create(newCustomData, function(err, customData) {
             if (err) return done(err);
 
-            numAffected.should.equal(1);
-
-            // verify page was updated
-            pageService.getById(existingPage2IdString, function(err, retrievedPage) {
+            customDataService.delete(customData.id, function(err) {
                 if (err) return done(err);
 
-                should.exist(retrievedPage);
-                retrievedPage.url.should.be.equal(newUrl);
-                retrievedPage.content.should.be.equal(newContent);
-                done();
-            });
-        });
-    });
-
-    it("can delete a Page by id", function (done) {
-        var newPage = { siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
-        pageService.create(newPage, function(err, page) {
-            if (err) return done(err);
-
-            pageService.delete(page.id, function(err) {
-                if (err) return done(err);
-
-                pageService.getById(page.id, function(err, retrievedPage) {
+                customDataService.getById(customData.id, function(err, retrievedCustomData) {
                     if (err) return done(err);
 
-                    should.not.exist(retrievedPage);
+                    should.not.exist(retrievedCustomData);
                     done();
                 });
             });
         });
     });
 
-    it("has a unique index on siteId and url", function (done) {
-        var newPage = { siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
-        pageService.create(newPage, function(err, page) {
-            if (err) return done();
-            should.fail();
-            done('did not prevent dupe');
-        });
-    });
-
-    function deleteAllTestPages(next) {
-        database.pages.remove({name: /^\$Test.*/, siteId: 1}, function (err) {
+    function deleteAllTestData(next) {
+        database.customData.remove({contentType: testContentType, orgId: 1}, function (err) {
             if(err) return next(err);
 
             next();

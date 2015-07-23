@@ -15,6 +15,7 @@ describe("PageService", function () {
     var existingPage2Name = '';
     var existingPage2Url = '';
     var theUpdatedPage = {};
+    var testOrgId = 1;
 
     before(function (done) {
         pageService = new PageService(database);
@@ -22,8 +23,8 @@ describe("PageService", function () {
         // todo: consider adding orgId to pages
         deleteAllTestPages(function() {
             // Insert a doc to be present before all tests start
-            var newPage = {name: '$Test Page 1 - existing', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'};
-            var newPage2 = {name: '$Test Page 2 - existing', siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'};
+            var newPage = {name: '$Test Page 1 - existing', orgId: testOrgId, siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'};
+            var newPage2 = {name: '$Test Page 2 - existing', orgId: testOrgId, siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'};
             async.parallel([
                 function(callback) {
                     database.pages.insert(newPage, function(err, doc) {
@@ -81,7 +82,7 @@ describe("PageService", function () {
     });
 
     it("can create a Page", function (done) {
-        var page = { siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
+        var page = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
         pageService.create(page, function (err, page) {
             if (err) return done(err);
 
@@ -102,7 +103,7 @@ describe("PageService", function () {
     });
 
     it("validates Page on create using extended validation - name, url, content", function (done) {
-        var invalidPage = { siteId: 1, name: '$Test - create page', url: '#/invalid-page' };
+        var invalidPage = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/invalid-page' };
         pageService.create(invalidPage, function (err, page) {
             should.exist(err);
             should.not.exist(page);
@@ -132,7 +133,7 @@ describe("PageService", function () {
     it("can update a Page by query object", function (done) {
         var newUrl = '#/updated-url2';
         var newContent = '#New Test Content for query by object';
-        var updatedPage = { id: existingPage2IdString, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
+        var updatedPage = { id: existingPage2IdString, orgId: testOrgId, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
         var queryObject = { name: existingPage2Name, url: existingPage2Url};
         pageService.update(queryObject, updatedPage, function (err, numAffected) {
             if (err) return done(err);
@@ -152,7 +153,7 @@ describe("PageService", function () {
     });
 
     it("can delete a Page by id", function (done) {
-        var newPage = { siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
+        var newPage = { orgId: testOrgId, siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
         pageService.create(newPage, function(err, page) {
             if (err) return done(err);
 
@@ -170,7 +171,7 @@ describe("PageService", function () {
     });
 
     it("has a unique index on siteId and url", function (done) {
-        var newPage = { siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
+        var newPage = { orgId: testOrgId, siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
         pageService.create(newPage, function(err, page) {
             if (err) return done();
             should.fail();
@@ -179,7 +180,7 @@ describe("PageService", function () {
     });
 
     function deleteAllTestPages(next) {
-        database.pages.remove({name: /^\$Test.*/, siteId: 1}, function (err) {
+        database.pages.remove({name: /^\$Test.*/, orgId: testOrgId}, function (err) {
             if(err) return next(err);
 
             next();

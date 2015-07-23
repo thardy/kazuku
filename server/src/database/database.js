@@ -6,7 +6,8 @@ var db = monk(config.mongoDbUrl);
 var database = {
     db: db,
     close: close,
-    pages: db.get("pages")
+    pages: db.get("pages"),
+    customData: db.get("customData")
 };
 
 function close() {

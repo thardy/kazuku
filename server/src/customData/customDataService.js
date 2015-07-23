@@ -1,8 +1,41 @@
 var _ = require("lodash");
+var util = require("util");
+var GenericService = require("../common/genericService");
 
+var CustomDataService = function CustomDataService(db) {
+    CustomDataService.super_.call(this, db, "customData");
+};
+util.inherits(CustomDataService, GenericService);
 
-var CustomDataService = function(db) {
+CustomDataService.prototype.validate = function(doc) {
+    if (doc.contentType) {
+        // call base validation, which should return nothing if valid
+        return GenericService.prototype.validate(doc);
+    }
+    else {
+        return "Need contentType";
+    }
+};
+
+CustomDataService.prototype.getByContentType = function(contentType, next) {
     var self = this;
+
+    self.collection.find({contentType: contentType}, function(err, docs) {
+        if (err) return next(err);
+
+        var transformedDocs = [];
+        _.forEach(docs, function(doc) {
+            self.useFriendlyId(doc);
+            transformedDocs.push(doc);
+        });
+
+        next(null, transformedDocs);
+    });
+};
+
+
+//var CustomDataService = function(db) {
+//    var self = this;
 //    var collection = db.customData;
 //
 //    // Public functions
@@ -88,7 +121,7 @@ var CustomDataService = function(db) {
 //        }
 //    };
 
-};
+//};
 
 module.exports = CustomDataService;
 
