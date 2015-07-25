@@ -1,4 +1,5 @@
 var _ = require("lodash");
+var Promise = require("bluebird");
 
 var GenericService = function(db, collectionName) {
     var self = this;
@@ -30,21 +31,30 @@ var GenericService = function(db, collectionName) {
         });
     };
 
-    self.create = function(page, next) {
+    self.create = function(doc) {
+        // todo: get the validate part to play nice with promises
+        var valError = this.validate(doc);
+        if (valError) {
+            return Promise.reject(new TypeError(valError));
+        }
 
-        var valError = this.validate(page);
-        if (valError) return next(valError);
+        return this.collection.insert(doc)
+            .then(function(doc) {
+                self.useFriendlyId(doc);
+                return doc;
 
-        self.collection.insert(page, function (err, doc) {
-            if (err) return next(err);
+            });
 
-            self.useFriendlyId(doc);
-            next(null, doc);
-        });
+//        self.collection.insert(doc, function (err, doc) {
+//            if (err) return next(err);
+//
+//            self.useFriendlyId(doc);
+//            next(null, doc);
+//        });
     };
 
-    self.updateById = function(id, updatedPage, next) {
-        var clone = _.clone(updatedPage);
+    self.updateById = function(id, updatedDoc, next) {
+        var clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
         self.collection.updateById(id, {$set: clone}, function (err, numAffected) {
@@ -54,8 +64,8 @@ var GenericService = function(db, collectionName) {
         });
     };
 
-    self.update = function(queryObject, updatedPage, next) {
-        var clone = _.clone(updatedPage);
+    self.update = function(queryObject, updatedDoc, next) {
+        var clone = _.clone(updatedDoc);
         delete clone.id;
         self.collection.update(queryObject, {$set: clone}, function (err, numAffected) {
             if (err) return next(err);

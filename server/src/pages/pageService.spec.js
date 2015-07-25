@@ -93,8 +93,8 @@ describe("PageService", function () {
         });
     });
 
-    it("validates Page on create using base validation - siteId", function (done) {
-        var invalidPage = { name: '$Test - create page', url: '#/invalid-page', content: '#Test' };
+    it("validates Page on create using base validation - orgId", function (done) {
+        var invalidPage = { name: '$Test - create page', siteId: 1, url: '#/invalid-page', content: '#Test' };
         pageService.create(invalidPage, function (err, page) {
             should.exist(err);
             should.not.exist(page);

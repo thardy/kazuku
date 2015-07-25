@@ -1,4 +1,5 @@
 var CustomDataService = require("./customDataService");
+var Promise = require("bluebird");
 var database = require("../database/database");
 var _ = require("lodash");
 var chai = require("chai");
@@ -6,6 +7,8 @@ var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
 var queue = require("queue");
+var moment = require("moment");
+
 var q = queue();
 
 chai.use(chaiAsPromised);
@@ -69,17 +72,33 @@ describe("CustomDataService CRUD", function () {
         });
     });
 
-    it("can create customData of a specified ContentType", function (done) {
-        var testBlogContent = 'Test blog post here.';
-        var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', content: testBlogContent };;
-        customDataService.create(customData, function(err, createdCustomData) {
-            if (err) return done(err);
+    it("can create customData of a specified ContentType", function () {
+        var now = moment().format('MMMM Do YYYY, h:mm:ss a');
+        var testBlogContent = 'Test blog post here. ' + now;
+        var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', content: testBlogContent };
 
-            should.exist(createdCustomData);
-            should.exist(createdCustomData.id);
-            createdCustomData.content.should.equal(testBlogContent);
-            done();
-        });
+        var createPromise = customDataService.create(customData);
+
+        return Promise.all([
+            createPromise.should.eventually.be.an("object"),
+            createPromise.should.eventually.have.property("content", testBlogContent)
+        ]);
+    });
+
+    it("validates customData on create using base validation - orgId", function () {
+        var invalidCustomData = { contentType: testContentType, title: 'New Test Blog Post', content: 'content of invalid customData object' };
+
+        var createPromise = customDataService.create(invalidCustomData);
+
+        return createPromise.should.be.rejectedWith(TypeError, "Need orgId");
+    });
+
+    it("validates customData on create using extended validation - contentType", function () {
+        var invalidCustomData = { orgId: testOrgId, title: 'New Test Blog Post2', content: 'content of invalid customData object' };
+
+        var createPromise = customDataService.create(invalidCustomData);
+
+        return createPromise.should.be.rejectedWith(TypeError, "Need contentType");
     });
 
     it("can get all data of a specified ContentType", function (done) {
@@ -140,7 +159,7 @@ describe("CustomDataService CRUD", function () {
     });
 
     function deleteAllTestData(next) {
-        database.customData.remove({contentType: testContentType, orgId: 1}, function (err) {
+        database.customData.remove({orgId: 1, contentType: testContentType}, function (err) {
             if(err) return next(err);
 
             next();

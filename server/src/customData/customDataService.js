@@ -25,7 +25,7 @@ CustomDataService.prototype.getByContentType = function(contentType, next) {
 
         var transformedDocs = [];
         _.forEach(docs, function(doc) {
-            self.useFriendlyId(doc);
+            GenericService.prototype.useFriendlyId(doc);
             transformedDocs.push(doc);
         });
 
