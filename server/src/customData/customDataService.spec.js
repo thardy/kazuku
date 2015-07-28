@@ -25,51 +25,41 @@ describe("CustomDataService CRUD", function () {
     var testOrgId = 1;
     var testContentType = 'testType';
 
-    before(function (done) {
+    before(function () {
         customDataService = new CustomDataService(database);
+        // Insert some docs to be present before all tests start
+        // All test data should belong to a specific orgId (a test org)
+        var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
+        var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', content: 'It was a dark and rainy night...'};
 
-        deleteAllTestData(function() {
-            // Insert a doc to be present before all tests start
-            // All test data should belong to a specific orgId (a test org)
-            var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
-            var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', content: 'It was a dark and rainy night...'};
-
-            // switched from async to q - https://github.com/jessetane/queue
-            q.push(
-                function(callback) {
-                    database.customData.insert(newCustomData1, function(err, doc) {
-                        if (err) return callback(err);
-
-                        existingCustomData1 = doc;
-                        existingCustomData1IdString = doc._id.toHexString();
-                        existingCustomData1Title = doc.title;
-                        callback();
-                    });
-                },
-                function(callback) {
-                    database.customData.insert(newCustomData2, function(err, doc) {
-                        if (err) return callback(err);
-
-                        existingCustomData2IdString = doc._id.toHexString();
-                        existingCustomData2Title = doc.title;
-                        existingCustomData2Content = doc.content;
-                        callback();
-                    });
-                }
-            );
-            q.start(function (err) {
-                if (err) return done(err);
-
-                done();
+        return deleteAllTestData()
+            .then(function(result) {
+                return database.customData.insert(newCustomData1);
+            })
+            .then(function(doc) {
+                existingCustomData1 = doc;
+                existingCustomData1IdString = doc._id.toHexString();
+                existingCustomData1Title = doc.title;
+                return doc;
+            })
+            .then(function(result) {
+                return database.customData.insert(newCustomData2);
+            })
+            .then(function(doc) {
+                existingCustomData2IdString = doc._id.toHexString();
+                existingCustomData2Title = doc.title;
+                existingCustomData2Content = doc.content;
+                return doc;
+            })
+            .then(null, function(error) {
+                console.log(error);
+                throw error;
             });
-        });
     });
 
-    after(function (done) {
+    after(function () {
         // Remove all Test documents
-        deleteAllTestData(function() {
-            done();
-        });
+        return deleteAllTestData();
     });
 
     it("can create customData of a specified ContentType", function () {
@@ -101,69 +91,53 @@ describe("CustomDataService CRUD", function () {
         return createPromise.should.be.rejectedWith(TypeError, "Need contentType");
     });
 
-    it("can get all data of a specified ContentType", function (done) {
-        customDataService.getByContentType(testContentType, function (err, docs) {
-            if (err) return done(err);
+    it("can get all data of a specified ContentType", function () {
+        var getByContentTypePromise = customDataService.getByContentType(testContentType);
 
-            docs.should.be.instanceOf(Array);
-            docs.length.should.be.greaterThan(1);
-            done();
-        });
+        return Promise.all([
+            getByContentTypePromise.should.eventually.be.instanceOf(Array),
+            getByContentTypePromise.should.eventually.have.length.greaterThan(1)
+        ]);
     });
 
-    it("can get customData by Id", function (done) {
-        customDataService.getById(existingCustomData1IdString, function(err, customData) {
-            if (err) return done(err);
+    it("can get customData by Id", function () {
+        var getByIdPromise = customDataService.getById(existingCustomData1IdString);
 
-            should.exist(customData);
-            customData.title.should.equal(existingCustomData1Title);
-            done();
-        });
+        getByIdPromise.should.eventually.have.property("title", existingCustomData1Title);
     });
 
-    it("can update customData by id", function (done) {
+    it("can update customData by id", function () {
         var newContent = '#New Test Content';
         theUpdatedCustomData = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: newContent };
-        customDataService.updateById(existingCustomData1IdString, theUpdatedCustomData, function (err, numAffected) {
-            if (err) return done(err);
 
+        var updateByIdPromise = customDataService.updateById(existingCustomData1IdString, theUpdatedCustomData);
+
+        updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify customData was updated
-            customDataService.getById(existingCustomData1IdString, function(err, retrievedCustomData) {
-                if (err) return done(err);
+            var getByIdPromise = customDataService.getById(existingCustomData1IdString);
 
-                should.exist(retrievedCustomData);
-                retrievedCustomData.content.should.be.equal(newContent);
-                done();
-            });
+            getByIdPromise.should.eventually.have.property("content", newContent);
         });
     });
 
-    it("can delete customData by id", function (done) {
+    it("can delete customData by id", function () {
         var newCustomData = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', content: 'this customData is to be deleted'};
-        customDataService.create(newCustomData, function(err, customData) {
-            if (err) return done(err);
+        var createPromise = customDataService.create(newCustomData);
 
-            customDataService.delete(customData.id, function(err) {
-                if (err) return done(err);
-
-                customDataService.getById(customData.id, function(err, retrievedCustomData) {
-                    if (err) return done(err);
-
-                    should.not.exist(retrievedCustomData);
-                    done();
+        createPromise.then(function(doc) {
+            var id = doc.id;
+            customDataService.delete(doc.id).then(function(result) {
+                customDataService.getById(id).then(function(retrievedDoc) {
+                    retrievedDoc.should.eventually.equal(undefined);
                 });
             });
         });
     });
 
-    function deleteAllTestData(next) {
-        database.customData.remove({orgId: 1, contentType: testContentType}, function (err) {
-            if(err) return next(err);
-
-            next();
-        });
+    function deleteAllTestData() {
+        return database.customData.remove({orgId: 1, contentType: testContentType});
     }
 });
 

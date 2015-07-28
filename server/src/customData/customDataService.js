@@ -20,17 +20,28 @@ CustomDataService.prototype.validate = function(doc) {
 CustomDataService.prototype.getByContentType = function(contentType, next) {
     var self = this;
 
-    self.collection.find({contentType: contentType}, function(err, docs) {
-        if (err) return next(err);
+    return self.collection.find({contentType: contentType})
+        .then(function (docs) {
+            var transformedDocs = [];
+            _.forEach(docs, function(doc) {
+                self.useFriendlyId(doc);
+                transformedDocs.push(doc);
+            });
 
-        var transformedDocs = [];
-        _.forEach(docs, function(doc) {
-            GenericService.prototype.useFriendlyId(doc);
-            transformedDocs.push(doc);
+            return transformedDocs;
         });
 
-        next(null, transformedDocs);
-    });
+//    self.collection.find({contentType: contentType}, function(err, docs) {
+//        if (err) return next(err);
+//
+//        var transformedDocs = [];
+//        _.forEach(docs, function(doc) {
+//            GenericService.prototype.useFriendlyId(doc);
+//            transformedDocs.push(doc);
+//        });
+//
+//        next(null, transformedDocs);
+//    });
 };
 
 

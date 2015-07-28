@@ -1,10 +1,14 @@
+var PageService = require("./pageService");
+var Promise = require("bluebird");
+var database = require("../database/database");
+var _ = require("lodash");
 var chai = require("chai");
 var should = chai.Should();
-var database = require("../database/database");
-var PageService = require("./pageService");
-var Page = require("./page");
-var _ = require("lodash");
-var async = require("async");
+var chaiAsPromised = require("chai-as-promised");
+var expect = chai.expect;
+var moment = require("moment");
+
+chai.use(chaiAsPromised);
 
 describe("PageService", function () {
     var pageService = {};
@@ -17,174 +21,139 @@ describe("PageService", function () {
     var theUpdatedPage = {};
     var testOrgId = 1;
 
-    before(function (done) {
+    before(function () {
         pageService = new PageService(database);
+        // Insert a doc to be present before all tests start
+        var newPage1 = {name: '$Test Page 1 - existing', orgId: testOrgId, siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'};
+        var newPage2 = {name: '$Test Page 2 - existing', orgId: testOrgId, siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'};
 
-        // todo: consider adding orgId to pages
-        deleteAllTestPages(function() {
-            // Insert a doc to be present before all tests start
-            var newPage = {name: '$Test Page 1 - existing', orgId: testOrgId, siteId: 1, url: '#/test', content: '#Test Page 1 - Existing'};
-            var newPage2 = {name: '$Test Page 2 - existing', orgId: testOrgId, siteId: 1, url: '#/test2', content: '#Test Page 2 - Existing'};
-            async.parallel([
-                function(callback) {
-                    database.pages.insert(newPage, function(err, doc) {
-                        if (err) return callback(err);
-
-                        existingPage1 = doc;
-                        existingPage1IdString = doc._id.toHexString();
-                        existingPage1Name = doc.name;
-                        callback();
-                    });
-                },
-                function(callback) {
-                    database.pages.insert(newPage2, function(err, doc) {
-                        if (err) return callback(err);
-
-                        existingPage2IdString = doc._id.toHexString();
-                        existingPage2Name = doc.name;
-                        existingPage2Url = doc.url;
-                        callback();
-                    });
-                }
-            ], function (err) {
-                if (err) return done(err);
-
-                done();
+        return deleteAllTestPages()
+            .then(function(result) {
+                return database.pages.insert(newPage1);
+            })
+            .then(function(doc) {
+                existingPage1 = doc;
+                existingPage1IdString = doc._id.toHexString();
+                existingPage1Name = doc.name;
+                return doc;
+            })
+            .then(function(result) {
+                return database.pages.insert(newPage2);
+            })
+            .then(function(doc) {
+                existingPage2IdString = doc._id.toHexString();
+                existingPage2Name = doc.name;
+                existingPage2Url = doc.url;
+                return doc;
+            })
+            .then(null, function(error) {
+                console.log(error);
+                throw error;
             });
-        });
     });
 
-    after(function (done) {
+    after(function () {
         // Remove all Test documents
-        deleteAllTestPages(function() {
-            done();
-        });
+        return deleteAllTestPages();
     });
 
-    it("can get all Pages", function (done) {
-        pageService.getAll(function (err, pages) {
-            if (err) return done(err);
+    it("can get all Pages", function () {
+        var getAllPromise = pageService.getAll();
 
-            pages.should.be.instanceOf(Array);
-            pages.length.should.be.greaterThan(1);
-            done();
-        });
+        return Promise.all([
+            getAllPromise.should.eventually.be.instanceOf(Array),
+            getAllPromise.should.eventually.have.length.greaterThan(1)
+        ]);
     });
 
-    it("can get a Page by id", function (done) {
-        pageService.getById(existingPage1IdString, function(err, page) {
-            if (err) return done(err);
+    it("can get a Page by id", function () {
+        var getByIdPromise = pageService.getById(existingPage1IdString);
 
-            should.exist(page);
-            page.name.should.equal(existingPage1Name);
-            done();
-        });
+        getByIdPromise.should.eventually.have.property("name", existingPage1Name);
     });
 
-    it("can create a Page", function (done) {
+    it("can create a Page", function () {
         var page = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
-        pageService.create(page, function (err, page) {
-            if (err) return done(err);
+        var createPromise = pageService.create(page);
 
-            should.exist(page);
-            should.exist(page.id);
-            page.url.should.equal('#/created');
-            done();
-        });
+        Promise.all([
+            createPromise.should.eventually.have.property("id"),
+            createPromise.should.eventually.have.property("url", '#/created')
+        ]);
     });
 
-    it("validates Page on create using base validation - orgId", function (done) {
+    it("validates Page on create using base validation - orgId", function () {
         var invalidPage = { name: '$Test - create page', siteId: 1, url: '#/invalid-page', content: '#Test' };
-        pageService.create(invalidPage, function (err, page) {
-            should.exist(err);
-            should.not.exist(page);
-            done();
-        });
+        var createPromise = pageService.create(invalidPage);
+
+        return createPromise.should.be.rejectedWith(TypeError, "Need orgId");
     });
 
-    it("validates Page on create using extended validation - name, url, content", function (done) {
+    it("validates Page on create using extended validation - name, url, content", function () {
         var invalidPage = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/invalid-page' };
-        pageService.create(invalidPage, function (err, page) {
-            should.exist(err);
-            should.not.exist(page);
-            done();
-        });
+        var createPromise = pageService.create(invalidPage);
+
+        return createPromise.should.be.rejectedWith(TypeError, "Need name, url, and content");
     });
 
-    it("can update a Page by id", function (done) {
+    it("can update a Page by id", function () {
         var newContent = '#New Test Content';
         _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, content: newContent });
-        pageService.updateById(existingPage1IdString, theUpdatedPage, function (err, numAffected) {
-            if (err) return done(err);
+        var updateByIdPromise = pageService.updateById(existingPage1IdString, theUpdatedPage);
 
+        updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify page was updated
-            pageService.getById(existingPage1IdString, function(err, retrievedPage) {
-                if (err) return done(err);
+            var getByIdPromise = pageService.getById(existingPage1IdString);
 
-                should.exist(retrievedPage);
-                retrievedPage.content.should.be.equal(newContent);
-                done();
-            });
+            getByIdPromise.should.eventually.have.property("content", newContent);
         });
     });
 
-    it("can update a Page by query object", function (done) {
+    it("can update a Page by query object", function () {
         var newUrl = '#/updated-url2';
         var newContent = '#New Test Content for query by object';
         var updatedPage = { id: existingPage2IdString, orgId: testOrgId, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
         var queryObject = { name: existingPage2Name, url: existingPage2Url};
-        pageService.update(queryObject, updatedPage, function (err, numAffected) {
-            if (err) return done(err);
 
+        var updateByObjectPromise = pageService.update(queryObject, updatedPage);
+
+        updateByObjectPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify page was updated
-            pageService.getById(existingPage2IdString, function(err, retrievedPage) {
-                if (err) return done(err);
+            var getByIdPromise = pageService.getById(existingPage2IdString);
 
-                should.exist(retrievedPage);
-                retrievedPage.url.should.be.equal(newUrl);
-                retrievedPage.content.should.be.equal(newContent);
-                done();
-            });
+            Promise.add([
+                getByIdPromise.should.eventually.have.property("url", newUrl),
+                getByIdPromise.should.eventually.have.property("content", newContent)
+            ]);
         });
     });
 
-    it("can delete a Page by id", function (done) {
+    it("can delete a Page by id", function () {
         var newPage = { orgId: testOrgId, siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
-        pageService.create(newPage, function(err, page) {
-            if (err) return done(err);
 
-            pageService.delete(page.id, function(err) {
-                if (err) return done(err);
-
-                pageService.getById(page.id, function(err, retrievedPage) {
-                    if (err) return done(err);
-
-                    should.not.exist(retrievedPage);
-                    done();
+        pageService.create(newPage).then(function(doc) {
+           var id = doc.id;
+            pageService.delete(doc.id).then(function(result) {
+                pageService.getById(id).then(function (retrievedDoc) {
+                    retrievedDoc.should.eventually.equal(undefined);
                 });
             });
         });
     });
 
-    it("has a unique index on siteId and url", function (done) {
+    it("has a unique index on siteId and url", function () {
         var newPage = { orgId: testOrgId, siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
-        pageService.create(newPage, function(err, page) {
-            if (err) return done();
-            should.fail();
-            done('did not prevent dupe');
-        });
+        var createPromise = pageService.create(newPage);
+
+        createPromise.should.eventually.be.rejected;
     });
 
-    function deleteAllTestPages(next) {
-        database.pages.remove({name: /^\$Test.*/, orgId: testOrgId}, function (err) {
-            if(err) return next(err);
-
-            next();
-        });
+    function deleteAllTestPages() {
+        return database.pages.remove({name: /^\$Test.*/, orgId: testOrgId});
     }
 });
 
