@@ -6,9 +6,34 @@
 //db.pages.createIndex( { "siteId": 1, "url": 1 }, { unique: true } );
 //
 //// sample document
-//var newPage = {name: '$Test Page1', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing',
+//var newPage = {orgId: 1, name: '$Test Page1', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing',
 //                created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
+
+//// ***** CustomData ****************************************
+//db.createCollection('customData', {});
+//db.customData.createIndex( { "orgId": 1, "contentType": 1 });
+//
+//// sample document
+//var newCustomData = { orgId: 1, contentType: 'blogPost', title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
+//
+
+
+//// ***** CustomDataSchema ****************************************
+//db.createCollection('customDataSchema', {});
+//db.customDataSchema.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
+//
+//// sample document
+//var newCustomDataSchema = { };
+//
+
+
+
+
+
+
+
+
 //// ***** Templates ****************************************
 //db.createCollection('templates', {});
 //// sample document

@@ -30,20 +30,31 @@ CustomDataService.prototype.getByContentType = function(contentType, next) {
 
             return transformedDocs;
         });
-
-//    self.collection.find({contentType: contentType}, function(err, docs) {
-//        if (err) return next(err);
-//
-//        var transformedDocs = [];
-//        _.forEach(docs, function(doc) {
-//            GenericService.prototype.useFriendlyId(doc);
-//            transformedDocs.push(doc);
-//        });
-//
-//        next(null, transformedDocs);
-//    });
 };
 
+CustomDataService.prototype.getByTypeAndId = function(contentType, id, next) {
+    if (arguments.length !== 2) {
+        throw new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId');
+    }
+
+    var self = this;
+
+    return self.collection.findOne({_id: id, contentType: contentType})
+        .then(function (doc) {
+            self.useFriendlyId(doc);
+            return doc;
+        });
+};
+
+CustomDataService.prototype.deleteByTypeAndId = function(contentType, id, next) {
+    if (arguments.length !== 2) {
+        throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');
+    }
+
+    var self = this;
+
+    return self.collection.remove({_id: id, contentType: contentType});
+};
 
 //var CustomDataService = function(db) {
 //    var self = this;

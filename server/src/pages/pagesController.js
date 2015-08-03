@@ -4,55 +4,72 @@ var PageService = require("./pageService");
 exports.init = function(app) {
     var pageService = new PageService(database);
 
-    app.get('/api/pages', function (req, res) {
-        pageService.getAll(function (err, pages) {
-            if (err) res.json(500, err);
-
-            res.json(pages);
-        });
+    app.get('/api/pages', function (req, res, next) {
+        pageService.getAll()
+            .then(function (pages) {
+                return res.status(200).json(pages);
+            })
+            .then(null, function (err) {
+                err.message = 'pagesController -> pageService.getAll - ' + err.message;
+                next(err);
+            });
     });
 
-    app.get('/api/pages/:id', function (req, res) {
+    app.get('/api/pages/:id', function (req, res, next) {
         var id = req.params.id;
-        pageService.getById(id, function (err, page) {
-            if (err) res.json(500, err);
 
-            if (page) {
-                res.json(page);
-            }
-            else {
-                res.json(404);
-            }
-        });
+        pageService.getById(id)
+            .then(function (page) {
+                if (page == null) return next();
+
+                res.status(200).json(page);
+            })
+            .then(null, function (err) {
+                err.message = 'pagesController -> pageService.getById - ' + err.message;
+                next(err);
+            });
     });
 
-    app.post('/api/pages', function (req, res) {
+    app.post('/api/pages', function (req, res, next) {
         var body = req.body;
-        pageService.create(body, function (err, page) {
-            if (err) res.json(500, err);
-
-            res.json(201, page);
-        });
+        pageService.create(body)
+            .then(function (page) {
+                res.status(201).json(page);
+            })
+            .then(null, function (err) {
+                err.message = 'pagesController -> pageService.create - ' + err.message;
+                next(err);
+            });
     });
 
-    app.put('/api/pages/:id', function (req, res) {
+    app.put('/api/pages/:id', function (req, res, next) {
         var id = req.params.id;
         var body = req.body;
+
         // todo: change pageService to return a Page
-        pageService.updateById(id, body, function (err, numAffected) {
-            // todo: alter to detect not found
-            if (err) res.json(500, err);
+        pageService.updateById(id, body)
+            .then(function (numAffected) {
+                if (numAffected <= 0) return next();
 
-            res.json(200);
-        });
+                res.status(200).json({});
+            })
+            .then(null, function (err) {
+                err.message = 'pagesController -> pageService.updateById - ' + err.message;
+                next(err);
+            });
     });
 
-    app.delete('/api/pages/:id', function (req, res) {
+    app.delete('/api/pages/:id', function (req, res, next) {
         var id = req.params.id;
-        pageService.delete(id, function (err) {
-            if (err) res.json(500, err);
+        pageService.delete(id)
+            .then(function (numAffected) {
+                if (numAffected <= 0) return next();
 
-            res.json(204);
-        });
+                res.status(204).json({});
+            })
+            .then(null, function (err) {
+                err.message = 'pagesController -> pageService.delete - ' + err.message;
+                next(err);
+            });
     });
 };

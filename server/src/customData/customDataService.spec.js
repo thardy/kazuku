@@ -16,11 +16,13 @@ chai.use(chaiAsPromised);
 describe("CustomDataService CRUD", function () {
     var customDataService = {};
     var existingCustomData1 = {};
-    var existingCustomData1IdString = {};
-    var existingCustomData2IdString = {};
-    var existingCustomData1Title = '';
-    var existingCustomData2Title = '';
-    var existingCustomData2Content = '';
+    var existingCustomData2 = {};
+//    var existingCustomData1IdString = {};
+//    var existingCustomData1TypeString = {};
+//    var existingCustomData2IdString = {};
+//    var existingCustomData1Title = '';
+//    var existingCustomData2Title = '';
+//    var existingCustomData2Content = '';
     var theUpdatedCustomData = {};
     var testOrgId = 1;
     var testContentType = 'testType';
@@ -38,17 +40,18 @@ describe("CustomDataService CRUD", function () {
             })
             .then(function(doc) {
                 existingCustomData1 = doc;
-                existingCustomData1IdString = doc._id.toHexString();
-                existingCustomData1Title = doc.title;
+//                existingCustomData1IdString = doc._id.toHexString();
+//                existingCustomData1Title = doc.title;
                 return doc;
             })
             .then(function(result) {
                 return database.customData.insert(newCustomData2);
             })
             .then(function(doc) {
-                existingCustomData2IdString = doc._id.toHexString();
-                existingCustomData2Title = doc.title;
-                existingCustomData2Content = doc.content;
+                existingCustomData2 = doc;
+//                existingCustomData2IdString = doc._id.toHexString();
+//                existingCustomData2Title = doc.title;
+//                existingCustomData2Content = doc.content;
                 return doc;
             })
             .then(null, function(error) {
@@ -100,23 +103,23 @@ describe("CustomDataService CRUD", function () {
         ]);
     });
 
-    it("can get customData by Id", function () {
-        var getByIdPromise = customDataService.getById(existingCustomData1IdString);
+    it("can get customData by contentType and Id", function () {
+        var getByTypeAndId = customDataService.getByTypeAndId(existingCustomData1.contentType, existingCustomData1.id);
 
-        getByIdPromise.should.eventually.have.property("title", existingCustomData1Title);
+        getByTypeAndId.should.eventually.have.property("title", existingCustomData1.title);
     });
 
     it("can update customData by id", function () {
         var newContent = '#New Test Content';
         theUpdatedCustomData = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: newContent };
 
-        var updateByIdPromise = customDataService.updateById(existingCustomData1IdString, theUpdatedCustomData);
+        var updateByIdPromise = customDataService.updateById(existingCustomData1.id, theUpdatedCustomData);
 
         updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify customData was updated
-            var getByIdPromise = customDataService.getById(existingCustomData1IdString);
+            var getByIdPromise = customDataService.getById(existingCustomData1.id);
 
             getByIdPromise.should.eventually.have.property("content", newContent);
         });
