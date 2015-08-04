@@ -7,7 +7,8 @@ var database = {
     db: db,
     close: close,
     pages: db.get("pages"),
-    customData: db.get("customData")
+    customData: db.get("customData"),
+    customDataSchema: db.get("customDataSchema")
 };
 
 function close() {

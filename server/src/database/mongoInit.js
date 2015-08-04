@@ -3,7 +3,7 @@
 
 //// ***** Pages ****************************************
 //db.createCollection('pages', {});
-//db.pages.createIndex( { "siteId": 1, "url": 1 }, { unique: true } );
+//db.pages.createIndex( { "orgId": 1, "siteId": 1, "url": 1 }, { unique: true } );
 //
 //// sample document
 //var newPage = {orgId: 1, name: '$Test Page1', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing',
@@ -24,7 +24,30 @@
 //db.customDataSchema.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
 //
 //// sample document
-//var newCustomDataSchema = { };
+//var newCustomDataSchema = {
+//id: 1,
+//    orgId: 1,
+//    contentType: 'Applicant',
+//    jsonSchema: {
+//    "type": "object",
+//        "properties": {
+//        "affiliatedWith": {
+//            "type": "string",
+//                "name": "affiliatedWith",
+//                "title": "Affiliated With"
+//        },
+//        "favoriteNumber": {
+//            "type": "number",
+//                "name": "favoriteNumber",
+//                "title": "Favorite Number"
+//        },
+//        "likes": {
+//            "type": "string",
+//                "name": "likes",
+//                "title": "Likes"
+//        }
+//    }
+//};
 //
 
 
