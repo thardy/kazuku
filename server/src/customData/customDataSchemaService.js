@@ -8,15 +8,16 @@ var CustomDataSchemaService = function CustomDataSchemaService(db) {
 util.inherits(CustomDataSchemaService, GenericService);
 
 CustomDataSchemaService.prototype.validate = function(doc) {
-    if (doc.contentType) {
+    if (doc.contentType && doc.jsonSchema) {
         // call base validation, which should return nothing if valid
         return GenericService.prototype.validate(doc);
     }
     else {
-        return "Need contentType";
+        return "Need contentType and jsonSchema";
     }
 };
 
+CustomDataSchemaService.prototype.getAll = undefined;
 CustomDataSchemaService.prototype.getByContentType = function(contentType, next) {
     var self = this;
 
@@ -27,6 +28,7 @@ CustomDataSchemaService.prototype.getByContentType = function(contentType, next)
         });
 };
 
+CustomDataSchemaService.prototype.getById = undefined;
 CustomDataSchemaService.prototype.getByTypeAndId = function(contentType, id, next) {
     if (arguments.length !== 2) {
         throw new Error('Incorrect number of arguments passed to CustomDataSchemaService.getByTypeAndId');
@@ -41,6 +43,10 @@ CustomDataSchemaService.prototype.getByTypeAndId = function(contentType, id, nex
         });
 };
 
+// todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
+//  update in order to check and enforce the context - something I'll have to do in order to enforce orgId context anyway)
+
+CustomDataSchemaService.prototype.delete = undefined;
 CustomDataSchemaService.prototype.deleteByTypeAndId = function(contentType, id, next) {
     if (arguments.length !== 2) {
         throw new Error('Incorrect number of arguments passed to CustomDataSchemaService.deleteByTypeAndId');

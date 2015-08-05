@@ -86,13 +86,14 @@ describe("CustomDataSchemaService CRUD", function () {
         return deleteAllTestSchema();
     });
 
-    it("can create customDataSchema of a specified ContentType", function () {
+    it("can create customDataSchema", function () {
+        var createdContentType = "newlyCreatedSchemaType";
         var now = moment().format('hmmss');
         var testFieldName = 'TestField' + now;
         var myJsonSchema = {
             "type": "object",
             "properties": {
-                someField: {
+                "someField": {
                     "type": "string",
                     "name": testFieldName,
                     "title": "Some Field"
@@ -101,7 +102,7 @@ describe("CustomDataSchemaService CRUD", function () {
         };
         var customDataSchema = {
             orgId: testOrgId,
-            contentType: testContentType2,
+            contentType: createdContentType,
             jsonSchema: myJsonSchema
         };
 
@@ -109,45 +110,75 @@ describe("CustomDataSchemaService CRUD", function () {
 
         return Promise.all([
             createPromise.should.eventually.be.an("object"),
+            createPromise.should.eventually.have.property("contentType", createdContentType),
             createPromise.should.eventually.have.property("jsonSchema", myJsonSchema)
         ]);
     });
 
-    // todo: stopped here last
     it("validates customDataSchema on create using base validation - orgId", function () {
-        var invalidCustomDataSchema = { contentType: testContentType1, title: 'New Test Blog Post', content: 'content of invalid customDataSchema object' };
+        var now = moment().format('hmmss');
+        var testFieldName = 'TestField' + now;
+        var myJsonSchema = {
+            "type": "object",
+            "properties": {
+                "someField": {
+                    "type": "string",
+                    "name": testFieldName,
+                    "title": "Some Field"
+                }
+            }
+        };
+        var invalidCustomDataSchema = {
+            contentType: testContentType2,
+            jsonSchema: myJsonSchema
+        };
 
         var createPromise = customDataSchemaService.create(invalidCustomDataSchema);
 
         return createPromise.should.be.rejectedWith(TypeError, "Need orgId");
     });
 
-    it("validates customDataSchema on create using extended validation - contentType", function () {
-        var invalidCustomDataSchema = { orgId: testOrgId, title: 'New Test Blog Post2', content: 'content of invalid customDataSchema object' };
+    it("validates customDataSchema on create using extended validation - contentType and jsonSchema", function () {
+        var invalidCustomDataSchema = {
+            orgId: testOrgId,
+            contentType: testContentType2
+        };
 
         var createPromise = customDataSchemaService.create(invalidCustomDataSchema);
 
-        return createPromise.should.be.rejectedWith(TypeError, "Need contentType");
+        return createPromise.should.be.rejectedWith(TypeError, "Need contentType and jsonSchema");
     });
 
-    it("can get all data of a specified ContentType", function () {
-        var getByContentTypePromise = customDataSchemaService.getByContentType(testContentType1);
+    it("can get schema by ContentType", function () {
+        var getByContentTypePromise = customDataSchemaService.getByContentType(testContentType2);
 
         return Promise.all([
-            getByContentTypePromise.should.eventually.be.instanceOf(Array),
-            getByContentTypePromise.should.eventually.have.length.greaterThan(1)
+            getByContentTypePromise.should.eventually.be.an("object"),
+            getByContentTypePromise.should.eventually.have.property("jsonSchema").deep.equal(existingCustomDataSchema2.jsonSchema)
         ]);
     });
 
     it("can get customDataSchema by contentType and Id", function () {
         var getByTypeAndId = customDataSchemaService.getByTypeAndId(existingCustomDataSchema1.contentType, existingCustomDataSchema1.id);
 
-        getByTypeAndId.should.eventually.have.property("title", existingCustomDataSchema1.title);
+        getByTypeAndId.should.eventually.have.property("jsonSchema", existingCustomDataSchema1.jsonSchema);
     });
 
     it("can update customDataSchema by id", function () {
-        var newContent = '#New Test Content';
-        theUpdatedCustomDataSchema = { orgId: testOrgId, contentType: testContentType1, title: 'My First Blog Post', content: newContent };
+        var fieldName = "updatedField";
+        var myJsonSchema = {
+            "type": "object",
+            "properties": {
+                "updatedField": {
+                    "type": "string",
+                    "name": fieldName,
+                    "title": "Updated Field"
+                }
+            }
+        };
+        var theUpdatedCustomDataSchema = {
+            jsonSchema: myJsonSchema
+        };
 
         var updateByIdPromise = customDataSchemaService.updateById(existingCustomDataSchema1.id, theUpdatedCustomDataSchema);
 
@@ -157,18 +188,34 @@ describe("CustomDataSchemaService CRUD", function () {
             // verify customDataSchema was updated
             var getByIdPromise = customDataSchemaService.getById(existingCustomDataSchema1.id);
 
-            getByIdPromise.should.eventually.have.property("content", newContent);
+            getByIdPromise.should.eventually.have.property("jsonSchema", myJsonSchema);
         });
     });
 
     it("can delete customDataSchema by id", function () {
-        var newCustomDataSchema = { orgId: testOrgId, contentType: testContentType1, title: 'Some title here', content: 'this customDataSchema is to be deleted'};
+        var createdContentType = "typeToBeDeleted";
+        var myJsonSchema = {
+            "type": "object",
+            "properties": {
+                "someField": {
+                    "type": "string",
+                    "name": "someField",
+                    "title": "Some Field"
+                }
+            }
+        };
+        var newCustomDataSchema = {
+            orgId: testOrgId,
+            contentType: createdContentType,
+            jsonSchema: myJsonSchema
+        };
+
         var createPromise = customDataSchemaService.create(newCustomDataSchema);
 
         createPromise.then(function(doc) {
             var id = doc.id;
             customDataSchemaService.delete(doc.id).then(function(result) {
-                customDataSchemaService.getById(id).then(function(retrievedDoc) {
+                customDataSchemaService.getByTypeAndId(createdContentType, id).then(function(retrievedDoc) {
                     retrievedDoc.should.eventually.equal(undefined);
                 });
             });

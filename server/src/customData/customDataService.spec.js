@@ -111,7 +111,7 @@ describe("CustomDataService CRUD", function () {
 
     it("can update customData by id", function () {
         var newContent = '#New Test Content';
-        theUpdatedCustomData = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: newContent };
+        theUpdatedCustomData = { content: newContent };
 
         var updateByIdPromise = customDataService.updateById(existingCustomData1.id, theUpdatedCustomData);
 
