@@ -86,6 +86,31 @@ describe("CustomDataSchemaService CRUD", function () {
         return deleteAllTestSchema();
     });
 
+    // todo: alter to enforce orgId (preferably in genericService)
+    it("can get all Schemas", function () {
+        var getAllPromise = customDataSchemaService.getAll();
+
+        return Promise.all([
+            getAllPromise.should.eventually.be.instanceOf(Array),
+            getAllPromise.should.eventually.have.length.greaterThan(1)
+        ]);
+    });
+
+    it("can get customDataSchema by Id", function () {
+        var getByTypeAndId = customDataSchemaService.getById(existingCustomDataSchema1.id);
+
+        getByTypeAndId.should.eventually.have.property("jsonSchema", existingCustomDataSchema1.jsonSchema);
+    });
+
+    it("can get schema by ContentType", function () {
+        var getByContentTypePromise = customDataSchemaService.getByContentType(testContentType2);
+
+        return Promise.all([
+            getByContentTypePromise.should.eventually.be.an("object"),
+            getByContentTypePromise.should.eventually.have.property("jsonSchema").deep.equal(existingCustomDataSchema2.jsonSchema)
+        ]);
+    });
+
     it("can create customDataSchema", function () {
         var createdContentType = "newlyCreatedSchemaType";
         var now = moment().format('hmmss');
@@ -147,21 +172,6 @@ describe("CustomDataSchemaService CRUD", function () {
         var createPromise = customDataSchemaService.create(invalidCustomDataSchema);
 
         return createPromise.should.be.rejectedWith(TypeError, "Need contentType and jsonSchema");
-    });
-
-    it("can get schema by ContentType", function () {
-        var getByContentTypePromise = customDataSchemaService.getByContentType(testContentType2);
-
-        return Promise.all([
-            getByContentTypePromise.should.eventually.be.an("object"),
-            getByContentTypePromise.should.eventually.have.property("jsonSchema").deep.equal(existingCustomDataSchema2.jsonSchema)
-        ]);
-    });
-
-    it("can get customDataSchema by contentType and Id", function () {
-        var getByTypeAndId = customDataSchemaService.getByTypeAndId(existingCustomDataSchema1.contentType, existingCustomDataSchema1.id);
-
-        getByTypeAndId.should.eventually.have.property("jsonSchema", existingCustomDataSchema1.jsonSchema);
     });
 
     it("can update customDataSchema by id", function () {

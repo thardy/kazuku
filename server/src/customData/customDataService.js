@@ -48,6 +48,9 @@ CustomDataService.prototype.getByTypeAndId = function(contentType, id, next) {
         });
 };
 
+// todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
+//  update in order to check and enforce the context - something I'll have to do in order to enforce orgId context anyway)
+
 CustomDataService.prototype.deleteByTypeAndId = function(contentType, id, next) {
     if (arguments.length !== 2) {
         throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');

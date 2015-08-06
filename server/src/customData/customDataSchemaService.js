@@ -17,7 +17,8 @@ CustomDataSchemaService.prototype.validate = function(doc) {
     }
 };
 
-CustomDataSchemaService.prototype.getAll = undefined;
+// todo: consider adding a generic query function to genericService - just allow passing in a query object, which
+//  is what mongo takes anyway => {contentType: contentType, someOtherProp: someOtherVal}
 CustomDataSchemaService.prototype.getByContentType = function(contentType, next) {
     var self = this;
 
@@ -26,35 +27,6 @@ CustomDataSchemaService.prototype.getByContentType = function(contentType, next)
             self.useFriendlyId(doc);
             return doc;
         });
-};
-
-CustomDataSchemaService.prototype.getById = undefined;
-CustomDataSchemaService.prototype.getByTypeAndId = function(contentType, id, next) {
-    if (arguments.length !== 2) {
-        throw new Error('Incorrect number of arguments passed to CustomDataSchemaService.getByTypeAndId');
-    }
-
-    var self = this;
-
-    return self.collection.findOne({_id: id, contentType: contentType})
-        .then(function (doc) {
-            self.useFriendlyId(doc);
-            return doc;
-        });
-};
-
-// todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
-//  update in order to check and enforce the context - something I'll have to do in order to enforce orgId context anyway)
-
-CustomDataSchemaService.prototype.delete = undefined;
-CustomDataSchemaService.prototype.deleteByTypeAndId = function(contentType, id, next) {
-    if (arguments.length !== 2) {
-        throw new Error('Incorrect number of arguments passed to CustomDataSchemaService.deleteByTypeAndId');
-    }
-
-    var self = this;
-
-    return self.collection.remove({_id: id, contentType: contentType});
 };
 
 module.exports = CustomDataSchemaService;

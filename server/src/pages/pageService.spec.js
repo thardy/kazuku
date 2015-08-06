@@ -57,6 +57,7 @@ describe("PageService", function () {
         return deleteAllTestPages();
     });
 
+    // todo: alter to enforce orgId (in genericService preferably) and siteId (in pageService override)
     it("can get all Pages", function () {
         var getAllPromise = pageService.getAll();
 
