@@ -6,10 +6,7 @@ var chai = require("chai");
 var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
-var queue = require("queue");
 var moment = require("moment");
-
-var q = queue();
 
 chai.use(chaiAsPromised);
 
@@ -142,6 +139,53 @@ describe("CustomDataService CRUD", function () {
     function deleteAllTestData() {
         return database.customData.remove({orgId: 1, contentType: testContentType});
     }
+});
+
+describe("CustomDataService RQL", function () {
+    var customDataService = {};
+    var existingProducts = [];
+    var testOrgId = 1;
+    var testContentType = 'testProducts';
+
+    before(function () {
+        customDataService = new CustomDataService(database);
+        // Insert some docs to be present before all tests start
+        var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99 };
+        var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99 };
+        var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99 };
+
+        return deleteAllTestData()
+            .then(function(result) {
+                return Promise.all([
+                    database.customData.insert(newProduct1),
+                    database.customData.insert(newProduct2),
+                    database.customData.insert(newProduct3)
+                ]);
+            })
+            .then(function(docs) {
+                existingProducts = docs;
+                return docs;
+            })
+            .then(null, function(error) {
+                console.log(error);
+                throw error;
+            });
+    });
+
+    after(function () {
+        // Remove all Test documents
+        return deleteAllTestData();
+    });
+
+    function deleteAllTestData() {
+        return database.customData.remove({orgId: testOrgId, contentType: testContentType});
+    }
+
+    it("can query using RQL equals");
+
+    it("can query using multiple RQL operators");
+
+    it("can query using an RQL string");
 });
 
 describe("CustomDataService Queries", function () {

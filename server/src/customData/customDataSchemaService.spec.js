@@ -6,10 +6,7 @@ var chai = require("chai");
 var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
-var queue = require("queue");
 var moment = require("moment");
-
-var q = queue();
 
 chai.use(chaiAsPromised);
 
