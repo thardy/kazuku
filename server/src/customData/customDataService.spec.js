@@ -4,11 +4,12 @@ var database = require("../database/database");
 var _ = require("lodash");
 var chai = require("chai");
 var should = chai.Should();
-var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
 var moment = require("moment");
+var Query = require("rql/query").Query;
 
-chai.use(chaiAsPromised);
+chai.use(require("chai-as-promised"));
+chai.use(require('chai-things'));
 
 describe("CustomDataService CRUD", function () {
     var customDataService = {};
@@ -37,8 +38,7 @@ describe("CustomDataService CRUD", function () {
             })
             .then(function(doc) {
                 existingCustomData1 = doc;
-//                existingCustomData1IdString = doc._id.toHexString();
-//                existingCustomData1Title = doc.title;
+                existingCustomData1.id = existingCustomData1._id.toHexString();
                 return doc;
             })
             .then(function(result) {
@@ -46,9 +46,7 @@ describe("CustomDataService CRUD", function () {
             })
             .then(function(doc) {
                 existingCustomData2 = doc;
-//                existingCustomData2IdString = doc._id.toHexString();
-//                existingCustomData2Title = doc.title;
-//                existingCustomData2Content = doc.content;
+                existingCustomData2.id = existingCustomData2._id.toHexString();
                 return doc;
             })
             .then(null, function(error) {
@@ -103,7 +101,7 @@ describe("CustomDataService CRUD", function () {
     it("can get customData by contentType and Id", function () {
         var getByTypeAndId = customDataService.getByTypeAndId(existingCustomData1.contentType, existingCustomData1.id);
 
-        getByTypeAndId.should.eventually.have.property("title", existingCustomData1.title);
+        return getByTypeAndId.should.eventually.have.property("title", existingCustomData1.title);
     });
 
     it("can update customData by id", function () {
@@ -112,7 +110,7 @@ describe("CustomDataService CRUD", function () {
 
         var updateByIdPromise = customDataService.updateById(existingCustomData1.id, theUpdatedCustomData);
 
-        updateByIdPromise.then(function(numAffected) {
+        return updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify customData was updated
@@ -126,14 +124,17 @@ describe("CustomDataService CRUD", function () {
         var newCustomData = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', content: 'this customData is to be deleted'};
         var createPromise = customDataService.create(newCustomData);
 
-        createPromise.then(function(doc) {
-            var id = doc.id;
-            customDataService.delete(doc.id).then(function(result) {
-                customDataService.getById(id).then(function(retrievedDoc) {
-                    retrievedDoc.should.eventually.equal(undefined);
-                });
+        return createPromise
+            .then(function(doc) {
+                var id = doc.id;
+                return customDataService.delete(doc.id)
+                    .then(function(result) {
+                        return customDataService.getById(id)
+                            .then(function(retrievedDoc) {
+                                return expect(retrievedDoc).to.equal(null);
+                            });
+                    });
             });
-        });
     });
 
     function deleteAllTestData() {
@@ -181,9 +182,23 @@ describe("CustomDataService RQL", function () {
         return database.customData.remove({orgId: testOrgId, contentType: testContentType});
     }
 
-    it("can query using RQL equals");
+    it("can query using an RQL query object", function () {
+        var name = 'Widget';
+        var query = new Query().eq('name', name);
+        var findPromise = customDataService.find(query);
 
-    it("can query using multiple RQL operators");
+        return findPromise.should.eventually.contain.an.item.with.property("name", name);
+    });
+
+    it("can query using multiple RQL operators", function () {
+        var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
+        var findPromise = customDataService.find(query);
+
+        return Promise.all([
+            findPromise.should.eventually.be.instanceOf(Array),
+            findPromise.should.eventually.have.length.equal(1)
+        ]);
+    });
 
     it("can query using an RQL string");
 });

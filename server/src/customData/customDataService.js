@@ -1,6 +1,8 @@
 var _ = require("lodash");
 var util = require("util");
 var GenericService = require("../common/genericService");
+var mongoRql = require('mongo-rql');
+var Query = require('rql/query').Query;
 
 var CustomDataService = function CustomDataService(db) {
     CustomDataService.super_.call(this, db, "customData");
@@ -45,6 +47,29 @@ CustomDataService.prototype.getByTypeAndId = function(contentType, id, next) {
         .then(function (doc) {
             self.useFriendlyId(doc);
             return doc;
+        });
+};
+
+CustomDataService.prototype.find = function(query, next) {
+    var self = this;
+
+    var mongoQuery = mongoRql(query);
+    var projection = {
+        skip: mongoQuery.skip,
+        limit: mongoQuery.limit,
+        fields: mongoQuery.projection,
+        sort: mongoQuery.sort
+    };
+
+    return self.collection.find(mongoQuery.criteria, projection)
+        .then(function(docs) {
+            var transformedDocs = [];
+            _.forEach(docs, function(doc) {
+                self.useFriendlyId(doc);
+                transformedDocs.push(doc);
+            });
+
+            return transformedDocs;
         });
 };
 

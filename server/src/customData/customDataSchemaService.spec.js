@@ -63,6 +63,7 @@ describe("CustomDataSchemaService CRUD", function () {
             })
             .then(function(doc) {
                 existingCustomDataSchema1 = doc;
+                existingCustomDataSchema1.id = existingCustomDataSchema1._id.toHexString();
                 return doc;
             })
             .then(function(result) {
@@ -70,6 +71,7 @@ describe("CustomDataSchemaService CRUD", function () {
             })
             .then(function(doc) {
                 existingCustomDataSchema2 = doc;
+                existingCustomDataSchema2.id = existingCustomDataSchema2._id.toHexString();
                 return doc;
             })
             .then(null, function(error) {
@@ -94,9 +96,9 @@ describe("CustomDataSchemaService CRUD", function () {
     });
 
     it("can get customDataSchema by Id", function () {
-        var getByTypeAndId = customDataSchemaService.getById(existingCustomDataSchema1.id);
+        var getById = customDataSchemaService.getById(existingCustomDataSchema1.id);
 
-        getByTypeAndId.should.eventually.have.property("jsonSchema", existingCustomDataSchema1.jsonSchema);
+        return getById.should.eventually.have.property("jsonSchema").deep.equal(existingCustomDataSchema1.jsonSchema);
     });
 
     it("can get schema by ContentType", function () {
@@ -189,13 +191,13 @@ describe("CustomDataSchemaService CRUD", function () {
 
         var updateByIdPromise = customDataSchemaService.updateById(existingCustomDataSchema1.id, theUpdatedCustomDataSchema);
 
-        updateByIdPromise.then(function(numAffected) {
+        return updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify customDataSchema was updated
             var getByIdPromise = customDataSchemaService.getById(existingCustomDataSchema1.id);
 
-            getByIdPromise.should.eventually.have.property("jsonSchema", myJsonSchema);
+            return getByIdPromise.should.eventually.have.property("jsonSchema").deep.equal(myJsonSchema);
         });
     });
 
@@ -219,11 +221,11 @@ describe("CustomDataSchemaService CRUD", function () {
 
         var createPromise = customDataSchemaService.create(newCustomDataSchema);
 
-        createPromise.then(function(doc) {
+        return createPromise.then(function(doc) {
             var id = doc.id;
-            customDataSchemaService.delete(doc.id).then(function(result) {
-                customDataSchemaService.getByTypeAndId(createdContentType, id).then(function(retrievedDoc) {
-                    retrievedDoc.should.eventually.equal(undefined);
+            return customDataSchemaService.delete(doc.id).then(function(result) {
+                return customDataSchemaService.getById(id).then(function(retrievedDoc) {
+                    return expect(retrievedDoc).to.equal(null);
                 });
             });
         });

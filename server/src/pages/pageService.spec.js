@@ -70,14 +70,14 @@ describe("PageService", function () {
     it("can get a Page by id", function () {
         var getByIdPromise = pageService.getById(existingPage1IdString);
 
-        getByIdPromise.should.eventually.have.property("name", existingPage1Name);
+        return getByIdPromise.should.eventually.have.property("name", existingPage1Name);
     });
 
     it("can create a Page", function () {
         var page = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
         var createPromise = pageService.create(page);
 
-        Promise.all([
+        return Promise.all([
             createPromise.should.eventually.have.property("id"),
             createPromise.should.eventually.have.property("url", '#/created')
         ]);
@@ -102,13 +102,13 @@ describe("PageService", function () {
         _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, content: newContent });
         var updateByIdPromise = pageService.updateById(existingPage1IdString, theUpdatedPage);
 
-        updateByIdPromise.then(function(numAffected) {
+        return updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify page was updated
             var getByIdPromise = pageService.getById(existingPage1IdString);
 
-            getByIdPromise.should.eventually.have.property("content", newContent);
+            return getByIdPromise.should.eventually.have.property("content", newContent);
         });
     });
 
@@ -120,13 +120,13 @@ describe("PageService", function () {
 
         var updateByObjectPromise = pageService.update(queryObject, updatedPage);
 
-        updateByObjectPromise.then(function(numAffected) {
+        return updateByObjectPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify page was updated
             var getByIdPromise = pageService.getById(existingPage2IdString);
 
-            Promise.add([
+            return Promise.all([
                 getByIdPromise.should.eventually.have.property("url", newUrl),
                 getByIdPromise.should.eventually.have.property("content", newContent)
             ]);
@@ -136,11 +136,11 @@ describe("PageService", function () {
     it("can delete a Page by id", function () {
         var newPage = { orgId: testOrgId, siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
 
-        pageService.create(newPage).then(function(doc) {
-           var id = doc.id;
-            pageService.delete(doc.id).then(function(result) {
-                pageService.getById(id).then(function (retrievedDoc) {
-                    retrievedDoc.should.eventually.equal(undefined);
+        return pageService.create(newPage).then(function(doc) {
+            var id = doc.id;
+            return pageService.delete(doc.id).then(function(result) {
+                return pageService.getById(id).then(function (retrievedDoc) {
+                    return expect(retrievedDoc).to.equal(null);
                 });
             });
         });
@@ -150,7 +150,7 @@ describe("PageService", function () {
         var newPage = { orgId: testOrgId, siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
         var createPromise = pageService.create(newPage);
 
-        createPromise.should.eventually.be.rejected;
+        return createPromise.should.eventually.be.rejected;
     });
 
     function deleteAllTestPages() {

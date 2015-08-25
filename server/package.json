@@ -18,6 +18,7 @@
     "lodash": "^3.2.0",
     "marked": "^0.3.2",
     "moment": "^2.10.3",
+    "mongo-rql": "0.0.2",
     "monk": "^0.9.1",
     "morgan": "~1.3.0",
     "request": "^2.51.0",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "chai-as-promised": "^4.3.0",
+    "chai-things": "^0.2.0",
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
