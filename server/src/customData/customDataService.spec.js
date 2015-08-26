@@ -142,18 +142,19 @@ describe("CustomDataService CRUD", function () {
     }
 });
 
-describe("CustomDataService RQL", function () {
+describe("CustomDataService - Resource Query Language", function () {
     var customDataService = {};
     var existingProducts = [];
     var testOrgId = 1;
     var testContentType = 'testProducts';
+    var now = moment().format('MMMM Do YYYY, h:mm:ss a');
+    var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date(2014, 1, 1) };
+    var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date(2015, 6, 20) };
+    var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date(2015, 2, 27)  };
 
     before(function () {
         customDataService = new CustomDataService(database);
         // Insert some docs to be present before all tests start
-        var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99 };
-        var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99 };
-        var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99 };
 
         return deleteAllTestData()
             .then(function(result) {
@@ -164,7 +165,13 @@ describe("CustomDataService RQL", function () {
                 ]);
             })
             .then(function(docs) {
+                // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
                 existingProducts = docs;
+                _.forEach(existingProducts, function (item) {
+                    if (item.name === newProduct1.name) {
+                        newProduct1.id = item._id.toHexString();
+                    }
+                });
                 return docs;
             })
             .then(null, function(error) {
@@ -185,9 +192,11 @@ describe("CustomDataService RQL", function () {
     it("can query using an RQL query object", function () {
         var name = 'Widget';
         var query = new Query().eq('name', name);
+        var expected = [];
+        expected.push(newProduct1);
         var findPromise = customDataService.find(query);
 
-        return findPromise.should.eventually.contain.an.item.with.property("name", name);
+        return findPromise.should.eventually.deep.equal(expected);
     });
 
     it("can query using multiple RQL operators", function () {
@@ -196,11 +205,35 @@ describe("CustomDataService RQL", function () {
 
         return Promise.all([
             findPromise.should.eventually.be.instanceOf(Array),
-            findPromise.should.eventually.have.length.equal(1)
+            findPromise.should.eventually.have.length(2)
         ]);
     });
 
-    it("can query using an RQL string");
+    it("can query using an RQL string", function () {
+        var findPromise = customDataService.find('price=gt=10.5&quantity=lt=50');
+        //var findPromise = customDataService.find('name=Widget');
+
+        return Promise.all([
+            findPromise.should.eventually.be.instanceOf(Array),
+            findPromise.should.eventually.have.length(1),
+            findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+        ]);
+    });
+
+    it("can query using an RQL date query", function () {
+        var findPromise = customDataService.find('created=lt=date:2015-06-10');
+        //var findPromise = customDataService.find('created=lt=date:2015-06-10T00:00:00Z');
+
+        //var findPromise = customDataService.find('name=Widget');
+
+//        return findPromise.then(function (docs) {
+//            var i = 0;
+//        });
+        return Promise.all([
+            findPromise.should.eventually.be.instanceOf(Array),
+            findPromise.should.eventually.have.length(2)
+        ]);
+    });
 });
 
 describe("CustomDataService Queries", function () {

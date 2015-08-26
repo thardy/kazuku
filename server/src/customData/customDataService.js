@@ -53,24 +53,30 @@ CustomDataService.prototype.getByTypeAndId = function(contentType, id, next) {
 CustomDataService.prototype.find = function(query, next) {
     var self = this;
 
-    var mongoQuery = mongoRql(query);
-    var projection = {
-        skip: mongoQuery.skip,
-        limit: mongoQuery.limit,
-        fields: mongoQuery.projection,
-        sort: mongoQuery.sort
-    };
+//    if (typeof(query) === "string") {
+//
+//    }
 
-    return self.collection.find(mongoQuery.criteria, projection)
-        .then(function(docs) {
-            var transformedDocs = [];
-            _.forEach(docs, function(doc) {
-                self.useFriendlyId(doc);
-                transformedDocs.push(doc);
+//    if (typeof(query) === "object") {
+        var mongoQuery = mongoRql(query);
+        var projection = {
+            skip: mongoQuery.skip,
+            limit: mongoQuery.limit,
+            fields: mongoQuery.projection,
+            sort: mongoQuery.sort
+        };
+
+        return self.collection.find(mongoQuery.criteria, projection)
+            .then(function (docs) {
+                var transformedDocs = [];
+                _.forEach(docs, function (doc) {
+                    self.useFriendlyId(doc);
+                    transformedDocs.push(doc);
+                });
+
+                return transformedDocs;
             });
-
-            return transformedDocs;
-        });
+//    }
 };
 
 // todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
