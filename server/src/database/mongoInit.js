@@ -19,12 +19,12 @@
 //
 
 
-//// ***** CustomDataSchema ****************************************
-//db.createCollection('customDataSchema', {});
-//db.customDataSchema.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
+//// ***** CustomSchemas ****************************************
+//db.createCollection('customSchemas', {});
+//db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
 //
 //// sample document
-//var newCustomDataSchema = {
+//var newCustomSchema = {
 //id: 1,
 //    orgId: 1,
 //    contentType: 'Applicant',

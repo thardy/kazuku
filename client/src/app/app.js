@@ -6,8 +6,16 @@
 
     app.run(function () {});
 
-    app.controller('AppController', function ($scope) {
+    app.controller('AppController', function ($scope, $state) {
+        var model = this;
 
+        $scope.$on('$stateChangeSuccess', stateChangeSuccess);
+
+        function stateChangeSuccess(event, toState, toParams, fromState, fromParams) {
+            if (angular.isDefined(toState.data.pageTitle)) {
+                model.pageTitle = toState.data.pageTitle;
+            }
+        }
     });
 
 }(angular.module("kazuku", [

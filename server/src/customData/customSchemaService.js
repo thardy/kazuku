@@ -2,12 +2,12 @@ var _ = require("lodash");
 var util = require("util");
 var GenericService = require("../common/genericService");
 
-var CustomDataSchemaService = function CustomDataSchemaService(db) {
-    CustomDataSchemaService.super_.call(this, db, "customDataSchema");
+var CustomSchemaService = function CustomSchemaService(db) {
+    CustomSchemaService.super_.call(this, db, "customSchemas");
 };
-util.inherits(CustomDataSchemaService, GenericService);
+util.inherits(CustomSchemaService, GenericService);
 
-CustomDataSchemaService.prototype.validate = function(doc) {
+CustomSchemaService.prototype.validate = function(doc) {
     if (doc.contentType && doc.jsonSchema) {
         // call base validation, which should return nothing if valid
         return GenericService.prototype.validate(doc);
@@ -19,7 +19,7 @@ CustomDataSchemaService.prototype.validate = function(doc) {
 
 // todo: consider adding a generic query function to genericService - just allow passing in a query object, which
 //  is what mongo takes anyway => {contentType: contentType, someOtherProp: someOtherVal}
-CustomDataSchemaService.prototype.getByContentType = function(contentType, next) {
+CustomSchemaService.prototype.getByContentType = function(contentType, next) {
     var self = this;
 
     return self.collection.findOne({contentType: contentType})
@@ -29,6 +29,6 @@ CustomDataSchemaService.prototype.getByContentType = function(contentType, next)
         });
 };
 
-module.exports = CustomDataSchemaService;
+module.exports = CustomSchemaService;
 
 

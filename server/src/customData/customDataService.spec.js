@@ -220,9 +220,9 @@ describe("CustomDataService - Resource Query Language", function () {
         ]);
     });
 
-    it("can query using an RQL date query", function () {
-        var findPromise = customDataService.find('created=lt=date:2015-06-10');
-        //var findPromise = customDataService.find('created=lt=date:2015-06-10T00:00:00Z');
+    it("can query dates using an RQL string", function () {
+        //var findPromise = customDataService.find('created=lt=date:2015-06-10');
+        var findPromise = customDataService.find('created=lt=date:2015-06-10T00:00:00Z');
 
         //var findPromise = customDataService.find('name=Widget');
 
