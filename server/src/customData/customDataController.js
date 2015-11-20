@@ -6,6 +6,7 @@ exports.init = function (app) {
 
     app.get("/api/customData/:contentType", function (req, res, next) {
         var contentType = req.params.contentType;
+        // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         res.set("Content-Type", "application/json");
 
         customDataService.getByContentType(contentType)
@@ -20,6 +21,7 @@ exports.init = function (app) {
 
     app.get("/api/customData/:contentType/:id", function (req, res, next) {
         var contentType = req.params.contentType;
+        // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;
         res.set("Content-Type", "application/json");
 
@@ -37,14 +39,15 @@ exports.init = function (app) {
 
     app.post('/api/customData/:contentType', function (req, res, next) {
         var contentType = req.params.contentType;
+        // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var body = req.body;
 
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
         customDataService.create(body)
-            .then(function (page) {
-                return res.status(201).json(page);
+            .then(function (customData) {
+                return res.status(201).json(customData);
             })
             .then(null, function (err) {
                 err.message = 'customDataController -> customDataService.create - ' + err.message;
@@ -54,6 +57,7 @@ exports.init = function (app) {
 
     app.put('/api/customData/:contentType/:id', function (req, res, next) {
         var contentType = req.params.contentType;
+        // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;
         var body = req.body;
 
@@ -74,6 +78,7 @@ exports.init = function (app) {
 
     app.delete('/api/customData/:contentType/:id', function (req, res, next) {
         var contentType = req.params.contentType;
+        // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;
         customDataService.deleteByTypeAndId(contentType, id)
             .then(function (numAffected) {

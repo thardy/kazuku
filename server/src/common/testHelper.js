@@ -4,7 +4,7 @@ var database = require("../database/database");
 var _ = require("lodash");
 var moment = require("moment");
 
-var existingProducts = [];
+//var existingProducts = [];
 var testOrgId = 1;
 var testProductsContentType = 'testProducts';
 var newProduct1 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date(2014, 1, 1) };
@@ -22,7 +22,7 @@ var testHelper = {
     newProduct1: newProduct1,
     newProduct2: newProduct2,
     newProduct3: newProduct3,
-    existingProducts: existingProducts
+    existingProducts: []
 };
 
 function setupTestProducts() {
@@ -45,9 +45,9 @@ function createTestProducts() {
         database.customData.insert(newProduct3)
     ])
         .then(function(docs) {
-            existingProducts = docs;
+            testHelper.existingProducts = docs;
             // TEST this!!!!
-            _.forEach(existingProducts, function (item) {
+            _.forEach(testHelper.existingProducts, function (item) {
                 item.id = item._id.toHexString();
             });
             return docs;

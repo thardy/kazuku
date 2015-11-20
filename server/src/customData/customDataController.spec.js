@@ -47,10 +47,19 @@ describe("ApiTests", function () {
                 });
             });
             describe("getById", function () {
-
+                it("should return a customData for a given org, contentType, and id", function () {
+                    return request(testHelper.apiUrl)
+                        .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[0].id))
+                        .expect(200)
+                        .then(function (result) {
+                            var product = result.body;
+                            product.name.should.equal(testHelper.existingProducts[0].name);
+                            product.quantity.should.equal(testHelper.existingProducts[0].quantity);
+                        });
+                });
             });
             describe("create", function () {
-                it("should create a new custom data document", function () {
+                it("should create a new customData document", function () {
                     var someString = 'Thursday';
                     var someNum = 22;
                     var body = {
@@ -60,8 +69,9 @@ describe("ApiTests", function () {
                         someNum: someNum
                     };
 
+                    var relativeUrl = '/api/customData/{0}'.format(testHelper.testProductsContentType);
                     return request(testHelper.apiUrl)
-                        .post('/api/customData/{0}'.format(testHelper.testProductsContentType1))
+                        .post(relativeUrl)
                         .send(body)
                         .expect(201)
                         .then(function(result) {
@@ -74,10 +84,43 @@ describe("ApiTests", function () {
 
             });
             describe("update", function () {
+                it("should update an existing customData document", function () {
+                    var updatedPrice = 1999.99;
+                    var updatedQuantity = 3;
+                    var body = {
+                        price: updatedPrice,
+                        quantity: updatedQuantity
+                    };
 
+                    var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id);
+                    return request(testHelper.apiUrl)
+                        .put(relativeUrl)
+                        .send(body)
+                        .expect(200)
+                        .then(function(result) {
+                            // todo: verify customData was updated - just wait until I alter controller to return the updated object
+                            var i = 0;
+//                            result.body.should.have.property('_id');
+//                            result.body.should.have.property('id');
+//                            result.body.price.should.equal(updatedPrice);
+//                            result.body.quantity.should.equal(updatedQuantity);
+//                            result.body.name.should.equal(testHelper.existingProducts[2].name);
+                        });
+                });
             });
             describe("delete", function () {
-
+                it("should delete an existing customData document", function () {
+                    var id = testHelper.existingProducts[1].id;
+                    return request(testHelper.apiUrl)
+                        .delete('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
+                        .expect(204)
+                        .then(function(result) {
+                            // verify customData was deleted
+                            return request(testHelper.apiUrl)
+                                .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
+                                .expect(404);
+                        });
+                });
             });
         });
     });
