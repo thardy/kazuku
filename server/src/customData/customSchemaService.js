@@ -29,6 +29,17 @@ CustomSchemaService.prototype.getByContentType = function(contentType, next) {
         });
 };
 
+CustomSchemaService.prototype.updateByContentType = function(contentType, updatedDoc, next) {
+    var clone = _.clone(updatedDoc);
+    delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
+    // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+    return self.collection.update({contentType: contentType}, {$set: clone});
+};
+
+CustomSchemaService.prototype.deleteByContentType = function(contentType, next) {
+    return self.collection.remove({contentType: contentType});
+};
+
 module.exports = CustomSchemaService;
 
 

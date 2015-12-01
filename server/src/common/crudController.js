@@ -68,7 +68,7 @@ exports.init = function(resourceName, app, service) {
                 return res.status(204).json({});
             })
             .then(null, function (err) {
-                err.message = resourceName + 'Controller -> deleteByTypeAndId - ' + err.message;
+                err.message = resourceName + 'Controller -> delete - ' + err.message;
                 return next(err);
             });
     });

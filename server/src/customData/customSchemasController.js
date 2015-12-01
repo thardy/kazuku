@@ -7,6 +7,59 @@ exports.init = function (app) {
 
     crudController.init('customSchemas', app, customSchemaService);
 
+    // unlike the util.inherits, here we are just assigning routes to the RESTful verbs
+
+    // Override/overwrite the crudController's get, put, and delete routes (all by id) to use contentType instead
+    app.get("/api/customschemas/:contentType", function (req, res, next) {
+        var contentType = req.params.contentType;
+        res.set("Content-Type", "application/json");
+
+        customSchemaService.getByContentType(contentType)
+            .then(function (doc) {
+                if (doc == null) return next();
+
+                return res.status(200).send(doc);
+            })
+            .then(null, function (err) {
+                err.message = 'customSchemasController -> customSchemaService.getByContentType - ' + err.message;
+                return next(err);
+            });
+    });
+
+    app.put('/api/customschemas/:contentType', function (req, res, next) {
+        var contentType = req.params.contentType;
+        var body = req.body;
+
+        // force body.contentType to equal :contentType
+        body.contentType = contentType;
+
+        customSchemaService.updateByContentType(id, body)
+            .then(function (numAffected) {
+                if (numAffected <= 0) return next();
+
+                return res.status(200).json({});
+            })
+            .then(null, function (err) {
+                err.message = 'customSchemasController -> customSchemaService.updateByContentType - ' + err.message;
+                return next(err);
+            });
+    });
+
+    app.delete('/api/customschemas/:contentType', function (req, res, next) {
+        var contentType = req.params.contentType;
+        // todo: Add some serious checking here.  Can't delete a schema unless all data for that schema is deleted first.
+        customSchemaService.deleteByContentType(contentType)
+            .then(function (numAffected) {
+                if (numAffected <= 0) return next();
+
+                return res.status(204).json({});
+            })
+            .then(null, function (err) {
+                err.message = 'customSchemasController -> customSchemaService.deleteByContentType - ' + err.message;
+                return next(err);
+            });
+    });
+
 //    app.get("/api/customSchemas", function (req, res, next) {
 //        res.set("Content-Type", "application/json");
 //
