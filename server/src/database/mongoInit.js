@@ -13,6 +13,7 @@
 //// ***** CustomData ****************************************
 //db.createCollection('customData', {});
 //db.customData.createIndex( { "orgId": 1, "contentType": 1 });
+//db.customData.createIndex( { "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true } );
 //
 //// sample document
 //var newCustomData = { orgId: 1, contentType: 'blogPost', title: 'My First Blog Post', content: 'Imagine a well written blog here.'};

@@ -17,27 +17,36 @@ CustomSchemaService.prototype.validate = function(doc) {
     }
 };
 
-// todo: consider adding a generic query function to genericService - just allow passing in a query object, which
-//  is what mongo takes anyway => {contentType: contentType, someOtherProp: someOtherVal}
-CustomSchemaService.prototype.getByContentType = function(contentType, next) {
+CustomSchemaService.prototype.getByContentType = function(orgId, contentType) {
+    if (arguments.length !== 2) {
+        throw new Error('Incorrect number of arguments passed to CustomSchemaService.getByContentType');
+    }
     var self = this;
 
-    return self.collection.findOne({contentType: contentType})
+    return self.collection.findOne({orgId: orgId, contentType: contentType})
         .then(function (doc) {
             self.useFriendlyId(doc);
             return doc;
         });
 };
 
-CustomSchemaService.prototype.updateByContentType = function(contentType, updatedDoc, next) {
+CustomSchemaService.prototype.updateByContentType = function(orgId, contentType, updatedDoc) {
+    if (arguments.length !== 3) {
+        throw new Error('Incorrect number of arguments passed to CustomSchemaService.updateByContentType');
+    }
+    var self = this;
     var clone = _.clone(updatedDoc);
     delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
     // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-    return self.collection.update({contentType: contentType}, {$set: clone});
+    return self.collection.update({orgId: orgId, contentType: contentType}, {$set: clone});
 };
 
-CustomSchemaService.prototype.deleteByContentType = function(contentType, next) {
-    return self.collection.remove({contentType: contentType});
+CustomSchemaService.prototype.deleteByContentType = function(orgId, contentType) {
+    if (arguments.length !== 2) {
+        throw new Error('Incorrect number of arguments passed to CustomSchemaService.deleteByContentType');
+    }
+    var self = this;
+    return self.collection.remove({orgId: orgId, contentType: contentType});
 };
 
 module.exports = CustomSchemaService;

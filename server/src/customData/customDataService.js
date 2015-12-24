@@ -19,12 +19,13 @@ CustomDataService.prototype.validate = function(doc) {
     }
 };
 
-// todo: add orgId to every call (once I figure out where I get orgId from and whether I'm going to pass it in here
-//  as a parameter or grab it out of the ether straight from here)
-CustomDataService.prototype.getByContentType = function(contentType, next) {
+CustomDataService.prototype.getByContentType = function(orgId, contentType) {
+    if (arguments.length !== 2) {
+        throw new Error('Incorrect number of arguments passed to CustomDataService.getByContentType');
+    }
     var self = this;
 
-    return self.collection.find({contentType: contentType})
+    return self.collection.find({orgId: orgId, contentType: contentType})
         .then(function (docs) {
             var transformedDocs = [];
             _.forEach(docs, function(doc) {
@@ -36,60 +37,58 @@ CustomDataService.prototype.getByContentType = function(contentType, next) {
         });
 };
 
-CustomDataService.prototype.getByTypeAndId = function(contentType, id, next) {
-    if (arguments.length !== 2) {
+CustomDataService.prototype.getByTypeAndId = function(orgId, contentType, id) {
+    if (arguments.length !== 3) {
         throw new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId');
     }
 
     var self = this;
 
-    return self.collection.findOne({_id: id, contentType: contentType})
+    return self.collection.findOne({_id: id, orgId: orgId, contentType: contentType})
         .then(function (doc) {
             self.useFriendlyId(doc);
             return doc;
         });
 };
 
-CustomDataService.prototype.find = function(query, next) {
+CustomDataService.prototype.find = function(orgId, query) {
+    if (arguments.length !== 2) {
+        throw new Error('Incorrect number of arguments passed to CustomDataService.find');
+    }
     var self = this;
+    query.orgId = orgId;
 
-//    if (typeof(query) === "string") {
-//
-//    }
+    var mongoQuery = mongoRql(query);
+    var projection = {
+        skip: mongoQuery.skip,
+        limit: mongoQuery.limit,
+        fields: mongoQuery.projection,
+        sort: mongoQuery.sort
+    };
 
-//    if (typeof(query) === "object") {
-        var mongoQuery = mongoRql(query);
-        var projection = {
-            skip: mongoQuery.skip,
-            limit: mongoQuery.limit,
-            fields: mongoQuery.projection,
-            sort: mongoQuery.sort
-        };
-
-        return self.collection.find(mongoQuery.criteria, projection)
-            .then(function (docs) {
-                var transformedDocs = [];
-                _.forEach(docs, function (doc) {
-                    self.useFriendlyId(doc);
-                    transformedDocs.push(doc);
-                });
-
-                return transformedDocs;
+    return self.collection.find(mongoQuery.criteria, projection)
+        .then(function (docs) {
+            var transformedDocs = [];
+            _.forEach(docs, function (doc) {
+                self.useFriendlyId(doc);
+                transformedDocs.push(doc);
             });
-//    }
+
+            return transformedDocs;
+        });
 };
 
 // todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
 //  update in order to check and enforce the context - something I'll have to do in order to enforce orgId context anyway)
 
-CustomDataService.prototype.deleteByTypeAndId = function(contentType, id, next) {
-    if (arguments.length !== 2) {
+CustomDataService.prototype.deleteByTypeAndId = function(orgId, contentType, id) {
+    if (arguments.length !== 3) {
         throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');
     }
 
     var self = this;
 
-    return self.collection.remove({_id: id, contentType: contentType});
+    return self.collection.remove({_id: id, orgId: orgId, contentType: contentType});
 };
 
 module.exports = CustomDataService;

@@ -59,7 +59,7 @@ describe("PageService", function () {
 
     // todo: alter to enforce orgId (in genericService preferably) and siteId (in pageService override)
     it("can get all Pages", function () {
-        var getAllPromise = pageService.getAll();
+        var getAllPromise = pageService.getAll(testOrgId);
 
         return Promise.all([
             getAllPromise.should.eventually.be.instanceOf(Array),
@@ -68,14 +68,14 @@ describe("PageService", function () {
     });
 
     it("can get a Page by id", function () {
-        var getByIdPromise = pageService.getById(existingPage1IdString);
+        var getByIdPromise = pageService.getById(testOrgId, existingPage1IdString);
 
         return getByIdPromise.should.eventually.have.property("name", existingPage1Name);
     });
 
     it("can create a Page", function () {
         var page = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/created', content: '#Test' };
-        var createPromise = pageService.create(page);
+        var createPromise = pageService.create(testOrgId, page);
 
         return Promise.all([
             createPromise.should.eventually.have.property("id"),
@@ -83,16 +83,9 @@ describe("PageService", function () {
         ]);
     });
 
-    it("validates Page on create using base validation - orgId", function () {
-        var invalidPage = { name: '$Test - create page', siteId: 1, url: '#/invalid-page', content: '#Test' };
-        var createPromise = pageService.create(invalidPage);
-
-        return createPromise.should.be.rejectedWith(TypeError, "Need orgId");
-    });
-
     it("validates Page on create using extended validation - name, url, content", function () {
         var invalidPage = { orgId: testOrgId, siteId: 1, name: '$Test - create page', url: '#/invalid-page' };
-        var createPromise = pageService.create(invalidPage);
+        var createPromise = pageService.create(testOrgId, invalidPage);
 
         return createPromise.should.be.rejectedWith(TypeError, "Need name, url, and content");
     });
@@ -100,13 +93,13 @@ describe("PageService", function () {
     it("can update a Page by id", function () {
         var newContent = '#New Test Content';
         _.assign(theUpdatedPage, { id: existingPage1IdString, siteId: 1, name: existingPage1Name, content: newContent });
-        var updateByIdPromise = pageService.updateById(existingPage1IdString, theUpdatedPage);
+        var updateByIdPromise = pageService.updateById(testOrgId, existingPage1IdString, theUpdatedPage);
 
         return updateByIdPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify page was updated
-            var getByIdPromise = pageService.getById(existingPage1IdString);
+            var getByIdPromise = pageService.getById(testOrgId, existingPage1IdString);
 
             return getByIdPromise.should.eventually.have.property("content", newContent);
         });
@@ -118,13 +111,13 @@ describe("PageService", function () {
         var updatedPage = { id: existingPage2IdString, orgId: testOrgId, siteId: 1, name: existingPage2Name, url: newUrl, content: newContent };
         var queryObject = { name: existingPage2Name, url: existingPage2Url};
 
-        var updateByObjectPromise = pageService.update(queryObject, updatedPage);
+        var updateByObjectPromise = pageService.update(testOrgId, queryObject, updatedPage);
 
         return updateByObjectPromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify page was updated
-            var getByIdPromise = pageService.getById(existingPage2IdString);
+            var getByIdPromise = pageService.getById(testOrgId, existingPage2IdString);
 
             return Promise.all([
                 getByIdPromise.should.eventually.have.property("url", newUrl),
@@ -136,10 +129,10 @@ describe("PageService", function () {
     it("can delete a Page by id", function () {
         var newPage = { orgId: testOrgId, siteId: 1, name: '$Test - deleting this one', url: '#/delete', content: '#Delete' };
 
-        return pageService.create(newPage).then(function(doc) {
+        return pageService.create(testOrgId, newPage).then(function(doc) {
             var id = doc.id;
-            return pageService.delete(doc.id).then(function(result) {
-                return pageService.getById(id).then(function (retrievedDoc) {
+            return pageService.delete(testOrgId, doc.id).then(function(result) {
+                return pageService.getById(testOrgId, id).then(function (retrievedDoc) {
                     return expect(retrievedDoc).to.equal(null);
                 });
             });
@@ -148,7 +141,7 @@ describe("PageService", function () {
 
     it("has a unique index on siteId and url", function () {
         var newPage = { orgId: testOrgId, siteId: existingPage1.siteId, url: existingPage1.url, name: '$Test - I am a dupe',content: '#DUPE' };
-        var createPromise = pageService.create(newPage);
+        var createPromise = pageService.create(testOrgId, newPage);
 
         return createPromise.should.eventually.be.rejected;
     });

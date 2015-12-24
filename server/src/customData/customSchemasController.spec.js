@@ -90,73 +90,70 @@ describe("ApiTests", function () {
                             result.body.should.have.property("jsonSchema").deep.equal(newSchema.jsonSchema);
                         });
                 });
-                // todo: Implement this as soon as I get auth working
-//                it("should return a 500 if I specify an orgId different than my actual orgId", function () {
-//                    var someString = 'Thursday';
-//                    var someNum = 22;
-//                    var body = {
-//                        orgId: testHelper.testOrgId,
-//                        contentType: testHelper.testContentType,
-//                        someString: someString,
-//                        someNum: someNum
-//                    };
-//
-//                    var relativeUrl = '/api/customschemas';
-//                    return request(testHelper.apiUrl)
-//                        .post(relativeUrl)
-//                        .send(body)
-//                        .expect(201)
-//                        .then(function(result) {
-//                            result.body.should.have.property('_id');
-//                            result.body.should.have.property('id');
-//                            result.body.someString.should.equal(someString);
-//                            result.body.someNum.should.equal(someNum);
-//                        });
-//                });
-//                it("should return a 400 for validation error", function () {
-//                    var badData = "somethingbadgoeshere";
-//                    return request(testHelper.apiUrl)
-//                        .post('/api/customschemas')
-//                        .send(body)
-//                        .expect(400);
-//                });
-//                it("should return a 409 for duplicate key errors", function () {
-//                    var body = {
-//                        orgId: testHelper.testOrgId,
-//                        contentType: testHelper.testProductsContentType
-//                    };
-//                    return request(testHelper.apiUrl)
-//                        .post('/api/customschemas')
-//                        .send(body)
-//                        .expect(409);
-//                });
+                it("should return a 400 for validation error", function () {
+                    var invalidCustomSchema = {
+                        contentType: testHelper.testContentType2
+                    };
+                    return request(testHelper.apiUrl)
+                        .post('/api/customschemas')
+                        .send(invalidCustomSchema)
+                        .expect(400);
+                });
+                it("should return a 409 for duplicate key errors", function () {
+                    var body = {
+                        orgId: testHelper.existingSchemas[0].orgId,
+                        contentType: testHelper.existingSchemas[0].contentType,
+                        jsonSchema: {}
+                    };
+                    return request(testHelper.apiUrl)
+                        .post('/api/customschemas')
+                        .send(body)
+                        .expect(409);
+                });
             });
             describe("update", function () {
                 it("should update an existing customSchema", function () {
-                    var updatedPrice = 1999.99;
-                    var updatedQuantity = 3;
-                    var body = {
-                        price: updatedPrice,
-                        quantity: updatedQuantity
+                    var updatedFieldName = 'iAmUpdated';
+                    var updatedSchema = {
+                        jsonSchema: {
+                            "type": "object",
+                            "properties": {
+                                "someString": {
+                                    "type": "string",
+                                    "name": updatedFieldName,
+                                    "title": "Some String"
+                                }
+                            }
+                        }
                     };
 
-                    var relativeUrl = '/api/customschemas/{0}'.format(testHelper.existingSchemas[2].contentType);
+                    var relativeUrl = '/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType);
+                    return request(testHelper.apiUrl)
+                        .put(relativeUrl)
+                        .send(updatedSchema)
+                        .expect(200)
+                        .then(function(result) {
+                            // verify customSchema was updated
+                            return request(testHelper.apiUrl)
+                                .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
+                                .expect(200)
+                                .then(function (result) {
+                                    var schema = result.body;
+                                    schema.should.have.property("jsonSchema").deep.equal(updatedSchema.jsonSchema);
+                                });
+                        });
+                });
+                it("should return 404 for a non-existent contentType", function () {
+                    var body = {
+                        jsonSchema: {}
+                    };
+
+                    // 557f30402598f1243c14403c
+                    var relativeUrl = '/api/customschemas/{0}'.format('nonExistentContentType');
                     return request(testHelper.apiUrl)
                         .put(relativeUrl)
                         .send(body)
-                        .expect(200)
-                        .then(function(result) {
-                            // verify customData was updated
-                            return request(testHelper.apiUrl)
-                                .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[2].contentType))
-                                .expect(200)
-                                .then(function (result) {
-                                    var product = result.body;
-                                    product.name.should.equal(testHelper.existingSchemas[2].name);
-                                    product.price.should.equal(updatedPrice);
-                                    product.quantity.should.equal(updatedQuantity);
-                                });
-                        });
+                        .expect(404);
                 });
             });
             describe("delete", function () {

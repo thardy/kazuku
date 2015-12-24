@@ -60,7 +60,7 @@ describe("CustomDataService", function () {
             var testBlogContent = 'Test blog post here. ' + now;
             var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', content: testBlogContent };
 
-            var createPromise = customDataService.create(customData);
+            var createPromise = customDataService.create(testOrgId, customData);
 
             return Promise.all([
                 createPromise.should.eventually.be.an("object"),
@@ -68,24 +68,16 @@ describe("CustomDataService", function () {
             ]);
         });
 
-        it("validates customData on create using base validation - orgId", function () {
-            var invalidCustomData = { contentType: testContentType, title: 'New Test Blog Post', content: 'content of invalid customData object' };
-
-            var createPromise = customDataService.create(invalidCustomData);
-
-            return createPromise.should.be.rejectedWith(TypeError, "Need orgId");
-        });
-
         it("validates customData on create using extended validation - contentType", function () {
             var invalidCustomData = { orgId: testOrgId, title: 'New Test Blog Post2', content: 'content of invalid customData object' };
 
-            var createPromise = customDataService.create(invalidCustomData);
+            var createPromise = customDataService.create(testOrgId, invalidCustomData);
 
             return createPromise.should.be.rejectedWith(TypeError, "Need contentType");
         });
 
         it("can get all data of a specified ContentType", function () {
-            var getByContentTypePromise = customDataService.getByContentType(testContentType);
+            var getByContentTypePromise = customDataService.getByContentType(testOrgId, testContentType);
 
             return Promise.all([
                 getByContentTypePromise.should.eventually.be.instanceOf(Array),
@@ -94,7 +86,7 @@ describe("CustomDataService", function () {
         });
 
         it("can get customData by contentType and Id", function () {
-            var getByTypeAndId = customDataService.getByTypeAndId(existingCustomData1.contentType, existingCustomData1.id);
+            var getByTypeAndId = customDataService.getByTypeAndId(testOrgId, existingCustomData1.contentType, existingCustomData1.id);
 
             return getByTypeAndId.should.eventually.have.property("title", existingCustomData1.title);
         });
@@ -103,13 +95,13 @@ describe("CustomDataService", function () {
             var newContent = '#New Test Content';
             theUpdatedCustomData = { content: newContent };
 
-            var updateByIdPromise = customDataService.updateById(existingCustomData1.id, theUpdatedCustomData);
+            var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData1.id, theUpdatedCustomData);
 
             return updateByIdPromise.then(function(numAffected) {
                 numAffected.should.equal(1);
 
                 // verify customData was updated
-                var getByIdPromise = customDataService.getById(existingCustomData1.id);
+                var getByIdPromise = customDataService.getById(testOrgId, existingCustomData1.id);
 
                 getByIdPromise.should.eventually.have.property("content", newContent);
             });
@@ -117,14 +109,14 @@ describe("CustomDataService", function () {
 
         it("can delete customData by id", function () {
             var newCustomData = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', content: 'this customData is to be deleted'};
-            var createPromise = customDataService.create(newCustomData);
+            var createPromise = customDataService.create(testOrgId, newCustomData);
 
             return createPromise
                 .then(function(doc) {
                     var id = doc.id;
-                    return customDataService.delete(doc.id)
+                    return customDataService.delete(testOrgId, doc.id)
                         .then(function(result) {
-                            return customDataService.getById(id)
+                            return customDataService.getById(testOrgId, id)
                                 .then(function(retrievedDoc) {
                                     return expect(retrievedDoc).to.equal(null);
                                 });
@@ -189,14 +181,14 @@ describe("CustomDataService", function () {
             var query = new Query().eq('name', name);
             var expected = [];
             expected.push(newProduct1);
-            var findPromise = customDataService.find(query);
+            var findPromise = customDataService.find(testOrgId, query);
 
             return findPromise.should.eventually.deep.equal(expected);
         });
 
         it("can query using multiple RQL operators", function () {
             var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
-            var findPromise = customDataService.find(query);
+            var findPromise = customDataService.find(testOrgId, query);
 
             return Promise.all([
                 findPromise.should.eventually.be.instanceOf(Array),
@@ -205,7 +197,7 @@ describe("CustomDataService", function () {
         });
 
         it("can query using an RQL string", function () {
-            var findPromise = customDataService.find('price=gt=10.5&quantity=lt=50');
+            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&price=gt=10.5&quantity=lt=50');
             //var findPromise = customDataService.find('name=Widget');
 
             return Promise.all([
@@ -217,7 +209,7 @@ describe("CustomDataService", function () {
 
         it("can query dates using an RQL string", function () {
             //var findPromise = customDataService.find('created=lt=date:2015-06-10');
-            var findPromise = customDataService.find('created=lt=date:2015-06-10T00:00:00Z');
+            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&created=lt=date:2015-06-10T00:00:00Z');
 
             //var findPromise = customDataService.find('name=Widget');
 

@@ -87,7 +87,7 @@ describe("CustomSchemaService CRUD", function () {
 
     // todo: alter to enforce orgId (preferably in genericService). Add orgId to all service function parms, have controller pull orgId from auth mechanism.
     it("can get all customSchemas", function () {
-        var getAllPromise = customSchemaService.getAll();
+        var getAllPromise = customSchemaService.getAll(testOrgId);
 
         return Promise.all([
             getAllPromise.should.eventually.be.instanceOf(Array),
@@ -96,13 +96,13 @@ describe("CustomSchemaService CRUD", function () {
     });
 
     it("can get customSchemas by Id", function () {
-        var getById = customSchemaService.getById(existingCustomSchema1.id);
+        var getById = customSchemaService.getById(testOrgId, existingCustomSchema1.id);
 
         return getById.should.eventually.have.property("jsonSchema").deep.equal(existingCustomSchema1.jsonSchema);
     });
 
     it("can get customSchemas by ContentType", function () {
-        var getByContentTypePromise = customSchemaService.getByContentType(testContentType2);
+        var getByContentTypePromise = customSchemaService.getByContentType(testOrgId, testContentType2);
 
         return Promise.all([
             getByContentTypePromise.should.eventually.be.an("object"),
@@ -130,7 +130,7 @@ describe("CustomSchemaService CRUD", function () {
             jsonSchema: myJsonSchema
         };
 
-        var createPromise = customSchemaService.create(customSchema);
+        var createPromise = customSchemaService.create(testOrgId, customSchema);
 
         return Promise.all([
             createPromise.should.eventually.be.an("object"),
@@ -139,41 +139,18 @@ describe("CustomSchemaService CRUD", function () {
         ]);
     });
 
-    it("validates customSchemas on create using base validation - orgId", function () {
-        var now = moment().format('hmmss');
-        var testFieldName = 'TestField' + now;
-        var myJsonSchema = {
-            "type": "object",
-            "properties": {
-                "someField": {
-                    "type": "string",
-                    "name": testFieldName,
-                    "title": "Some Field"
-                }
-            }
-        };
-        var invalidCustomSchema = {
-            contentType: testContentType2,
-            jsonSchema: myJsonSchema
-        };
-
-        var createPromise = customSchemaService.create(invalidCustomSchema);
-
-        return createPromise.should.be.rejectedWith(TypeError, "Need orgId");
-    });
-
     it("validates customSchemas on create using extended validation - contentType and jsonSchema", function () {
         var invalidCustomSchema = {
             orgId: testOrgId,
             contentType: testContentType2
         };
 
-        var createPromise = customSchemaService.create(invalidCustomSchema);
+        var createPromise = customSchemaService.create(testOrgId, invalidCustomSchema);
 
         return createPromise.should.be.rejectedWith(TypeError, "Need contentType and jsonSchema");
     });
 
-    it("can update customSchemas by id", function () {
+    it("can update customSchemas by contentType", function () {
         var fieldName = "updatedField";
         var myJsonSchema = {
             "type": "object",
@@ -189,19 +166,19 @@ describe("CustomSchemaService CRUD", function () {
             jsonSchema: myJsonSchema
         };
 
-        var updateByIdPromise = customSchemaService.updateById(existingCustomSchema1.id, theUpdatedCustomSchema);
+        var updateByContentTypePromise = customSchemaService.updateByContentType(testOrgId, existingCustomSchema1.contentType, theUpdatedCustomSchema);
 
-        return updateByIdPromise.then(function(numAffected) {
+        return updateByContentTypePromise.then(function(numAffected) {
             numAffected.should.equal(1);
 
             // verify customSchema was updated
-            var getByIdPromise = customSchemaService.getById(existingCustomSchema1.id);
+            var getByContentTypePromise = customSchemaService.getByContentType(testOrgId, existingCustomSchema1.contentType);
 
-            return getByIdPromise.should.eventually.have.property("jsonSchema").deep.equal(myJsonSchema);
+            return getByContentTypePromise.should.eventually.have.property("jsonSchema").deep.equal(myJsonSchema);
         });
     });
 
-    it("can delete customSchemas by id", function () {
+    it("can delete customSchemas by contentType", function () {
         var createdContentType = "typeToBeDeleted";
         var myJsonSchema = {
             "type": "object",
@@ -219,12 +196,11 @@ describe("CustomSchemaService CRUD", function () {
             jsonSchema: myJsonSchema
         };
 
-        var createPromise = customSchemaService.create(newCustomSchema);
+        var createPromise = customSchemaService.create(testOrgId, newCustomSchema);
 
         return createPromise.then(function(doc) {
-            var id = doc.id;
-            return customSchemaService.delete(doc.id).then(function(result) {
-                return customSchemaService.getById(id).then(function(retrievedDoc) {
+            return customSchemaService.deleteByContentType(testOrgId, createdContentType).then(function(result) {
+                return customSchemaService.getByContentType(testOrgId, createdContentType).then(function(retrievedDoc) {
                     return expect(retrievedDoc).to.equal(null);
                 });
             });

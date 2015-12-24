@@ -86,30 +86,7 @@ describe("ApiTests", function () {
                             result.body.someNum.should.equal(someNum);
                         });
                 });
-                // todo: Implement this as soon as I get auth working
-//                it("should return a 500 if I specify an orgId different than my actual orgId", function () {
-//                    var someString = 'Thursday';
-//                    var someNum = 22;
-//                    var body = {
-//                        orgId: testHelper.testOrgId,
-//                        contentType: testHelper.testProductsContentType,
-//                        someString: someString,
-//                        someNum: someNum
-//                    };
-//
-//                    var relativeUrl = '/api/customData/{0}'.format(testHelper.testProductsContentType);
-//                    return request(testHelper.apiUrl)
-//                        .post(relativeUrl)
-//                        .send(body)
-//                        .expect(201)
-//                        .then(function(result) {
-//                            result.body.should.have.property('_id');
-//                            result.body.should.have.property('id');
-//                            result.body.someString.should.equal(someString);
-//                            result.body.someNum.should.equal(someNum);
-//                        });
-//                });
-//                // There are currently no validation errors for customData, since it can be anything
+                // There are currently no validation errors for customData, since it can be anything
 //                it("should return a 400 for validation error", function () {
 //                    var badData = "somethingbadgoeshere";
 //                    return request(testHelper.apiUrl)
@@ -117,8 +94,8 @@ describe("ApiTests", function () {
 //                        .send(body)
 //                        .expect(400);
 //                });
-//                // There's no way to try to insert a duplicate key with CustomData (you can't specify an id in the create,
-//                //  and there aren't any unique key constraints that don't involve id)
+                // There's no way to try to insert a duplicate key with CustomData (you can't specify an id in the create,
+                //  and there aren't any unique key constraints that don't involve id)
 //                it("should return a 409 for duplicate key errors", function () {
 //                    var body = {
 //                        orgId: testHelper.testOrgId,
@@ -156,6 +133,18 @@ describe("ApiTests", function () {
                                     product.quantity.should.equal(updatedQuantity);
                                 });
                         });
+                });
+                it("should return 404 for a non-existent id", function () {
+                    var body = {
+                        price: 9.99,
+                        quantity: 55
+                    };
+                    // 557f30402598f1243c14403c
+                    var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
+                    return request(testHelper.apiUrl)
+                        .put(relativeUrl)
+                        .send(body)
+                        .expect(404);
                 });
             });
             describe("delete", function () {
