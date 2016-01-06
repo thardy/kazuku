@@ -24,7 +24,7 @@ exports.init = function(resourceName, app, service) {
 
         service.getById(orgId, id)
             .then(function (doc) {
-                if (doc == null) return next();
+                if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })

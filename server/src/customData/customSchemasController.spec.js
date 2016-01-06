@@ -6,6 +6,7 @@ var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 var testHelper = require("../common/testHelper");
+var utils = require('../utils');
 
 // todo: consider moving this into a more global spot before running all api-related tests.  See http://beletsky.net/2014/03/testable-apis-with-node-dot-js.html
 var app = require('../../bin/www'); // This starts up the api server (I'm assuming it shuts down when mocha is done)
@@ -168,6 +169,12 @@ describe("ApiTests", function () {
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1]))
                                 .expect(404);
                         });
+                });
+                it("should return 404 for a non-existent contentType", function () {
+                    var relativeUrl = '/api/customData/{0}'.format('nonExistentContentType');
+                    return request(testHelper.apiUrl)
+                        .delete(relativeUrl)
+                        .expect(404);
                 });
             });
         });

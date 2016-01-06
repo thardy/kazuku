@@ -36,7 +36,7 @@ exports.init = function (app) {
 
         customSchemaService.getByContentType(orgId, contentType)
             .then(function (doc) {
-                if (doc == null) return next();
+                if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })

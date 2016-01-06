@@ -31,7 +31,7 @@ exports.init = function (app) {
 
         customDataService.getByTypeAndId(orgId, contentType, id)
             .then(function (doc) {
-                if (doc == null) return next();
+                if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })

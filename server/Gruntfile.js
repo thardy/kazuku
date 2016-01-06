@@ -6,7 +6,10 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['src/**/*.js']
+            files: ['src/**/*.js'],
+            options: {
+                '-W079': true
+            }
         },
 //        watch: {
 //            files: ['src/**/*js'],

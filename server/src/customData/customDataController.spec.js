@@ -6,6 +6,7 @@ var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 var testHelper = require("../common/testHelper");
+var utils = require('../utils');
 
 // todo: consider moving this into a more global spot before running all api-related tests.  See http://beletsky.net/2014/03/testable-apis-with-node-dot-js.html
 //  or split mocha tests up somehow, preferably by tag or somesuch instead of by location.
@@ -159,6 +160,12 @@ describe("ApiTests", function () {
                                 .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
                                 .expect(404);
                         });
+                });
+                it("should return 404 for a non-existent id", function () {
+                    var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
+                    return request(testHelper.apiUrl)
+                        .delete(relativeUrl)
+                        .expect(404);
                 });
             });
         });
