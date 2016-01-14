@@ -127,6 +127,34 @@ describe("CustomDataService", function () {
         function deleteAllTestData() {
             return database.customData.remove({orgId: 1, contentType: testContentType});
         }
+
+        describe("CRUD with dates", function () {
+            it("create converts ISO8601 date strings to Mongo dates", function() {
+                var dateString = '2014-02-27T10:00:00';
+                var expectedDate = new Date('2014-02-27T10:00:00');
+                var objectWithIsoDateString = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', someDate: dateString};
+
+                var createPromise = customDataService.create(testOrgId, objectWithIsoDateString);
+
+                return createPromise.should.eventually.have.property("someDate").deep.equal(expectedDate);
+            });
+            it("updateById converts ISO8601 date strings to Mongo dates", function () {
+                var dateString = '2016-01-27T08:43:00';
+                var expectedDate = new Date('2016-01-27T08:43:00');
+                var theUpdatedCustomData = { favoriteDate: dateString };
+
+                var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData2.id, theUpdatedCustomData);
+
+                return updateByIdPromise.then(function(numAffected) {
+                    numAffected.should.equal(1);
+
+                    // verify customData was updated
+                    var getByIdPromise = customDataService.getById(testOrgId, existingCustomData2.id);
+
+                    getByIdPromise.should.eventually.have.property("favoriteDate").deep.equal(expectedDate);
+                });
+            });
+        });
     });
 
     describe("Resource Query Language", function () {

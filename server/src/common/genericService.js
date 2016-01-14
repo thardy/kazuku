@@ -1,5 +1,6 @@
 var _ = require("lodash");
 var Promise = require("bluebird");
+var conversionService = require("./conversionService");
 
 var GenericService = function(db, collectionName) {
     var self = this;
@@ -46,6 +47,8 @@ var GenericService = function(db, collectionName) {
             return Promise.reject(new TypeError(valError));
         }
 
+        conversionService.convertISOStringDateTimesToMongoDates(doc);
+
         return self.collection.insert(doc)
             .then(function(doc) {
                 self.useFriendlyId(doc);
@@ -62,7 +65,8 @@ var GenericService = function(db, collectionName) {
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
 
-        // todo: test that I don't need to use ObjectId(id)
+        conversionService.convertISOStringDateTimesToMongoDates(clone);
+
         var queryObject = { _id: id, orgId: orgId };
         return self.collection.update(queryObject, {$set: clone});
     };
@@ -73,6 +77,8 @@ var GenericService = function(db, collectionName) {
         }
         var clone = _.clone(updatedDoc);
         delete clone.id;
+
+        conversionService.convertISOStringDateTimesToMongoDates(clone);
 
         queryObject.orgId = orgId;
         return self.collection.update(queryObject, {$set: clone});
