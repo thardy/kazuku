@@ -249,17 +249,52 @@ describe("CustomDataService", function () {
                 findPromise.should.eventually.have.length(2)
             ]);
         });
-    });
 
-    describe("Queries", function () {
-        it("can query custom string fields by value");
+        it("can query custom string fields using regex", function () {
+            var query = new Query().eq('contentType', testContentType).eq('description', /.*toy.*/i); // this one works
+            var findPromise = customDataService.find(testOrgId, query);
+            //var findPromise = customDataService.find(testOrgId, "contentType={0}&description=/.*toy.*/i".format(testContentType)); // does not work
 
-        it("can query custom number fields by value");
-        it("can query custom number fields greater than value");
-        it("can query custom number fields in range");
+            return Promise.all([
+                findPromise.should.eventually.have.length(1),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+            ]);
+//            return Promise.all(
+//                findPromise.should.eventually.have.length(1),
+//                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+//            );
+        });
+
+        it("can query custom number fields by value", function () {
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&quantity={1}".format(testContentType, 85));
+
+            return Promise.all([
+                findPromise.should.eventually.have.length(1),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct3.name)
+            ]);
+        });
+        it("can query custom number fields greater than value", function () {
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&quantity=gt={1}".format(testContentType, 90));
+
+            return Promise.all([
+                findPromise.should.eventually.have.length(1),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct1.name)
+            ]);
+        });
+        it("can query custom number fields in range", function () {
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&price=ge={1}&price=le={2}".format(testContentType, 5.00, 20.00));
+
+            return Promise.all([
+                findPromise.should.eventually.have.length(2),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct1.name),
+                findPromise.should.eventually.have.deep.property('[1].name', newProduct3.name)
+            ]);
+        });
 
         it("can query custom date fields by value");
         it("can query custom date fields greater than value");
         it("can query custom date fields within range");
     });
+
+
 });
