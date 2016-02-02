@@ -13,14 +13,42 @@ exports.init = function (app) {
         // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         res.set("Content-Type", "application/json");
 
-        customDataService.getByContentType(orgId, contentType)
-            .then(function (docs) {
-                return res.status(200).json(docs);
-            })
-            .then(null, function (err) {
-                err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(orgId, contentType, err.message);
-                return next(err);
-            });
+        if (Object.keys(req.query).length > 0) {
+            var query = '';
+            var first = true;
+            for (property in req.query) {
+                if (first === true) {
+                    first = false;
+                    // hardocde contentType into the query according to the contentType in the route
+                    // todo: remove any contentType provided in the querystring (don't add it again)
+                    query = 'contentType={0}&'.format(contentType);
+                }
+                else {
+                    query += '&'
+                }
+                //query += '{0}={1}'.format(property, req.query[property]);
+                query += property;
+                query += req.query[property] ? '=' + req.query[property] : '';
+            }
+            customDataService.find(orgId, query)
+                .then(function (docs) {
+                    return res.status(200).json(docs);
+                })
+                .then(null, function (err) {
+                    err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(orgId, contentType, err.message);
+                    return next(err);
+                });
+        }
+        else {
+            customDataService.getByContentType(orgId, contentType)
+                .then(function (docs) {
+                    return res.status(200).json(docs);
+                })
+                .then(null, function (err) {
+                    err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(orgId, contentType, err.message);
+                    return next(err);
+                });
+        }
     });
 
     app.get("/api/customData/:contentType/:id", function (req, res, next) {

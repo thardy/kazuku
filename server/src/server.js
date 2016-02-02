@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var routes = require('./routes');
 var config = require("./env-config");
-//var utils = require('./utils');
+var utils = require('./utils');
 
 var app = express();
 app.use(bodyParser.json());

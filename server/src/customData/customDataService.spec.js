@@ -163,9 +163,9 @@ describe("CustomDataService", function () {
         var testOrgId = 1;
         var testContentType = 'testProducts';
         var now = moment().format('MMMM Do YYYY, h:mm:ss a');
-        var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date(2014, 1, 1) };
-        var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date(2015, 6, 20) };
-        var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date(2015, 2, 27)  };
+        var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
+        var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
+        var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00')  };
 
         before(function () {
             customDataService = new CustomDataService(database);
@@ -237,7 +237,7 @@ describe("CustomDataService", function () {
 
         it("can query dates using an RQL string", function () {
             //var findPromise = customDataService.find('created=lt=date:2015-06-10');
-            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&created=lt=date:2015-06-10T00:00:00Z');
+            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&created=lt=date:2015-05-10T00:00:00Z');
 
             //var findPromise = customDataService.find('name=Widget');
 
@@ -250,6 +250,7 @@ describe("CustomDataService", function () {
             ]);
         });
 
+        // todo: Find a way to do a contains search (RegEx would be nice)
         it("can query custom string fields using regex", function () {
             var query = new Query().eq('contentType', testContentType).eq('description', /.*toy.*/i); // this one works
             var findPromise = customDataService.find(testOrgId, query);
@@ -291,9 +292,36 @@ describe("CustomDataService", function () {
             ]);
         });
 
-        it("can query custom date fields by value");
-        it("can query custom date fields greater than value");
-        it("can query custom date fields within range");
+        it("can query custom date fields by value", function () {
+            var findDate = moment(newProduct2.created).toISOString(); //'2015-06-10T00:00:00Z';
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&created=date:{1}".format(testContentType, findDate));
+
+            return Promise.all([
+                findPromise.should.eventually.have.length(1),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+            ]);
+        });
+        it("can query custom date fields greater than value", function () {
+            var findDate = '2014-01-01';
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&created=gt=date:{1}&sort(-created)".format(testContentType, findDate));
+
+            return Promise.all([
+                findPromise.should.eventually.have.length(2),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name),
+                findPromise.should.eventually.have.deep.property('[1].name', newProduct3.name)
+            ]);
+        });
+        it("can query custom date fields within range", function () {
+            var startDate = '2015-01-27';
+            var endDate = '2015-05-20';
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&created=ge=date:{1}&created=le=date:{2}&sort(-created)".format(testContentType, startDate, endDate));
+
+            return Promise.all([
+                findPromise.should.eventually.have.length(2),
+                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name),
+                findPromise.should.eventually.have.deep.property('[1].name', newProduct3.name)
+            ]);
+        });
     });
 
 
