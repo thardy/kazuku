@@ -16,7 +16,7 @@ exports.init = function (app) {
         if (Object.keys(req.query).length > 0) {
             var query = '';
             var first = true;
-            for (property in req.query) {
+            for (var property in req.query) {
                 if (first === true) {
                     first = false;
                     // hardocde contentType into the query according to the contentType in the route
@@ -24,11 +24,22 @@ exports.init = function (app) {
                     query = 'contentType={0}&'.format(contentType);
                 }
                 else {
-                    query += '&'
+                    query += '&';
                 }
-                //query += '{0}={1}'.format(property, req.query[property]);
-                query += property;
-                query += req.query[property] ? '=' + req.query[property] : '';
+
+                if (Object.prototype.toString.call(req.query[property]) === '[object Array]') {
+                    for (var i = 0; i < req.query[property].length; i++) {
+                        if (i > 0) {
+                            query += '&';
+                        }
+                        query += property;
+                        query += req.query[property][i] ? '=' + req.query[property][i] : '';
+                    }
+                }
+                else {
+                    query += property;
+                    query += req.query[property] ? '=' + req.query[property] : '';
+                }
             }
             customDataService.find(orgId, query)
                 .then(function (docs) {
