@@ -283,7 +283,7 @@ describe("CustomDataService", function () {
             ]);
         });
         it("can query custom number fields in range", function () {
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&price=ge={1}&price=le={2}".format(testContentType, 5.00, 20.00));
+            var findPromise = customDataService.find(testOrgId, "contentType={0}&price=ge={1}&price=le={2}&sort(created)".format(testContentType, 5.00, 20.00));
 
             return Promise.all([
                 findPromise.should.eventually.have.length(2),

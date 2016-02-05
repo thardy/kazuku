@@ -1,4 +1,5 @@
 var TemplateEngine = require("./templateEngine");
+var frontMatter = require('front-matter');
 var _ = require("lodash");
 
 var TemplateRepo = function() {
@@ -41,7 +42,7 @@ var TemplateService = function(args) {
     var templateRepo = (args && args.templateRepo) ? args.templateRepo : new TemplateRepo();
     var templateEngine = new TemplateEngine({engineType: 'liquid', templateRepo: templateRepo});
 
-    templateService.RenderObject = function(objectWithTemplate) {
+    templateService.renderObject = function(objectWithTemplate) {
         var template = objectWithTemplate.content;
         var model = _.omit(objectWithTemplate, 'content');
         var renderPromise = null;
@@ -61,6 +62,15 @@ var TemplateService = function(args) {
         }
 
         return renderPromise;
+    };
+
+    templateService.convertStringToTemplateObject = function(stringToConvert) {
+        var frontMatterObject = frontMatter(stringToConvert);
+        var templateObject = {
+            model: frontMatterObject.attributes,
+            template: frontMatterObject.body
+        };
+        return templateObject;
     };
 
     templateService.RenderInsideLayout = function (contentObject, layoutObject) {

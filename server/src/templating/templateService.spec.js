@@ -1,4 +1,5 @@
 var TemplateService = require('./templateService');
+var testHelper = require("../common/testHelper");
 var _ = require("lodash");
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -41,73 +42,129 @@ var FakeTemplateRepo = function() {
     return templateRepo;
 };
 
-describe("TemplateService Layouts", function () {
-    var templateService = {};
-    var engineType = 'liquid';
+describe("TemplateService", function () {
+    describe("TemplateService Layouts", function () {
+        var templateService = {};
+        var engineType = 'liquid';
 
-    before(function() {
-        templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
-    });
+        before(function() {
+            templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
+        });
 
-    it("can render an object with content as the template and all other properties as the model", function () {
-        var objectWithTemplate = {
-            favoriteColor: 'blue',
-            favoriteNumber: 22,
-            content: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
-        };
-        return expect(templateService.RenderObject(objectWithTemplate)).to.eventually.equal('<h2>Favorite Color is blue, and Favorite Number is 22</h2>');
-    });
+        it("can render an object with content as the template and all other properties as the model", function () {
+            var objectWithTemplate = {
+                favoriteColor: 'blue',
+                favoriteNumber: 22,
+                content: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
+            };
+            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal('<h2>Favorite Color is blue, and Favorite Number is 22</h2>');
+        });
 
-    it("can render using a layout", function () {
+        it("can render using a layout", function () {
 //        master template looks like this = "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>";
-        var objectWithTemplate = {
-            favoriteColor: 'blue',
-            favoriteNumber: 22,
-            layout: 'master',
-            content: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
-        };
-        return expect(templateService.RenderObject(objectWithTemplate)).to.eventually.equal("<header>I'm the header</header><h2>Favorite Color is blue, and Favorite Number is 22</h2><footer>I'm the footer</footer>");
+            var objectWithTemplate = {
+                favoriteColor: 'blue',
+                favoriteNumber: 22,
+                layout: 'master',
+                content: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
+            };
+            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal("<header>I'm the header</header><h2>Favorite Color is blue, and Favorite Number is 22</h2><footer>I'm the footer</footer>");
+        });
+
+        it("can use both content and layout template model properties in a layout template", function () {
+            var objectWithTemplate = {
+                favoriteColor: 'blue',
+                layout: 'masterWithModel',
+                content: '<h2>Some Content</h2>'
+            };
+            var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content</h2><footer>I'm the footer</footer>";
+            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+        });
+
+        it("can use both layout and content template model properties in a content template", function () {
+            var objectWithTemplate = {
+                favoriteColor: 'blue',
+                layout: 'masterWithModel',
+                content: '<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>'
+            };
+            var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content. Master Title-11-blue</h2><footer>I'm the footer</footer>";
+            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+        });
+
+        it("override layout model properties with content model properties with the same name", function () {
+            var objectWithTemplate = {
+                title: 'Content Title',
+                favoriteNumber: '7',
+                favoriteColor: 'yellow',
+                layout: 'masterWithModel',
+                content: '<h2>Some Content</h2>'
+            };
+            var expectedResult = "<header>I'm the header. Content Title-7-yellow</header><h2>Some Content</h2><footer>I'm the footer</footer>";
+            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+        });
     });
 
-    it("can use both content and layout template model properties in a layout template", function () {
-        var objectWithTemplate = {
-            favoriteColor: 'blue',
-            layout: 'masterWithModel',
-            content: '<h2>Some Content</h2>'
-        };
-        var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content</h2><footer>I'm the footer</footer>";
-        return expect(templateService.RenderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+    describe("Front Matter", function () {
+        var templateService = {};
+        var engineType = 'liquid';
+
+        before(function () {
+            templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
+
+            // Insert some docs to be present before all tests start
+            return testHelper.setupTestProducts();
+        });
+
+        after(function () {
+            // Remove everything we created
+            return testHelper.deleteAllTestProducts();
+        });
+
+        // Need to convert front matter into properties and create a template object containing those properties as well as a
+        //  content property with the template in it.
+        it("can convert 'pure content' template strings with simple front matter into template objects", function () {
+            var expectedBody = "Template body is here";
+            var templateString =
+                "---\n" +
+                "color: 'blue'\n" +
+                "meat: 'beef'\n" +
+                "---\n" +
+                expectedBody;
+
+            var expectedModel = { color: 'blue', meat: 'beef' };
+            var templateObject = templateService.convertStringToTemplateObject(templateString);
+            expect(templateObject.model).to.eql(expectedModel);
+            expect(templateObject.template).to.eql(expectedBody);
+            return;
+        }); // front matter
+
+        // Need to convert front matter queries into datasets in template object
+        it("can convert 'pure content' template strings with front matter queries into template objects", function () {
+            var expectedBody = "Template body is here";
+            var templateString =
+                "---\n" +
+                "title: 'Products Over $10.00'\n" +
+                "products: 'contentType=products&price=gt=10.00&sort(price)'\n" +
+                "---\n" +
+                expectedBody;
+
+            var expectedModel = {
+                products: [
+                    testHelper.newProduct3,
+                    testHelper.newProduct2
+                ],
+                meat: 'beef'
+            };
+            var templateObject = templateService.convertStringToTemplateObject(templateString);
+            // todo: get this working - need to test for presence of rql in string and execute the query if present, placing the results in the model
+            //  how about we just look for contentType= at the beginning of the string?
+            expect(templateObject.model).to.eql(expectedModel);
+            expect(templateObject.template).to.eql(expectedBody);
+            return;
+        }); // front matter
+
+        // same as above but queries not defined in front matter, but in the content object itself
+        it("can declare model queries in templates");
     });
-
-    it("can use both layout and content template model properties in a content template", function () {
-        var objectWithTemplate = {
-            favoriteColor: 'blue',
-            layout: 'masterWithModel',
-            content: '<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>'
-        };
-        var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content. Master Title-11-blue</h2><footer>I'm the footer</footer>";
-        return expect(templateService.RenderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
-    });
-
-    it("override layout model properties with content model properties with the same name", function () {
-        var objectWithTemplate = {
-            title: 'Content Title',
-            favoriteNumber: '7',
-            favoriteColor: 'yellow',
-            layout: 'masterWithModel',
-            content: '<h2>Some Content</h2>'
-        };
-        var expectedResult = "<header>I'm the header. Content Title-7-yellow</header><h2>Some Content</h2><footer>I'm the footer</footer>";
-        return expect(templateService.RenderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
-    });
-
-    // Need to convert front matter into properties and create a template object containing those properties as well as a
-    //  content property with the template in it.
-    it("can convert 'pure content' template strings with simple front matter into template objects"); // front matter
-
-    // Need to convert front matter queries into datasets in template object
-    it("can convert 'pure content' template strings with front matter queries into template objects"); // front matter
-
-    // same as above but queries not defined in front matter, but in the content object itself
-    it("can declare model queries in templates");
 });
+
