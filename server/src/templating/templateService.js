@@ -71,19 +71,20 @@ var TemplateService = function(args) {
     };
 
     templateService.convertStringToTemplateObject = function(stringToConvert) {
-        var deferred = Promise.pending();
+//        var deferred = Promise.pending();
         var frontMatterObject = frontMatter(stringToConvert);
         var templateObject = {
             model: frontMatterObject.attributes,
             template: frontMatterObject.body
         };
 
-        var templateObject = convertRQLQueriesToResultSets(templateObject);
-        deferred.resolve(templateObject);
-        return deferred.promise;
+        return templateObject;
+//        var templateObject = this.convertTemplateObjectQueriesToResultSets(templateObject);
+//        deferred.resolve(templateObject);
+//        return deferred.promise;
     };
 
-    function convertRQLQueriesToResultSets(templateObject) {
+    templateService.convertTemplateObjectQueriesToResultSets = function (templateObject) {
         var deferred = Promise.pending();
         var hasRQL = false;
 

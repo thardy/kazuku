@@ -111,14 +111,9 @@ describe("TemplateService", function () {
 
         before(function () {
             templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
-
-            // Insert some docs to be present before all tests start
-            return testHelper.setupTestProducts();
         });
 
         after(function () {
-            // Remove everything we created
-            return testHelper.deleteAllTestProducts();
         });
 
         it("can convert template strings without front matter into template objects", function () {
@@ -126,12 +121,9 @@ describe("TemplateService", function () {
             var templateString = expectedBody;
 
             var expectedModel = {};
-            var convertPromise = templateService.convertStringToTemplateObject(templateString);
-
-            return Promise.all([
-                convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
-                convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)
-            ]);
+            var templateObject = templateService.convertStringToTemplateObject(templateString);
+            templateObject.model.should.deep.equal(expectedModel);
+            templateObject.template.should.deep.equal(expectedBody);
         });
 
         // Need to convert front matter into properties and create a template object containing those properties as well as a
@@ -146,25 +138,60 @@ describe("TemplateService", function () {
                 expectedBody;
 
             var expectedModel = { color: 'blue', meat: 'beef' };
-            var convertPromise = templateService.convertStringToTemplateObject(templateString);
+            var templateObject = templateService.convertStringToTemplateObject(templateString);
+            templateObject.model.should.deep.equal(expectedModel);
+            templateObject.template.should.deep.equal(expectedBody);
+        });
+    });
 
-            return Promise.all([
-                convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
-                convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)
-            ]);
+    describe("RQL Queries in Templates", function () {
+        var templateService = {};
+        var engineType = 'liquid';
+
+        before(function () {
+            templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
+
+            // Insert some docs to be present before all tests start
+            return testHelper.setupTestProducts();
         });
 
-        // Need to convert front matter queries into datasets in template object
-        it("can convert 'pure content' template strings with front matter queries into template objects", function () {
+        after(function () {
+            // Remove everything we created
+            return testHelper.deleteAllTestProducts();
+        });
+
+        it("can convert 'pure content' template strings with RQL queries in front matter into template objects", function () {
             var expectedBody = 'Template body is here';
             var expectedTitle = 'Products Over $10.00';
+            var productQuery = "contentType={0}&price=gt=10.1&sort(price)".format(testHelper.testProductsContentType);
             var templateString =
                 "---\n" +
-                "products: 'contentType={0}&price=gt=10.1&sort(price)'\n".format(testHelper.testProductsContentType) +
+                "products: {0}\n".format(productQuery) +
                 "title: {0}\n".format(expectedTitle) +
                 "---\n" +
                 expectedBody;
 
+            var expectedModel = {
+                products: productQuery,
+                title: expectedTitle
+            };
+            var templateObject = templateService.convertStringToTemplateObject(templateString);
+            templateObject.model.should.deep.equal(expectedModel);
+            templateObject.template.should.deep.equal(expectedBody);
+        });
+
+        // same as above but queries not defined in front matter, but in the content object itself
+        it("can have model property RQL queries in template objects converted to resultsets", function () {
+            var expectedBody = 'Template body is here';
+            var expectedTitle = 'Products Over $10.00';
+            var productQuery = "contentType={0}&price=gt=10.1&sort(price)".format(testHelper.testProductsContentType);
+            var templateObject = {
+                model: {
+                    products: productQuery,
+                    title: expectedTitle
+                },
+                template: expectedBody
+            };
             var expectedModel = {
                 products: [
                     testHelper.newProduct3,
@@ -172,17 +199,13 @@ describe("TemplateService", function () {
                 ],
                 title: expectedTitle
             };
-            var convertPromise = templateService.convertStringToTemplateObject(templateString);
-            // todo: get this working - need to test for presence of rql in string and execute the query if present, placing the results in the model
-            //  how about we just look for contentType= at the beginning of the string?
+
+            var convertPromise = templateService.convertTemplateObjectQueriesToResultSets(templateObject);
             return Promise.all([
                 convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
                 convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)
             ]);
         });
-
-        // same as above but queries not defined in front matter, but in the content object itself
-        it("can declare model queries in templates");
     });
 });
 
