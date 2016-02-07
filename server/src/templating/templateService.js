@@ -1,4 +1,7 @@
 var TemplateEngine = require("./templateEngine");
+var CustomDataService = require("../customData/customDataService");
+var database = require("../database/database");
+var Promise = require("bluebird");
 var frontMatter = require('front-matter');
 var _ = require("lodash");
 
@@ -41,6 +44,9 @@ var TemplateService = function(args) {
     var templateService = {};
     var templateRepo = (args && args.templateRepo) ? args.templateRepo : new TemplateRepo();
     var templateEngine = new TemplateEngine({engineType: 'liquid', templateRepo: templateRepo});
+    var orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
+    var customDataService = {};
+    customDataService = new CustomDataService(database);
 
     templateService.renderObject = function(objectWithTemplate) {
         var template = objectWithTemplate.content;
@@ -65,13 +71,45 @@ var TemplateService = function(args) {
     };
 
     templateService.convertStringToTemplateObject = function(stringToConvert) {
+        var deferred = Promise.pending();
         var frontMatterObject = frontMatter(stringToConvert);
         var templateObject = {
             model: frontMatterObject.attributes,
             template: frontMatterObject.body
         };
-        return templateObject;
+
+        var templateObject = convertRQLQueriesToResultSets(templateObject);
+        deferred.resolve(templateObject);
+        return deferred.promise;
     };
+
+    function convertRQLQueriesToResultSets(templateObject) {
+        var deferred = Promise.pending();
+        var hasRQL = false;
+
+        for (var property in templateObject.model) {
+            if (_.isString(templateObject.model[property]) && _.startsWith(templateObject.model[property], 'contentType=')) {
+                hasRQL = true;
+                // have to wrap property in a closure, otherwise property is different by the time the "then" gets called
+                (function (property) {
+                    customDataService.find(orgId, templateObject.model[property])
+                        .then(function (result) {
+                            templateObject.model[property] = result;
+                            return deferred.resolve(templateObject);
+                        })
+                        .then(null, function(error) { // todo: replace with catch once I fix the promises coming back from Monk.
+                            return deferred.reject(error);
+                        });
+                })(property);
+            }
+        }
+
+        if (!hasRQL) {
+            deferred.resolve(templateObject);
+        }
+
+        return deferred.promise;
+    }
 
     templateService.RenderInsideLayout = function (contentObject, layoutObject) {
         var contentTemplate = contentObject.content;
@@ -99,6 +137,7 @@ var TemplateService = function(args) {
 
         return renderPromise;
     };
+
 
     return templateService;
 };

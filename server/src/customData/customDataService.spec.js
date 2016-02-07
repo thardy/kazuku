@@ -44,7 +44,7 @@ describe("CustomDataService", function () {
                     existingCustomData2.id = existingCustomData2._id.toHexString();
                     return doc;
                 })
-                .then(null, function(error) {
+                .then(null, function(error) { // todo: replace with catch once I fix the promises coming back from Monk.
                     console.log(error);
                     throw error;
                 });

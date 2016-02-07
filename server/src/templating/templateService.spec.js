@@ -1,4 +1,5 @@
 var TemplateService = require('./templateService');
+var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
 var _ = require("lodash");
 var chai = require("chai");
@@ -120,6 +121,19 @@ describe("TemplateService", function () {
             return testHelper.deleteAllTestProducts();
         });
 
+        it("can convert template strings without front matter into template objects", function () {
+            var expectedBody = "Template body is here";
+            var templateString = expectedBody;
+
+            var expectedModel = {};
+            var convertPromise = templateService.convertStringToTemplateObject(templateString);
+
+            return Promise.all([
+                convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
+                convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)
+            ]);
+        });
+
         // Need to convert front matter into properties and create a template object containing those properties as well as a
         //  content property with the template in it.
         it("can convert 'pure content' template strings with simple front matter into template objects", function () {
@@ -132,19 +146,22 @@ describe("TemplateService", function () {
                 expectedBody;
 
             var expectedModel = { color: 'blue', meat: 'beef' };
-            var templateObject = templateService.convertStringToTemplateObject(templateString);
-            expect(templateObject.model).to.eql(expectedModel);
-            expect(templateObject.template).to.eql(expectedBody);
-            return;
-        }); // front matter
+            var convertPromise = templateService.convertStringToTemplateObject(templateString);
+
+            return Promise.all([
+                convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
+                convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)
+            ]);
+        });
 
         // Need to convert front matter queries into datasets in template object
         it("can convert 'pure content' template strings with front matter queries into template objects", function () {
-            var expectedBody = "Template body is here";
+            var expectedBody = 'Template body is here';
+            var expectedTitle = 'Products Over $10.00';
             var templateString =
                 "---\n" +
-                "title: 'Products Over $10.00'\n" +
-                "products: 'contentType=products&price=gt=10.00&sort(price)'\n" +
+                "products: 'contentType={0}&price=gt=10.1&sort(price)'\n".format(testHelper.testProductsContentType) +
+                "title: {0}\n".format(expectedTitle) +
                 "---\n" +
                 expectedBody;
 
@@ -153,15 +170,16 @@ describe("TemplateService", function () {
                     testHelper.newProduct3,
                     testHelper.newProduct2
                 ],
-                meat: 'beef'
+                title: expectedTitle
             };
-            var templateObject = templateService.convertStringToTemplateObject(templateString);
+            var convertPromise = templateService.convertStringToTemplateObject(templateString);
             // todo: get this working - need to test for presence of rql in string and execute the query if present, placing the results in the model
             //  how about we just look for contentType= at the beginning of the string?
-            expect(templateObject.model).to.eql(expectedModel);
-            expect(templateObject.template).to.eql(expectedBody);
-            return;
-        }); // front matter
+            return Promise.all([
+                convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
+                convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)
+            ]);
+        });
 
         // same as above but queries not defined in front matter, but in the content object itself
         it("can declare model queries in templates");

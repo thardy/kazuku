@@ -205,8 +205,21 @@ describe("ApiTests", function () {
                             product.name.should.equal(testHelper.newProduct1.name);
                         });
                 });
+                it("can query custom number fields greater than value with a sort", function () {
+                    var query = 'price=gt={0}&sort(price)'.format(10.00);
+                    return request(testHelper.apiUrl)
+                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+                        .expect(200)
+                        .then(function (result) {
+                            result.body.length.should.equal(2);
+                            var product1 = result.body[0];
+                            var product2 = result.body[1];
+                            product1.name.should.equal(testHelper.newProduct3.name);
+                            product2.name.should.equal(testHelper.newProduct2.name);
+                        });
+                });
                 it("can query custom number fields in range", function () {
-                    var query = 'price=ge={0}&price=le={1}'.format(5.50, 20.00);
+                    var query = 'price=ge={0}&price=le={1}&sort(price)'.format(5.50, 20.00);
                     return request(testHelper.apiUrl)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
