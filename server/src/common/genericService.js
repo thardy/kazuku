@@ -1,43 +1,53 @@
+'use strict';
 var _ = require("lodash");
 var Promise = require("bluebird");
 var conversionService = require("./conversionService");
 
-var GenericService = function(db, collectionName) {
-    var self = this;
+var collectionSymbol = Symbol();
+var dbSymbol = Symbol();
 
-    // Public properties
-    self.collection = db[collectionName];
+class GenericService {
+    get collection() {
+        return this[collectionSymbol];
+    }
+    get db() {
+        return this[dbSymbol];
+    }
 
-    // Public functions
-    self.getAll = function(orgId) {
+    constructor(database, collectionName) {
+        this[dbSymbol] = database;
+        this[collectionSymbol] = database[collectionName];
+    }
+
+    getAll(orgId) {
         if (arguments.length !== 1) {
             throw new Error('Incorrect number of arguments passed to GenericService.getAll');
         }
 
-        return self.collection.find({orgId: orgId})
-            .then(function(docs) {
+        return this[collectionSymbol].find({orgId: orgId})
+            .then((docs) => {
                 var transformedDocs = [];
-                _.forEach(docs, function(doc) {
-                    self.useFriendlyId(doc);
+                _.forEach(docs, (doc) => {
+                    this.useFriendlyId(doc);
                     transformedDocs.push(doc);
                 });
 
                 return transformedDocs;
             });
-    };
+    }
 
-    self.getById = function(orgId, id) {
+    getById(orgId, id) {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.getById');
         }
-        return self.collection.findOne({_id: id, orgId: orgId})
-            .then(function(doc) {
-                self.useFriendlyId(doc);
+        return this[collectionSymbol].findOne({_id: id, orgId: orgId})
+            .then((doc) => {
+                this.useFriendlyId(doc);
                 return doc;
             });
-    };
+    }
 
-    self.create = function(orgId, doc) {
+    create(orgId, doc) {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.create');
         }
@@ -49,29 +59,27 @@ var GenericService = function(db, collectionName) {
 
         conversionService.convertISOStringDateTimesToMongoDates(doc);
 
-        return self.collection.insert(doc)
-            .then(function(doc) {
-                self.useFriendlyId(doc);
+        return this[collectionSymbol].insert(doc)
+            .then((doc) => {
+                this.useFriendlyId(doc);
                 return doc;
-
             });
-    };
+    }
 
-    self.updateById = function(orgId, id, updatedDoc) {
+    updateById(orgId, id, updatedDoc) {
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to GenericService.updateById');
         }
         var clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
-        // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
         var queryObject = { _id: id, orgId: orgId };
-        return self.collection.update(queryObject, {$set: clone});
-    };
+        // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+        return this[collectionSymbol].update(queryObject, {$set: clone});
+    }
 
-    self.update = function(orgId, queryObject, updatedDoc) {
+    update(orgId, queryObject, updatedDoc) {
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to GenericService.update');
         }
@@ -81,24 +89,17 @@ var GenericService = function(db, collectionName) {
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
         queryObject.orgId = orgId;
-        return self.collection.update(queryObject, {$set: clone});
-    };
+        return this[collectionSymbol].update(queryObject, {$set: clone});
+    }
 
-    self.delete = function(orgId, id) {
+    delete(orgId, id) {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.delete');
         }
-        return self.collection.remove({ _id: id, orgId: orgId });
-    };
+        return this[collectionSymbol].remove({ _id: id, orgId: orgId });
+    }
 
-    self.useFriendlyId = function(doc) {
-        if (doc && doc._id) {
-            doc.id = doc._id.toHexString();
-        }
-    };
-
-    // Virtual functions
-    GenericService.prototype.validate = function(doc) {
+    validate(doc) {
         if (doc.orgId) {
             // simply do nothing if valid
             return;
@@ -106,14 +107,13 @@ var GenericService = function(db, collectionName) {
         else {
             return "Need orgId";
         }
-    };
+    }
 
-    // Private functions
-//    var useFriendlyId = function(doc) {
-//        if (doc && doc._id) {
-//            doc.id = doc._id.toHexString();
-//        }
-//    };
-};
+    useFriendlyId(doc) {
+        if (doc && doc._id) {
+            doc.id = doc._id.toHexString();
+        }
+    }
+}
 
 module.exports = GenericService;
