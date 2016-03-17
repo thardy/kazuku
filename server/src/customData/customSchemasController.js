@@ -1,87 +1,80 @@
+'use strict';
 var database = require("../database/database");
-var crudController = require("../common/crudController");
+var CrudController = require("../common/crudController");
 var CustomSchemaService = require("./customSchemaService");
 
-exports.init = function (app) {
-    var customSchemaService = new CustomSchemaService(database);
+class CustomSchemasController extends CrudController {
+    constructor(app) {
+        super('customSchemas', app, new CustomSchemaService(database));
 
-    crudController.init('customSchemas', app, customSchemaService);
-
-    // todo: change to use auth mechanism
-    // todo: test that this gets written on every request
-    var orgId = 1;
-
-    // unlike the util.inherits, here we are just assigning routes to the RESTful verbs
-
-    // Clear out the id routes.  See http://stackoverflow.com/questions/10378690/remove-route-mappings-in-nodejs-express
-    // Delete the get, update, and delete routes in crudController that use id
-    var routes = app._router.stack;
-    routes.forEach(removeIdRoutes);
-    // Have to NAME the route functions for this to work - app.get('/blah', function someRoute(req, res, next){});
-    function removeIdRoutes(route, i, routes) {
-        switch (route.handle.name) {
-            case 'getById':
-            case 'updateById':
-            case 'deleteById':
-                routes.splice(i, 1);
-        }
-        if (route.route)
-            route.route.stack.forEach(removeIdRoutes);
+        this.mapRoutes();
     }
 
-    // Add our new get, put, and delete routes that use contentType instead of id
-    app.get("/api/customschemas/:contentType", function (req, res, next) {
-        var contentType = req.params.contentType;
+    mapRoutes() {
+        // Map routes
+        // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
+        this.app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
+        this.app.get(`/api/${this.resourceName}/:contentType`, this.getByContentType.bind(this));
+        this.app.post(`/api/${this.resourceName}`, this.create.bind(this));
+        this.app.put(`/api/${this.resourceName}/:contentType`, this.updateByContentType.bind(this));
+        this.app.delete(`/api/${this.resourceName}/:contentType`, this.deleteByContentType.bind(this));
+    }
+
+    getByContentType(req, res, next) {
+        let contentType = req.params.contentType;
         res.set("Content-Type", "application/json");
 
-        customSchemaService.getByContentType(orgId, contentType)
-            .then(function (doc) {
+        this.service.getByContentType(this.orgId, contentType)
+            .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
-            .then(null, function (err) {
-                err.message = 'ERROR: customSchemasController -> customSchemaService.getByContentType({0}, {1}) - {2}'.format(orgId, contentType, err.message);
-                return next(err);
+            .then(null, (err) => {
+                err.message = 'ERROR: customSchemasController -> customSchemaService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
+                    return next(err);
             });
-    });
+    }
 
-    app.put('/api/customschemas/:contentType', function (req, res, next) {
-        var contentType = req.params.contentType;
-        var body = req.body;
+    updateByContentType(req, res, next) {
+        let contentType = req.params.contentType;
+        let body = req.body;
 
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        customSchemaService.updateByContentType(orgId, contentType, body)
-            .then(function (numAffected) {
+        this.service.updateByContentType(this.orgId, contentType, body)
+            .then((numAffected) => {
                 if (numAffected <= 0) {
                     return res.status(404).json({'Errors': ['Document not found']});
                 }
 
                 return res.status(200).json({});
             })
-            .then(null, function (err) {
-                err.message = 'ERROR: customSchemasController -> customSchemaService.updateByContentType({0}, {1}, {2}) - {3}'.format(orgId, contentType, body, err.message);
+            .then(null, (err) => {
+                err.message = 'ERROR: customSchemasController -> customSchemaService.updateByContentType({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, body, err.message);
                 return next(err);
             });
-    });
+    }
 
-    app.delete('/api/customschemas/:contentType', function (req, res, next) {
-        var contentType = req.params.contentType;
+    deleteByContentType(req, res, next) {
+        let contentType = req.params.contentType;
+
         // todo: Add some serious checking here.  Can't delete a schema unless all data for that schema is deleted first.
-        customSchemaService.deleteByContentType(orgId, contentType)
-            .then(function (numAffected) {
+        this.service.deleteByContentType(this.orgId, contentType)
+            .then((numAffected) => {
                 if (numAffected <= 0) return next();
 
-                return res.status(204).json({});
+                    return res.status(204).json({});
             })
-            .then(null, function (err) {
-                err.message = 'ERROR: customSchemasController -> customSchemaService.deleteByContentType({0}, {1}) - {2}'.format(orgId, contentType, err.message);
+            .then(null, (err) => {
+                err.message = 'ERROR: customSchemasController -> customSchemaService.deleteByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
                 return next(err);
             });
-    });
+    }
+}
 
-};
+module.exports = CustomSchemasController;
+
 
 

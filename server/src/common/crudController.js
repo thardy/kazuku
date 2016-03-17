@@ -1,47 +1,69 @@
+'use strict';
 var Promise = require("bluebird");
 
-exports.init = function(resourceName, app, service) {
-    // todo: change to use auth mechanism
-    // todo: test that this gets written on every request
-    var orgId = 1;
+class CrudController {
 
-    app.get('/api/' + resourceName, function getAll(req, res, next) {
+    constructor(resourceName, app, service) {
+        // todo: change to use auth mechanism
+        // todo: test that this gets written on every request and not reused between them
+        this._app = app;
+        this._orgId = 1;
+        this._service = service;
+        this._resourceName = resourceName;
+    }
+
+    get app() { return this._app; }
+    get orgId() { return this._orgId; }
+    get service() { return this._service; }
+    get resourceName() { return this._resourceName; }
+
+    mapRoutes() {
+        // Map routes
+        // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
+        this.app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
+        this.app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
+        this.app.post(`/api/${this.resourceName}`, this.create.bind(this));
+        this.app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
+        this.app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
+    }
+
+    getAll(req, res, next) {
         res.set("Content-Type", "application/json");
 
-        service.getAll(orgId)
-            .then(function (docs) {
+        this.service.getAll(this.orgId)
+            .then((docs) => {
                 return res.status(200).json(docs);
             })
-            .then(null, function (err) {
-                err.message = 'ERROR: {0}Controller -> getAll({1}) - {2}'.format(resourceName, orgId, err.message);
+            .then(null, (err) => {
+                err.message = 'ERROR: {0}Controller -> getAll({1}) - {2}'.format(this.resourceName, this.orgId, err.message);
                 return next(err);
             });
-    });
+    }
 
-    app.get('/api/' + resourceName  + '/:id', function getById(req, res, next) {
-        var id = req.params.id;
+    getById (req, res, next) {
+        let id = req.params.id;
         res.set("Content-Type", "application/json");
 
-        service.getById(orgId, id)
-            .then(function (doc) {
+        this.service.getById(this.orgId, id)
+            .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
-            .then(null, function (err) {
-                err.message = 'ERROR: {0}Controller -> getById({1}, {2}) - {3}'.format(resourceName, orgId, id, err.message);
+            .then(null, (err) => {
+                err.message = 'ERROR: {0}Controller -> getById({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
                 return next(err);
             });
-    });
+    }
 
-    app.post('/api/' + resourceName, function create(req, res, next) {
-        var body = req.body;
+    create(req, res, next) {
+        let body = req.body;
 
-        service.create(orgId, body)
-            .then(function (doc) {
+        this.service.create(this.orgId, body)
+            .then((doc) => {
                 return res.status(201).json(doc);
             })
-            .then(null, function(err) {
+            .then(null, (err) => {
                 if (err.constructor == TypeError) {
                     return res.status(400).json({'Errors': [err.message]});
                 }
@@ -50,45 +72,45 @@ exports.init = function(resourceName, app, service) {
                     return res.status(409).json({'Errors': ['Duplicate Key Error']});
                 }
 
-                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(resourceName, orgId, body, err.message);
+                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, this.orgId, body, err.message);
                 return next(err);
             });
-    });
+    }
 
-    app.put('/api/' + resourceName + '/:id', function updateById(req, res, next) {
-        var id = req.params.id;
-        var body = req.body;
+    updateById(req, res, next) {
+        let id = req.params.id;
+        let body = req.body;
 
-        service.updateById(orgId, id, body)
-            .then(function (numAffected) {
+        this.service.updateById(this.orgId, id, body)
+            .then((numAffected) => {
                 if (numAffected <= 0) return next();
 
                 return res.status(200).json({});
             })
-            .then(null, function (err) {
+            .then(null, (err) => {
                 if (err.code) {
 
                 }
 
-                err.message = 'ERROR: {0}Controller -> updateById({1}, {2}, {3}) - {4}'.format(resourceName, orgId, id, body, err.message);
+                err.message = 'ERROR: {0}Controller -> updateById({1}, {2}, {3}) - {4}'.format(this.resourceName, this.orgId, id, body, err.message);
                 return next(err);
             });
-    });
+    }
 
-    app.delete('/api/' + resourceName + '/:id', function deleteById(req, res, next) {
-        var id = req.params.id;
-        service.delete(orgId, id)
-            .then(function (numAffected) {
+    deleteById (req, res, next) {
+        let id = req.params.id;
+        this.service.delete(this.orgId, id)
+            .then((numAffected) => {
                 if (numAffected <= 0) return next();
 
                 return res.status(204).json({});
             })
-            .then(null, function (err) {
-                err.message = 'ERROR: {0}Controller -> delete({1}, {2}) - {3}'.format(resourceName, orgId, id, err.message);
+            .then(null, (err) => {
+                err.message = 'ERROR: {0}Controller -> delete({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
                 return next(err);
             });
-    });
-};
+    }
+}
 
-//module.exports = CrudController;
+module.exports = CrudController;
 

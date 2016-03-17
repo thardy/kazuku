@@ -3,28 +3,22 @@ var _ = require("lodash");
 var Promise = require("bluebird");
 var conversionService = require("./conversionService");
 
-var collectionSymbol = Symbol();
-var dbSymbol = Symbol();
-
 class GenericService {
-    get collection() {
-        return this[collectionSymbol];
-    }
-    get db() {
-        return this[dbSymbol];
-    }
 
     constructor(database, collectionName) {
-        this[dbSymbol] = database;
-        this[collectionSymbol] = database[collectionName];
+        this._db = database;
+        this._collection = database[collectionName];
     }
+
+    get collection() { return this._collection; }
+    get db() { return this._db; }
 
     getAll(orgId) {
         if (arguments.length !== 1) {
             throw new Error('Incorrect number of arguments passed to GenericService.getAll');
         }
 
-        return this[collectionSymbol].find({orgId: orgId})
+        return this.collection.find({orgId: orgId})
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -40,7 +34,7 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.getById');
         }
-        return this[collectionSymbol].findOne({_id: id, orgId: orgId})
+        return this.collection.findOne({_id: id, orgId: orgId})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -59,7 +53,7 @@ class GenericService {
 
         conversionService.convertISOStringDateTimesToMongoDates(doc);
 
-        return this[collectionSymbol].insert(doc)
+        return this.collection.insert(doc)
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -76,7 +70,7 @@ class GenericService {
 
         var queryObject = { _id: id, orgId: orgId };
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-        return this[collectionSymbol].update(queryObject, {$set: clone});
+        return this.collection.update(queryObject, {$set: clone});
     }
 
     update(orgId, queryObject, updatedDoc) {
@@ -89,14 +83,14 @@ class GenericService {
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
         queryObject.orgId = orgId;
-        return this[collectionSymbol].update(queryObject, {$set: clone});
+        return this.collection.update(queryObject, {$set: clone});
     }
 
     delete(orgId, id) {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.delete');
         }
-        return this[collectionSymbol].remove({ _id: id, orgId: orgId });
+        return this.collection.remove({ _id: id, orgId: orgId });
     }
 
     validate(doc) {
