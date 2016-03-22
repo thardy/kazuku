@@ -6,7 +6,7 @@ var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 var testHelper = require("../common/testHelper");
-var utils = require('../utils');
+var utils = require('../utils/index');
 
 // todo: consider moving this into a more global spot before running all api-related tests.  See http://beletsky.net/2014/03/testable-apis-with-node-dot-js.html
 var app = require('../../bin/www'); // This starts up the api server (I'm assuming it shuts down when mocha is done)

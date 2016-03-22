@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var database = require("../database/database");
 var CrudController = require("../common/crudController");
 var CustomSchemaService = require("./customSchemaService");
