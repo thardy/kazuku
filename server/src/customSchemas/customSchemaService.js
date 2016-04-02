@@ -4,8 +4,8 @@ var util = require("util");
 var GenericService = require("../common/genericService");
 
 class CustomSchemaService extends GenericService {
-    constructor(databaseName) {
-        super(databaseName, 'customSchemas');
+    constructor(database) {
+        super(database, 'customSchemas');
     }
 
     getByContentType(orgId, contentType) {

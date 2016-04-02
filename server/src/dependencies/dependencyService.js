@@ -6,26 +6,59 @@ const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout
 
 class DependencyService {
 
-    constructor(database) {
-        this._db = database;
-
+    constructor(customDataService, templateService, queryService) {
+        this._customDataService = customDataService;
+        this._templateService = templateService;
+        this._queryService = queryService;
     }
 
-    get db() { return this._db; }
+    get customDataService() { return this._customDataService; }
+    get templateService() { return this._templateService; }
+    get queryService() { return this._queryService; }
 
-    getDependenciesOf(item) {
-        // Determine if item is template or query
-        let itemType = this.getTypeOfItem(item);
+    getRegenerationListForItem(item) {
+        // Expect simple type objects - e.g. { type: "data", name: "products" }
+        let regenerationList = this.getAllDependentsOfItem(item);
+
+        return regenerationList;
+    }
+
+    getAllDependentsOfItem(item) {
+        // Look for any queries or templates that are dependent on this item (dependencies array contains item)
+        let queryDependents = this.queryService.getAllDependentsOfItem(item);
+        let templateDependents = this.templateService.getAllDependentsOfItem(item);
+        let allDependents = _.union(queryDependents, templateDependents);
+        let allSubDependents = [];
+
+        // Recursively do the above for every item in the list
+        if (allDependents) {
+            for (let dependent of allDependents) {
+                let subDependents = this.getAllDependentsOfItem(dependent);
+                if (subDependents) {
+                    allSubDependents = _.union(allSubDependents, subDependents);
+                }
+            }
+
+            allDependents = _.union(allDependents, allSubDependents);
+        }
+
+        return allDependents;
+    }
+
+    getDependenciesOfItem(itemObject) {
+        // Expect templateObject or queryObject
+        // Determine if itemObject is template or query
+        let itemType = this.getTypeOfItem(itemObject);
         let dependencies = [];
 
         switch (itemType) {
             case "page":
             case "template":
-                dependencies = this.getDependenciesOfTemplate(item);
+                dependencies = this.getDependenciesOfTemplate(itemObject);
                 break;
             case "query":
                 // just check the query string itself, not the whole queryObject
-                dependencies = this.getDependenciesOfQuery(item.query);
+                dependencies = this.getDependenciesOfQuery(itemObject.query);
                 break;
         }
 
