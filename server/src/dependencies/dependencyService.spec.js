@@ -1,5 +1,6 @@
 "use strict";
 var DependencyService = require("./dependencyService");
+var dependencyTestHelper = require("./dependencyTestHelper");
 var Promise = require("bluebird");
 var database = require("../database/database");
 var CustomDataService = require("../customData/customDataService");

@@ -1,4 +1,8 @@
 "use strict";
+var CustomDataService = require("../customData/customDataService");
+var TemplateService = require("../templates/templateService");
+var QueryService = require("../queries/queryService");
+var sinon = require("sinon");
 
 var dependencyTestHelper = {
     initDependencyChain: initDependencyChain,
@@ -30,16 +34,16 @@ function initDependencyChain() {
         return sinon.createStubInstance(QueryService);
     });
     dependencyTestHelper.fakeQueryService = new QueryServiceStub();
-    fakeQueryService.getAllDependentsOfItem.withArgs(itemNavItemsData).returns(fakeNavItemsDataDependents);
+    dependencyTestHelper.fakeQueryService.getAllDependentsOfItem.withArgs(itemNavItemsData).returns(fakeNavItemsDataDependents);
 
     let TemplateServiceStub = sinon.spy(function() {
         return sinon.createStubInstance(TemplateService);
     });
     dependencyTestHelper.fakeTemplateService = new TemplateServiceStub();
-    fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderNavigationQuery).returns(fakeHeaderNavigationQueryDependents);
-    fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderTemplate).returns(fakeHeaderTemplateDependents);
-    fakeTemplateService.getAllDependentsOfItem.withArgs(itemMasterTemplate).returns(fakeMasterTemplateDependents);
-    fakeTemplateService.getAllDependentsOfItem.withArgs(itemChristmasMasterTemplate).returns(fakeChristmasMasterTemplateDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderNavigationQuery).returns(fakeHeaderNavigationQueryDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderTemplate).returns(fakeHeaderTemplateDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemMasterTemplate).returns(fakeMasterTemplateDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemChristmasMasterTemplate).returns(fakeChristmasMasterTemplateDependents);
 }
 
 module.exports = dependencyTestHelper;
