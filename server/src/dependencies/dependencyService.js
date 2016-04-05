@@ -105,7 +105,8 @@ class DependencyService {
             item = { type: "query", name: queryName };
         }
         else if (query.startsWith("eq(")) {
-            // currently, this is only smart enough to understand one contentType dependency from a query
+            // currently, this is only smart enough to understand one contentType dependency from a query,
+            //  and the query must start with "eq(contentType, "
             // get the contentType
             let matchArray = query.match(/eq\(contentType, ([a-zA-Z0-9-_]*)\)/);
             let contentType = matchArray[1];

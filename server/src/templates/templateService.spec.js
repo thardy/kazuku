@@ -1,4 +1,7 @@
+"use strict";
+
 var TemplateService = require('./templateService');
+var database = require("../database/database");
 var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
 var _ = require("lodash");
@@ -49,7 +52,7 @@ describe("TemplateService", function () {
         var engineType = 'liquid';
 
         before(function() {
-            templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
+            templateService = new TemplateService(database, new FakeTemplateRepo());
         });
 
         it("can render an object with content as the template and all other properties as the model", function () {
@@ -110,7 +113,7 @@ describe("TemplateService", function () {
         var engineType = 'liquid';
 
         before(function () {
-            templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
+            templateService = new TemplateService(database, new FakeTemplateRepo());
         });
 
         after(function () {
@@ -149,7 +152,7 @@ describe("TemplateService", function () {
         var engineType = 'liquid';
 
         before(function () {
-            templateService = new TemplateService({templateRepo: new FakeTemplateRepo()});
+            templateService = new TemplateService(database, new FakeTemplateRepo());
 
             // Insert some docs to be present before all tests start
             return testHelper.setupTestProducts();

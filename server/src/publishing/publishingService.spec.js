@@ -11,14 +11,24 @@ chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
 describe("PublishingService", function () {
+    
+    describe("regenerateItems", function () {
+        it("regenerates items on a schedule");
 
-    it("can save pages to the file system");
+        it("regenerates all items that need to be regenerated", function () {
+           
+        });
 
+        it("regenerates templates");
+
+        it("regenerates queries");
+
+        it("saves pages to the file system when they are regenerated");
+    });
+    
     it("should delete pages when they need to be deleted");
 
     it("can publish an entire site on demand");
-
-    it("regenerates items that need to be regenerated");
 
     it("creates page-per-item pages");
 

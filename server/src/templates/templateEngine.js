@@ -8,6 +8,8 @@ var _ = require("lodash");
 // Constructor
 var TemplateEngine = function(args) {
     assert.ok(args.engineType, 'engineType is required');
+    if (!args.templateRepo)
+        return;
     assert.ok(args.templateRepo, 'templateRepo is required');
     var templateEngine = {};
     templateEngine.engineType = args.engineType;

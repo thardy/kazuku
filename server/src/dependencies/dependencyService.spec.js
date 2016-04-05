@@ -95,10 +95,53 @@ describe("DependencyService", function () {
         it("should get list of all items that need to be regenerated when a template changes", function () {
             // this needs to recursively get everything dependent on the item that changed
             // pass simple item object -> {type: 'data', name: 'products'}
-            should.Throw();
+            dependencyTestHelper.initDependencyChain();
+
+            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
+                                                      dependencyTestHelper.fakeTemplateService,
+                                                      dependencyTestHelper.fakeQueryService);
+
+            let changedItem = { type: "template", name: "header" };
+            let expectedRegenerationList = [
+                { type: "template", name: "master" },
+                { type: "template", name: "christmasMaster" },
+                { type: "template", name: "home" },
+                { type: "template", name: "about" },
+                { type: "template", name: "christmasHome" },
+                { type: "template", name: "christmasAbout" }
+            ];
+
+            // An item changes - recursively get everything dependent on the item that changed
+            let regenerationList = dependencyService.getRegenerationListForItem(changedItem);
+
+            regenerationList.should.have.length(expectedRegenerationList.length);
+            regenerationList.should.deep.equal(expectedRegenerationList);
         });
 
-        it("should get list of all items that need to be regenerated when a query changes");
+        it("should get list of all items that need to be regenerated when a query changes", function () {
+            dependencyTestHelper.initDependencyChain();
+
+            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
+                dependencyTestHelper.fakeTemplateService,
+                dependencyTestHelper.fakeQueryService);
+
+            let changedItem = { type: "query", name: "headerNavigation" };
+            let expectedRegenerationList = [
+                { type: "template", name: "header" },
+                { type: "template", name: "master" },
+                { type: "template", name: "christmasMaster" },
+                { type: "template", name: "home" },
+                { type: "template", name: "about" },
+                { type: "template", name: "christmasHome" },
+                { type: "template", name: "christmasAbout" }
+            ];
+
+            // An item changes - recursively get everything dependent on the item that changed
+            let regenerationList = dependencyService.getRegenerationListForItem(changedItem);
+
+            regenerationList.should.have.length(expectedRegenerationList.length);
+            regenerationList.should.deep.equal(expectedRegenerationList);
+        });
 
         it("should get list of all items that need to be regenerated when data is added/updated/deleted", function () {
             dependencyTestHelper.initDependencyChain();
@@ -128,9 +171,10 @@ describe("DependencyService", function () {
     });
 
     describe("FlagItemsForRegeneration", function () {
+        // This one is an integration test, persisting the regeneration flag to mongo
         it("should flag all items in list for regeneration", function () {
             // this should set the regenerate flag to true on all the items in the list.
-            // the ApiTest for this will be more compelling, making sure every document in the list gets the flag set in Mongo
+
         });
     });
 
