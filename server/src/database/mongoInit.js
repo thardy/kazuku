@@ -2,6 +2,7 @@
 // todo: actually configure mongo using this file (this stuff is completely untested)
 
 //// ***** Pages ****************************************
+// NOTE:  I don't think we're going to use a Pages collection - pages will be represented by Templates with a url property
 //db.createCollection('pages', {});
 //db.pages.createIndex( { "orgId": 1, "siteId": 1, "url": 1 }, { unique: true } );
 //
@@ -52,21 +53,25 @@
 //
 
 
-
-
-
-
-
-
 //// ***** Templates ****************************************
 //db.createCollection('templates', {});
+//db.templates.createIndex( { "orgId": 1, "siteId": 1, "name": 1 }, { unique: true });
+
 //// sample document
-//var newTemplate = {name: '$Test Template1', siteId: 1, content: '#Test Page 1 - Existing',
-//                    created: new Date(), createdBy: 1, updated: null, updatedBy: null};
+//var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', template: '#Test Page 1 - Existing',
+//                      renderedTemplate: '', dependencies: [], regenerate: 0,
+//                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
 //
-//// ***** BlogPosts ****************************************
-//db.createCollection('blogposts', {});
+
+
+//// ***** Queries ****************************************
+//db.createCollection('queries', {});
+//db.customSchemas.createIndex( { "orgId": 1, "siteId": 1, "name": 1 }, { unique: true });
+
 //// sample document
-//var newBlogPost = {title: '$Test Blog Post1', siteId: 1, content: '#Test Blog1',
-//                    created: new Date(), createdBy: 1, updated: null, updatedBy: null};
+//var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', query: 'blah blah', results: [],
+//                      dependencies: [], regenerate: 0,
+//                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
+//
+//
