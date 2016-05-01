@@ -6,9 +6,10 @@ var db = monk(config.mongoDbUrl);
 var database = {
     db: db,
     close: close,
-    pages: db.get("pages"),
     customData: db.get("customData"),
-    customSchemas: db.get("customSchemas")
+    customSchemas: db.get("customSchemas"),
+    templates: db.get("templates"),
+    queries: db.get("queries")
 };
 
 function close() {

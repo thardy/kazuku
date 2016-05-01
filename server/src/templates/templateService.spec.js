@@ -8,6 +8,7 @@ var _ = require("lodash");
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
+var moment = require("moment");
 
 chai.use(chaiAsPromised);
 
@@ -132,31 +133,33 @@ describe("TemplateService", function () {
                 .then((doc) => {
                     return templateService.getById(testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            expect(retrievedDoc).to have property("site", testSiteId);
+                            expect(retrievedDoc).to.have.property("site", testSiteId);
                             return expect(retrievedDoc).to.have.property("name", testName);
                         });
                 });
-            });
+
         });
 
         it("validates templates on create using extended validation - name and template", function () {
             let invalidTemplate = { // just needs to be missing some required properties
-                orgId: testOrgId
-
+                orgId: testOrgId,
+                siteId: testSiteId,
+                name: "testTemplateName"
+                // template property is missing
             };
 
             let createPromise = templateService.create(testOrgId, invalidTemplate);
 
-            return createPromise.should.be.rejectedWith(TypeError, "Need blah and whatever cheese");
+            return createPromise.should.be.rejectedWith(TypeError, "Need name and template");
         });
 
         it("can update templates by id", function () {
             let updatedTemplate = "updatedTemplate";
             let theUpdatedTemplate = {
                 orgId: testOrgId,
-                name: testName,
-                siteId: createdSite,
-                template = updatedTemplate
+                name: "testName",
+                siteId: testSiteId,
+                template: updatedTemplate
             };
 
             var updateByIdPromise = templateService.updateById(testOrgId, existingTemplate1.id, theUpdatedTemplate);
@@ -182,7 +185,7 @@ describe("TemplateService", function () {
             var createPromise = templateService.create(testOrgId, newTemplate);
 
             return createPromise.then((doc) => {
-                return templateService.deleteById(testOrgId, doc.id).then(function(result) {
+                return templateService.delete(testOrgId, doc.id).then(function(result) {
                     return templateService.getById(testOrgId, doc.id).then(function(retrievedDoc) {
                         return expect(retrievedDoc).to.equal(null);
                     });

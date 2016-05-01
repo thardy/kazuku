@@ -36,7 +36,7 @@ describe("PublishingService", function () {
             // todo: store what the regenerated outputs should look like
 
             // Call regenerateItems
-            publishingService.regenerateItems(testOrgId, testSiteId);
+            //publishingService.regenerateItems(testOrgId, testSiteId);
 
             // Verify outputs
         });
