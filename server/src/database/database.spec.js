@@ -11,7 +11,7 @@ describe("database", function () {
 
     after(function () {
         // Remove all documents we added
-        return database.pages.remove({name: /^\$Test.*/, siteId: 2});
+        return database.templates.remove({name: /^\$Test.*/, siteId: 2});
     });
 
     it("can connect to mongo", function () {
@@ -19,18 +19,18 @@ describe("database", function () {
     });
 
     it("can retrieve collections", function () {
-        should.exist(database.pages);
+        should.exist(database.templates);
     });
 
     it("can add to collections", function () {
-        var testContent = '#Test Page';
-        var insertPromise = database.pages.insert({name: '$Test Page', siteId: 2, url: '#/test', content: testContent});
+        var testTemplate = '#Test Template';
+        var insertPromise = database.templates.insert({name: '$TestTemplate', siteId: 2, template: testTemplate});
 
-        return insertPromise.should.eventually.have.property("content", testContent);
+        return insertPromise.should.eventually.have.property("template", testTemplate);
     });
 
     it("can query using regex", function () {
-        var findPromise = database.pages.find({name: /^\$Test.*/, siteId: 2});
+        var findPromise = database.templates.find({name: /^\$Test.*/, siteId: 2});
 
         return Promise.all([
             findPromise.should.eventually.be.instanceOf(Array),

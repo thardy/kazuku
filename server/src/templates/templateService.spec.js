@@ -52,7 +52,7 @@ describe("TemplateService", function () {
         let templateService = {};
         let existingTemplate1 = {};
         let existingTemplate2= {};
-        let theUpdatedTemplate = {};
+        let existingRegenerateList = [];
         let testOrgId = 1;
         let testSiteId = 1;
 
@@ -115,6 +115,15 @@ describe("TemplateService", function () {
             let getById = templateService.getById(testOrgId, existingTemplate1.id);
 
             return getById.should.eventually.deep.equal(existingTemplate1);
+        });
+
+        it("can get all templates that need to be regenerated", function () {
+            createRegenerateList()
+                .then(function (result) {
+                    let regeneratePromise = templateService.getRegenerateList(testOrgId);
+
+                    return regeneratePromise.should.eventually.deep.equal(existingRegenerateList);
+                });
         });
 
         it("can create templates", function () {
@@ -195,6 +204,21 @@ describe("TemplateService", function () {
 
         function deleteAllTestTemplates() {
             return database.templates.remove({orgId: testOrgId});
+        }
+
+        function createRegenerateList() {
+            existingRegenerateList = [
+                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate1", template: "plz regenerate me", regenerate: 1 },
+                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate2", template: "needz regenerating", regenerate: 1 },
+                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate3", template: "regen ftw", regenerate: 1 },
+                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate4", template: "can haz regenerations?", regenerate: 1 },
+            ];
+
+            return database.templates.insert(existingRegenerateList)
+                .then(function (result) {
+                    // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
+                    return database.templates.insert({ orgId: testOrgId, siteId: testSiteId, name: "TemplateToNOTRegenerate1", template: "do not regenerate me", regenerate: 0 });
+                });
         }
     });
 

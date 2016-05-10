@@ -18,13 +18,14 @@ describe("PublishingService", function () {
 
     describe("regenerateItems", function () {
         before(function () {
-            // todo: Let's make these integration tests.
             // need TemplateService to get list of all templates that need to be regenerated
             // need QueryService to get list of all queries that need to be regenerated
-            // need CustomSchemaService to get list of all schemas setup for Page-per-item
-            // need CustomDataService, to get list of all data to create Page-per-item pages
+            // future: need CustomSchemaService to get list of all schemas setup for Page-per-item
+            // future: need CustomDataService, to get list of all data to create Page-per-item pages
             //  and to get data for templates with PagedOn property (create pages for resultset)
             // need some sort of FileService, to save and delete files
+
+            // todo: we're ready to write this test now
             publishingService = new PublishingService();
 
         });

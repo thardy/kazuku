@@ -7,6 +7,19 @@ class QueryService extends GenericService {
         super(database, 'queries');
     }
 
+    getRegenerateList(orgId) {
+        return this.collection.find({orgId: orgId, regenerate: 1})
+            .then((docs) => {
+                var transformedDocs = [];
+                _.forEach(docs, (doc) => {
+                    this.useFriendlyId(doc);
+                    transformedDocs.push(doc);
+                });
+
+                return transformedDocs;
+            });
+    }
+
     getAllDependentsOfItem(item) {
         return [];
     }

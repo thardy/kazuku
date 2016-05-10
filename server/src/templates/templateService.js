@@ -23,6 +23,19 @@ class TemplateService extends GenericService {
     get customDataService() { return this._customDataService; }
     get orgId() { return this._orgId; }
 
+    getRegenerateList(orgId) {
+        return this.collection.find({orgId: orgId, regenerate: 1})
+            .then((docs) => {
+                var transformedDocs = [];
+                _.forEach(docs, (doc) => {
+                    this.useFriendlyId(doc);
+                    transformedDocs.push(doc);
+                });
+
+                return transformedDocs;
+            });
+    }
+
     renderObject(objectWithTemplate) {
         var template = objectWithTemplate.content;
         var model = _.omit(objectWithTemplate, 'content');
