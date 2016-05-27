@@ -61,40 +61,7 @@ describe("TemplateService", function () {
             templateService = new TemplateService(database);
             // Insert some docs to be present before all tests start
             // All test data should belong to a specific orgId (a test org)
-            var newTemplate1 = {
-                orgId: testOrgId,
-                siteId: testSiteId,
-                name: "TestTemplate1",
-                template: "test template one"
-            };
-            var newTemplate2 = {
-                orgId: testOrgId,
-                siteId: testSiteId,
-                name: "TestTemplate2",
-                template: "test template two"
-            };
-
-            return templateTestHelper.deleteAllTestTemplates()
-                .then((result) => {
-                    return database.templates.insert(newTemplate1);
-                })
-                .then((doc) => {
-                    existingTemplate1 = doc;
-                    existingTemplate1.id = existingTemplate1._id.toHexString();
-                    return doc;
-                })
-                .then((result) => {
-                    return database.templates.insert(newTemplate2);
-                })
-                .then((doc) => {
-                    existingTemplate2 = doc;
-                    existingTemplate2.id = existingTemplate2._id.toHexString();
-                    return doc;
-                })
-                .then(null, (error) => {
-                    console.log(error);
-                    throw error;
-                });
+            return templateTestHelper.setupTestTemplates();
         });
 
         after(() => {
@@ -104,7 +71,7 @@ describe("TemplateService", function () {
 
         // todo: alter to enforce orgId (preferably in genericService). Add orgId to all service function parms, have controller pull orgId from auth mechanism.
         it("can get all templates", function () {
-            let getAllPromise = templateService.getAll(testOrgId);
+            let getAllPromise = templateService.getAll(templateTestHelper.testOrgId);
 
             return Promise.all([
                 getAllPromise.should.eventually.be.instanceOf(Array),
@@ -113,17 +80,17 @@ describe("TemplateService", function () {
         });
 
         it("can get templates by id", function () {
-            let getById = templateService.getById(testOrgId, existingTemplate1.id);
+            let getById = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);
 
-            return getById.should.eventually.deep.equal(existingTemplate1);
+            return getById.should.eventually.deep.equal(templateTestHelper.existingTemplate1);
         });
 
         it("can get all templates that need to be regenerated", function () {
             templateTestHelper.createRegenerateList()
                 .then(function (result) {
-                    let regeneratePromise = templateService.getRegenerateList(testOrgId);
+                    let regeneratePromise = templateService.getRegenerateList(templateTestHelper.testOrgId);
 
-                    return regeneratePromise.should.eventually.deep.equal(existingRegenerateList);
+                    return regeneratePromise.should.eventually.deep.equal(templateTestHelper.existingRegenerateList);
                 });
         });
 
@@ -131,19 +98,19 @@ describe("TemplateService", function () {
             let now = moment().format('hmmss');
             let testName = 'TestTemplate' + now;
             let myTemplate = {
-                orgId: testOrgId,
+                orgId: templateTestHelper.testOrgId,
                 name: testName,
-                site: testSiteId,
+                site: templateTestHelper.testSiteId,
                 template: "<h1>newly created template</h1>"
             };
 
-            let createPromise = templateService.create(testOrgId, myTemplate);
+            let createPromise = templateService.create(templateTestHelper.testOrgId, myTemplate);
 
             return createPromise
                 .then((doc) => {
-                    return templateService.getById(testOrgId, doc.id)
+                    return templateService.getById(templateTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            expect(retrievedDoc).to.have.property("site", testSiteId);
+                            expect(retrievedDoc).to.have.property("site", templateTestHelper.testSiteId);
                             return expect(retrievedDoc).to.have.property("name", testName);
                         });
                 });
@@ -152,13 +119,13 @@ describe("TemplateService", function () {
 
         it("validates templates on create using extended validation - name and template", function () {
             let invalidTemplate = { // just needs to be missing some required properties
-                orgId: testOrgId,
-                siteId: testSiteId,
+                orgId: templateTestHelper.testOrgId,
+                siteId: templateTestHelper.testSiteId,
                 name: "testTemplateName"
                 // template property is missing
             };
 
-            let createPromise = templateService.create(testOrgId, invalidTemplate);
+            let createPromise = templateService.create(templateTestHelper.testOrgId, invalidTemplate);
 
             return createPromise.should.be.rejectedWith(TypeError, "Need name and template");
         });
@@ -166,19 +133,19 @@ describe("TemplateService", function () {
         it("can update templates by id", function () {
             let updatedTemplate = "updatedTemplate";
             let theUpdatedTemplate = {
-                orgId: testOrgId,
+                orgId: templateTestHelper.testOrgId,
                 name: "testName",
-                siteId: testSiteId,
+                siteId: templateTestHelper.testSiteId,
                 template: updatedTemplate
             };
 
-            var updateByIdPromise = templateService.updateById(testOrgId, existingTemplate1.id, theUpdatedTemplate);
+            var updateByIdPromise = templateService.updateById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id, theUpdatedTemplate);
 
             return updateByIdPromise.then(function(numAffected) {
                 numAffected.should.equal(1);
 
                 // verify customSchema was updated
-                var getByIdPromise = templateService.getById(testOrgId, existingTemplate1.id);
+                var getByIdPromise = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);
 
                 return getByIdPromise.should.eventually.have.property("template").equal(updatedTemplate);
             });
@@ -186,17 +153,17 @@ describe("TemplateService", function () {
 
         it("can delete templates by id", function () {
             var newTemplate = {
-                orgId: testOrgId,
-                siteId: testSiteId,
+                orgId: templateTestHelper.testOrgId,
+                siteId: templateTestHelper.testSiteId,
                 name: "testTemplate",
                 template: "<h1>Delete Me</h1>"
             };
 
-            var createPromise = templateService.create(testOrgId, newTemplate);
+            var createPromise = templateService.create(templateTestHelper.testOrgId, newTemplate);
 
             return createPromise.then((doc) => {
-                return templateService.delete(testOrgId, doc.id).then(function(result) {
-                    return templateService.getById(testOrgId, doc.id).then(function(retrievedDoc) {
+                return templateService.delete(templateTestHelper.testOrgId, doc.id).then(function(result) {
+                    return templateService.getById(templateTestHelper.testOrgId, doc.id).then(function(retrievedDoc) {
                         return expect(retrievedDoc).to.equal(null);
                     });
                 });

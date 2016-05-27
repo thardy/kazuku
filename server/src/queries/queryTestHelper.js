@@ -66,15 +66,15 @@ function setupTestQueries() {
 }
 
 function createRegenerateList() {
-    return database.queries.insert(existingRegenerateList)
+    return database.queries.insert(queryTestHelper.existingRegenerateList)
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.queries.insert({ orgId: testOrgId, siteId: testSiteId, name: "QueryToNOTRegenerate1", query: "do not regenerate me", regenerate: 0 });
+            return database.queries.insert({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "QueryToNOTRegenerate1", query: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function deleteAllTestQueries() {
-    return database.queries.remove({orgId: testOrgId});
+    return database.queries.remove({orgId: queryTestHelper.testOrgId});
 }
 
 module.exports = queryTestHelper;
