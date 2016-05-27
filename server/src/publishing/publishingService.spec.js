@@ -25,7 +25,6 @@ describe("PublishingService", function () {
             //  and to get data for templates with PagedOn property (create pages for resultset)
             // need some sort of FileService, to save and delete files
 
-            // todo: we're ready to write this test now
             publishingService = new PublishingService();
 
         });
@@ -33,7 +32,10 @@ describe("PublishingService", function () {
         it("regenerates items on a schedule");
 
         it("regenerates all items that need to be regenerated", function () {
-            // todo: setup some items to be regenerated
+            // Create some pages(templates) that need to be regenerated - move the createRegenerateList function from templateService.spec.js to templateTestHelper
+            // Create some templates that need to be regenerated
+            // Create some queries that need to be regenerated - move the createRegenerateList function from queryService.spec.js to queryTestHelper
+
             // todo: store what the regenerated outputs should look like
 
             // Call regenerateItems
@@ -49,6 +51,12 @@ describe("PublishingService", function () {
         it("regenerates pages");
 
         it("saves pages to the file system when they are regenerated");
+    });
+
+    describe("Scheduling", function () {
+        it("moves draft customData to live when scheduled");
+        it("moves draft templates to live when scheduled");
+
     });
     
 

@@ -32,7 +32,7 @@ function setupItemsToBeRegenerated() {
         deleteAllTestQueries(),
         deleteAllTestTemplates()
     ])
-        .then(function(result) {
+        .then((result) => {
             return Promise.all([
                 createTestQueries(),
                 createTestTemplates()
@@ -42,7 +42,7 @@ function setupItemsToBeRegenerated() {
 //            console.log(error);
 //            throw error;
 //        });
-        .catch(function (error) {
+        .catch((error) => {
             console.log(error);
             throw error;
         })
@@ -56,14 +56,14 @@ function createTestQueries() {
         database.queries.insert(newQuery2),
         database.queries.insert(newQuery3)
     ])
-        .then(function(docs) {
+        .then((docs) => {
             pubTestHelper.existingQueries = docs;
             _.forEach(pubTestHelper.existingQueries, function (item) {
                 item.id = item._id.toHexString();
             });
             return docs;
         })
-        .then(null, function(error) {
+        .then(null, (error) => {
             console.log(error);
             throw error;
         });
@@ -78,14 +78,14 @@ function createTestTemplates() {
         database.templates.insert(newTemplate2),
         database.templates.insert(newTemplate3)
     ])
-        .then(function(docs) {
+        .then((docs) => {
             pubTestHelper.existingTemplates = docs;
             _.forEach(pubTestHelper.existingTemplates, function (item) {
                 item.id = item._id.toHexString();
             });
             return docs;
         })
-        .then(null, function(error) {
+        .then(null, (error) => {
             console.log(error);
             throw error;
         });

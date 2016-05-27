@@ -1,6 +1,7 @@
 "use strict";
 
 var TemplateService = require('./templateService');
+var templateTestHelper = require("./templateTestHelper");
 var database = require("../database/database");
 var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
@@ -73,7 +74,7 @@ describe("TemplateService", function () {
                 template: "test template two"
             };
 
-            return deleteAllTestTemplates()
+            return templateTestHelper.deleteAllTestTemplates()
                 .then((result) => {
                     return database.templates.insert(newTemplate1);
                 })
@@ -98,7 +99,7 @@ describe("TemplateService", function () {
 
         after(() => {
             // Remove all Test documents
-            return deleteAllTestTemplates();
+            return templateTestHelper.deleteAllTestTemplates();
         });
 
         // todo: alter to enforce orgId (preferably in genericService). Add orgId to all service function parms, have controller pull orgId from auth mechanism.
@@ -118,7 +119,7 @@ describe("TemplateService", function () {
         });
 
         it("can get all templates that need to be regenerated", function () {
-            createRegenerateList()
+            templateTestHelper.createRegenerateList()
                 .then(function (result) {
                     let regeneratePromise = templateService.getRegenerateList(testOrgId);
 
@@ -202,24 +203,6 @@ describe("TemplateService", function () {
             });
         });
 
-        function deleteAllTestTemplates() {
-            return database.templates.remove({orgId: testOrgId});
-        }
-
-        function createRegenerateList() {
-            existingRegenerateList = [
-                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate1", template: "plz regenerate me", regenerate: 1 },
-                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate2", template: "needz regenerating", regenerate: 1 },
-                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate3", template: "regen ftw", regenerate: 1 },
-                { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate4", template: "can haz regenerations?", regenerate: 1 },
-            ];
-
-            return database.templates.insert(existingRegenerateList)
-                .then(function (result) {
-                    // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-                    return database.templates.insert({ orgId: testOrgId, siteId: testSiteId, name: "TemplateToNOTRegenerate1", template: "do not regenerate me", regenerate: 0 });
-                });
-        }
     });
 
     describe("TemplateService Layouts", function () {

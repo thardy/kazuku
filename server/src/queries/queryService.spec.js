@@ -1,6 +1,7 @@
 "use strict";
 
-var QueryService = require('./queryService');
+var QueryService = require("./queryService");
+var queryTestHelper = require("./queryTestHelper");
 var database = require("../database/database");
 var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
@@ -15,61 +16,21 @@ chai.use(chaiAsPromised);
 describe("QueryService", function () {
     describe("CRUD", function () {
         let queryService = {};
-        let existingQuery1 = {};
-        let existingQuery2= {};
-        let existingRegenerateList = [];
-        let theUpdatedQuery = {};
-        let testOrgId = 1;
-        let testSiteId = 1;
 
         before(() => {
             queryService = new QueryService(database);
-            // Insert some docs to be present before all tests start
-            // All test data should belong to a specific orgId (a test org)
-            var newQuery1 = {
-                orgId: testOrgId,
-                siteId: testSiteId,
-                name: "TestQuery1",
-                query: "test query one"
-            };
-            var newQuery2 = {
-                orgId: testOrgId,
-                siteId: testSiteId,
-                name: "TestQuery2",
-                query: "test query two"
-            };
 
-            return deleteAllTestTemplates()
-                .then((result) => {
-                    return database.queries.insert(newQuery1);
-                })
-                .then((doc) => {
-                    existingQuery1 = doc;
-                    existingQuery1.id = existingQuery1._id.toHexString();
-                    return doc;
-                })
-                .then((result) => {
-                    return database.queries.insert(newQuery2);
-                })
-                .then((doc) => {
-                    existingQuery2 = doc;
-                    existingQuery2.id = existingQuery2._id.toHexString();
-                    return doc;
-                })
-                .then(null, (error) => {
-                    console.log(error);
-                    throw error;
-                });
+            return queryTestHelper.setupTestQueries();
         });
 
         after(() => {
             // Remove all Test documents
-            return deleteAllTestTemplates();
+            return queryTestHelper.deleteAllTestQueries();
         });
 
         // todo: alter to enforce orgId (preferably in genericService). Add orgId to all service function parms, have controller pull orgId from auth mechanism.
         it("can get all queries", function () {
-            let getAllPromise = queryService.getAll(testOrgId);
+            let getAllPromise = queryService.getAll(queryTestHelper.testOrgId);
 
             return Promise.all([
                 getAllPromise.should.eventually.be.instanceOf(Array),
@@ -78,17 +39,17 @@ describe("QueryService", function () {
         });
 
         it("can get queries by id", function () {
-            let getById = queryService.getById(testOrgId, existingQuery1.id);
+            let getById = queryService.getById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id);
 
-            return getById.should.eventually.deep.equal(existingQuery1);
+            return getById.should.eventually.deep.equal(queryTestHelper.existingQuery1);
         });
 
         it("can get all queries that need to be regenerated", function () {
-            createRegenerateList()
+            queryTestHelper.createRegenerateList()
                 .then(function (result) {
-                    let regeneratePromise = queryService.getRegenerateList(testOrgId);
+                    let regeneratePromise = queryService.getRegenerateList(queryTestHelper.testOrgId);
 
-                    return regeneratePromise.should.eventually.deep.equal(existingRegenerateList);
+                    return regeneratePromise.should.eventually.deep.equal(queryTestHelper.existingRegenerateList);
                 });
         });
 
@@ -96,19 +57,19 @@ describe("QueryService", function () {
             let now = moment().format('hmmss');
             let testName = 'TestTemplate' + now;
             let myTemplate = {
-                orgId: testOrgId,
+                orgId: queryTestHelper.testOrgId,
                 name: testName,
-                site: testSiteId,
+                site: queryTestHelper.testSiteId,
                 query: "<h1>newly created template</h1>"
             };
 
-            let createPromise = queryService.create(testOrgId, myTemplate);
+            let createPromise = queryService.create(queryTestHelper.testOrgId, myTemplate);
 
             return createPromise
                 .then((doc) => {
-                    return queryService.getById(testOrgId, doc.id)
+                    return queryService.getById(queryTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            expect(retrievedDoc).to.have.property("site", testSiteId);
+                            expect(retrievedDoc).to.have.property("site", queryTestHelper.testSiteId);
                             return expect(retrievedDoc).to.have.property("name", testName);
                         });
                 });
@@ -117,13 +78,13 @@ describe("QueryService", function () {
 
         it("validates queries on create using extended validation - name and query", function () {
             let invalidQuery = { // just needs to be missing some required properties
-                orgId: testOrgId,
-                siteId: testSiteId,
+                orgId: queryTestHelper.testOrgId,
+                siteId: queryTestHelper.testSiteId,
                 name: "testQueryName"
                 // query property is missing
             };
 
-            let createPromise = queryService.create(testOrgId, invalidQuery);
+            let createPromise = queryService.create(queryTestHelper.testOrgId, invalidQuery);
 
             return createPromise.should.be.rejectedWith(TypeError, "Need name and query");
         });
@@ -131,19 +92,19 @@ describe("QueryService", function () {
         it("can update queries by id", function () {
             let updatedQuery = "updatedQuery";
             let theUpdatedQuery = {
-                orgId: testOrgId,
+                orgId: queryTestHelper.testOrgId,
                 name: "testName",
-                siteId: testSiteId,
+                siteId: queryTestHelper.testSiteId,
                 query: updatedQuery
             };
 
-            var updateByIdPromise = queryService.updateById(testOrgId, existingQuery1.id, theUpdatedQuery);
+            var updateByIdPromise = queryService.updateById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id, theUpdatedQuery);
 
             return updateByIdPromise.then(function(numAffected) {
                 numAffected.should.equal(1);
 
                 // verify query was updated
-                var getByIdPromise = queryService.getById(testOrgId, existingQuery1.id);
+                var getByIdPromise = queryService.getById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id);
 
                 return getByIdPromise.should.eventually.have.property("query").equal(updatedQuery);
             });
@@ -151,17 +112,17 @@ describe("QueryService", function () {
 
         it("can delete queries by id", function () {
             var newQuery = {
-                orgId: testOrgId,
-                siteId: testSiteId,
+                orgId: queryTestHelper.testOrgId,
+                siteId: queryTestHelper.testSiteId,
                 name: "testQuery",
                 query: "<h1>Delete Me</h1>"
             };
 
-            var createPromise = queryService.create(testOrgId, newQuery);
+            var createPromise = queryService.create(queryTestHelper.testOrgId, newQuery);
 
             return createPromise.then((doc) => {
-                return queryService.delete(testOrgId, doc.id).then(function(result) {
-                    return queryService.getById(testOrgId, doc.id).then(function(retrievedDoc) {
+                return queryService.delete(queryTestHelper.testOrgId, doc.id).then(function(result) {
+                    return queryService.getById(queryTestHelper.testOrgId, doc.id).then(function(retrievedDoc) {
                         return expect(retrievedDoc).to.equal(null);
                     });
                 });
@@ -169,22 +130,9 @@ describe("QueryService", function () {
         });
 
         function deleteAllTestTemplates() {
-            return database.queries.remove({orgId: testOrgId});
+            return database.queries.remove({orgId: queryTestHelper.testOrgId});
         }
 
-        function createRegenerateList() {
-            existingRegenerateList = [
-                { orgId: testOrgId, siteId: testSiteId, name: "QueryToRegenerate1", query: "plz regenerate this query", regenerate: 1 },
-                { orgId: testOrgId, siteId: testSiteId, name: "QueryToRegenerate2", query: "query needz regenerating", regenerate: 1 },
-                { orgId: testOrgId, siteId: testSiteId, name: "QueryToRegenerate3", query: "query regen ftw", regenerate: 1 }
-            ];
-
-            return database.templates.insert(existingRegenerateList)
-                .then(function (result) {
-                    // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-                    return database.templates.insert({ orgId: testOrgId, siteId: testSiteId, name: "QueryToNOTRegenerate1", query: "do not regenerate me", regenerate: 0 });
-                });
-        }
     });
 
 });
