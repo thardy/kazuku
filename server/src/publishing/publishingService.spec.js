@@ -1,7 +1,9 @@
 "use strict";
 
 var PublishingService = require("./publishingService");
-var publishingTestHelper = require("./publishingTestHelper");
+var pubTestHelper = require("./publishingTestHelper");
+var templateTestHelper = require("../templates/templateTestHelper");
+var queryTestHelper = require("../queries/queryTestHelper");
 var Promise = require("bluebird");
 var _ = require("lodash");
 var chai = require("chai");
@@ -13,8 +15,6 @@ chai.use(require('chai-things'));
 
 describe("PublishingService", function () {
     let publishingService = {};
-    let testOrgId = 1;
-    let testSiteId = 1;
 
     describe("regenerateItems", function () {
         before(function () {
@@ -32,16 +32,25 @@ describe("PublishingService", function () {
         it("regenerates items on a schedule");
 
         it("regenerates all items that need to be regenerated", function () {
-            // Create some pages(templates) that need to be regenerated - move the createRegenerateList function from templateService.spec.js to templateTestHelper
-            // Create some templates that need to be regenerated
-            // Create some queries that need to be regenerated - move the createRegenerateList function from queryService.spec.js to queryTestHelper
+            // Create all our test data
+            pubTestHelper.createCustomData()
+                .then((result) => {
+                    pubTestHelper.createQueryRegenerateList();
+                })
+                .then((result) => {
+                    return pubTestHelper.createTemplateRegenerateList();
+                })
+                .then((result) => {
+                    return pubTestHelper.createPageRegenerateList();
+                })
+                .then((result) => {
+                    // Call regenerateItems
+                    return publishingService.regenerateItems(pubTestHelper.testOrgId, pubTestHelper.testSiteId);
+                })
+                .then((result) => {
+                    // Verify template and query rendered outputs
 
-            // todo: store what the regenerated outputs should look like
-
-            // Call regenerateItems
-            //publishingService.regenerateItems(testOrgId, testSiteId);
-
-            // Verify outputs
+                });
         });
 
         it("regenerates templates");

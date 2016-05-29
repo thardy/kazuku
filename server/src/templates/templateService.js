@@ -37,12 +37,25 @@ class TemplateService extends GenericService {
     }
 
     renderObject(objectWithTemplate) {
-        var template = objectWithTemplate.content;
-        var model = _.omit(objectWithTemplate, 'content');
-        var renderPromise = null;
+        // Use either template or content properties
+        let template;
+
+        if ("template" in objectWithTemplate) {
+            template = objectWithTemplate.template;
+        }
+        else if ("content" in objectWithTemplate) {
+            template = objectWithTemplate.content;
+        }
+        else {
+            // if objectWithTemplate doesn't have a template or content property, just return a resolved Promise.
+            return Promise.resolve("");
+        }
+
+        let model = _.omit(objectWithTemplate, 'template', 'content');
+        let renderPromise = null;
 
         if (objectWithTemplate.layout) {
-            var layoutObject = this.templateRepo.getTemplate(objectWithTemplate.layout);
+            let layoutObject = this.templateRepo.getTemplate(objectWithTemplate.layout);
             renderPromise = this.renderInsideLayout(objectWithTemplate, layoutObject)
                 .then((output) => {
                     return output;

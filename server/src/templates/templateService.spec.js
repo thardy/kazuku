@@ -181,6 +181,8 @@ describe("TemplateService", function () {
         });
 
         it("can render an object with content as the template and all other properties as the model", function () {
+            // "An object" can simply be a customData object, basically any json object can simply add a content property
+            //  and, optionally, a layout property to have it's content rendered as a template
             var objectWithTemplate = {
                 favoriteColor: 'blue',
                 favoriteNumber: 22,

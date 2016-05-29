@@ -35,7 +35,7 @@ class CustomSchemaService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomSchemaService.deleteByContentType');
         }
         return this.collection.remove({orgId: orgId, contentType: contentType});
-    };
+    }
 
     validate(doc) {
         if (doc.contentType && doc.jsonSchema) {

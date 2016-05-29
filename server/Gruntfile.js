@@ -8,7 +8,11 @@ module.exports = function(grunt) {
         jshint: {
             files: ['src/**/*.js'],
             options: {
-                '-W079': true
+                '-W079': true,
+                'node': true,
+                'mocha': true,
+                'esnext': true // deprecated, use the following once jshint upgrades
+                //'esversion': 6
             }
         },
 //        watch: {

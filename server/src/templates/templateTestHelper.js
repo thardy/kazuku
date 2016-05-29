@@ -1,6 +1,6 @@
 "use strict";
-var database = require("../database/database");
-var _ = require("lodash");
+let database = require("../database/database");
+let _ = require("lodash");
 
 let testOrgId = 1;
 let testSiteId = 1;
@@ -10,15 +10,14 @@ let newTemplate1 = { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate1",
 let newTemplate2 = { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate2", template: "I'm another new template", created: new Date('2015-01-01T00:00:00') };
 let newTemplate3 = { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate3", template: "I'm a cool new template", created: new Date('2016-01-01T00:00:00') };
 
-// todo: change template properties to actual templates that can be generated and their outputs tested (start from test)
 let existingRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate1", template: "plz regenerate me", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate2", template: "needz regenerating", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate3", template: "regen ftw", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "TemplateToRegenerate4", template: "can haz regenerations?", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate1", template: "regenerate me", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate2", template: "regenerate me too", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate3", template: "plz regen", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate4", template: "regen ftw", regenerate: 1 }
 ];
 
-var templateTestHelper = {
+let templateTestHelper = {
     testOrgId: testOrgId,
     testSiteId: testSiteId,
     setupTestTemplates: setupTestTemplates,
@@ -56,15 +55,22 @@ function setupTestTemplates() {
 }
 
 function createRegenerateList() {
-    return database.templates.insert(templateTestHelper.existingRegenerateList)
-        .then(function (result) {
+    return deleteAllRegenTemplates()
+        .then((result) => {
+            database.templates.insert(templateTestHelper.existingRegenerateList);
+        })
+        .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.templates.insert({ orgId: templateTestHelper.testOrgId, siteId: templateTestHelper.testSiteId, name: "TemplateToNOTRegenerate1", template: "do not regenerate me", regenerate: 0 });
+            return database.templates.insert({ orgId: templateTestHelper.testOrgId, siteId: templateTestHelper.testSiteId, name: "RegenerateTemplateNOT1", template: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function deleteAllTestTemplates() {
     return database.templates.remove({orgId: templateTestHelper.testOrgId});
+}
+
+function deleteAllRegenTemplates() {
+    return database.templates.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^RegenerateTemplate/ }});
 }
 
 module.exports = templateTestHelper;

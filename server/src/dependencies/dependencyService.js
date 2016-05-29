@@ -70,7 +70,7 @@ class DependencyService {
 
         // a layout is a dependency
         if ("layout" in template) {
-            dependencies.push({type: "template", name: template.layout})
+            dependencies.push({type: "template", name: template.layout});
         }
 
         // any queries defined in the model are dependencies
@@ -94,8 +94,8 @@ class DependencyService {
     }
 
     getDependenciesOfQuery(query) {
-        let dependencies = undefined;
-        let item = undefined;
+        let dependencies;
+        let item;
 
         // check to see if this value is actually a valid query
         if (query.startsWith("query(")) {
@@ -130,7 +130,7 @@ class DependencyService {
         });
 
         return includedTemplateDependencies;
-    };
+    }
 
     getTypeOfItem(item) {
         let typeOfItem = '';

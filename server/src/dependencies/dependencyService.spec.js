@@ -32,10 +32,10 @@ describe("DependencyService", function () {
             let template = {
                 orgId: testOrgId,
                 siteId: 1,
-                url: 'home',
-                layout: 'master',
-                products:'query(top5Products)',
-                template: 'template body is here'
+                url: "home",
+                layout: "master",
+                products: "query(top5Products)",
+                template: "template body is here"
             };
 
             let dependencies = dependencyService.getDependenciesOfItem(template);
@@ -47,18 +47,18 @@ describe("DependencyService", function () {
 
         it("should return all dependencies of a template with includes", function () {
             let expectedDependencies =  [
-                { type: 'template', name: 'master' },
-                { type: 'query', name: 'top10Events' },
-                { type: 'template', name: 'header' },
-                { type: 'template', name: 'footer' }
+                { type: "template", name: "master" },
+                { type: "query", name: "top10Events" },
+                { type: "template", name: "header" },
+                { type: "template", name: "footer" }
             ];
             let template = {
                 orgId: testOrgId,
                 siteId: 1,
-                url: 'home',
-                layout: 'master',
-                products:'query(top10Events)',
-                template: '{% include header %}<div>template body is here</div>{% include footer %}'
+                url: "home",
+                layout: "master",
+                products: "query(top10Events)",
+                template: "{% include header %}<div>template body is here</div>{% include footer %}"
             };
 
             let dependencies = dependencyService.getDependenciesOfItem(template);
@@ -69,12 +69,12 @@ describe("DependencyService", function () {
         });
 
         it("should return all dependencies of a query", function () {
-            let expectedDependencies = [{type: 'data', name: 'products'}];
+            let expectedDependencies = [{type: "data", name: "products"}];
             let query = {
                 orgId: testOrgId,
                 siteId: 1,
-                name: 'top5Products',
-                query: 'eq(contentType, products)&limit(5)$sort(created)'
+                name: "top5Products",
+                query: "eq(contentType, products)&limit(5)$sort(created)"
             };
 
             let dependencies = dependencyService.getDependenciesOfItem(query);

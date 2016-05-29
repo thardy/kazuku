@@ -20,11 +20,10 @@ let newQuery2 = {
     query: "test query two"
 };
 
-// todo: change query properties to actual queries for testing, maybe???
 let existingRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "QueryToRegenerate1", query: "plz regenerate this query", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "QueryToRegenerate2", query: "query needz regenerating", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "QueryToRegenerate3", query: "query regen ftw", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-HeaderNavigation", query: "", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "query needz regenerating", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-TopProducts", query: "query regen ftw", regenerate: 1 }
 ];
 
 
@@ -66,16 +65,24 @@ function setupTestQueries() {
 }
 
 function createRegenerateList() {
-    return database.queries.insert(queryTestHelper.existingRegenerateList)
+    return deleteAllRegenTemplates()
+        .then((result) => {
+            return database.queries.insert(queryTestHelper.existingRegenerateList);
+        })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.queries.insert({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "QueryToNOTRegenerate1", query: "do not regenerate me", regenerate: 0 });
+            return database.queries.insert({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "RegenerateQueryNOT", query: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function deleteAllTestQueries() {
     return database.queries.remove({orgId: queryTestHelper.testOrgId});
 }
+
+function deleteAllRegenTemplates() {
+    return database.queries.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^RegenerateQuery/ }});
+}
+
 
 module.exports = queryTestHelper;
 
