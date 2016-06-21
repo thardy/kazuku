@@ -129,10 +129,37 @@ describe("QueryService", function () {
             });
         });
 
-        function deleteAllTestTemplates() {
-            return database.queries.remove({orgId: queryTestHelper.testOrgId});
-        }
+    });
 
+    describe("Querying", function () {
+        let queryService = {};
+
+        before(() => {
+            queryService = new QueryService(database);
+
+            return queryTestHelper.setupTestQueries()
+                .then(function (results) {
+                    return testHelper.setupTestProducts();
+                });
+        });
+
+        after(() => {
+            // Remove all Test documents
+            return queryTestHelper.deleteAllTestQueries()
+                .then(function (results) {
+                    return testHelper.deleteAllTestProducts();
+                });
+        });
+
+        it("can resolve queries", function () {
+            let expectedResults = [testHelper.newProduct1, testHelper.newProduct3];
+            let query = `eq(contentType,${testHelper.testProductsContentType})&lt(price,20)&sort(created)`;
+            let resolvePromise = queryService.resolve(testHelper.testOrgId, query);
+
+            return Promise.all([
+                resolvePromise.should.eventually.deep.equal(expectedResults)
+            ]);
+        });
     });
 
 });

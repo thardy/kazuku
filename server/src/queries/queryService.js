@@ -1,11 +1,15 @@
 "use strict";
 var _ = require("lodash");
 var GenericService = require("../common/genericService");
+var CustomDataService = require("../customData/customDataService");
 
 class QueryService extends GenericService {
     constructor(database) {
         super(database, 'queries');
+        this._customDataService = new CustomDataService(database);
     }
+
+    get customDataService() { return this._customDataService; }
 
     getRegenerateList(orgId) {
         return this.collection.find({orgId: orgId, regenerate: 1})
@@ -22,6 +26,10 @@ class QueryService extends GenericService {
 
     getAllDependentsOfItem(item) {
         return [];
+    }
+
+    resolve(orgId, query) {
+        return this.customDataService.find(orgId, query);
     }
 
     validate(doc) {

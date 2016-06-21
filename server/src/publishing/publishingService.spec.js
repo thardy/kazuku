@@ -1,5 +1,6 @@
 "use strict";
 
+var database = require("../database/database");
 var PublishingService = require("./publishingService");
 var pubTestHelper = require("./publishingTestHelper");
 var templateTestHelper = require("../templates/templateTestHelper");
@@ -25,7 +26,7 @@ describe("PublishingService", function () {
             //  and to get data for templates with PagedOn property (create pages for resultset)
             // need some sort of FileService, to save and delete files
 
-            publishingService = new PublishingService();
+            publishingService = new PublishingService(database);
 
         });
 
@@ -49,7 +50,7 @@ describe("PublishingService", function () {
                 })
                 .then((result) => {
                     // Verify template and query rendered outputs
-
+                    let temp = result;
                 });
         });
 

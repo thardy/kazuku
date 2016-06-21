@@ -27,9 +27,9 @@ class PublishingService {
                 queriesToRegenerate = docs;
 
                 // Regenerate/resolve the queries
-                for (var query of docs) {
+                for (var queryObject of docs) {
                     // todo: add resolve function to queryService
-                    this.queryService.resolve(query);
+                    this.queryService.resolve(queryObject.query);
                 }
             });
 
@@ -40,7 +40,7 @@ class PublishingService {
 
                 // Regenerate/render the templates
                 for (var template of docs) {
-                    // todo: need to add renderTemplate function to templateService. Can renderObject work? Can we just alter it to look for content OR template?
+                    // renderObject looks for either a content OR template property on the object passed in
                     this.templateService.renderObject(template);
                 }
             });

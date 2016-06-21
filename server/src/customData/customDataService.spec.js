@@ -1,3 +1,4 @@
+"use strict";
 var CustomDataService = require("./customDataService");
 var Promise = require("bluebird");
 var database = require("../database/database");
@@ -7,6 +8,9 @@ var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 var Query = require("rql/query").Query;
+
+//temp
+var mongoRql = require('mongo-rql');
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
@@ -183,9 +187,7 @@ describe("CustomDataService", function () {
                     // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
                     existingProducts = docs;
                     _.forEach(existingProducts, function (item) {
-                        if (item.name === newProduct1.name) {
-                            newProduct1.id = item._id.toHexString();
-                        }
+                        item.id = item._id.toHexString();
                     });
                     return docs;
                 })
@@ -214,6 +216,54 @@ describe("CustomDataService", function () {
             return findPromise.should.eventually.deep.equal(expected);
         });
 
+//        it("can start my own query parsing experiment", function () {
+//            let expectedResults = [newProduct1, newProduct3];
+//            let queryString = `eq(contentType, ${testContentType})&limit(2)&sort(created)`;
+//            let queryArray = queryString.split("&");
+//
+//            let query = new Query();
+//            for (var segment of queryArray) {
+//                let operatorRegex = /^.*(?=(\())/;
+//                let matchArray = operatorRegex.exec(segment);
+//                let operator = matchArray[0];
+//                let operandsRegex = /\(([^)]+)\)/;
+//                let operandsMatchArray = operandsRegex.exec(segment);
+//                let operandsString = operandsMatchArray[1];
+//                let operandsArray = operandsString.split(",");
+//                let operand1 = operandsArray[0].trim();
+//                let operand2 = operandsArray.length > 1 ? operandsArray[1].trim() : null;
+//
+//                switch (operator) {
+//                    case "eq":
+//                        query = query.eq(operand1, operand2);
+//                        break;
+//                    case "limit":
+//                        query = query.limit(operand1);
+//                        break;
+//                    case "sort":
+//                        query = query.sort(operand1);
+//                        break;
+//                }
+//            }
+//
+//            let findPromise = customDataService.find(testOrgId, query);
+//
+//            return findPromise.should.eventually.deep.equal(expectedResults);
+//
+//        });
+
+        it("can query using RQL limit", function () {
+            var query = "eq(orgId,1)&eq(contentType,testContentType)&sort(created)&limit(2,0)";
+            var actual = mongoRql(query);
+            let expected = {
+                sort: { created: 1 },
+                limit: 2
+            };
+
+            actual.should.have.deep.property("sort.created", expected.sort.created);
+            actual.should.have.property("limit", expected.limit);
+        });
+
         it("can query using multiple RQL operators", function () {
             var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
             var findPromise = customDataService.find(testOrgId, query);
@@ -222,6 +272,15 @@ describe("CustomDataService", function () {
                 findPromise.should.eventually.be.instanceOf(Array),
                 findPromise.should.eventually.have.length(2)
             ]);
+        });
+
+        it("can query using an RQL string in method format", function () {
+            let expectedResults = [newProduct1, newProduct3];
+            let query = `eq(contentType,${testContentType})&sort(created)&limit(2,0)`; // limit must come last or it won't work
+
+            let findPromise = customDataService.find(testOrgId, query);
+
+            return findPromise.should.eventually.deep.equal(expectedResults);
         });
 
         it("can query using an RQL string", function () {

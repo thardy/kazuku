@@ -79,7 +79,7 @@ function createCustomData() {
 function createTemplateRegenerateList() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
-            database.templates.insert(pubTestHelper.existingTemplateRegenerateList);
+            database.templates.insert(existingTemplateRegenerateList);
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
@@ -90,7 +90,7 @@ function createTemplateRegenerateList() {
 function createPageRegenerateList() {
     return deleteAllPageRegenTemplates()
         .then((result) => {
-            database.templates.insert(pubTestHelper.existingPageRegenerateList);
+            database.templates.insert(existingPageRegenerateList);
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
@@ -101,7 +101,7 @@ function createPageRegenerateList() {
 function createQueryRegenerateList() {
     return deleteAllQueryRegenTemplates()
         .then((result) => {
-            return database.queries.insert(pubTestHelper.existingRegenerateList);
+            return database.queries.insert(existingQueryRegenerateList);
         })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0

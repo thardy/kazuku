@@ -46,7 +46,7 @@ class CustomDataService extends GenericService {
 
         // Hardwire orgId into every query
         if (typeof query === 'string' || query instanceof String) {
-            query += '&orgId=' + orgId;
+            query = 'eq(orgId,' + orgId + ')&' + query;
         }
         else {
             // todo: test that this actual shows up in the query - https://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/

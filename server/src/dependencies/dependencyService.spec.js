@@ -74,7 +74,7 @@ describe("DependencyService", function () {
                 orgId: testOrgId,
                 siteId: 1,
                 name: "top5Products",
-                query: "eq(contentType, products)&limit(5)$sort(created)"
+                query: "eq(contentType, products)&limit(5)&sort(created)"
             };
 
             let dependencies = dependencyService.getDependenciesOfItem(query);
