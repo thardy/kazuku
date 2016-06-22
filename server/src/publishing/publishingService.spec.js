@@ -2,6 +2,8 @@
 
 var database = require("../database/database");
 var PublishingService = require("./publishingService");
+var QueryService = require("../queries/queryService");
+var TemplateService = require("../templates/templateService");
 var pubTestHelper = require("./publishingTestHelper");
 var templateTestHelper = require("../templates/templateTestHelper");
 var queryTestHelper = require("../queries/queryTestHelper");
@@ -16,6 +18,8 @@ chai.use(require('chai-things'));
 
 describe("PublishingService", function () {
     let publishingService = {};
+    let queryService = {};
+    let templateService = {};
 
     describe("regenerateItems", function () {
         before(function () {
@@ -27,6 +31,8 @@ describe("PublishingService", function () {
             // need some sort of FileService, to save and delete files
 
             publishingService = new PublishingService(database);
+            queryService = new QueryService(database);
+            templateService = new TemplateService(database);
 
         });
 
@@ -50,6 +56,20 @@ describe("PublishingService", function () {
                 })
                 .then((result) => {
                     // Verify template and query rendered outputs
+                    // retrieve all the queries that we were supposed to regenerate
+                    //queryService.
+
+                    // compare their results to expected results
+
+                    // verify regenerate properties were reset to zero
+
+                    // retrieve all the templates we were supposed to regenerate
+
+                    // compare their results to expected results
+
+                    // verify regenerate properties were reset to zero
+
+                    // todo: for pages, also compare expected outputs to file outputs OR relegate this to a separate test
                     let temp = result;
                 });
         });

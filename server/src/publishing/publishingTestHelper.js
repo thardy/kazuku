@@ -28,10 +28,10 @@ let existingTemplateRegenerateList = [
         siteId: testSiteId,
         name: "RegenerateTemplate-Navigation",
         navItems: "query(RegenerateQuery-NavItems)",
-        template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</nav>",
+        template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>",
         regenerate: 1
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header</header>", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include RegenerateTemplate-Navigation %}</header>", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<header>This is a Footer</header>", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include RegenerateTemplate-Header %} <div>{{ content }}</div> {% include RegenerateTemplate-Footer %}", regenerate: 1 }
 ];
@@ -46,16 +46,13 @@ let existingQueryRegenerateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "eq(contentType, testimonials)&sort(-created)", regenerate: 1 }
 ];
 
-// todo: what should the generated versions of these look like?
-// todo: replace this with an ES6 construct (dictionary with key/value - I think it's a map
-let expectedRenderedTemplates = {
-    "RegenerateTemplate-Navigation": "expected output here",
-    "RegenerateTemplate-Header": "expected",
-    "RegenerateTemplate-Footer": "expected",
-    "RegenerateTemplate-Master": "expected",
-    "RegeneratePage-HomePage": "expected",
-    "RegeneratePage-About": "expected"
-};
+let expectedRenderedTemplates = new Map();
+expectedRenderedTemplates.set("RegenerateTemplate-Navigation", "<nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav>");
+expectedRenderedTemplates.set("RegenerateTemplate-Header", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header>");
+expectedRenderedTemplates.set("RegenerateTemplate-Footer", "<header>This is a Footer</header>");
+expectedRenderedTemplates.set("RegenerateTemplate-Master", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div>{{ content }}</div> <header>This is a Footer</header>");
+expectedRenderedTemplates.set("RegeneratePage-HomePage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <header>This is a Footer</header>");
+expectedRenderedTemplates.set("RegeneratePage-About", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <header>This is a Footer</header>");
 
 var pubTestHelper = {
     testOrgId: testOrgId,
@@ -63,7 +60,8 @@ var pubTestHelper = {
     createCustomData: createCustomData,
     createTemplateRegenerateList: createTemplateRegenerateList,
     createPageRegenerateList: createPageRegenerateList,
-    createQueryRegenerateList: createQueryRegenerateList
+    createQueryRegenerateList: createQueryRegenerateList,
+    expectedRenderedTemplates: expectedRenderedTemplates
 };
 
 function createCustomData() {

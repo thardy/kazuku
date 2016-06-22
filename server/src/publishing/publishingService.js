@@ -43,6 +43,8 @@ class PublishingService {
                     // renderObject looks for either a content OR template property on the object passed in
                     this.templateService.renderObject(template);
                 }
+
+                // todo: regenerating a template with a url (a page) should output the page
             });
 
     }
