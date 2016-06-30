@@ -174,7 +174,7 @@ describe("DependencyService", function () {
         // This one is an integration test, persisting the regeneration flag to mongo
         it("should flag all items in list for regeneration", function () {
             // this should set the regenerate flag to true on all the items in the list.
-
+            assert.fail();
         });
     });
 

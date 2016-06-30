@@ -17,9 +17,9 @@ let existingNavItems = [
 ];
 
 let existingTestimonials = [
-    { orgId: testOrgId, contentType: "testimonials", name: 'Joe Shmoe', testimonial: 'It\'s cool.', created: new Date('2016-05-01T00:00:00') },
-    { orgId: testOrgId, contentType: "testimonials", name: 'Shelly Harvell', testimonial: 'This product or service is the best thing ever.', created: new Date('2016-05-20T00:00:00') },
     { orgId: testOrgId, contentType: "testimonials", name: 'Dan Vickers', testimonial: 'I can now be happy because of this product or service.', created: new Date('2016-05-29T00:00:00') },
+    { orgId: testOrgId, contentType: "testimonials", name: 'Shelly Harvell', testimonial: 'This product or service is the best thing ever.', created: new Date('2016-05-20T00:00:00') },
+    { orgId: testOrgId, contentType: "testimonials", name: 'Joe Shmoe', testimonial: 'It\'s cool.', created: new Date('2016-05-01T00:00:00') }
 ];
 
 let existingTemplateRegenerateList = [
@@ -32,7 +32,7 @@ let existingTemplateRegenerateList = [
         regenerate: 1
     },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include RegenerateTemplate-Navigation %}</header>", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<header>This is a Footer</header>", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<footer>This is a Footer</footer>", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include RegenerateTemplate-Header %} <div>{{ content }}</div> {% include RegenerateTemplate-Footer %}", regenerate: 1 }
 ];
 
@@ -42,8 +42,9 @@ let existingPageRegenerateList = [
 ];
 
 let existingQueryRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", query: "eq(contentType, navItems)&sort(sortOrder)", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "eq(contentType, testimonials)&sort(-created)", regenerate: 1 }
+    // queries are VERY space sensitive currently.  need to fix.
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", query: "eq(contentType,navItems)&sort(sortOrder)", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
 ];
 
 let expectedRenderedTemplates = new Map();
@@ -54,6 +55,10 @@ expectedRenderedTemplates.set("RegenerateTemplate-Master", "<header>This is a He
 expectedRenderedTemplates.set("RegeneratePage-HomePage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <header>This is a Footer</header>");
 expectedRenderedTemplates.set("RegeneratePage-About", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <header>This is a Footer</header>");
 
+let expectedRenderedQueries = new Map();
+expectedRenderedQueries.set("RegenerateQuery-NavItems", existingNavItems);
+expectedRenderedQueries.set("RegenerateQuery-AllTestimonials", existingTestimonials);
+
 var pubTestHelper = {
     testOrgId: testOrgId,
     testSiteId: testSiteId,
@@ -61,23 +66,45 @@ var pubTestHelper = {
     createTemplateRegenerateList: createTemplateRegenerateList,
     createPageRegenerateList: createPageRegenerateList,
     createQueryRegenerateList: createQueryRegenerateList,
-    expectedRenderedTemplates: expectedRenderedTemplates
+    expectedRenderedTemplates: expectedRenderedTemplates,
+    expectedRenderedQueries: expectedRenderedQueries
 };
 
 function createCustomData() {
     return deleteAllTestCustomData()
         .then((result) => {
-            database.customData.insert(existingNavItems);
+            database.customData.insert(existingNavItems)
+                .then(function(docs) {
+                    existingNavItems = docs;
+                    _.forEach(existingNavItems, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         })
         .then((result) => {
-            return database.customData.insert(existingTestimonials);
+            return database.customData.insert(existingTestimonials)
+                .then(function(docs) {
+                    existingTestimonials = docs;
+                    _.forEach(existingTestimonials, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         });
 }
 
 function createTemplateRegenerateList() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
-            database.templates.insert(existingTemplateRegenerateList);
+            database.templates.insert(existingTemplateRegenerateList)
+                .then(function(docs) {
+                    existingTemplateRegenerateList = docs;
+                    _.forEach(existingTemplateRegenerateList, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
@@ -88,7 +115,14 @@ function createTemplateRegenerateList() {
 function createPageRegenerateList() {
     return deleteAllPageRegenTemplates()
         .then((result) => {
-            database.templates.insert(existingPageRegenerateList);
+            database.templates.insert(existingPageRegenerateList)
+                .then(function(docs) {
+                    existingPageRegenerateList = docs;
+                    _.forEach(existingPageRegenerateList, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
@@ -99,7 +133,14 @@ function createPageRegenerateList() {
 function createQueryRegenerateList() {
     return deleteAllQueryRegenTemplates()
         .then((result) => {
-            return database.queries.insert(existingQueryRegenerateList);
+            return database.queries.insert(existingQueryRegenerateList)
+                .then(function(docs) {
+                    existingQueryRegenerateList = docs;
+                    _.forEach(existingQueryRegenerateList, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0

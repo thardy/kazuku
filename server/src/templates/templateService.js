@@ -13,7 +13,7 @@ class TemplateService extends GenericService {
         super(database, 'templates');
 
         this._templateRepo = (templateRepo) ? templateRepo : new TemplateRepo();
-        this._templateEngine = new TemplateEngine({engineType: 'liquid', templateRepo: templateRepo});
+        this._templateEngine = new TemplateEngine({engineType: 'liquid', templateRepo: this._templateRepo});
         this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
         this._customDataService = new CustomDataService(database);
     }

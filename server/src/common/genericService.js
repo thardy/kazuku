@@ -41,6 +41,33 @@ class GenericService {
             });
     }
 
+    find(orgId, mongoQueryObject, projection) {
+        if (arguments.length < 2) { // need at least the first two
+            throw new Error('Incorrect number of arguments passed to CustomDataService.find');
+        }
+
+        // Hardwire orgId into every query
+        mongoQueryObject["orgId"] = orgId;
+
+//        var projection = {
+//            skip: mongoQuery.skip,
+//            limit: mongoQuery.limit,
+//            fields: mongoQuery.projection,
+//            sort: mongoQuery.sort
+//        };
+
+        return this.collection.find(mongoQueryObject, projection)
+            .then((docs) => {
+                var transformedDocs = [];
+                _.forEach(docs, (doc) => {
+                    this.useFriendlyId(doc);
+                    transformedDocs.push(doc);
+                });
+
+                return transformedDocs;
+            });
+    }
+
     create(orgId, doc) {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.create');
@@ -73,7 +100,7 @@ class GenericService {
         return this.collection.update(queryObject, {$set: clone});
     }
 
-    update(orgId, queryObject, updatedDoc) {
+    update(orgId, mongoQueryObject, updatedDoc) {
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to GenericService.update');
         }
@@ -82,9 +109,23 @@ class GenericService {
 
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
-        queryObject.orgId = orgId;
-        return this.collection.update(queryObject, {$set: clone});
+        mongoQueryObject.orgId = orgId;
+        return this.collection.update(mongoQueryObject, {$set: clone});
     }
+
+    // todo: Make Work!!! just started
+//    updateBatch(orgId, updatedDocs) {
+//        if (arguments.length !== 2) {
+//            throw new Error('Incorrect number of arguments passed to GenericService.updateBatch');
+//        }
+//        var clone = _.clone(updatedDoc);
+//        delete clone.id;
+//
+//        conversionService.convertISOStringDateTimesToMongoDates(clone);
+//
+//        mongoQueryObject.orgId = orgId;
+//        return this.collection.update(mongoQueryObject, {$set: clone});
+//    }
 
     delete(orgId, id) {
         if (arguments.length !== 2) {

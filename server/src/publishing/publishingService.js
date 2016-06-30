@@ -21,32 +21,63 @@ class PublishingService {
         let queriesToRegenerate = [];
         let templatesToRegenerate = [];
 
-        // get the list of queries that need to be regenerated
-        this.queryService.getRegenerateList(orgId)
-            .then((docs) => {
-                queriesToRegenerate = docs;
+        return Promise.all([
+            // get the list of queries that need to be regenerated
+            this.queryService.getRegenerateList(orgId)
+                .then((queriesToRegenerate) => {
+                    // Regenerate/resolve all of the queries
+                    return Promise.map(queriesToRegenerate, (queryObject) => {
+                        return this.queryService.resolve(orgId, queryObject.query)
+                            .then((queryResults) => {
+                                queryObject.results = queryResults; // persist the results on the queryObject
+                                queryObject.regenerate = 0;         // reset the regenerate flag
 
-                // Regenerate/resolve the queries
-                for (var queryObject of docs) {
-                    // todo: add resolve function to queryService
-                    this.queryService.resolve(queryObject.query);
-                }
-            });
+                                // save the queries back to the database
+                                // todo: switch to batch update for all queries (queriesToRegenerate) once I get a batch update working
+                                return this.queryService.updateById(orgId, queryObject.id, queryObject);
+                            });
+                    })
+//                    // todo: save the queryObjects back to the database as a batch instead of looping through them one at a time
+//                    .then((result) => {
+//                        // reset the regenerate flag on all the queries we resolved
+//                        for (var queryObject of queriesToRegenerate) {
+//                            queryObject.regenerate = 0;
+//                        }
+//                        return this.queryService.updateBatch(orgId, queriesToRegenerate);
+//                    })
+                    .catch(e => {
+                        throw e;
+                    });
+                }),
+            // get the list of templates that need to be regenerated
+            this.templateService.getRegenerateList(orgId)
+                .then((templatesToRegenerate) => {
+                    // Regenerate/render all of the templates
+                    return Promise.map(templatesToRegenerate, (templateObject) => {
+                        return this.templateService.renderObject(templateObject)
+                            .then((renderedTemplate) => {
+                                templateObject.renderedTemplate = renderedTemplate; // persist the renderedTemplate on the templateObject
+                                templateObject.regenerate = 0;         // reset the regenerate flag
 
-        // get the list of templates that need to be regenerated
-        this.templateService.getRegenerateList(orgId)
-            .then((docs) => {
-                templatesToRegenerate = docs;
-
-                // Regenerate/render the templates
-                for (var template of docs) {
-                    // renderObject looks for either a content OR template property on the object passed in
-                    this.templateService.renderObject(template);
-                }
-
-                // todo: regenerating a template with a url (a page) should output the page
-            });
-
+                                // save the templates back to the database
+                                // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
+                                return this.templateService.updateById(orgId, templateObject.id, templateObject);
+                            });
+                    })
+//                    // todo: save the templateObjects back to the database as a batch instead of looping through them one at a time
+//                    .then((result) => {
+//                        // reset the regenerate flag on all the queries we resolved
+//                        for (var queryObject of queriesToRegenerate) {
+//                            queryObject.regenerate = 0;
+//                        }
+//                        return this.templateService.updateBatch(orgId, templatesToRegenerate);
+//                    })
+                    .catch(e => {
+                        throw e;
+                    });
+                    // todo: regenerating a template with a url (a page) should output the page to the file system
+                })
+        ]);
     }
 }
 

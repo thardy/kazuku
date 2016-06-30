@@ -33,16 +33,16 @@ describe("PublishingService", function () {
             publishingService = new PublishingService(database);
             queryService = new QueryService(database);
             templateService = new TemplateService(database);
-
+            //templateService = new TemplateService(database, new FakeTemplateRepo());
         });
 
         it("regenerates items on a schedule");
 
         it("regenerates all items that need to be regenerated", function () {
             // Create all our test data
-            pubTestHelper.createCustomData()
+            return pubTestHelper.createCustomData()
                 .then((result) => {
-                    pubTestHelper.createQueryRegenerateList();
+                    return pubTestHelper.createQueryRegenerateList();
                 })
                 .then((result) => {
                     return pubTestHelper.createTemplateRegenerateList();
@@ -55,22 +55,58 @@ describe("PublishingService", function () {
                     return publishingService.regenerateItems(pubTestHelper.testOrgId, pubTestHelper.testSiteId);
                 })
                 .then((result) => {
-                    // Verify template and query rendered outputs
+                    // Verify query results
+                    let retrievedQueries = [];
+                    let nameArray = [];
+                    for (var expectedQuery of pubTestHelper.expectedRenderedQueries) {
+                        nameArray.push(expectedQuery[0]);
+                    }
+
+                    let mongoQueryObject = { "name": { "$in": nameArray }};
+
                     // retrieve all the queries that we were supposed to regenerate
-                    //queryService.
+                    return queryService.find(pubTestHelper.testOrgId, mongoQueryObject)
+                        .then((retrievedQueries) => {
+                            for (var query of retrievedQueries) {
+                                let expected = pubTestHelper.expectedRenderedQueries.get(query.name);
+                                // compare their results to expected results
+                                query.results.should.deep.equal(expected);
+                                // verify regenerate properties were reset to zero
+                                query.regenerate.should.equal(0);
+                            }
+                            return results;
+                        })
+                        .then(null, e => {
+                            throw e;
+                        });
+                })
+                .then((result) => {
+                    // Verify template rendered outputs
+                    let retrievedQueries = [];
+                    let nameArray = [];
+                    for (var expectedTemplate of pubTestHelper.expectedRenderedTemplates) {
+                        nameArray.push(expectedTemplate[0]);
+                    }
 
-                    // compare their results to expected results
-
-                    // verify regenerate properties were reset to zero
+                    let mongoQueryObject = { "name": { "$in": nameArray }};
 
                     // retrieve all the templates we were supposed to regenerate
+                    return templateService.find(pubTestHelper.testOrgId, mongoQueryObject)
+                        .then((retrievedTemplates) => {
+                            for (var template of retrievedTemplates) {
+                                let expected = pubTestHelper.expectedRenderedTemplates.get(template.name);
+                                // compare their results to expected results
+                                template.renderedTemplate.should.deep.equal(expected);
+                                // verify regenerate properties were reset to zero
+                                template.regenerate.should.equal(0);
+                            }
+                            return retrievedTemplates;
+                        })
+                        .then(null, e => {
+                            throw e;
+                        });
 
-                    // compare their results to expected results
-
-                    // verify regenerate properties were reset to zero
-
-                    // todo: for pages, also compare expected outputs to file outputs OR relegate this to a separate test
-                    let temp = result;
+                        // todo: for pages, also compare expected outputs to file outputs OR relegate this to a separate test
                 });
         });
 
