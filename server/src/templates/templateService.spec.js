@@ -19,30 +19,35 @@ var FakeTemplateRepo = function() {
     var templateObjects = [];
     templateObjects.push({
         name: 'master',
-        content: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
+        template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
         name: 'masterWithModel',
         title: 'Master Title',
         favoriteNumber: 11,
-        content: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
+        template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
         name: 'dog',
-        content: "dogs are nice"
+        template: "dogs are nice"
     });
     templateObjects.push({
         name: 'cat',
-        content: "cats are ok"
+        template: "cats are ok"
     });
     templateObjects.push({
         name: 'chicken',
-        content: "chickens are {{disposition}}"
+        template: "chickens are {{disposition}}"
     });
 
+    // getTemplate returns a templateObject
     templateRepo.getTemplate = function(templateName) {
-        var templateObject = _.find(templateObjects, {name: templateName});
-        return templateObject;
+        var resolver = Promise.defer();
+        var foundTemplateObject = _.find(templateObjects, {name: templateName});
+        setTimeout(function () {
+            resolver.resolve(foundTemplateObject);
+        }, 100);
+        return resolver.promise;
     };
 
     return templateRepo;
@@ -175,9 +180,10 @@ describe("TemplateService", function () {
     describe("TemplateService Layouts", function () {
         var templateService = {};
         var engineType = 'liquid';
+        var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function() {
-            templateService = new TemplateService(database, new FakeTemplateRepo());
+            templateService = new TemplateService(database, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
         });
 
         it("can render an object with content as the template and all other properties as the model", function () {
@@ -186,7 +192,7 @@ describe("TemplateService", function () {
             var objectWithTemplate = {
                 favoriteColor: 'blue',
                 favoriteNumber: 22,
-                content: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
+                template: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
             };
             return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal('<h2>Favorite Color is blue, and Favorite Number is 22</h2>');
         });
@@ -197,7 +203,7 @@ describe("TemplateService", function () {
                 favoriteColor: 'blue',
                 favoriteNumber: 22,
                 layout: 'master',
-                content: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
+                template: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
             };
             return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal("<header>I'm the header</header><h2>Favorite Color is blue, and Favorite Number is 22</h2><footer>I'm the footer</footer>");
         });
@@ -206,7 +212,7 @@ describe("TemplateService", function () {
             var objectWithTemplate = {
                 favoriteColor: 'blue',
                 layout: 'masterWithModel',
-                content: '<h2>Some Content</h2>'
+                template: '<h2>Some Content</h2>'
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content</h2><footer>I'm the footer</footer>";
             return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
@@ -216,7 +222,7 @@ describe("TemplateService", function () {
             var objectWithTemplate = {
                 favoriteColor: 'blue',
                 layout: 'masterWithModel',
-                content: '<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>'
+                template: '<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>'
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content. Master Title-11-blue</h2><footer>I'm the footer</footer>";
             return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
@@ -228,7 +234,7 @@ describe("TemplateService", function () {
                 favoriteNumber: '7',
                 favoriteColor: 'yellow',
                 layout: 'masterWithModel',
-                content: '<h2>Some Content</h2>'
+                template: '<h2>Some Content</h2>'
             };
             var expectedResult = "<header>I'm the header. Content Title-7-yellow</header><h2>Some Content</h2><footer>I'm the footer</footer>";
             return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
@@ -238,9 +244,10 @@ describe("TemplateService", function () {
     describe("Front Matter", function () {
         var templateService = {};
         var engineType = 'liquid';
+        var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function () {
-            templateService = new TemplateService(database, new FakeTemplateRepo());
+            templateService = new TemplateService(database, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
         });
 
         after(function () {
@@ -277,9 +284,10 @@ describe("TemplateService", function () {
     describe("RQL Queries in Templates", function () {
         var templateService = {};
         var engineType = 'liquid';
+        var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function () {
-            templateService = new TemplateService(database, new FakeTemplateRepo());
+            templateService = new TemplateService(database, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
 
             // Insert some docs to be present before all tests start
             return testHelper.setupTestProducts();

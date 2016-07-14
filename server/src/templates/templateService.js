@@ -2,26 +2,27 @@
 
 var GenericService = require("../common/genericService");
 var TemplateEngine = require("./templateEngine");
-var TemplateRepo = require("./templateRepo");
 var CustomDataService = require("../customData/customDataService");
 var Promise = require("bluebird");
 var frontMatter = require('front-matter');
 var _ = require("lodash");
 
 class TemplateService extends GenericService {
-    constructor(database, templateRepo) {
+    constructor(database, getTemplate) {
         super(database, 'templates');
 
-        this._templateRepo = (templateRepo) ? templateRepo : new TemplateRepo();
-        this._templateEngine = new TemplateEngine({engineType: 'liquid', templateRepo: this._templateRepo});
+        // TemplateService now implements the function getTemplate that the templateEngine requires.  Use that if
+        //  a getTemplate function was not supplied.
+        this._getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
+        this._templateEngine = new TemplateEngine({engineType: 'liquid', getTemplate: this._getTemplateFunction});
         this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
         this._customDataService = new CustomDataService(database);
     }
 
-    get templateRepo() { return this._templateRepo; }
     get templateEngine() { return this._templateEngine; }
     get customDataService() { return this._customDataService; }
     get orgId() { return this._orgId; }
+    get getTemplateFunction() { return this._getTemplateFunction; }
 
     getRegenerateList(orgId) {
         return this.collection.find({orgId: orgId, regenerate: 1})
@@ -55,21 +56,37 @@ class TemplateService extends GenericService {
         let renderPromise = null;
 
         if (objectWithTemplate.layout) {
-            let layoutObject = this.templateRepo.getTemplate(objectWithTemplate.layout);
-            renderPromise = this.renderInsideLayout(objectWithTemplate, layoutObject)
-                .then((output) => {
-                    return output;
+            renderPromise = this.getTemplateFunction(objectWithTemplate.layout)
+                .then((templateObject) => {
+                    return this.renderInsideLayout(objectWithTemplate, templateObject)
+                        .then((output) => {
+                            return output; // just for debugging
+                        });
+                })
+                .then(null, (e) => { //.catch(e => {  have to do this until I get rid of monk, whose promises don't have a catch
+                    throw e;
                 });
         }
         else {
             renderPromise = this.templateEngine.Render(template, model)
                 .then((output) => {
                     return output;
+                })
+                .catch(e => {
+                    throw e;
                 });
         }
 
         return renderPromise;
     }
+
+    // getTemplate returns a templateObject
+    getTemplate(templateName) {
+        return this.find(this.orgId, {name: templateName})
+            .then((templateObjectArray) => { // todo: do we need to add a catch here as well since we are altering the output from an array to a single object?
+                return templateObjectArray[0];
+            });
+    };
 
     convertStringToTemplateObject(stringToConvert) {
 //        var deferred = Promise.pending();
@@ -114,10 +131,10 @@ class TemplateService extends GenericService {
     }
 
     renderInsideLayout(contentObject, layoutObject) {
-        var contentTemplate = contentObject.content;
-        var contentModel = _.omit(contentObject, 'content');
-        var layoutTemplate = layoutObject.content;
-        var layoutModel = _.omit(layoutObject, 'content');
+        var contentTemplate = contentObject.template;
+        var contentModel = _.omit(contentObject, 'template');
+        var layoutTemplate = layoutObject.template;
+        var layoutModel = _.omit(layoutObject, 'template');
 
         // merge contentTemplate's model with layoutTemplate's model
         var combinedModel = _.assign(layoutModel, contentModel);

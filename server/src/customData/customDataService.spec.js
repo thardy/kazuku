@@ -28,8 +28,8 @@ describe("CustomDataService", function () {
             customDataService = new CustomDataService(database);
             // Insert some docs to be present before all tests start
             // All test data should belong to a specific orgId (a test org)
-            var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
-            var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', content: 'It was a dark and rainy night...'};
+            var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', template: 'Imagine a well written blog here.'};
+            var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', template: 'It was a dark and rainy night...'};
 
             return deleteAllTestData()
                 .then(function(result) {
@@ -62,18 +62,18 @@ describe("CustomDataService", function () {
         it("can create customData of a specified ContentType", function () {
             var now = moment().format('MMMM Do YYYY, h:mm:ss a');
             var testBlogContent = 'Test blog post here. ' + now;
-            var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', content: testBlogContent };
+            var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', template: testBlogContent };
 
             var createPromise = customDataService.create(testOrgId, customData);
 
             return Promise.all([
                 createPromise.should.eventually.be.an("object"),
-                createPromise.should.eventually.have.property("content", testBlogContent)
+                createPromise.should.eventually.have.property("template", testBlogContent)
             ]);
         });
 
         it("validates customData on create using extended validation - contentType", function () {
-            var invalidCustomData = { orgId: testOrgId, title: 'New Test Blog Post2', content: 'content of invalid customData object' };
+            var invalidCustomData = { orgId: testOrgId, title: 'New Test Blog Post2', template: 'content of invalid customData object' };
 
             var createPromise = customDataService.create(testOrgId, invalidCustomData);
 
@@ -97,7 +97,7 @@ describe("CustomDataService", function () {
 
         it("can update customData by id", function () {
             var newContent = '#New Test Content';
-            theUpdatedCustomData = { content: newContent };
+            theUpdatedCustomData = { template: newContent };
 
             var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData1.id, theUpdatedCustomData);
 
@@ -112,7 +112,7 @@ describe("CustomDataService", function () {
         });
 
         it("can delete customData by id", function () {
-            var newCustomData = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', content: 'this customData is to be deleted'};
+            var newCustomData = { orgId: testOrgId, contentType: testContentType, title: 'Some title here', template: 'this customData is to be deleted'};
             var createPromise = customDataService.create(testOrgId, newCustomData);
 
             return createPromise

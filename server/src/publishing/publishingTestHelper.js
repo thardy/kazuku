@@ -37,8 +37,8 @@ let existingTemplateRegenerateList = [
 ];
 
 let existingPageRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-HomePage", url: "home", layout: "master", template: "<h1>Home Page</h1>", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-About", url: "about", template: "<h1>About</h1>", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-HomePage", url: "home", layout: "RegenerateTemplate-Master", template: "<h1>Home Page</h1>", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-About", url: "about", layout: "RegenerateTemplate-Master", template: "<h1>About</h1>", regenerate: 1 }
 ];
 
 let existingQueryRegenerateList = [

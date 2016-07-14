@@ -1,3 +1,6 @@
+"use strict";
+
+var Promise = require("bluebird");
 var TemplateEngine = require('./templateEngine');
 var _ = require("lodash");
 var chai = require("chai");
@@ -12,30 +15,35 @@ var FakeTemplateRepo = function() {
     var templateObjects = [];
     templateObjects.push({
         name: 'master',
-        content: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
+        template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
         name: 'masterWithModel',
         title: 'Master Title',
         favoriteNumber: 11,
-        content: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
+        template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
         name: 'dog',
-        content: "dogs are nice"
+        template: "dogs are nice"
     });
     templateObjects.push({
         name: 'cat',
-        content: "cats are ok"
+        template: "cats are ok"
     });
     templateObjects.push({
         name: 'chicken',
-        content: "chickens are {{disposition}}"
+        template: "chickens are {{disposition}}"
     });
 
+    // getTemplate returns a templateObject
     templateRepo.getTemplate = function(templateName) {
-        var templateObject = _.find(templateObjects, {name: templateName});
-        return templateObject;
+        var resolver = Promise.defer();
+        var foundTemplateObject = _.find(templateObjects, {name: templateName});
+        setTimeout(function () {
+            resolver.resolve(foundTemplateObject);
+        }, 100);
+        return resolver.promise;
     };
 
     return templateRepo;
@@ -47,7 +55,7 @@ describe('TemplateEngine basics', function() {
 
     before(function() {
         var fakeTemplateRepo = new FakeTemplateRepo();
-        templateEngine = new TemplateEngine({engineType: engineType, templateRepo: fakeTemplateRepo});
+        templateEngine = new TemplateEngine({engineType: engineType, getTemplate: fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo)});
     });
 
     it('engine is what we asked for', function() {
