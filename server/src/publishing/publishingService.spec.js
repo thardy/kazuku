@@ -74,7 +74,7 @@ describe("PublishingService", function () {
                                 // verify regenerate properties were reset to zero
                                 query.regenerate.should.equal(0);
                             }
-                            return results;
+                            return retrievedQueries;
                         })
                         .then(null, e => {
                             throw e;

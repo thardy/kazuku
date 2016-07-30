@@ -10,7 +10,7 @@ class PublishingService {
     constructor(database) {
         this._db = database;
         this._queryService = new QueryService(database);
-        this._templateService = new TemplateService(database);
+        this._templateService = new TemplateService(database, this._queryService);
     }
 
     get db() { return this._db; }

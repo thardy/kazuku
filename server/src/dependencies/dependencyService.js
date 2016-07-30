@@ -1,6 +1,8 @@
 "use strict";
 var _ = require("lodash");
 var Promise = require("bluebird");
+var database = require("../database/database");
+var QueryService = require("../queries/queryService");
 
 const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 
@@ -9,7 +11,8 @@ class DependencyService {
     constructor(customDataService, templateService, queryService) {
         this._customDataService = customDataService;
         this._templateService = templateService;
-        this._queryService = queryService;
+        this._queryService = (queryService) ? queryService : new QueryService(database);
+
     }
 
     get customDataService() { return this._customDataService; }
@@ -98,19 +101,15 @@ class DependencyService {
         let item;
 
         // check to see if this value is actually a valid query
-        if (query.startsWith("query(")) {
-            // get the name of the query
-            let matchArray = query.match(/query\(([a-zA-Z0-9-_]*)\)/);
-            let queryName = matchArray[1];
+        let queryName = this.queryService.getNameOfNamedQuery(query);
+        if (queryName) {
             item = { type: "query", name: queryName };
         }
-        else if (query.startsWith("eq(")) {
-            // currently, this is only smart enough to understand one contentType dependency from a query,
-            //  and the query must start with "eq(contentType, "
-            // get the contentType
-            let matchArray = query.match(/eq\(contentType, ([a-zA-Z0-9-_]*)\)/);
-            let contentType = matchArray[1];
-            item = { type: "data", name: contentType };
+        else {
+            let contentType = this.queryService.getContentType(query);
+            if (contentType) {
+                item = { type: "data", name: contentType };
+            }
         }
 
         if (item !== undefined) {

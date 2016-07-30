@@ -49,7 +49,7 @@ class CustomDataService extends GenericService {
             query = 'eq(orgId,' + orgId + ')&' + query;
         }
         else {
-            // todo: test that this actual shows up in the query - https://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/
+            // todo: test that this actually shows up in the query - https://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/
             query = query.eq('orgId', orgId);
         }
 

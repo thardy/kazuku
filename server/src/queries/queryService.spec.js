@@ -11,6 +11,9 @@ var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
 var moment = require("moment");
 
+// temporary
+var CustomDataService = require("../customData/customDataService");
+
 chai.use(chaiAsPromised);
 
 describe("QueryService", function () {
@@ -140,6 +143,12 @@ describe("QueryService", function () {
             return queryTestHelper.setupTestQueries()
                 .then(function (results) {
                     return testHelper.setupTestProducts();
+                })
+                .then((results) => {
+                    return queryTestHelper.createExistingDataQueries();
+                })
+                .then((results) => {
+                    return queryTestHelper.createExistingQueryData();
                 });
         });
 
@@ -148,6 +157,9 @@ describe("QueryService", function () {
             return queryTestHelper.deleteAllTestQueries()
                 .then(function (results) {
                     return testHelper.deleteAllTestProducts();
+                })
+                .then((results) => {
+                    return queryTestHelper.deleteAllQueryData();
                 });
         });
 
@@ -159,6 +171,53 @@ describe("QueryService", function () {
             return Promise.all([
                 resolvePromise.should.eventually.deep.equal(expectedResults)
             ]);
+        });
+
+        it("can resolve all query properties on model object", function () {
+            let model = {
+                propertyOne: "query(DataQuery-one)",
+                propertyTwo: "query(DataQuery-two)",
+                propertyThree: "someString",
+                propertyFour: "query(DataQuery-three)"
+            };
+            let expected = {
+                propertyOne: [
+                    queryTestHelper.existingQueryData[0],
+                    queryTestHelper.existingQueryData[1]
+                ],
+                propertyTwo: [
+                    queryTestHelper.existingQueryData[3],
+                    queryTestHelper.existingQueryData[2],
+                    queryTestHelper.existingQueryData[1]
+                ],
+                propertyThree: "someString",
+                propertyFour: [
+                    queryTestHelper.existingQueryData[1],
+                    queryTestHelper.existingQueryData[2]
+                ]
+            };
+
+            let resolvePromise = queryService.resolveQueryPropertiesOnModel(queryTestHelper.testOrgId, model);
+
+            return resolvePromise
+                .then((result) => {
+                    expect(model).to.deep.equal(expected);
+                });
+
+        });
+
+        it("random customData query test using date", function () {
+            let customDataService = new CustomDataService(database);
+            let findPromise = customDataService.find(queryTestHelper.testOrgId, "eq(contentType,testQueryDataContentType)&ge(created,date:2016-02-20)&sort(created)&limit(2,0)");
+            let expected = [
+                queryTestHelper.existingQueryData[1],
+                queryTestHelper.existingQueryData[2]
+            ];
+
+            return findPromise
+                .then((result) => {
+                    expect(result).to.deep.equal(expected);
+                });
         });
     });
 

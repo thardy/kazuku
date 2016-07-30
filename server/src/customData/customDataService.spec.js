@@ -253,7 +253,7 @@ describe("CustomDataService", function () {
 //        });
 
         it("can query using RQL limit", function () {
-            var query = "eq(orgId,1)&eq(contentType,testContentType)&sort(created)&limit(2,0)";
+            var query = "eq(orgId,1)&eq(contentType,testContentType)&sort(created)&limit(2,0)"; // limit must be last
             var actual = mongoRql(query);
             let expected = {
                 sort: { created: 1 },

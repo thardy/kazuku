@@ -3,12 +3,13 @@
 var GenericService = require("../common/genericService");
 var TemplateEngine = require("./templateEngine");
 var CustomDataService = require("../customData/customDataService");
+var QueryService = require("../queries/queryService");
 var Promise = require("bluebird");
 var frontMatter = require('front-matter');
 var _ = require("lodash");
 
 class TemplateService extends GenericService {
-    constructor(database, getTemplate) {
+    constructor(database, queryService, getTemplate) {
         super(database, 'templates');
 
         // TemplateService now implements the function getTemplate that the templateEngine requires.  Use that if
@@ -16,10 +17,13 @@ class TemplateService extends GenericService {
         this._getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
         this._templateEngine = new TemplateEngine({engineType: 'liquid', getTemplate: this._getTemplateFunction});
         this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
+
+        this._queryService = (queryService) ? queryService : new QueryService(database);
         this._customDataService = new CustomDataService(database);
     }
 
     get templateEngine() { return this._templateEngine; }
+    get queryService() { return this._queryService; }
     get customDataService() { return this._customDataService; }
     get orgId() { return this._orgId; }
     get getTemplateFunction() { return this._getTemplateFunction; }
@@ -53,6 +57,10 @@ class TemplateService extends GenericService {
         }
 
         let model = _.omit(objectWithTemplate, 'template', 'content');
+//        this.queryService.resolveQueries(model)
+//            .then((modelAfterQueriesResolved) => {
+//
+//            });
         let renderPromise = null;
 
         if (objectWithTemplate.layout) {

@@ -56,17 +56,12 @@ var FakeTemplateRepo = function() {
 describe("TemplateService", function () {
     describe("CRUD", function () {
         let templateService = {};
-        let existingTemplate1 = {};
-        let existingTemplate2= {};
-        let existingRegenerateList = [];
-        let testOrgId = 1;
-        let testSiteId = 1;
 
         before(() => {
             templateService = new TemplateService(database);
             // Insert some docs to be present before all tests start
             // All test data should belong to a specific orgId (a test org)
-            return templateTestHelper.setupTestTemplates();
+            return templateTestHelper.createTemplateList();
         });
 
         after(() => {
@@ -177,13 +172,13 @@ describe("TemplateService", function () {
 
     });
 
-    describe("TemplateService Layouts", function () {
+    describe("TemplateService Unit Layouts", function () {
         var templateService = {};
         var engineType = 'liquid';
         var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function() {
-            templateService = new TemplateService(database, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
+            templateService = new TemplateService(database, null, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
         });
 
         it("can render an object with content as the template and all other properties as the model", function () {
@@ -241,13 +236,45 @@ describe("TemplateService", function () {
         });
     });
 
+    describe("TemplateService Integration Layouts", function () {
+        var templateService = {};
+
+        before(function() {
+            templateService = new TemplateService(database);
+            return templateTestHelper.createTemplateList();
+        });
+
+        after(() => {
+            // Remove all Test documents
+            return templateTestHelper.deleteAllTestTemplates();
+        });
+
+        it("can render using a layout", function () {
+            let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithLayout");
+
+            return templateService.getTemplate("NewTemplateWithLayout")
+                .then((templateObject) => {
+                    return expect(templateService.renderObject(templateObject)).to.eventually.equal(expected);
+                });
+        });
+
+        it("can render includes", function () {
+            let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithIncludes");
+
+            return templateService.getTemplate("NewTemplateWithIncludes")
+                .then((templateObject) => {
+                    return expect(templateService.renderObject(templateObject)).to.eventually.equal(expected);
+                });
+        });
+    });
+
     describe("Front Matter", function () {
         var templateService = {};
         var engineType = 'liquid';
         var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function () {
-            templateService = new TemplateService(database, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
+            templateService = new TemplateService(database, null, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
         });
 
         after(function () {
@@ -287,7 +314,7 @@ describe("TemplateService", function () {
         var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function () {
-            templateService = new TemplateService(database, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
+            templateService = new TemplateService(database, null, fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo));
 
             // Insert some docs to be present before all tests start
             return testHelper.setupTestProducts();

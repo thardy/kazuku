@@ -6,6 +6,7 @@ let testOrgId = 1;
 let testSiteId = 1;
 let existingQuery1 = {};
 let existingQuery2= {};
+let testQueryDataContentType = "testQueryDataContentType";
 
 let newQuery1 = {
     orgId: testOrgId,
@@ -19,21 +20,37 @@ let newQuery2 = {
     name: "TestQuery2",
     query: "test query two"
 };
+let existingDataQueries = [
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-one", query: `eq(contentType,${testQueryDataContentType})&sort(created)&limit(2,0)` },
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-two", query: `eq(contentType,${testQueryDataContentType})&sort(-created)&limit(3,0)` },
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-three", query: `eq(contentType,${testQueryDataContentType})&ge(created,date:2016-02-20)&sort(created)&limit(2,0)` }
+];
+
+let existingQueryData = [
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-One', description: 'This is One.', someNumber: 10, created: new Date('2016-01-20T00:00:00') },
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Two', description: 'This is Two.', someNumber: 20, created: new Date('2016-02-20T00:00:00') },
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Three', description: 'This is Three.', someNumber: 30, created: new Date('2016-03-20T00:00:00') },
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Four', description: 'This is Four.', someNumber: 40, created: new Date('2016-04-20T00:00:00') }
+];
 
 let existingRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-HeaderNavigation", query: "", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-HeaderNavigation", query: "something", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "query needz regenerating", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-TopProducts", query: "query regen ftw", regenerate: 1 }
 ];
 
 
-var queryTestHelper = {
+let queryTestHelper = {
     testOrgId: testOrgId,
     testSiteId: testSiteId,
     setupTestQueries: setupTestQueries,
     deleteAllTestQueries: deleteAllTestQueries,
+    deleteAllQueryData: deleteAllQueryData,
     createRegenerateList: createRegenerateList,
+    createExistingDataQueries: createExistingDataQueries,
+    createExistingQueryData: createExistingQueryData,
     existingRegenerateList: existingRegenerateList,
+    existingQueryData: existingQueryData,
     existingQuery1: existingQuery1,
     existingQuery2: existingQuery2
 };
@@ -64,8 +81,36 @@ function setupTestQueries() {
         });
 }
 
+function createExistingDataQueries() {
+    return deleteAllDataQueries()
+        .then((result) => {
+            database.queries.insert(existingDataQueries)
+                .then(function(docs) {
+                    existingDataQueries = docs;
+                    _.forEach(existingDataQueries, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
+        });
+}
+
+function createExistingQueryData() {
+    return deleteAllQueryData()
+        .then((result) => {
+            database.customData.insert(existingQueryData)
+                .then(function(docs) {
+                    existingQueryData = docs;
+                    _.forEach(existingQueryData, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
+        });
+}
+
 function createRegenerateList() {
-    return deleteAllRegenTemplates()
+    return deleteAllRegenQueries()
         .then((result) => {
             return database.queries.insert(queryTestHelper.existingRegenerateList);
         })
@@ -79,8 +124,16 @@ function deleteAllTestQueries() {
     return database.queries.remove({orgId: queryTestHelper.testOrgId});
 }
 
-function deleteAllRegenTemplates() {
+function deleteAllRegenQueries() {
     return database.queries.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^RegenerateQuery/ }});
+}
+
+function deleteAllDataQueries() {
+    return database.queries.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^DataQuery-/ }});
+}
+
+function deleteAllQueryData() {
+    return database.customData.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^QueryData-/ }});
 }
 
 
