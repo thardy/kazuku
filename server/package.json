@@ -18,6 +18,7 @@
     "liquid-node": "^2.5.0",
     "lodash": "^3.2.0",
     "marked": "^0.3.2",
+    "memory-cache": "^0.1.6",
     "moment": "^2.10.3",
     "mongo-rql": "0.0.2",
     "monk": "^0.9.1",

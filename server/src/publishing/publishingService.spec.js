@@ -67,7 +67,7 @@ describe("PublishingService", function () {
                     // retrieve all the queries that we were supposed to regenerate
                     return queryService.find(pubTestHelper.testOrgId, mongoQueryObject)
                         .then((retrievedQueries) => {
-                            for (var query of retrievedQueries) {
+                            for (let query of retrievedQueries) {
                                 let expected = pubTestHelper.expectedRenderedQueries.get(query.name);
                                 // compare their results to expected results
                                 query.results.should.deep.equal(expected);
@@ -84,7 +84,7 @@ describe("PublishingService", function () {
                     // Verify template rendered outputs
                     let retrievedQueries = [];
                     let nameArray = [];
-                    for (var expectedTemplate of pubTestHelper.expectedRenderedTemplates) {
+                    for (let expectedTemplate of pubTestHelper.expectedRenderedTemplates) {
                         nameArray.push(expectedTemplate[0]);
                     }
 

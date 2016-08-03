@@ -57,6 +57,8 @@ class TemplateService extends GenericService {
         }
 
         let model = _.omit(objectWithTemplate, 'template', 'content');
+        // At this point, the queries should be resolved, but we still need to replace our model properties with their results,
+        //  unless we decide to do that earlier in this batch
 //        this.queryService.resolveQueries(model)
 //            .then((modelAfterQueriesResolved) => {
 //
