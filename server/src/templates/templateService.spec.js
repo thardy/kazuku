@@ -189,7 +189,7 @@ describe("TemplateService", function () {
                 favoriteNumber: 22,
                 template: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
             };
-            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal('<h2>Favorite Color is blue, and Favorite Number is 22</h2>');
+            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal('<h2>Favorite Color is blue, and Favorite Number is 22</h2>');
         });
 
         it("can render using a layout", function () {
@@ -200,7 +200,7 @@ describe("TemplateService", function () {
                 layout: 'master',
                 template: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
             };
-            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal("<header>I'm the header</header><h2>Favorite Color is blue, and Favorite Number is 22</h2><footer>I'm the footer</footer>");
+            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal("<header>I'm the header</header><h2>Favorite Color is blue, and Favorite Number is 22</h2><footer>I'm the footer</footer>");
         });
 
         it("can use both content and layout template model properties in a layout template", function () {
@@ -210,7 +210,7 @@ describe("TemplateService", function () {
                 template: '<h2>Some Content</h2>'
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content</h2><footer>I'm the footer</footer>";
-            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal(expectedResult);
         });
 
         it("can use both layout and content template model properties in a content template", function () {
@@ -220,7 +220,7 @@ describe("TemplateService", function () {
                 template: '<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>'
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content. Master Title-11-blue</h2><footer>I'm the footer</footer>";
-            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal(expectedResult);
         });
 
         it("override layout model properties with content model properties with the same name", function () {
@@ -232,7 +232,7 @@ describe("TemplateService", function () {
                 template: '<h2>Some Content</h2>'
             };
             var expectedResult = "<header>I'm the header. Content Title-7-yellow</header><h2>Some Content</h2><footer>I'm the footer</footer>";
-            return expect(templateService.renderObject(objectWithTemplate)).to.eventually.equal(expectedResult);
+            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal(expectedResult);
         });
     });
 
@@ -254,7 +254,7 @@ describe("TemplateService", function () {
 
             return templateService.getTemplate("NewTemplateWithLayout")
                 .then((templateObject) => {
-                    return expect(templateService.renderObject(templateObject)).to.eventually.equal(expected);
+                    return expect(templateService.renderObject(templateTestHelper.testOrgId, templateObject)).to.eventually.equal(expected);
                 });
         });
 
@@ -263,7 +263,7 @@ describe("TemplateService", function () {
 
             return templateService.getTemplate("NewTemplateWithIncludes")
                 .then((templateObject) => {
-                    return expect(templateService.renderObject(templateObject)).to.eventually.equal(expected);
+                    return expect(templateService.renderObject(templateTestHelper.testOrgId, templateObject)).to.eventually.equal(expected);
                 });
         });
     });

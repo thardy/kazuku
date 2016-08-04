@@ -3,6 +3,7 @@ var _ = require("lodash");
 var Promise = require("bluebird");
 var GenericService = require("../common/genericService");
 var CustomDataService = require("../customData/customDataService");
+var cache = require("memory-cache");
 
 class QueryService extends GenericService {
     constructor(database) {
@@ -37,33 +38,44 @@ class QueryService extends GenericService {
     resolveQueryPropertiesOnModel(orgId, model) {
         const promises = [];
         // some local helper functions to make this more clear
-        const resolveQueryByName = queryName => this.getByName(orgId, queryName)
-                .then((queryObject) => {
-                    if (queryObject && queryObject.results) {
-                        // queryObject has cached results.  Use them
-                        return queryObject.results;
-                    }
-                    else {
-                        // resolve the query
-                        return this.resolve(orgId, queryObject.query);
-                    }
-                })
-                .then(null, (error) => {
-                    console.log(error);
-                });
         const resolveModelProperty = (modelProperty) => {
             const queryName = this.getNameOfNamedQuery(modelProperty);
             if (queryName) {
+                // property is a named query, e.g. query(top5Products)
                 return resolveQueryByName(queryName);
             }
             else if (this.propertyIsQuery(modelProperty)) {
+                // property is an actual query e.g. eq(contentType,products)&gt(price,9.99)&limit(10,0)
                 return this.resolve(modelProperty);
             }
             else {
                 return Promise.resolve(modelProperty);
             }
         };
+        const resolveQueryByName = (queryName) => {
+            let cachedResults = cache.get(queryName);
+            if (cachedResults) {
+                return Promise.resolve(cachedResults);
+            }
+            else {
+                return this.getByName(orgId, queryName)
+                    .then((queryObject) => {
+                        if (queryObject && queryObject.results) {
+                            // queryObject has cached results.  Use them
+                            return queryObject.results;
+                        }
+                        else {
+                            // resolve the query
+                            return this.resolve(orgId, queryObject.query);
+                        }
+                    })
+                    .then(null, (error) => {
+                        console.log(error);
+                    });
+            }
+        };
 
+        // Loop through our model properties to resolve queries, using the above helper functions
         for (let property in model) {
             if (model.hasOwnProperty(property)) {
                 promises.push(
@@ -96,8 +108,10 @@ class QueryService extends GenericService {
     getNameOfNamedQuery(query) {
         let queryName;
 
-        // check to see if this value is actually a valid query
-        if (query && query.startsWith("query(")) {
+        // check to see if this value is actually a string and a valid query
+        if (query
+            && (typeof query === 'string' || query instanceof String)
+            && query.startsWith("query(")) {
             // get the name of the query
             let matchArray = query.match(/query\(([a-zA-Z0-9-_]*)\)/);
             queryName = matchArray[1];
@@ -113,7 +127,9 @@ class QueryService extends GenericService {
     getContentType(query) {
         let contentType;
 
-        if (query.startsWith("eq(")) {
+        if (query
+            && (typeof query === 'string' || query instanceof String)
+            && query.startsWith("eq(")) {
             // currently, this is only smart enough to understand one contentType dependency from a query,
             //  and the query must start with "eq(contentType, "
             // get the contentType

@@ -41,7 +41,7 @@ class TemplateService extends GenericService {
             });
     }
 
-    renderObject(objectWithTemplate) {
+    renderObject(orgId, objectWithTemplate) {
         // Use either template or content properties
         let template;
 
@@ -57,37 +57,37 @@ class TemplateService extends GenericService {
         }
 
         let model = _.omit(objectWithTemplate, 'template', 'content');
-        // At this point, the queries should be resolved, but we still need to replace our model properties with their results,
-        //  unless we decide to do that earlier in this batch
-//        this.queryService.resolveQueries(model)
-//            .then((modelAfterQueriesResolved) => {
-//
-//            });
-        let renderPromise = null;
 
-        if (objectWithTemplate.layout) {
-            renderPromise = this.getTemplateFunction(objectWithTemplate.layout)
-                .then((templateObject) => {
-                    return this.renderInsideLayout(objectWithTemplate, templateObject)
-                        .then((output) => {
-                            return output; // just for debugging
+        // At this point, the queries should be resolved, but we still need to replace our model properties with their results
+        return this.queryService.resolveQueryPropertiesOnModel(orgId, model)
+            .then((modelAfterQueriesResolved) => {
+                let renderPromise = null;
+
+                if (objectWithTemplate.layout) {
+                    renderPromise = this.getTemplateFunction(objectWithTemplate.layout)
+                        .then((templateObject) => {
+                            return this.renderInsideLayout(objectWithTemplate, templateObject)
+                                .then((output) => {
+                                    return output; // just for debugging
+                                });
+                        })
+                        .then(null, (e) => { //.catch(e => {  todo: have to do this until I get rid of monk, whose promises don't have a catch
+                            throw e;
                         });
-                })
-                .then(null, (e) => { //.catch(e => {  have to do this until I get rid of monk, whose promises don't have a catch
-                    throw e;
-                });
-        }
-        else {
-            renderPromise = this.templateEngine.Render(template, model)
-                .then((output) => {
-                    return output;
-                })
-                .catch(e => {
-                    throw e;
-                });
-        }
+                }
+                else {
+                    renderPromise = this.templateEngine.Render(template, model)
+                        .then((output) => {
+                            return output;
+                        })
+                        .catch(e => {
+                            throw e;
+                        });
+                }
 
-        return renderPromise;
+                return renderPromise;
+            });
+
     }
 
     // getTemplate returns a templateObject
