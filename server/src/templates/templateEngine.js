@@ -30,7 +30,7 @@ var TemplateEngine = function(args) {
                 else {
                     throw new Error(`template '${path}' not found`);
                 }
-            })
+            });
 
     };
 

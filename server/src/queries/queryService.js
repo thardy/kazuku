@@ -109,9 +109,7 @@ class QueryService extends GenericService {
         let queryName;
 
         // check to see if this value is actually a string and a valid query
-        if (query
-            && (typeof query === 'string' || query instanceof String)
-            && query.startsWith("query(")) {
+        if (query && (typeof query === 'string' || query instanceof String) && query.startsWith("query(")) {
             // get the name of the query
             let matchArray = query.match(/query\(([a-zA-Z0-9-_]*)\)/);
             queryName = matchArray[1];
@@ -127,9 +125,7 @@ class QueryService extends GenericService {
     getContentType(query) {
         let contentType;
 
-        if (query
-            && (typeof query === 'string' || query instanceof String)
-            && query.startsWith("eq(")) {
+        if (query && (typeof query === 'string' || query instanceof String) && query.startsWith("eq(")) {
             // currently, this is only smart enough to understand one contentType dependency from a query,
             //  and the query must start with "eq(contentType, "
             // get the contentType

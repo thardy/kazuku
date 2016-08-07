@@ -96,7 +96,7 @@ class TemplateService extends GenericService {
             .then((templateObjectArray) => { // todo: do we need to add a catch here as well since we are altering the output from an array to a single object?
                 return templateObjectArray[0];
             });
-    };
+    }
 
     convertStringToTemplateObject(stringToConvert) {
 //        var deferred = Promise.pending();

@@ -47,7 +47,7 @@ class GenericService {
         }
 
         // Hardwire orgId into every query
-        mongoQueryObject["orgId"] = orgId;
+        mongoQueryObject.orgId = orgId;
 
 //        var projection = {
 //            skip: mongoQuery.skip,

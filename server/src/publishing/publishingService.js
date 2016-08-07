@@ -80,7 +80,7 @@ class PublishingService {
                             throw e;
                         });
                         // todo: regenerating a template with a url (a page) should output the page to the file system
-                    })
+                    });
             })
             .then((results) => {
                 // Clear the cache
