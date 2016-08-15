@@ -60,13 +60,13 @@ class TemplateService extends GenericService {
 
         // At this point, the queries should be resolved, but we still need to replace our model properties with their results
         return this.queryService.resolveQueryPropertiesOnModel(orgId, model)
-            .then((modelAfterQueriesResolved) => {
+            .then((result) => { // result is inconsequential. model should have been modified directly.
                 let renderPromise = null;
 
                 if (objectWithTemplate.layout) {
                     renderPromise = this.getTemplateFunction(objectWithTemplate.layout)
-                        .then((templateObject) => {
-                            return this.renderInsideLayout(objectWithTemplate, templateObject)
+                        .then((layoutObject) => {
+                            return this.renderInsideLayout(objectWithTemplate.template, model, layoutObject)
                                 .then((output) => {
                                     return output; // just for debugging
                                 });
@@ -140,35 +140,39 @@ class TemplateService extends GenericService {
         return deferred.promise;
     }
 
-    renderInsideLayout(contentObject, layoutObject) {
-        var contentTemplate = contentObject.template;
-        var contentModel = _.omit(contentObject, 'template');
+    renderInsideLayout(template, model, layoutObject) {
         var layoutTemplate = layoutObject.template;
         var layoutModel = _.omit(layoutObject, 'template');
 
-        // merge contentTemplate's model with layoutTemplate's model
-        var combinedModel = _.assign(layoutModel, contentModel);
+        // Need to resolve any query properties on the layout model
+        return this.queryService.resolveQueryPropertiesOnModel(this.orgId, layoutModel)
+            .then((result) => {
+                // merge contentTemplate's model with layoutTemplate's model
+                var combinedModel = _.assign(layoutModel, model);
 
-        // render contentTemplate using that same model
-        var renderPromise = this.templateEngine.Render(contentTemplate, combinedModel)
-            .then((contentOutput) => {
-                // make the content's rendered output available as the content property of the layout
-                combinedModel.content = contentOutput;
-            })
-            .then(() => {
-                // render layoutTemplate
-                var layoutRenderPromise = this.templateEngine.Render(layoutTemplate, combinedModel)
-                    .then((layoutOutput) => {
-                        return layoutOutput;
+                // render contentTemplate using that same model
+                var renderPromise = this.templateEngine.Render(template, combinedModel)
+                    .then((contentOutput) => {
+                        // make the content's rendered output available as the content property of the layout
+                        combinedModel.content = contentOutput;
+                    })
+                    .then(() => {
+                        // render layoutTemplate
+                        var layoutRenderPromise = this.templateEngine.Render(layoutTemplate, combinedModel)
+                            .then((layoutOutput) => {
+                                return layoutOutput; // just for debugging
+                            });
+                        return layoutRenderPromise;
                     });
-                return layoutRenderPromise;
+
+                return renderPromise;
             });
 
-        return renderPromise;
     }
 
 
     getAllDependentsOfItem(item) {
+        // todo: make this do something
         return [];
     }
 

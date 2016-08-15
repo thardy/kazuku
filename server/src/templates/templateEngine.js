@@ -25,6 +25,11 @@ var TemplateEngine = function(args) {
         return templateEngine.getTemplate(path)
             .then((templateObject) => {
                 if (templateObject && templateObject.template) {
+                    // todo: I suspect that my returning of only the templates here and not the model that goes with it
+                    //  is causing all of my includes to not render properly. e.g. RegenerateTemplate-Navigation references
+                    //  navItems, which the parsing engine won't have a clue where that comes from when used in an include.
+                    //  Has liquid-node been updated to accept a model with an include?  Just a template is not enough.  Every
+                    //  include needs its model that goes with it, the entire templateObject.
                     return templateObject.template; // return the template itself
                 }
                 else {
