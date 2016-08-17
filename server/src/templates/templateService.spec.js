@@ -258,7 +258,7 @@ describe("TemplateService", function () {
                 });
         });
 
-        it("can render includes", function () {
+        it("can render includes when include has a model", function () {
             let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithIncludes");
 
             return templateService.getTemplate("NewTemplateWithIncludes")

@@ -15,7 +15,7 @@ let existingTemplateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateLayout", template: "<header>Some header</header>{{ content }}<footer>Some footer</footer>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", layout: "NewTemplateLayout", template: "<div>cool content is here</div>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", template: "{% include NewTemplateHeader %}<div>nice content</div>{% include NewTemplateFooter %}"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateHeader", template: "<header>The real header</header>"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateHeader", title: "Master Title", favoriteNumber: 11, template: "<header>The real header {{title}}-{{favoriteNumber}}</header>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateFooter", template: "<footer>The real footer</footer>"}
 ];
 
@@ -28,7 +28,7 @@ let existingRegenerateList = [
 
 let expectedRenderedTemplates = new Map();
 expectedRenderedTemplates.set("NewTemplateWithLayout", "<header>Some header</header><div>cool content is here</div><footer>Some footer</footer>");
-expectedRenderedTemplates.set("NewTemplateWithIncludes", "<header>The real header</header><div>nice content</div><footer>The real footer</footer>");
+expectedRenderedTemplates.set("NewTemplateWithIncludes", "<header>The real header Master Title-11</header><div>nice content</div><footer>The real footer</footer>");
 
 
 let templateTestHelper = {
