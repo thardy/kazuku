@@ -25,15 +25,10 @@ var TemplateEngine = function(args) {
         return templateEngine.getTemplate(path)
             .then((templateObject) => {
                 if (templateObject && templateObject.template) {
-                    // todo: return template object and figure out why I wasn't doing that before
-                    return templateObject;
-
-                    // todo: I suspect that my returning of only the templates here and not the model that goes with it
-                    //  is causing all of my includes to not render properly. e.g. RegenerateTemplate-Navigation references
-                    //  navItems, which the parsing engine won't have a clue where that comes from when used in an include.
-                    //  Has liquid-node been updated to accept a model with an include?  Just a template is not enough.  Every
-                    //  include needs its model that goes with it, the entire templateObject.
-                    //return templateObject.template; // return the template itself
+                    // Here's exactly what is happening.  If I can have the basic render promise do what it is doing now,
+                    //  it will replace any includes with their template strings then evaluate the whole thing against the top-most model.
+                    // todo: figure out how to propagate every included model up to the top-most model OR switch out the template engine
+                    return templateObject.template; // return the template itself
                 }
                 else {
                     throw new Error(`template '${path}' not found`);
@@ -44,7 +39,6 @@ var TemplateEngine = function(args) {
 
     templateEngine.engine.fileSystem = new CustomFileSystem();
 
-    // todo: alter this to accept a templateObject instead of a templateString
     templateEngine.Render = function(templateString, model) {
         var renderPromise = templateEngine.engine.parse(templateString)
             .then((template) => {

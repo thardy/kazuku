@@ -22,6 +22,7 @@ let existingTestimonials = [
     { orgId: testOrgId, contentType: "testimonials", name: 'Joe Shmoe', testimonial: 'It\'s cool.', created: new Date('2016-05-01T00:00:00') }
 ];
 
+// todo: rename templatesForRegenerationTests because I've decided not to actually regenerate templates unless they are pages
 let existingTemplateRegenerateList = [
     {
         orgId: testOrgId,

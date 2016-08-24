@@ -60,7 +60,7 @@ class PublishingService {
                         return Promise.map(templatesToRegenerate, (templateObject) => {
                             return this.templateService.renderObject(orgId, templateObject)
                                 .then((renderedTemplate) => {
-                                    templateObject.renderedTemplate = renderedTemplate; // persist the renderedTemplate on the templateObject
+                                    //templateObject.renderedTemplate = renderedTemplate; // persist the renderedTemplate on the templateObject
                                     templateObject.regenerate = 0;         // reset the regenerate flag
 
                                     // save the templates back to the database

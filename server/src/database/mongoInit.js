@@ -59,7 +59,7 @@
 
 //// sample document
 //var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', template: '#Test Page 1 - Existing',
-//                      renderedTemplate: '', dependencies: [], regenerate: 0,
+//                      dependencies: [], regenerate: 0,
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
 //

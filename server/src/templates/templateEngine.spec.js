@@ -83,7 +83,7 @@ describe('TemplateEngine basics', function() {
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('dogs are nice. Hello World true. cats are ok.');
     });
 
-    it("can render includes using a model", function () {
+    it("can render includes using parent's model", function () {
         var templateString = 'I think {% include chicken %}.';
         var model = { disposition: 'awesome' };
 
