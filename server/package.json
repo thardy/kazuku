@@ -25,7 +25,8 @@
     "morgan": "~1.3.0",
     "request": "^2.51.0",
     "rql": "^0.3.3",
-    "serve-favicon": "~2.1.3"
+    "serve-favicon": "~2.1.3",
+    "shopify-liquid": "https://github.com/thardy/shopify-liquid/tarball/698bbd75cfbedd6393c1b8ae50b1124dc75927c0"
   },
   "devDependencies": {
     "chai": "^2.2.0",
