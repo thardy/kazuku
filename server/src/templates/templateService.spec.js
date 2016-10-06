@@ -141,8 +141,8 @@ describe("TemplateService", function () {
 
             var updateByIdPromise = templateService.updateById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id, theUpdatedTemplate);
 
-            return updateByIdPromise.then(function(numAffected) {
-                numAffected.should.equal(1);
+            return updateByIdPromise.then(function(result) {
+                result.nModified.should.equal(1);
 
                 // verify customSchema was updated
                 var getByIdPromise = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);

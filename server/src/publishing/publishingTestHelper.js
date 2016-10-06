@@ -32,9 +32,9 @@ let existingTemplateRegenerateList = [
         template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>",
         regenerate: 1
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include RegenerateTemplate-Navigation %}</header>", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include 'RegenerateTemplate-Navigation' %}</header>", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<footer>This is a Footer</footer>", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include RegenerateTemplate-Header %} <div>{{ content }}</div> {% include RegenerateTemplate-Footer %}", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include 'RegenerateTemplate-Header' %} <div>{{ content }}</div> {% include 'RegenerateTemplate-Footer' %}", regenerate: 1 }
 ];
 
 let existingPageRegenerateList = [

@@ -44,8 +44,8 @@ class CustomSchemasController extends CrudController {
         body.contentType = contentType;
 
         this.service.updateByContentType(this.orgId, contentType, body)
-            .then((numAffected) => {
-                if (numAffected <= 0) {
+            .then((result) => {
+                if (result.nModified <= 0) {
                     return res.status(404).json({'Errors': ['Document not found']});
                 }
 

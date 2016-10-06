@@ -168,8 +168,8 @@ describe("CustomSchemaService CRUD", function () {
 
         var updateByContentTypePromise = customSchemaService.updateByContentType(testOrgId, existingCustomSchema1.contentType, theUpdatedCustomSchema);
 
-        return updateByContentTypePromise.then(function(numAffected) {
-            numAffected.should.equal(1);
+        return updateByContentTypePromise.then(function(result) {
+            result.nModified.should.equal(1);
 
             // verify customSchema was updated
             var getByContentTypePromise = customSchemaService.getByContentType(testOrgId, existingCustomSchema1.contentType);

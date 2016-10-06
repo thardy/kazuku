@@ -58,7 +58,7 @@ describe("DependencyService", function () {
                 url: "home",
                 layout: "master",
                 products: "query(top10Events)",
-                template: "{% include header %}<div>template body is here</div>{% include footer %}"
+                template: "{% include 'header' %}<div>template body is here</div>{% include footer %}"
             };
 
             let dependencies = dependencyService.getDependenciesOfItem(template);

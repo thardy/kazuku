@@ -38,20 +38,6 @@ class QueryService extends GenericService {
     resolveQueryPropertiesOnModel(orgId, model) {
         const promises = [];
         // some local helper functions to make this more clear
-        const resolveModelProperty = (modelProperty) => {
-            const queryName = this.getNameOfNamedQuery(modelProperty);
-            if (queryName) {
-                // property is a named query, e.g. query(top5Products)
-                return resolveQueryByName(queryName);
-            }
-            else if (this.propertyIsQuery(modelProperty)) {
-                // property is an actual query e.g. eq(contentType,products)&gt(price,9.99)&limit(10,0)
-                return this.resolve(modelProperty);
-            }
-            else {
-                return Promise.resolve(modelProperty);
-            }
-        };
         const resolveQueryByName = (queryName) => {
             let cachedResults = cache.get(queryName);
             if (cachedResults) {
@@ -74,6 +60,21 @@ class QueryService extends GenericService {
                     });
             }
         };
+        const resolveModelProperty = (modelProperty) => {
+            const queryName = this.getNameOfNamedQuery(modelProperty);
+            if (queryName) {
+                // property is a named query, e.g. query(top5Products)
+                return resolveQueryByName(queryName);
+            }
+            else if (this.propertyIsQuery(modelProperty)) {
+                // property is an actual query e.g. eq(contentType,products)&gt(price,9.99)&limit(10,0)
+                return this.resolve(modelProperty);
+            }
+            else {
+                return Promise.resolve(modelProperty);
+            }
+        };
+
 
         // Loop through our model properties to resolve queries, using the above helper functions
         for (let property in model) {

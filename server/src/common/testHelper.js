@@ -66,7 +66,8 @@ var testHelper = {
     deleteAllTestOrgCustomData: deleteAllTestOrgCustomData,
     setupTestSchemas: setupTestSchemas,
     createTestSchemas: createTestSchemas,
-    deleteAllTestSchemas: deleteAllTestSchemas
+    deleteAllTestSchemas: deleteAllTestSchemas,
+    stripFriendlyIdsFromModel: stripFriendlyIdsFromModel
 };
 
 function setupTestProducts() {
@@ -146,7 +147,10 @@ function deleteAllTestSchemas() {
     return database.customSchemas.remove({orgId: testOrgId});
 }
 
+function stripFriendlyIdsFromModel(model) {
 
+
+}
 
 
 module.exports = testHelper;

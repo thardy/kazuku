@@ -82,8 +82,8 @@ class CrudController {
         let body = req.body;
 
         this.service.updateById(this.orgId, id, body)
-            .then((numAffected) => {
-                if (numAffected <= 0) return next();
+            .then((result) => {
+                if (result.nModified <= 0) return next();
 
                 return res.status(200).json({});
             })

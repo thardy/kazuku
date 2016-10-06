@@ -77,14 +77,14 @@ describe('TemplateEngine basics', function() {
     });
 
     it('can use a CustomFileSystem to embed templates', function () {
-        var templateString = '{% include dog %}. Hello World {{foo}}. {% include cat %}.';
+        var templateString = "{% include 'dog' %}. Hello World {{foo}}. {% include 'cat' %}.";
         var model = { foo: true };
 
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('dogs are nice. Hello World true. cats are ok.');
     });
 
     it("can render includes using parent's model", function () {
-        var templateString = 'I think {% include chicken %}.';
+        var templateString = "I think {% include 'chicken' %}.";
         var model = { disposition: 'awesome' };
 
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('I think chickens are awesome.');

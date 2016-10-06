@@ -96,7 +96,7 @@ describe("PublishingService", function () {
                             for (var template of retrievedTemplates) {
                                 let expected = pubTestHelper.expectedRenderedTemplates.get(template.name);
                                 // compare their results to expected results
-                                template.renderedTemplate.should.deep.equal(expected);
+                                expect(template.renderedTemplate).to.deep.equal(expected);
                                 // verify regenerate properties were reset to zero
                                 template.regenerate.should.equal(0);
                             }

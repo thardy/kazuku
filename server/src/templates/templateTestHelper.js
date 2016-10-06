@@ -14,7 +14,7 @@ let existingTemplateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate3", template: "I'm a cool new template", created: new Date('2016-01-01T00:00:00') },
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateLayout", template: "<header>Some header</header>{{ content }}<footer>Some footer</footer>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", layout: "NewTemplateLayout", template: "<div>cool content is here</div>"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", template: "{% include NewTemplateHeader %}<div>nice content</div>{% include NewTemplateFooter %}"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", template: "{% include 'NewTemplateHeader' %}<div>nice content</div>{% include 'NewTemplateFooter' %}"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateHeader", title: "Master Title", favoriteNumber: 11, template: "<header>The real header {{title}}-{{favoriteNumber}}</header>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateFooter", template: "<footer>The real footer</footer>"}
 ];

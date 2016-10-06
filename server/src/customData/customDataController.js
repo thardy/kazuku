@@ -131,8 +131,8 @@ class CustomDataController {
         body.contentType = contentType;
 
         this.service.updateById(this.orgId, id, body)
-            .then(function (numAffected) {
-                if (numAffected <= 0) {
+            .then(function (result) {
+                if (result.nModified <= 0) {
                     return res.status(404).json({'Errors': ['Document not found']});
                 }
 

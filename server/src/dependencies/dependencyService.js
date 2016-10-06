@@ -124,7 +124,7 @@ class DependencyService {
         let includedTemplateDependencies = [];
 
         // We are looking for the following strings - {% include header %}, to pull out the name inside the include
-        templateString.replace(/{%\s?include ([a-zA-Z0-9-_]*)[ %]/g, (match, group1) => {
+        templateString.replace(/{%\s?include '([a-zA-Z0-9-_]*)'[ %]/g, (match, group1) => {
             includedTemplateDependencies.push({ type: "template", name: group1 });
         });
 

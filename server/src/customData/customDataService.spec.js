@@ -101,8 +101,8 @@ describe("CustomDataService", function () {
 
             var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData1.id, theUpdatedCustomData);
 
-            return updateByIdPromise.then(function(numAffected) {
-                numAffected.should.equal(1);
+            return updateByIdPromise.then(function(result) {
+                result.nModified.should.equal(1);
 
                 // verify customData was updated
                 var getByIdPromise = customDataService.getById(testOrgId, existingCustomData1.id);
@@ -149,8 +149,8 @@ describe("CustomDataService", function () {
 
                 var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData2.id, theUpdatedCustomData);
 
-                return updateByIdPromise.then(function(numAffected) {
-                    numAffected.should.equal(1);
+                return updateByIdPromise.then(function(result) {
+                    result.nModified.should.equal(1);
 
                     // verify customData was updated
                     var getByIdPromise = customDataService.getById(testOrgId, existingCustomData2.id);
