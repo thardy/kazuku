@@ -9,7 +9,7 @@ describe("Authentication", function() {
         });
 
         it("does something important");
-        it("tastes delicious, yes");
+
 
     });
 });

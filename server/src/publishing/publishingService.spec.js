@@ -95,6 +95,8 @@ describe("PublishingService", function () {
                         .then((retrievedTemplates) => {
                             for (var template of retrievedTemplates) {
                                 let expected = pubTestHelper.expectedRenderedTemplates.get(template.name);
+                                // todo: figure out how to view the rendered template.  I'm no longer storing the result in a renderedTemplate property on the templateObject
+                                //  either look at the cached template, wherever the heck that is, or just look at the published pages (which isn't implemented just yet)
                                 // compare their results to expected results
                                 expect(template.renderedTemplate).to.deep.equal(expected);
                                 // verify regenerate properties were reset to zero

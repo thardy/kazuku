@@ -15,11 +15,16 @@ class TemplateService extends GenericService {
         // TemplateService now implements the function getTemplate that the templateEngine requires.  Use that if
         //  a getTemplate function was not supplied.
         this._getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
-        this._templateEngine = new TemplateEngine({engineType: 'liquid', getTemplate: this._getTemplateFunction});
-        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
 
+        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
         this._queryService = (queryService) ? queryService : new QueryService(database);
         this._customDataService = new CustomDataService(database);
+        this._templateEngine = new TemplateEngine({
+            engineType: 'liquid',
+            getTemplate: this._getTemplateFunction,
+            queryService: this._queryService, // templateEngine needs this to resolve queries on models
+            orgId: this._orgId // needed for resolving queries on models
+        });
     }
 
     get templateEngine() { return this._templateEngine; }

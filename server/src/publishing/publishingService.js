@@ -40,14 +40,17 @@ class PublishingService {
                             return this.queryService.updateById(orgId, queryObject.id, queryObject);
                         });
                 })
-//                    // todo: save the queryObjects back to the database as a batch instead of looping through them one at a time
-//                    .then((result) => {
-//                        // reset the regenerate flag on all the queries we resolved
-//                        for (var queryObject of queriesToRegenerate) {
-//                            queryObject.regenerate = 0;
-//                        }
-//                        return this.queryService.updateBatch(orgId, queriesToRegenerate);
-//                    })
+               // // todo: save the queryObjects back to the database as a batch instead of looping through them one at a time
+               // .then((resolvedQueries) => {
+               //     // reset the regenerate flag on all the queries we resolved
+               //     for (var queryObject of resolvedQueries) {
+               //          queryObject.results = queryResults; // persist the results on the queryObject
+               //          queryObject.regenerate = 0;
+               //          // cache all the query results for this regeneration cycle
+               //          cache.put(queryObject.name, queryResults);
+               //     }
+               //     return this.queryService.updateBatch(orgId, queriesToRegenerate);
+               // })
                 .catch(e => {
                     throw e;
                 });

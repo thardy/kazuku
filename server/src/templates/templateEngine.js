@@ -12,18 +12,26 @@ var _ = require("lodash");
 var TemplateEngine = function(args) {
     assert.ok(args.engineType, 'engineType is required');
     assert.ok(args.getTemplate, 'getTemplate is required');
+    assert.ok(args.queryService, 'queryService is required');
+    assert.ok(args.orgId, 'orgId is required');
     var templateEngine = {};
     templateEngine.engineType = args.engineType;
     //templateEngine.engine = new Liquid.Engine();
     templateEngine.engine = new Liquid();
     templateEngine.getTemplate = args.getTemplate;
+    let queryService = args.queryService;
+    let orgId = args.orgId;
 
     // Override shopify-liquid's getTemplate lookup to use our own mechanism for getting templates by name
     templateEngine.engine.getTemplate = function(path) {
         return templateEngine.getTemplate(path)
            .then((templateObject) => {
                if (templateObject && templateObject.template) {
-                   return templateObject; // return the templateObject
+                   return queryService.resolveQueryPropertiesOnModel(orgId, templateObject)
+                       .then(result => {
+                           // result is inconsequential.  The templateObject should have been altered directly.
+                           return templateObject; // return the templateObject
+                       });
                }
                else {
                    throw new Error(`template '${path}' not found`);
