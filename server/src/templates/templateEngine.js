@@ -64,7 +64,7 @@ var TemplateEngine = function(args) {
     templateEngine.Render = function(templateString, model) {
         var renderPromise = templateEngine.engine.parseAndRender(templateString, model)
             .then((renderedTemplateOutput) => {
-                console.log(renderedTemplateOutput);
+                //console.log(renderedTemplateOutput);
                 return renderedTemplateOutput;
             })
             .catch((e) => {

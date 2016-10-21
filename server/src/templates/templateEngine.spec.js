@@ -11,6 +11,12 @@ var expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
+let partialWithModelQuery = {
+    name: 'partialWithModelQuery',
+    products: 'query(top5Products)',
+    template: "<ul>{% for product in products %}<li>{{product.name}}</li>{% endfor %}</ul>"
+};
+
 var FakeTemplateRepo = function() {
     var templateRepo = {};
 
@@ -42,6 +48,7 @@ var FakeTemplateRepo = function() {
         title: 'Default Title',
         template: "title is {{title}}"
     });
+    templateObjects.push(partialWithModelQuery);
 
     // getTemplate returns a templateObject
     templateRepo.getTemplate = function(templateName) {
@@ -57,12 +64,13 @@ var FakeTemplateRepo = function() {
 };
 
 describe('TemplateEngine basics', function() {
-    var templateEngine = {};
-    var engineType = 'liquid';
+    let templateEngine = {};
+    let engineType = 'liquid';
+    let fakeQueryService = {};
 
     before(function() {
-        var fakeTemplateRepo = new FakeTemplateRepo();
-        let fakeQueryService = {};
+        let fakeTemplateRepo = new FakeTemplateRepo();
+
         let QueryServiceStub = sinon.spy(function() {
             return sinon.createStubInstance(QueryService);
         });
@@ -74,8 +82,6 @@ describe('TemplateEngine basics', function() {
         templateEngine = new TemplateEngine({
             engineType: engineType,
             getTemplate: fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo),
-            // todo: add some tests to test the resolving of query properties on included models,
-            //  unit tests that just test that the templateEngine calls the correct function on the queryService
             queryService: fakeQueryService, // templateEngine needs this to resolve queries on models
             orgId: 1
         });
@@ -133,6 +139,17 @@ describe('TemplateEngine basics', function() {
 
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('<p>title is Parent Title</p>');
     });
+
+    // it("resolves queries on include with templateObject model", function () {
+    //     var templateString = "<p>{% include 'partialWithModelQuery' %}</p>";
+    //     var model = {};
+    //
+    //     // How can I change a passed-in argument with sinon???  I need to change the model they pass in to replace
+    //     //  the products property with an array of products.
+    //     fakeQueryService.resolveQueryPropertiesOnModel.withArgs(1, partialWithModelQuery).returns(Promise.resolve(''));
+    //
+    //     return expect(templateEngine.Render(templateString, model)).to.eventually.equal('<p>title is Parent Title</p>');
+    // });
 
 //    it('does not blow up with malicious input');
 });

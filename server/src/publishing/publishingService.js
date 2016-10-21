@@ -55,7 +55,8 @@ class PublishingService {
                     throw e;
                 });
             })
-            // get the list of templates that need to be regenerated
+            // get the list of templates that need to be regenerated.  Right now it should just be pages, but there
+            //  might be a need for non-page templates to be generated in the future, so let's keep it generic.
             .then((result) => {
                 return this.templateService.getRegenerateList(orgId)
                     .then((templatesToRegenerate) => {
@@ -63,12 +64,16 @@ class PublishingService {
                         return Promise.map(templatesToRegenerate, (templateObject) => {
                             return this.templateService.renderObject(orgId, templateObject)
                                 .then((renderedTemplate) => {
-                                    //templateObject.renderedTemplate = renderedTemplate; // persist the renderedTemplate on the templateObject
-                                    templateObject.regenerate = 0;         // reset the regenerate flag
+                                    if ("url" in templateObject) {
+                                        // templateObject is a page, so store the rendered output in a renderedTemplate property
+                                        templateObject.renderedTemplate = renderedTemplate;
+                                        templateObject.regenerate = 0;         // reset the regenerate flag
 
-                                    // save the templates back to the database
-                                    // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
-                                    return this.templateService.updateById(orgId, templateObject.id, templateObject);
+                                        // save the templates back to the database
+                                        // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
+                                        return this.templateService.updateById(orgId, templateObject.id, templateObject);
+                                    }
+                                    return;
                                 });
                         })
 //                    // todo: save the templateObjects back to the database as a batch instead of looping through them one at a time

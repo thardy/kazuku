@@ -33,7 +33,6 @@ describe("PublishingService", function () {
             publishingService = new PublishingService(database);
             queryService = new QueryService(database);
             templateService = new TemplateService(database);
-            //templateService = new TemplateService(database, new FakeTemplateRepo());
         });
 
         it("regenerates items on a schedule");
@@ -45,7 +44,7 @@ describe("PublishingService", function () {
                     return pubTestHelper.createQueryRegenerateList();
                 })
                 .then((result) => {
-                    return pubTestHelper.createTemplateRegenerateList();
+                    return pubTestHelper.createTemplatesForRegenerationTests();
                 })
                 .then((result) => {
                     return pubTestHelper.createPageRegenerateList();
@@ -56,7 +55,6 @@ describe("PublishingService", function () {
                 })
                 .then((result) => {
                     // Verify query results
-                    let retrievedQueries = [];
                     let nameArray = [];
                     for (var expectedQuery of pubTestHelper.expectedRenderedQueries) {
                         nameArray.push(expectedQuery[0]);
@@ -81,23 +79,19 @@ describe("PublishingService", function () {
                         });
                 })
                 .then((result) => {
-                    // Verify template rendered outputs
-                    let retrievedQueries = [];
+                    // Verify page rendered outputs
                     let nameArray = [];
-                    for (let expectedTemplate of pubTestHelper.expectedRenderedTemplates) {
+                    for (let expectedTemplate of pubTestHelper.expectedRenderedPages) {
                         nameArray.push(expectedTemplate[0]);
                     }
 
                     let mongoQueryObject = { "name": { "$in": nameArray }};
 
-                    // retrieve all the templates we were supposed to regenerate
+                    // retrieve all the pages we were supposed to regenerate
                     return templateService.find(pubTestHelper.testOrgId, mongoQueryObject)
                         .then((retrievedTemplates) => {
                             for (var template of retrievedTemplates) {
-                                let expected = pubTestHelper.expectedRenderedTemplates.get(template.name);
-                                // todo: figure out how to view the rendered template.  I'm no longer storing the result in a renderedTemplate property on the templateObject
-                                //  either look at the cached template, wherever the heck that is, or just look at the published pages (which isn't implemented just yet)
-                                // compare their results to expected results
+                                let expected = pubTestHelper.expectedRenderedPages.get(template.name);
                                 expect(template.renderedTemplate).to.deep.equal(expected);
                                 // verify regenerate properties were reset to zero
                                 template.regenerate.should.equal(0);

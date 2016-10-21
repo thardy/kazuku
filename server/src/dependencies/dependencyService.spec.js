@@ -105,10 +105,10 @@ describe("DependencyService", function () {
             let expectedRegenerationList = [
                 { type: "template", name: "master" },
                 { type: "template", name: "christmasMaster" },
-                { type: "template", name: "home" },
-                { type: "template", name: "about" },
-                { type: "template", name: "christmasHome" },
-                { type: "template", name: "christmasAbout" }
+                { type: "page", name: "home" },
+                { type: "page", name: "about" },
+                { type: "page", name: "christmasHome" },
+                { type: "page", name: "christmasAbout" }
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
@@ -130,10 +130,10 @@ describe("DependencyService", function () {
                 { type: "template", name: "header" },
                 { type: "template", name: "master" },
                 { type: "template", name: "christmasMaster" },
-                { type: "template", name: "home" },
-                { type: "template", name: "about" },
-                { type: "template", name: "christmasHome" },
-                { type: "template", name: "christmasAbout" }
+                { type: "page", name: "home" },
+                { type: "page", name: "about" },
+                { type: "page", name: "christmasHome" },
+                { type: "page", name: "christmasAbout" }
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
@@ -156,10 +156,10 @@ describe("DependencyService", function () {
                 { type: "template", name: "header" },
                 { type: "template", name: "master" },
                 { type: "template", name: "christmasMaster" },
-                { type: "template", name: "home" },
-                { type: "template", name: "about" },
-                { type: "template", name: "christmasHome" },
-                { type: "template", name: "christmasAbout" }
+                { type: "page", name: "home" },
+                { type: "page", name: "about" },
+                { type: "page", name: "christmasHome" },
+                { type: "page", name: "christmasAbout" }
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
@@ -171,9 +171,12 @@ describe("DependencyService", function () {
     });
 
     describe.skip("flagItemsForRegeneration", function () {
-        // This one is an integration test, persisting the regeneration flag to mongo
-        it("should flag all items in list for regeneration", function () {
-            // this should set the regenerate flag to true on all the items in the list.
+        // This one is an integration test, persisting the regeneration flags to mongo
+        // todo: do this one VERY SOON!!
+        it("upon customData change, flag dependency chain for regeneration in database", function () {
+            // update some custom data, which should cause queries to get flagged for regeneration, which should
+            //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
+            //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
 
         });
     });

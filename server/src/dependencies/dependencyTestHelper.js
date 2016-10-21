@@ -22,8 +22,8 @@ function initDependencyChain() {
     let fakeNavItemsDataDependents = [itemHeaderNavigationQuery];
     let fakeHeaderNavigationQueryDependents = [itemHeaderTemplate];
     let fakeHeaderTemplateDependents = [itemMasterTemplate, itemChristmasMasterTemplate];
-    let fakeMasterTemplateDependents = [{type:"template", name:"home"}, {type:"template", name:"about"}];
-    let fakeChristmasMasterTemplateDependents = [{type:"template", name:"christmasHome"}, {type:"template", name:"christmasAbout"}]; // bad example, perhaps, but ok for testing
+    let fakeMasterTemplateDependents = [{type:"page", name:"home"}, {type:"page", name:"about"}];
+    let fakeChristmasMasterTemplateDependents = [{type:"page", name:"christmasHome"}, {type:"page", name:"christmasAbout"}]; // bad example, perhaps, but ok for testing
 
     let CustomDataServiceStub = sinon.spy(function() {
         return sinon.createStubInstance(CustomDataService);

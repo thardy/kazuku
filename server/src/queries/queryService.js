@@ -91,7 +91,8 @@ class QueryService extends GenericService {
         return Promise.all(promises)
             .then((result) => {
                 // we don't need to return the result because we modified all the model properties directly with the results
-                console.log("resolveQueryPropertiesOnModel finished");
+                //console.log("resolveQueryPropertiesOnModel finished");
+                return '';
             });
     }
 

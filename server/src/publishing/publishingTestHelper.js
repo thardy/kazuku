@@ -22,19 +22,17 @@ let existingTestimonials = [
     { orgId: testOrgId, contentType: "testimonials", name: 'Joe Shmoe', testimonial: 'It\'s cool.', created: new Date('2016-05-01T00:00:00') }
 ];
 
-// todo: rename templatesForRegenerationTests because I've decided not to actually regenerate templates unless they are pages
-let existingTemplateRegenerateList = [
+let templatesForRegenerationTests = [
     {
         orgId: testOrgId,
         siteId: testSiteId,
         name: "RegenerateTemplate-Navigation",
         navItems: "query(RegenerateQuery-NavItems)",
-        template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>",
-        regenerate: 1
+        template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>"
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include 'RegenerateTemplate-Navigation' %}</header>", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<footer>This is a Footer</footer>", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include 'RegenerateTemplate-Header' %} <div>{{ content }}</div> {% include 'RegenerateTemplate-Footer' %}", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include 'RegenerateTemplate-Navigation' %}</header>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<footer>This is a Footer</footer>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include 'RegenerateTemplate-Header' %} <div>{{ content }}</div> {% include 'RegenerateTemplate-Footer' %}" }
 ];
 
 let existingPageRegenerateList = [
@@ -48,13 +46,16 @@ let existingQueryRegenerateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
 ];
 
-let expectedRenderedTemplates = new Map();
-expectedRenderedTemplates.set("RegenerateTemplate-Navigation", "<nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav>");
-expectedRenderedTemplates.set("RegenerateTemplate-Header", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header>");
-expectedRenderedTemplates.set("RegenerateTemplate-Footer", "<header>This is a Footer</header>");
-expectedRenderedTemplates.set("RegenerateTemplate-Master", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div>{{ content }}</div> <header>This is a Footer</header>");
-expectedRenderedTemplates.set("RegeneratePage-HomePage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <header>This is a Footer</header>");
-expectedRenderedTemplates.set("RegeneratePage-About", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <header>This is a Footer</header>");
+// We don't render templates on their own anymore, only within the context of a page because each page can potentially alter the rendered output of an included template
+// let expectedRenderedTemplates = new Map();
+// expectedRenderedTemplates.set("RegenerateTemplate-Navigation", "<nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav>");
+// expectedRenderedTemplates.set("RegenerateTemplate-Header", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header>");
+// expectedRenderedTemplates.set("RegenerateTemplate-Footer", "<header>This is a Footer</header>");
+// expectedRenderedTemplates.set("RegenerateTemplate-Master", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div>{{ content }}</div> <header>This is a Footer</header>");
+
+let expectedRenderedPages = new Map();
+expectedRenderedPages.set("RegeneratePage-HomePage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <footer>This is a Footer</footer>");
+expectedRenderedPages.set("RegeneratePage-About", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <footer>This is a Footer</footer>");
 
 let expectedRenderedQueries = new Map();
 expectedRenderedQueries.set("RegenerateQuery-NavItems", existingNavItems);
@@ -64,10 +65,11 @@ var pubTestHelper = {
     testOrgId: testOrgId,
     testSiteId: testSiteId,
     createCustomData: createCustomData,
-    createTemplateRegenerateList: createTemplateRegenerateList,
+    createTemplatesForRegenerationTests: createTemplatesForRegenerationTests,
     createPageRegenerateList: createPageRegenerateList,
     createQueryRegenerateList: createQueryRegenerateList,
-    expectedRenderedTemplates: expectedRenderedTemplates,
+    //expectedRenderedTemplates: expectedRenderedTemplates,
+    expectedRenderedPages: expectedRenderedPages,
     expectedRenderedQueries: expectedRenderedQueries
 };
 
@@ -95,13 +97,13 @@ function createCustomData() {
         });
 }
 
-function createTemplateRegenerateList() {
+function createTemplatesForRegenerationTests() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
-            database.templates.insert(existingTemplateRegenerateList)
+            database.templates.insert(templatesForRegenerationTests)
                 .then(function(docs) {
-                    existingTemplateRegenerateList = docs;
-                    _.forEach(existingTemplateRegenerateList, function (item) {
+                    templatesForRegenerationTests = docs;
+                    _.forEach(templatesForRegenerationTests, function (item) {
                         item.id = item._id.toHexString();
                     });
                     return docs;
