@@ -9,6 +9,7 @@ class QueryService extends GenericService {
     constructor(database) {
         super(database, 'queries');
         this._customDataService = new CustomDataService(database);
+        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
     }
 
     get customDataService() { return this._customDataService; }
@@ -26,18 +27,19 @@ class QueryService extends GenericService {
             });
     }
 
+    // todo: add a test
+    // item should be of format - { type: "data", name: "someQuery" }
     getAllDependentsOfItem(item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
-        // look like this - { dependencies: [{type: 'query', name: 'master' }] }
-        return this.collection.find(this.orgId, { dependencies: item })
+        // look like this - { dependencies: [{type: 'query', name: 'someQuery' }] }
+        return this.collection.find({orgId: this._orgId, dependencies: item })
             .then((docs) => {
-                var transformedDocs = [];
+                var dependentItems = [];
                 _.forEach(docs, (doc) => {
-                    this.useFriendlyId(doc);
-                    transformedDocs.push(doc);
+                    dependentItems.push({type: "query", name: doc.name});
                 });
 
-                return transformedDocs;
+                return dependentItems;
             })
             .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
                 throw error;

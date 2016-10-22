@@ -26,6 +26,7 @@ class DependencyService {
         return regenerationList;
     }
 
+    // returns array of dependents, e.g. [{type:"query", name:"top5Products"}, {type:"template", name:"master"}]
     getAllDependentsOfItem(item) {
         // Look for any queries or templates that are dependent on this item (dependencies array contains item)
         let queryDependents = this.queryService.getAllDependentsOfItem(item);

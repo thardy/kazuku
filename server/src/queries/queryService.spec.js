@@ -48,7 +48,7 @@ describe("QueryService", function () {
         });
 
         it("can get all queries that need to be regenerated", function () {
-            queryTestHelper.createRegenerateList()
+            return queryTestHelper.createRegenerateList()
                 .then(function (result) {
                     let regeneratePromise = queryService.getRegenerateList(queryTestHelper.testOrgId);
 
@@ -130,6 +130,22 @@ describe("QueryService", function () {
                     });
                 });
             });
+        });
+
+        it("getAllDependentsOfItem with data item returns item array of dependent queries", function () {
+            let item = {type: "data", name: queryTestHelper.testQueryDataContentType};
+            let expectedDependents = [
+                {type: "query", name: "DataQuery-one"},
+                {type: "query", name: "DataQuery-two"},
+                {type: "query", name: "DataQuery-three"},
+            ];
+
+            return queryTestHelper.createExistingDataQueries()
+                .then(() => {
+                    let promise = queryService.getAllDependentsOfItem(item);
+
+                    return promise.should.eventually.deep.equal(expectedDependents);
+                });
         });
 
     });

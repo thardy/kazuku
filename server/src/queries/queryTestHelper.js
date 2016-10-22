@@ -21,9 +21,12 @@ let newQuery2 = {
     query: "test query two"
 };
 let existingDataQueries = [
-    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-one", query: `eq(contentType,${testQueryDataContentType})&sort(created)&limit(2,0)` },
-    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-two", query: `eq(contentType,${testQueryDataContentType})&sort(-created)&limit(3,0)` },
-    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-three", query: `eq(contentType,${testQueryDataContentType})&ge(created,date:2016-02-20)&sort(created)&limit(2,0)` }
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-one", query: `eq(contentType,${testQueryDataContentType})&sort(created)&limit(2,0)`,
+        dependencies: [{type: "data", name: `${testQueryDataContentType}`}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-two", query: `eq(contentType,${testQueryDataContentType})&sort(-created)&limit(3,0)`,
+        dependencies: [{type: "data", name: `${testQueryDataContentType}`}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-three", query: `eq(contentType,${testQueryDataContentType})&ge(created,date:2016-02-20)&sort(created)&limit(2,0)`,
+        dependencies: [{type: "data", name: `${testQueryDataContentType}`}]}
 ];
 
 let existingQueryData = [
@@ -43,6 +46,7 @@ let existingRegenerateList = [
 let queryTestHelper = {
     testOrgId: testOrgId,
     testSiteId: testSiteId,
+    testQueryDataContentType: testQueryDataContentType,
     setupTestQueries: setupTestQueries,
     deleteAllTestQueries: deleteAllTestQueries,
     deleteAllQueryData: deleteAllQueryData,
@@ -84,7 +88,7 @@ function setupTestQueries() {
 function createExistingDataQueries() {
     return deleteAllDataQueries()
         .then((result) => {
-            database.queries.insert(existingDataQueries)
+            return database.queries.insert(existingDataQueries)
                 .then(function(docs) {
                     existingDataQueries = docs;
                     _.forEach(existingDataQueries, function (item) {
@@ -98,7 +102,7 @@ function createExistingDataQueries() {
 function createExistingQueryData() {
     return deleteAllQueryData()
         .then((result) => {
-            database.customData.insert(existingQueryData)
+            return database.customData.insert(existingQueryData)
                 .then(function(docs) {
                     existingQueryData = docs;
                     _.forEach(existingQueryData, function (item) {
@@ -112,7 +116,14 @@ function createExistingQueryData() {
 function createRegenerateList() {
     return deleteAllRegenQueries()
         .then((result) => {
-            return database.queries.insert(queryTestHelper.existingRegenerateList);
+            return database.queries.insert(existingRegenerateList)
+                .then(function(docs) {
+                    existingRegenerateList = docs;
+                    _.forEach(existingRegenerateList, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0

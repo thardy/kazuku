@@ -8,13 +8,17 @@ let existingTemplate1 = {};
 let existingTemplate2= {};
 
 let existingTemplateList = [
-    // todo: move the templates here, and change tests to use the new createTemplateList and make sure they all work
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate1", template: "I'm a new template", created: new Date('2014-01-01T00:00:00') },
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate2", template: "I'm another new template", created: new Date('2015-01-01T00:00:00') },
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate3", template: "I'm a cool new template", created: new Date('2016-01-01T00:00:00') },
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateLayout", template: "<header>Some header</header>{{ content }}<footer>Some footer</footer>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", layout: "NewTemplateLayout", template: "<div>cool content is here</div>"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", template: "{% include 'NewTemplateHeader' %}<div>nice content</div>{% include 'NewTemplateFooter' %}"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", template: "{% include 'NewTemplateHeader' %}<div>nice content</div>{% include 'NewTemplateFooter' %}",
+        dependencies: [{type: "template", name: "NewTemplateHeader"}, {type: "template", name: "NewTemplateFooter"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewAnotherTemplateWithInclude", template: "<div id='someContainer'>{% include 'NewTemplateHeader' %}</div>",
+        dependencies: [{type: "template", name: "NewTemplateHeader"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateThatIsPage", url: "newpage", template: "<html><body>{% include 'NewTemplateHeader' %}</body></html>",
+        dependencies: [{type: "query", name: "someQuery"}, {type: "template", name: "NewTemplateHeader"}]},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateHeader", title: "Master Title", favoriteNumber: 11, template: "<header>The real header {{title}}-{{favoriteNumber}}</header>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateFooter", template: "<footer>The real footer</footer>"}
 ];

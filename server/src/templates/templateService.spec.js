@@ -170,6 +170,28 @@ describe("TemplateService", function () {
             });
         });
 
+        it("getAllDependentsOfItem with template item returns item array of dependent templates", function () {
+            let item = {type: "template", name: "NewTemplateHeader"};
+            let expectedDependents = [
+                {type: "template", name: "NewTemplateWithIncludes"},
+                {type: "template", name: "NewAnotherTemplateWithInclude"},
+                {type: "page", name: "NewTemplateThatIsPage"},
+            ];
+            let promise = templateService.getAllDependentsOfItem(item);
+
+            return promise.should.eventually.deep.equal(expectedDependents);
+        });
+
+        it("getAllDependentsOfItem with query item returns item array of dependent templates", function () {
+            let item = {type: "query", name: "someQuery"};
+            let expectedDependents = [
+                {type: "page", name: "NewTemplateThatIsPage"}
+            ];
+            let promise = templateService.getAllDependentsOfItem(item);
+
+            return promise.should.eventually.deep.equal(expectedDependents);
+        });
+
     });
 
     describe("TemplateService Unit Layouts", function () {

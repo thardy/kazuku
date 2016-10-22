@@ -177,18 +177,19 @@ class TemplateService extends GenericService {
     }
 
 
+    // item should be of format - { type: "template", name: "master" }
     getAllDependentsOfItem(item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
         // look like this - { dependencies: [{type: 'template', name: 'master' }] }
-        return this.collection.find(this.orgId, { dependencies: item })
+        return this.collection.find({orgId: this.orgId, dependencies: item })
             .then((docs) => {
-                var transformedDocs = [];
+                var dependentItems = [];
                 _.forEach(docs, (doc) => {
-                    this.useFriendlyId(doc);
-                    transformedDocs.push(doc);
+                    let itemType = "url" in doc ? "page" : "template";
+                    dependentItems.push({type: itemType, name: doc.name});
                 });
 
-                return transformedDocs;
+                return dependentItems;
             })
             .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
                 throw error;
