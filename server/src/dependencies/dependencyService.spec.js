@@ -170,16 +170,6 @@ describe("DependencyService", function () {
         });
     });
 
-    describe.skip("flagItemsForRegeneration", function () {
-        // This one is an integration test, persisting the regeneration flags to mongo
-        // todo: do this one VERY SOON!!
-        it("upon customData change, flag dependency chain for regeneration in database", function () {
-            // update some custom data, which should cause queries to get flagged for regeneration, which should
-            //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
-            //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
-
-        });
-    });
 
 });
 

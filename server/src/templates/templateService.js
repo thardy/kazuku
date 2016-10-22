@@ -118,6 +118,7 @@ class TemplateService extends GenericService {
     }
 
     convertTemplateObjectQueriesToResultSets(templateObject) {
+        // todo: refactor to use cleaner/newer Promise usage
         var deferred = Promise.pending();
         var hasRQL = false;
 
@@ -177,8 +178,21 @@ class TemplateService extends GenericService {
 
 
     getAllDependentsOfItem(item) {
-        // todo: make this do something
-        return [];
+        // Get all templates that have the given item in their dependencies array.  dependency properties on templates
+        // look like this - { dependencies: [{type: 'template', name: 'master' }] }
+        return this.collection.find(this.orgId, { dependencies: item })
+            .then((docs) => {
+                var transformedDocs = [];
+                _.forEach(docs, (doc) => {
+                    this.useFriendlyId(doc);
+                    transformedDocs.push(doc);
+                });
+
+                return transformedDocs;
+            })
+            .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
+                throw error;
+            });
     }
 
     validate(doc) {

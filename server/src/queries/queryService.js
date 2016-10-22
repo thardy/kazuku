@@ -27,7 +27,21 @@ class QueryService extends GenericService {
     }
 
     getAllDependentsOfItem(item) {
-        return [];
+        // Get all queries that have the given item in their dependencies array.  dependency properties on queries
+        // look like this - { dependencies: [{type: 'query', name: 'master' }] }
+        return this.collection.find(this.orgId, { dependencies: item })
+            .then((docs) => {
+                var transformedDocs = [];
+                _.forEach(docs, (doc) => {
+                    this.useFriendlyId(doc);
+                    transformedDocs.push(doc);
+                });
+
+                return transformedDocs;
+            })
+            .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
+                throw error;
+            });
     }
 
     resolve(orgId, query) {

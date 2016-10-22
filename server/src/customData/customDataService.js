@@ -83,6 +83,7 @@ class CustomDataService extends GenericService {
         return this.collection.remove({_id: id, orgId: orgId, contentType: contentType});
     }
 
+    // todo: validate that the contentType exists (customSchema) for this org and implement any schema validation
     validate(doc) {
         if (doc.contentType) {
             // call base validation, which should return nothing if valid

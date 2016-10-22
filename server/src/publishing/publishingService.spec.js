@@ -106,13 +106,29 @@ describe("PublishingService", function () {
                 });
         });
 
-        it("regenerates templates");
-
         it("regenerates queries");
 
         it("regenerates pages");
 
         it("saves pages to the file system when they are regenerated");
+    });
+
+    describe.skip("End to End Testing", function () {
+        it("upon customData change, all dependent queries and pages get regenerated", function () {
+            // update some custom data, which should cause queries to get flagged for regeneration, which should
+            //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
+            //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
+            var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', template: testBlogContent };
+
+            var createPromise = customDataService.create(testOrgId, customData);
+        });
+
+        it("upon template change, all dependent queries and pages get regenerated", function () {
+            // update some custom data, which should cause queries to get flagged for regeneration, which should
+            //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
+            //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
+
+        });
     });
 
     describe("Scheduling", function () {
