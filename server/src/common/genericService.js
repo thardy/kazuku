@@ -80,9 +80,13 @@ class GenericService {
 
         conversionService.convertISOStringDateTimesToMongoDates(doc);
 
-        return this.collection.insert(doc)
+        return this.onBeforeCreate(doc)
+            .then((result) => {
+                return this.collection.insert(doc)
+            })
             .then((doc) => {
                 this.useFriendlyId(doc);
+                this.onAfterCreate(doc); // we don't wait for whatever is done in onAfter
                 return doc;
             });
     }
@@ -91,13 +95,20 @@ class GenericService {
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to GenericService.updateById');
         }
-        var clone = _.clone(updatedDoc);
+        let clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
-        var queryObject = { _id: id, orgId: orgId };
+        let queryObject = { _id: id, orgId: orgId };
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-        return this.collection.update(queryObject, {$set: clone});
+        return this.onBeforeUpdate(clone)
+            .then((result) => {
+                return this.collection.update(queryObject, {$set: clone})
+            })
+            .then((result) => {
+                this.onAfterUpdate(clone); // we don't wait for whatever is done in onAfter
+                return result;
+            });
     }
 
     update(orgId, mongoQueryObject, updatedDoc) {
@@ -110,7 +121,15 @@ class GenericService {
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
         mongoQueryObject.orgId = orgId;
-        return this.collection.update(mongoQueryObject, {$set: clone});
+
+        return this.onBeforeUpdate(clone)
+            .then((result) => {
+                return this.collection.update(mongoQueryObject, {$set: clone});
+            })
+            .then((result) => {
+                this.onAfterUpdate(clone); // we don't wait for whatever is done in on After
+                return result;
+            });
     }
 
     // todo: Make Work!!! just started
@@ -131,7 +150,15 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.delete');
         }
-        return this.collection.remove({ _id: id, orgId: orgId });
+        let queryObject = { _id: id, orgId: orgId };
+        return this.onBeforeDelete(queryObject)
+            .then((result) => {
+                return this.collection.remove(queryObject)
+            })
+            .then((result) => {
+                this.onAfterDelete(queryObject);
+                return result;
+            });
     }
 
     validate(doc) {
@@ -149,6 +176,15 @@ class GenericService {
             doc.id = doc._id.toHexString();
         }
     }
+
+    onBeforeCreate(doc) {
+        return Promise.resolve();
+    }
+    onBeforeUpdate(doc) { return Promise.resolve(); }
+    onBeforeDelete(doc) { return Promise.resolve(); }
+    onAfterCreate(doc) { }
+    onAfterUpdate(doc) { }
+    onAfterDelete(doc) { }
 }
 
 module.exports = GenericService;

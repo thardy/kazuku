@@ -44,6 +44,7 @@ function initDependencyChain() {
     dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderTemplate).returns(fakeHeaderTemplateDependents);
     dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemMasterTemplate).returns(fakeMasterTemplateDependents);
     dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemChristmasMasterTemplate).returns(fakeChristmasMasterTemplateDependents);
+
 }
 
 module.exports = dependencyTestHelper;

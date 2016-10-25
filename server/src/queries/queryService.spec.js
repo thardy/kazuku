@@ -8,6 +8,7 @@ var testHelper = require("../common/testHelper");
 var _ = require("lodash");
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
+var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 
@@ -58,22 +59,21 @@ describe("QueryService", function () {
 
         it("can create queries", function () {
             let now = moment().format('hmmss');
-            let testName = 'TestTemplate' + now;
-            let myTemplate = {
+            let testName = 'TestQuery' + now;
+            let myQuery = {
                 orgId: queryTestHelper.testOrgId,
                 name: testName,
-                site: queryTestHelper.testSiteId,
-                query: "<h1>newly created template</h1>"
+                query: `eq(contentType,fakeContentType)&sort(created)&limit(2,0)`
             };
 
-            let createPromise = queryService.create(queryTestHelper.testOrgId, myTemplate);
+            let createPromise = queryService.create(queryTestHelper.testOrgId, myQuery);
 
             return createPromise
                 .then((doc) => {
                     return queryService.getById(queryTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            expect(retrievedDoc).to.have.property("site", queryTestHelper.testSiteId);
-                            return expect(retrievedDoc).to.have.property("name", testName);
+                            expect(retrievedDoc).to.have.property("name", testName);
+                            return expect(retrievedDoc).to.have.property("query", myQuery.query);
                         });
                 });
 
@@ -145,6 +145,53 @@ describe("QueryService", function () {
                     let promise = queryService.getAllDependentsOfItem(item);
 
                     return promise.should.eventually.deep.equal(expectedDependents);
+                });
+        });
+
+        it("can save dependencies on create", function () {
+            let myQuery = {
+                orgId: queryTestHelper.testOrgId,
+                name: "TestQueryWithDependencies",
+                query: `eq(contentType,${queryTestHelper.testQueryDataContentType})&sort(created)&limit(2,0)`
+            };
+            let expectedDependencies = [
+                {type: "data", name: queryTestHelper.testQueryDataContentType},
+            ];
+
+            let createPromise = queryService.create(queryTestHelper.testOrgId, myQuery);
+
+            return createPromise
+                .then((doc) => {
+                    return queryService.getById(queryTestHelper.testOrgId, doc.id)
+                        .then((retrievedDoc) => {
+                            retrievedDoc.name.should.equal(myQuery.name);
+                            retrievedDoc.query.should.equal(myQuery.query);
+                            return retrievedDoc.dependencies.should.deep.equal(expectedDependencies);
+                        });
+                });
+        });
+
+        it("can save dependencies on update", function () {
+            let theUpdatedQuery = {
+                orgId: queryTestHelper.testOrgId,
+                name: "testName",
+                siteId: queryTestHelper.testSiteId,
+                query: `eq(contentType,someContentType)&sort(created)&limit(2,0)`
+            };
+            let expectedDependencies = [
+                {type: "data", name: "someContentType"},
+            ];
+
+            var updateByIdPromise = queryService.updateById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id, theUpdatedQuery);
+
+            return updateByIdPromise
+                .then((result) => {
+                    result.nModified.should.equal(1);
+
+                    // verify dependencies value
+                    var getByIdPromise = queryService.getById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id);
+
+                    return getByIdPromise.should.eventually.have.property("dependencies").deep.equal(expectedDependencies);
                 });
         });
 

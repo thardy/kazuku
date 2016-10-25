@@ -8,6 +8,8 @@ var Promise = require("bluebird");
 var frontMatter = require('front-matter');
 var _ = require("lodash");
 
+const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
+
 class TemplateService extends GenericService {
     constructor(database, queryService, getTemplate) {
         super(database, 'templates');
@@ -196,6 +198,45 @@ class TemplateService extends GenericService {
             });
     }
 
+    getDependenciesOfTemplate(templateObject) {
+        let dependencies = [];
+
+        // a layout is a dependency
+        if ("layout" in templateObject) {
+            dependencies.push({type: "template", name: templateObject.layout});
+        }
+
+        // any queries defined in the model are dependencies
+        // look at all properties on the templateObject that aren't system properties to see if they are queries
+        for (let property in templateObject) {
+            if (templateObject.hasOwnProperty(property) && !systemProperties.contains(property)) {
+                let queryDependencies = this.queryService.getDependenciesOfQuery(templateObject[property]);
+                if (queryDependencies !== undefined) {
+                    dependencies = dependencies.concat(queryDependencies);
+                }
+            }
+        }
+
+        // any includes in the template are dependencies
+        let includedTemplateDependencies = this.getIncludedTemplateDependencies(templateObject.template);
+        if (includedTemplateDependencies !== undefined) {
+            dependencies = dependencies.concat(includedTemplateDependencies);
+        }
+
+        return dependencies;
+    }
+
+    getIncludedTemplateDependencies(templateString) {
+        let includedTemplateDependencies = [];
+
+        // We are looking for the following strings - {% include 'header' %}, to pull out the name inside the include
+        templateString.replace(/{%\s?include '([a-zA-Z0-9-_]*)'[ %]/g, (match, group1) => {
+            includedTemplateDependencies.push({ type: "template", name: group1 });
+        });
+
+        return includedTemplateDependencies;
+    }
+
     validate(doc) {
         if (doc.name && doc.template) {
             // call base validation, which should return nothing if valid
@@ -204,6 +245,18 @@ class TemplateService extends GenericService {
         else {
             return "Need name and template";
         }
+    }
+
+    onBeforeCreate(templateObject) {
+        // add/overwrite dependencies property
+        templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
+        return Promise.resolve();
+    }
+
+    onBeforeUpdate(templateObject) {
+        // add/overwrite dependencies property
+        templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
+        return Promise.resolve();
     }
 
 }

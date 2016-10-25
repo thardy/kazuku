@@ -4,15 +4,12 @@ var Promise = require("bluebird");
 var database = require("../database/database");
 var QueryService = require("../queries/queryService");
 
-const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
-
 class DependencyService {
 
     constructor(customDataService, templateService, queryService) {
         this._customDataService = customDataService;
         this._templateService = templateService;
         this._queryService = (queryService) ? queryService : new QueryService(database);
-
     }
 
     get customDataService() { return this._customDataService; }
@@ -55,81 +52,19 @@ class DependencyService {
         let itemType = this.getTypeOfItem(itemObject);
         let dependencies = [];
 
+        // todo: add itemType "data" - both queries and templates can be dependent on data, and add tests for data dependencies
         switch (itemType) {
             case "page":
             case "template":
-                dependencies = this.getDependenciesOfTemplate(itemObject);
+                dependencies = this.templateService.getDependenciesOfTemplate(itemObject);
                 break;
             case "query":
                 // just check the query string itself, not the whole queryObject
-                dependencies = this.getDependenciesOfQuery(itemObject.query);
+                dependencies = this.queryService.getDependenciesOfQuery(itemObject.query);
                 break;
         }
 
         return dependencies;
-    }
-
-    getDependenciesOfTemplate(template) {
-        let dependencies = [];
-
-        // a layout is a dependency
-        if ("layout" in template) {
-            dependencies.push({type: "template", name: template.layout});
-        }
-
-        // any queries defined in the model are dependencies
-        // look at all properties on the templateObject that aren't system properties to see if they are queries
-        for (let property in template) {
-            if (template.hasOwnProperty(property) && !systemProperties.contains(property)) {
-                let queryDependencies = this.getDependenciesOfQuery(template[property]);
-                if (queryDependencies !== undefined) {
-                    dependencies = dependencies.concat(queryDependencies);
-                }
-            }
-        }
-
-        // any includes in the template are dependencies
-        let includedTemplateDependencies = this.getIncludedTemplateDependencies(template.template);
-        if (includedTemplateDependencies !== undefined) {
-            dependencies = dependencies.concat(includedTemplateDependencies);
-        }
-
-        return dependencies;
-    }
-
-    getDependenciesOfQuery(query) {
-        let dependencies;
-        let item;
-
-        // check to see if this value is actually a valid query
-        let queryName = this.queryService.getNameOfNamedQuery(query);
-        if (queryName) {
-            item = { type: "query", name: queryName };
-        }
-        else {
-            let contentType = this.queryService.getContentType(query);
-            if (contentType) {
-                item = { type: "data", name: contentType };
-            }
-        }
-
-        if (item !== undefined) {
-            dependencies = [];
-            dependencies.push(item);
-        }
-
-        return dependencies;
-    }
-
-    getIncludedTemplateDependencies(templateString) {
-        let includedTemplateDependencies = [];
-
-        // We are looking for the following strings - {% include 'header' %}, to pull out the name inside the include
-        templateString.replace(/{%\s?include '([a-zA-Z0-9-_]*)'[ %]/g, (match, group1) => {
-            includedTemplateDependencies.push({ type: "template", name: group1 });
-        });
-
-        return includedTemplateDependencies;
     }
 
     getTypeOfItem(item) {

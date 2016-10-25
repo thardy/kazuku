@@ -23,8 +23,9 @@ describe("DependencyService", function () {
 
     describe("getDependenciesOfItem", function () {
         before(function () {
-            // todo: fake the dependencies.  Let's make these unit tests, not integration tests.
-            dependencyService = new DependencyService();
+            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
+                                                        new TemplateService(database),
+                                                        new QueryService(database));
         });
 
         it("should return all dependencies of a template", function () {

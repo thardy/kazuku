@@ -1,6 +1,6 @@
 "use strict";
 
-var TemplateService = require('./templateService');
+var TemplateService = require("./templateService");
 var templateTestHelper = require("./templateTestHelper");
 var database = require("../database/database");
 var Promise = require("bluebird");
@@ -8,6 +8,7 @@ var testHelper = require("../common/testHelper");
 var _ = require("lodash");
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
+var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 
@@ -18,25 +19,25 @@ var FakeTemplateRepo = function() {
 
     var templateObjects = [];
     templateObjects.push({
-        name: 'master',
+        name: "master",
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        name: 'masterWithModel',
-        title: 'Master Title',
+        name: "masterWithModel",
+        title: "Master Title",
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        name: 'dog',
+        name: "dog",
         template: "dogs are nice"
     });
     templateObjects.push({
-        name: 'cat',
+        name: "cat",
         template: "cats are ok"
     });
     templateObjects.push({
-        name: 'chicken',
+        name: "chicken",
         template: "chickens are {{disposition}}"
     });
 
@@ -95,8 +96,8 @@ describe("TemplateService", function () {
         });
 
         it("can create templates", function () {
-            let now = moment().format('hmmss');
-            let testName = 'TestTemplate' + now;
+            let now = moment().format("hmmss");
+            let testName = "TestTemplate" + now;
             let myTemplate = {
                 orgId: templateTestHelper.testOrgId,
                 name: testName,
@@ -192,11 +193,68 @@ describe("TemplateService", function () {
             return promise.should.eventually.deep.equal(expectedDependents);
         });
 
+        it("can save dependencies on create", function () {
+            let testName = "TestTemplateWithDependencies";
+            let myTemplate = {
+                orgId: templateTestHelper.testOrgId,
+                url: "somePage",
+                name: testName,
+                site: templateTestHelper.testSiteId,
+                products: "query(top5Products)",
+                testimonials: `eq(contentType,testimonials)&sort(created)`,
+                template: "{% include 'header' %}<h1>newly created template</h1>{% include 'footer' %}"
+            };
+            let expectedDependencies = [
+                {type: "query", name: "top5Products"},
+                {type: "data", name: "testimonials"},
+                {type: "template", name: "header"},
+                {type: "template", name: "footer"}
+            ];
+
+            let createPromise = templateService.create(templateTestHelper.testOrgId, myTemplate);
+
+            return createPromise
+                .then((doc) => {
+                    return templateService.getById(templateTestHelper.testOrgId, doc.id)
+                        .then((retrievedDoc) => {
+                            retrievedDoc.site.should.equal(templateTestHelper.testSiteId);
+                            retrievedDoc.name.should.equal(testName);
+                            return retrievedDoc.dependencies.should.deep.equal(expectedDependencies);
+                        });
+                });
+        });
+
+        it("can save dependencies on update", function () {
+            let theUpdatedTemplate = {
+                orgId: templateTestHelper.testOrgId,
+                url: "somePage",
+                name: "updatedTemplateWithDependencies",
+                site: templateTestHelper.testSiteId,
+                widgets: `eq(contentType,widgets)&sort(created)`,
+                template: "<h1>newly created template</h1>{% include 'footer' %}"
+            };
+            let expectedDependencies = [
+                {type: "data", name: "widgets"},
+                {type: "template", name: "footer"}
+            ];
+
+            var updateByIdPromise = templateService.updateById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id, theUpdatedTemplate);
+
+            return updateByIdPromise
+                .then((result) => {
+                    result.nModified.should.equal(1);
+
+                    // verify dependencies value
+                    var getByIdPromise = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);
+
+                    return getByIdPromise.should.eventually.have.property("dependencies").deep.equal(expectedDependencies);
+                });
+        });
     });
 
     describe("TemplateService Unit Layouts", function () {
         var templateService = {};
-        var engineType = 'liquid';
+        var engineType = "liquid";
         var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function() {
@@ -207,29 +265,29 @@ describe("TemplateService", function () {
             // "An object" can simply be a customData object, basically any json object can simply add a content property
             //  and, optionally, a layout property to have it's content rendered as a template
             var objectWithTemplate = {
-                favoriteColor: 'blue',
+                favoriteColor: "blue",
                 favoriteNumber: 22,
-                template: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
+                template: "<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>"
             };
-            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal('<h2>Favorite Color is blue, and Favorite Number is 22</h2>');
+            return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal("<h2>Favorite Color is blue, and Favorite Number is 22</h2>");
         });
 
         it("can render using a layout", function () {
 //        master template looks like this = "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>";
             var objectWithTemplate = {
-                favoriteColor: 'blue',
+                favoriteColor: "blue",
                 favoriteNumber: 22,
-                layout: 'master',
-                template: '<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>'
+                layout: "master",
+                template: "<h2>Favorite Color is {{favoriteColor}}, and Favorite Number is {{favoriteNumber}}</h2>"
             };
             return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal("<header>I'm the header</header><h2>Favorite Color is blue, and Favorite Number is 22</h2><footer>I'm the footer</footer>");
         });
 
         it("can use both content and layout template model properties in a layout template", function () {
             var objectWithTemplate = {
-                favoriteColor: 'blue',
-                layout: 'masterWithModel',
-                template: '<h2>Some Content</h2>'
+                favoriteColor: "blue",
+                layout: "masterWithModel",
+                template: "<h2>Some Content</h2>"
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content</h2><footer>I'm the footer</footer>";
             return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal(expectedResult);
@@ -237,9 +295,9 @@ describe("TemplateService", function () {
 
         it("can use both layout and content template model properties in a content template", function () {
             var objectWithTemplate = {
-                favoriteColor: 'blue',
-                layout: 'masterWithModel',
-                template: '<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>'
+                favoriteColor: "blue",
+                layout: "masterWithModel",
+                template: "<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>"
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content. Master Title-11-blue</h2><footer>I'm the footer</footer>";
             return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal(expectedResult);
@@ -247,11 +305,11 @@ describe("TemplateService", function () {
 
         it("override layout model properties with content model properties with the same name", function () {
             var objectWithTemplate = {
-                title: 'Content Title',
-                favoriteNumber: '7',
-                favoriteColor: 'yellow',
-                layout: 'masterWithModel',
-                template: '<h2>Some Content</h2>'
+                title: "Content Title",
+                favoriteNumber: "7",
+                favoriteColor: "yellow",
+                layout: "masterWithModel",
+                template: "<h2>Some Content</h2>"
             };
             var expectedResult = "<header>I'm the header. Content Title-7-yellow</header><h2>Some Content</h2><footer>I'm the footer</footer>";
             return expect(templateService.renderObject(templateTestHelper.testOrgId, objectWithTemplate)).to.eventually.equal(expectedResult);
@@ -292,7 +350,7 @@ describe("TemplateService", function () {
 
     describe("Front Matter", function () {
         var templateService = {};
-        var engineType = 'liquid';
+        var engineType = "liquid";
         var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function () {
@@ -323,7 +381,7 @@ describe("TemplateService", function () {
                 "---\n" +
                 expectedBody;
 
-            var expectedModel = { color: 'blue', meat: 'beef' };
+            var expectedModel = { color: "blue", meat: "beef" };
             var templateObject = templateService.convertStringToTemplateObject(templateString);
             templateObject.model.should.deep.equal(expectedModel);
             templateObject.template.should.deep.equal(expectedBody);
@@ -332,7 +390,7 @@ describe("TemplateService", function () {
 
     describe("RQL Queries in Templates", function () {
         var templateService = {};
-        var engineType = 'liquid';
+        var engineType = "liquid";
         var fakeTemplateRepo = new FakeTemplateRepo();
 
         before(function () {
@@ -348,8 +406,8 @@ describe("TemplateService", function () {
         });
 
         it("can convert 'pure content' template strings with RQL queries in front matter into template objects", function () {
-            var expectedBody = 'Template body is here';
-            var expectedTitle = 'Products Over $10.00';
+            var expectedBody = "Template body is here";
+            var expectedTitle = "Products Over $10.00";
             var productQuery = "contentType={0}&price=gt=10.1&sort(price)".format(testHelper.testProductsContentType);
             var templateString =
                 "---\n" +
@@ -369,8 +427,8 @@ describe("TemplateService", function () {
 
         // same as above but queries not defined in front matter, but in the content object itself
         it("can have model property RQL queries in template objects converted to resultsets", function () {
-            var expectedBody = 'Template body is here';
-            var expectedTitle = 'Products Over $10.00';
+            var expectedBody = "Template body is here";
+            var expectedTitle = "Products Over $10.00";
             var productQuery = "contentType={0}&price=gt=10.1&sort(price)".format(testHelper.testProductsContentType);
             var templateObject = {
                 model: {

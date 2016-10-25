@@ -27,7 +27,6 @@ class QueryService extends GenericService {
             });
     }
 
-    // todo: add a test
     // item should be of format - { type: "data", name: "someQuery" }
     getAllDependentsOfItem(item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
@@ -155,6 +154,30 @@ class QueryService extends GenericService {
         return contentType;
     }
 
+    getDependenciesOfQuery(query) {
+        let dependencies;
+        let item;
+
+        // check to see if this value is actually a valid query
+        let queryName = this.getNameOfNamedQuery(query);
+        if (queryName) {
+            item = { type: "query", name: queryName };
+        }
+        else {
+            let contentType = this.getContentType(query);
+            if (contentType) {
+                item = { type: "data", name: contentType };
+            }
+        }
+
+        if (item !== undefined) {
+            dependencies = [];
+            dependencies.push(item);
+        }
+
+        return dependencies;
+    }
+
     validate(doc) {
         if (doc.name && doc.query) {
             // call base validation, which should return nothing if valid
@@ -163,6 +186,18 @@ class QueryService extends GenericService {
         else {
             return "Need name and query";
         }
+    }
+
+    onBeforeCreate(queryObject) {
+        // add/overwrite dependencies property
+        queryObject["dependencies"] = this.getDependenciesOfQuery(queryObject.query);
+        return Promise.resolve();
+    }
+
+    onBeforeUpdate(queryObject) {
+        // add/overwrite dependencies property
+        queryObject["dependencies"] = this.getDependenciesOfQuery(queryObject.query);
+        return Promise.resolve();
     }
 
 }

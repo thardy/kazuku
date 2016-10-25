@@ -80,7 +80,12 @@ class CustomDataService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');
         }
 
-        return this.collection.remove({_id: id, orgId: orgId, contentType: contentType});
+        let queryObject = {_id: id, orgId: orgId, contentType: contentType};
+        return this.collection.remove(queryObject)
+            .then((result) => {
+                this.onDelete(queryObject);
+                return result;
+            });
     }
 
     // todo: validate that the contentType exists (customSchema) for this org and implement any schema validation
@@ -92,6 +97,18 @@ class CustomDataService extends GenericService {
         else {
             return "Need contentType";
         }
+    }
+
+    onAfterCreate(doc) {
+
+    }
+
+    onAfterUpdate(doc) {
+
+    }
+
+    onAfterDelete(doc) {
+
     }
 }
 
