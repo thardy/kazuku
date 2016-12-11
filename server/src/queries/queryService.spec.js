@@ -284,5 +284,31 @@ describe("QueryService", function () {
         });
     });
 
+    describe("Dependencies", function() {
+        let queryService = {};
+
+        before(() => {
+            queryService = new QueryService(database);
+        });
+
+        after(() => {});
+
+        describe("getDependenciesOfQuery", function () {
+            it("should return all dependencies of a query", function () {
+                let expectedDependencies = [{type: "data", name: "products"}];
+                let query = {
+                    orgId: queryTestHelper.testOrgId,
+                    siteId: 1,
+                    name: "top5Products",
+                    query: "eq(contentType,products)&sort(created)&limit(5,0)"
+                };
+
+                let dependencies = queryService.getDependenciesOfQuery(query.query);
+
+                dependencies.should.have.length(1);
+                dependencies.should.deep.equal(expectedDependencies);
+            });
+        });
+    });
 });
 

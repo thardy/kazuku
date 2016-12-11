@@ -3,7 +3,7 @@ var _ = require("lodash");
 var util = require("util");
 var GenericService = require("../common/genericService");
 var mongoRql = require('mongo-rql');
-var Query = require('rql/query').Query;
+//var Query = require('rql/query').Query;
 
 class CustomDataService extends GenericService {
     constructor(database) {
@@ -81,9 +81,13 @@ class CustomDataService extends GenericService {
         }
 
         let queryObject = {_id: id, orgId: orgId, contentType: contentType};
-        return this.collection.remove(queryObject)
+
+        return this.onBeforeDelete(queryObject)
             .then((result) => {
-                this.onDelete(queryObject);
+                return this.collection.remove(queryObject)
+            })
+            .then((result) => {
+                this.onAfterDelete(queryObject);
                 return result;
             });
     }
@@ -99,17 +103,27 @@ class CustomDataService extends GenericService {
         }
     }
 
-    onAfterCreate(doc) {
-
-    }
-
-    onAfterUpdate(doc) {
-
-    }
-
-    onAfterDelete(doc) {
-
-    }
+    // flagDependentsForRegeneration(doc) {
+    //     // get list of all dependents of this data item
+    //     let item = {type: "data", name: doc.contentType};
+    //
+    //     // flag dependents for regeneration
+    //     this.dependencyService.getAllDependentsOfItem(item);
+    //     // let dependents = this.templateService.getAllDependentsOfItem(item);
+    //     // this.templateService.flagForRegeneration(dependents);
+    //     // this.queryService.flagForRegeneration(dependents);
+    // }
+    // onAfterCreate(doc) {
+    //     this.flagDependentsForRegeneration(doc);
+    // }
+    //
+    // onAfterUpdate(doc) {
+    //     this.flagDependentsForRegeneration(doc);
+    // }
+    //
+    // onAfterDelete(doc) {
+    //     this.flagDependentsForRegeneration(doc);
+    // }
 }
 
 module.exports = CustomDataService;

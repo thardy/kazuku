@@ -21,75 +21,8 @@ describe("DependencyService", function () {
     let testOrgId = 1;
     let testContentType = 'testType';
 
-    describe("getDependenciesOfItem", function () {
-        before(function () {
-            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
-                                                        new TemplateService(database),
-                                                        new QueryService(database));
-        });
-
-        it("should return all dependencies of a template", function () {
-            let expectedDependencies =  [ { type: 'template', name: 'master' }, { type: 'query', name: 'top5Products' } ];
-            let template = {
-                orgId: testOrgId,
-                siteId: 1,
-                url: "home",
-                layout: "master",
-                products: "query(top5Products)",
-                template: "template body is here"
-            };
-
-            let dependencies = dependencyService.getDependenciesOfItem(template);
-
-            dependencies.should.have.length(2);
-            dependencies.should.deep.equal(expectedDependencies);
-
-        });
-
-        it("should return all dependencies of a template with includes", function () {
-            let expectedDependencies =  [
-                { type: "template", name: "master" },
-                { type: "query", name: "top10Events" },
-                { type: "template", name: "header" },
-                { type: "template", name: "footer" }
-            ];
-            let template = {
-                orgId: testOrgId,
-                siteId: 1,
-                url: "home",
-                layout: "master",
-                products: "query(top10Events)",
-                template: "{% include 'header' %}<div>template body is here</div>{% include 'footer' %}"
-            };
-
-            let dependencies = dependencyService.getDependenciesOfItem(template);
-
-            dependencies.should.have.length(4);
-            dependencies.should.deep.equal(expectedDependencies);
-
-        });
-
-        it("should return all dependencies of a query", function () {
-            let expectedDependencies = [{type: "data", name: "products"}];
-            let query = {
-                orgId: testOrgId,
-                siteId: 1,
-                name: "top5Products",
-                query: "eq(contentType,products)&sort(created)&limit(5,0)"
-            };
-
-            let dependencies = dependencyService.getDependenciesOfItem(query);
-
-            dependencies.should.have.length(1);
-            dependencies.should.deep.equal(expectedDependencies);
-        });
-    });
-
-
-
     describe("getRegenerationListForItem", function () {
         before(function () {
-            // todo: fake the dependencies.  Let's make these unit tests, not integration tests.
 
         });
 
@@ -113,7 +46,7 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationList = dependencyService.getRegenerationListForItem(changedItem);
+            let regenerationList = dependencyService.getRegenerationListForItem(dependencyTestHelper.orgId, changedItem);
 
             regenerationList.should.have.length(expectedRegenerationList.length);
             regenerationList.should.deep.equal(expectedRegenerationList);
@@ -138,7 +71,7 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationList = dependencyService.getRegenerationListForItem(changedItem);
+            let regenerationList = dependencyService.getRegenerationListForItem(dependencyTestHelper.orgId, changedItem);
 
             regenerationList.should.have.length(expectedRegenerationList.length);
             regenerationList.should.deep.equal(expectedRegenerationList);
@@ -164,7 +97,7 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationList = dependencyService.getRegenerationListForItem(changedItem);
+            let regenerationList = dependencyService.getRegenerationListForItem(dependencyTestHelper.orgId, changedItem);
 
             regenerationList.should.have.length(expectedRegenerationList.length);
             regenerationList.should.deep.equal(expectedRegenerationList);

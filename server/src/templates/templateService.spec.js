@@ -252,6 +252,58 @@ describe("TemplateService", function () {
         });
     });
 
+    describe("Dependencies", function() {
+        let templateService = {};
+
+        before(() => {
+            templateService = new TemplateService(database);
+        });
+
+        after(() => {});
+
+        describe("getDependenciesOfTemplate", function () {
+            it("should return all dependencies of a template", function () {
+                let expectedDependencies =  [ { type: 'template', name: 'master' }, { type: 'query', name: 'top5Products' } ];
+                let template = {
+                    orgId: templateTestHelper.testOrgId,
+                    siteId: 1,
+                    url: "home",
+                    layout: "master",
+                    products: "query(top5Products)",
+                    template: "template body is here"
+                };
+
+                let dependencies = templateService.getDependenciesOfTemplate(template);
+
+                dependencies.should.have.length(2);
+                dependencies.should.deep.equal(expectedDependencies);
+
+            });
+
+            it("should return all dependencies of a template with includes", function () {
+                let expectedDependencies =  [
+                    { type: "template", name: "master" },
+                    { type: "query", name: "top10Events" },
+                    { type: "template", name: "header" },
+                    { type: "template", name: "footer" }
+                ];
+                let template = {
+                    orgId: templateTestHelper.testOrgId,
+                    siteId: 1,
+                    url: "home",
+                    layout: "master",
+                    products: "query(top10Events)",
+                    template: "{% include 'header' %}<div>template body is here</div>{% include 'footer' %}"
+                };
+
+                let dependencies = templateService.getDependenciesOfTemplate(template);
+
+                dependencies.should.have.length(4);
+                dependencies.should.deep.equal(expectedDependencies);
+            });
+        });
+    });
+
     describe("TemplateService Unit Layouts", function () {
         var templateService = {};
         var engineType = "liquid";

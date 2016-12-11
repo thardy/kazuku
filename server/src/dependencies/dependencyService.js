@@ -2,70 +2,97 @@
 var _ = require("lodash");
 var Promise = require("bluebird");
 var database = require("../database/database");
-var QueryService = require("../queries/queryService");
 
 class DependencyService {
 
-    constructor(customDataService, templateService, queryService) {
-        this._customDataService = customDataService;
-        this._templateService = templateService;
-        this._queryService = (queryService) ? queryService : new QueryService(database);
+    constructor() {
     }
 
-    get customDataService() { return this._customDataService; }
-    get templateService() { return this._templateService; }
-    get queryService() { return this._queryService; }
-
-    getRegenerationListForItem(item) {
+    getRegenerationListForItem(orgId, item) {
         // Expect simple type objects - e.g. { type: "data", name: "products" }
-        let regenerationList = this.getAllDependentsOfItem(item);
+        let regenerationList = this.getAllDependentsOfItem(orgId, item);
 
         return regenerationList;
     }
 
-    // returns array of dependents, e.g. [{type:"query", name:"top5Products"}, {type:"template", name:"master"}]
-    getAllDependentsOfItem(item) {
-        // Look for any queries or templates that are dependent on this item (dependencies array contains item)
-        let queryDependents = this.queryService.getAllDependentsOfItem(item);
-        let templateDependents = this.templateService.getAllDependentsOfItem(item);
-        let allDependents = _.union(queryDependents, templateDependents);
-        let allSubDependents = [];
+    // returns array of dependents in "item" format,
+    //  e.g. [{type:"query", name:"top5Products"}, {type:"template", name:"master"}]
+    getAllDependentsOfItem(orgId, item, recurseLevel) {
+        // Look for any queries or templates that are dependent on this item (their dependencies array contains item)
+        if (!recurseLevel) {
+            recurseLevel = 1;
+        }
+        else {
+            recurseLevel += 1;
+        }
+        let promise = Promise.resolve([]);
 
-        // Recursively do the above for every item in the list
-        if (allDependents) {
-            for (let dependent of allDependents) {
-                let subDependents = this.getAllDependentsOfItem(dependent);
-                if (subDependents) {
-                    allSubDependents = _.union(allSubDependents, subDependents);
+        // I'm not looking for query children after the first batch because currently, queries can't depend on other
+        //  queries. The first batch should have been all that we care about.
+        if (recurseLevel <= 1) {
+            promise = database.queries.find({orgId: orgId, dependencies: item});
+        }
+        return promise
+            .then((dependentQueries) => {
+                // get the dependentTemplates, and pass both those and the dependentQueries as the result - resultsArray
+                return Promise.all([dependentQueries, database.templates.find({orgId: orgId, dependencies:item})]);
+            })
+            .then((resultsArray) => {
+                // dependentQueries should be index 0, and dependentTemplates index 1
+                let currentAllDependents = _.unionWith(resultsArray[0], resultsArray[1], _.isEqual); // unionWith creates a distinct union with no duplicates
+                let currentSubDependents = [];
+                let promises = [];
+
+                // Recursively do the above for every item in the list
+                if (currentAllDependents.length > 0) {
+                    for (let dependent of currentAllDependents) {
+                        let itemType = this.getTypeOfItem(dependent);
+                        let dependentItem = { type: itemType, name: dependent.name };
+
+                        promises.push(this.getAllDependentsOfItem(orgId, dependentItem, recurseLevel));
+                    }
                 }
-            }
 
-            allDependents = _.union(allDependents, allSubDependents);
-        }
+                // todo: test this with promises being empty.  What happens with Promise.all([]); ???  Do I need to convert an empty
+                //  array of promises into a self-resolving promise? According to docs, it looks like it should be fine.
 
-        return allDependents;
+                // Calling Promise.all on the array of promises from above because order doesn't matter.  We just
+                //  need to know when they are all done.
+                return Promise.all(promises)
+                    .then((subDependentsResultsArray) => { // array with each item being a result of one of the promises
+                        // loop through all the resulting dependent arrays, unioning the dependents together
+                        for (let subDependents of subDependentsResultsArray) {
+                            if (subDependents) {
+                                currentSubDependents = _.unionWith(currentSubDependents, subDependents, _.isEqual);
+                            }
+                        }
+
+                        // union this distinct list of subDependents with the currentAllDependents above and return it
+                        return currentAllDependents = _.unionWith(currentAllDependents, currentSubDependents, _.isEqual);
+                    });
+            });
     }
 
-    getDependenciesOfItem(itemObject) {
-        // Expect templateObject or queryObject
-        // Determine if itemObject is template or query
-        let itemType = this.getTypeOfItem(itemObject);
-        let dependencies = [];
-
-        // todo: add itemType "data" - both queries and templates can be dependent on data, and add tests for data dependencies
-        switch (itemType) {
-            case "page":
-            case "template":
-                dependencies = this.templateService.getDependenciesOfTemplate(itemObject);
-                break;
-            case "query":
-                // just check the query string itself, not the whole queryObject
-                dependencies = this.queryService.getDependenciesOfQuery(itemObject.query);
-                break;
-        }
-
-        return dependencies;
-    }
+    // getDependenciesOfItem(itemObject) {
+    //     // Expect templateObject or queryObject
+    //     // Determine if itemObject is template or query
+    //     let itemType = this.getTypeOfItem(itemObject);
+    //     let dependencies = [];
+    //
+    //     // todo: add itemType "data" - both queries and templates can be dependent on data, and add tests for data dependencies
+    //     switch (itemType) {
+    //         case "page":
+    //         case "template":
+    //             dependencies = this.templateService.getDependenciesOfTemplate(itemObject);
+    //             break;
+    //         case "query":
+    //             // just check the query string itself, not the whole queryObject
+    //             dependencies = this.queryService.getDependenciesOfQuery(itemObject.query);
+    //             break;
+    //     }
+    //
+    //     return dependencies;
+    // }
 
     getTypeOfItem(item) {
         let typeOfItem = '';

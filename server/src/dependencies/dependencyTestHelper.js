@@ -5,6 +5,7 @@ var QueryService = require("../queries/queryService");
 var sinon = require("sinon");
 
 var dependencyTestHelper = {
+    testOrgId: 1,
     initDependencyChain: initDependencyChain,
     fakeCustomDataService: {},
     fakeQueryService: {},
@@ -34,16 +35,16 @@ function initDependencyChain() {
         return sinon.createStubInstance(QueryService);
     });
     dependencyTestHelper.fakeQueryService = new QueryServiceStub();
-    dependencyTestHelper.fakeQueryService.getAllDependentsOfItem.withArgs(itemNavItemsData).returns(fakeNavItemsDataDependents);
+    dependencyTestHelper.fakeQueryService.getAllDependentsOfItem.withArgs(sinon.match.any, itemNavItemsData, sinon.match.any).returns(fakeNavItemsDataDependents);
 
     let TemplateServiceStub = sinon.spy(function() {
         return sinon.createStubInstance(TemplateService);
     });
     dependencyTestHelper.fakeTemplateService = new TemplateServiceStub();
-    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderNavigationQuery).returns(fakeHeaderNavigationQueryDependents);
-    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemHeaderTemplate).returns(fakeHeaderTemplateDependents);
-    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemMasterTemplate).returns(fakeMasterTemplateDependents);
-    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(itemChristmasMasterTemplate).returns(fakeChristmasMasterTemplateDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(sinon.match.any, itemHeaderNavigationQuery, sinon.match.any).returns(fakeHeaderNavigationQueryDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(sinon.match.any, itemHeaderTemplate, sinon.match.any).returns(fakeHeaderTemplateDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(sinon.match.any, itemMasterTemplate, sinon.match.any).returns(fakeMasterTemplateDependents);
+    dependencyTestHelper.fakeTemplateService.getAllDependentsOfItem.withArgs(sinon.match.any, itemChristmasMasterTemplate, sinon.match.any).returns(fakeChristmasMasterTemplateDependents);
 
 }
 
