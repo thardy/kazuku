@@ -6,13 +6,13 @@ var sinon = require("sinon");
 
 var dependencyTestHelper = {
     testOrgId: 1,
-    initDependencyChain: initDependencyChain,
+    initMockDependencyChain: initMockDependencyChain,
     fakeCustomDataService: {},
     fakeQueryService: {},
     fakeTemplateService: {}
 };
 
-function initDependencyChain() {
+function initMockDependencyChain() {
     // Create a dependency chain, starting with data, then moving to all the other items that depend upon it
     let itemNavItemsData = {type:'data', name:'navItems'};
     let itemHeaderNavigationQuery = {type: "query", name: "headerNavigation"};

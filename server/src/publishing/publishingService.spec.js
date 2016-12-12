@@ -92,7 +92,7 @@ describe("PublishingService", function () {
                         .then((retrievedTemplates) => {
                             for (var template of retrievedTemplates) {
                                 let expected = pubTestHelper.expectedRenderedPages.get(template.name);
-                                expect(template.renderedTemplate).to.deep.equal(expected);
+                                expect(template.renderedPage).to.deep.equal(expected);
                                 // verify regenerate properties were reset to zero
                                 template.regenerate.should.equal(0);
                             }
@@ -113,14 +113,40 @@ describe("PublishingService", function () {
         it("saves pages to the file system when they are regenerated");
     });
 
-    describe.skip("End to End Testing", function () {
-        it("upon customData change, all dependent queries and pages get regenerated", function () {
-            // update some custom data, which should cause queries to get flagged for regeneration, which should
-            //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
-            //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
-            var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', template: testBlogContent };
+    describe("End to End Testing", function () {
+        before(() => {
 
-            var createPromise = customDataService.create(testOrgId, customData);
+        });
+
+        after(() => {
+
+        });
+
+        it("upon customData change, all dependent queries and pages get regenerated", function () {
+            let promises = [];
+            // setup our data
+            promises.push(pubTestHelper.createCustomDataForEndToEndTests());
+            promises.push(pubTestHelper.createQueriesForEndToEndTests());
+            promises.push(pubTestHelper.createTemplatesForEndToEndTests());
+            promises.push(pubTestHelper.createPagesForEndToEndTests());
+            return Promise.all(promises)
+                .then((resultsArray) => {
+                    // update some custom data, which should cause queries to get flagged for regeneration, which should
+                    //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
+                    //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
+                    var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', template: testBlogContent };
+
+                    return customDataService.create(testOrgId, customData);
+                })
+                .then((result) => {
+                    // verify outcome
+                    
+
+                });
+
+
+
+
         });
 
         it("upon template change, all dependent queries and pages get regenerated", function () {

@@ -65,8 +65,8 @@ class PublishingService {
                             return this.templateService.renderObject(orgId, templateObject)
                                 .then((renderedTemplate) => {
                                     if ("url" in templateObject) {
-                                        // templateObject is a page, so store the rendered output in a renderedTemplate property
-                                        templateObject.renderedTemplate = renderedTemplate;
+                                        // templateObject is a page, so store the rendered output in a renderedPage property
+                                        templateObject.renderedPage = renderedTemplate;
                                         templateObject.regenerate = 0;         // reset the regenerate flag
 
                                         // save the templates back to the database

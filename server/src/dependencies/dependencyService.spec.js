@@ -2,10 +2,6 @@
 var DependencyService = require("./dependencyService");
 var dependencyTestHelper = require("./dependencyTestHelper");
 var Promise = require("bluebird");
-var database = require("../database/database");
-var CustomDataService = require("../customData/customDataService");
-var TemplateService = require("../templates/templateService");
-var QueryService = require("../queries/queryService");
 var _ = require("lodash");
 var chai = require("chai");
 var should = chai.Should();
@@ -29,7 +25,7 @@ describe("DependencyService", function () {
         it("should get list of all items that need to be regenerated when a template changes", function () {
             // this needs to recursively get everything dependent on the item that changed
             // pass simple item object -> {type: 'data', name: 'products'}
-            dependencyTestHelper.initDependencyChain();
+            dependencyTestHelper.initMockDependencyChain();
 
             dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
                                                       dependencyTestHelper.fakeTemplateService,
@@ -46,14 +42,13 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationList = dependencyService.getRegenerationListForItem(dependencyTestHelper.orgId, changedItem);
+            let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationList.should.have.length(expectedRegenerationList.length);
-            regenerationList.should.deep.equal(expectedRegenerationList);
+            regenerationListPromise.should.eventually.deep.equal(expectedRegenerationList);
         });
 
         it("should get list of all items that need to be regenerated when a query changes", function () {
-            dependencyTestHelper.initDependencyChain();
+            dependencyTestHelper.initMockDependencyChain();
 
             dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
                 dependencyTestHelper.fakeTemplateService,
@@ -71,14 +66,13 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationList = dependencyService.getRegenerationListForItem(dependencyTestHelper.orgId, changedItem);
+            let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationList.should.have.length(expectedRegenerationList.length);
-            regenerationList.should.deep.equal(expectedRegenerationList);
+            regenerationListPromise.should.eventually.deep.equal(expectedRegenerationList);
         });
 
         it("should get list of all items that need to be regenerated when data is added/updated/deleted", function () {
-            dependencyTestHelper.initDependencyChain();
+            dependencyTestHelper.initMockDependencyChain();
 
             dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
                                                       dependencyTestHelper.fakeTemplateService,
@@ -97,10 +91,9 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationList = dependencyService.getRegenerationListForItem(dependencyTestHelper.orgId, changedItem);
+            let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationList.should.have.length(expectedRegenerationList.length);
-            regenerationList.should.deep.equal(expectedRegenerationList);
+            regenerationListPromise.should.eventually.deep.equal(expectedRegenerationList);
         });
     });
 

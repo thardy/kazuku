@@ -52,6 +52,41 @@ let existingQueryRegenerateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
 ];
 
+// ********** Data for end to end tests *********************
+let existingBlogPosts = [
+    { orgId: testOrgId, contentType: 'blogPosts', title: 'End to End Blog Post One', body: 'This is the really cool blog post one.', created: new Date('2014-01-01T00:00:00') },
+    { orgId: testOrgId, contentType: 'blogPosts', title: 'End to End Blog Post Two', body: 'Two is the best blog post ever.', created: new Date('2015-07-17T00:00:00') },
+    { orgId: testOrgId, contentType: 'blogPosts', title: 'End to End Blog Post Three', body: 'The third post is always the best.', created: new Date('2016-12-01T00:00:00') }
+];
+let existingQueriesForEndToEndTests = [
+    // queries are VERY space sensitive currently.  need to fix.
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndQuery-AllBlogs", query: "eq(contentType,blogPosts)&sort(-created)", regenerate: 0,
+        dependencies: [{type: "data", name: "blogPosts"}]}
+];
+
+let existingTemplatesForEndToEndTests = [
+    {
+        orgId: testOrgId,
+        siteId: testSiteId,
+        name: "EndToEndTemplate-BlogNav",
+        blogs: "query(EndToEndQuery-AllBlogs)",
+        template: "<ul class='cool-blog-list'>{% for blog in blogs %}<li><h3>{{blog.name}}</h3></li>{% endfor %}</ul>",
+        dependencies: [{type: "query", name: "EndToEndQuery-AllBlogs"}]
+    },
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Header", template: "<header>This is the end-to-end Header<br/>{% include 'EndToEndTemplate-BlogNav' %}</header>",
+        dependencies: [{type: "template", name: "EndToEndTemplate-BlogNav"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Footer", template: "<footer>This is the end-to-end Footer</footer>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Master", template: "{% include 'EndToEndTemplate-Header' %} <div>{{ content }}</div> {% include 'EndToEndTemplate-Footer' %}",
+        dependencies: [{type: "template", name: "EndToEndTemplate-Header"}, {type: "template", name: "EndToEndTemplate-Footer"}]}
+];
+
+let existingPagesForEndToEndTests = [
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Home", url: "home", layout: "EndToEndTemplate-Master", template: "<h1>End-to-End Home Page</h1>", regenerate: 0,
+        dependencies: [{type: "template", name: "EndToEndTemplate-Master"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-About", url: "about", layout: "EndToEndTemplate-Master", template: "<h1>End-to-End About</h1>", regenerate: 0,
+        dependencies: [{type: "template", name: "EndToEndTemplate-Master"}]}
+];
+
 // We don't render templates on their own anymore, only within the context of a page because each page can potentially alter the rendered output of an included template
 // let expectedRenderedTemplates = new Map();
 // expectedRenderedTemplates.set("RegenerateTemplate-Navigation", "<nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav>");
@@ -74,11 +109,16 @@ var pubTestHelper = {
     createTemplatesForRegenerationTests: createTemplatesForRegenerationTests,
     createPageRegenerateList: createPageRegenerateList,
     createQueryRegenerateList: createQueryRegenerateList,
+    createCustomDataForEndToEndTests: createCustomDataForEndToEndTests,
+    createQueriesForEndToEndTests: createQueriesForEndToEndTests,
+    createTemplatesForEndToEndTests: createTemplatesForEndToEndTests,
+    createPagesForEndToEndTests: createPagesForEndToEndTests,
     //expectedRenderedTemplates: expectedRenderedTemplates,
     expectedRenderedPages: expectedRenderedPages,
     expectedRenderedQueries: expectedRenderedQueries
 };
 
+// todo: refactor all the common code out of these...
 function createCustomData() {
     return deleteAllTestCustomData()
         .then((result) => {
@@ -103,6 +143,20 @@ function createCustomData() {
         });
 }
 
+function createCustomDataForEndToEndTests() {
+    return deleteCustomDataForEndToEndTests()
+        .then((result) => {
+            database.customData.insert(existingBlogPosts)
+                .then(function(docs) {
+                    existingBlogPosts = docs;
+                    _.forEach(existingBlogPosts, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
+        });
+}
+
 function createTemplatesForRegenerationTests() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
@@ -118,6 +172,34 @@ function createTemplatesForRegenerationTests() {
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
             return database.templates.insert({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegenerateTemplateNOT1", template: "do not regenerate me", regenerate: 0 });
+        });
+}
+
+function createTemplatesForEndToEndTests() {
+    return deleteAllEndToEndTemplates()
+        .then((result) => {
+            database.templates.insert(existingTemplatesForEndToEndTests)
+                .then(function(docs) {
+                    existingTemplatesForEndToEndTests = docs;
+                    _.forEach(existingTemplatesForEndToEndTests, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
+        });
+}
+
+function createPagesForEndToEndTests() {
+    return deleteAllEndToEndPages()
+        .then((result) => {
+            database.templates.insert(existingPagesForEndToEndTests)
+                .then(function(docs) {
+                    existingPagesForEndToEndTests = docs;
+                    _.forEach(existingPagesForEndToEndTests, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         });
 }
 
@@ -157,8 +239,26 @@ function createQueryRegenerateList() {
         });
 }
 
+function createQueriesForEndToEndTests() {
+    return deleteAllEndToEndQueries()
+        .then((result) => {
+            return database.queries.insert(existingQueriesForEndToEndTests)
+                .then(function(docs) {
+                    existingQueriesForEndToEndTests = docs;
+                    _.forEach(existingQueriesForEndToEndTests, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
+        });
+}
+
 function deleteAllTestCustomData() {
     return database.customData.remove({orgId: testOrgId});
+}
+
+function deleteCustomDataForEndToEndTests() {
+    return database.customData.remove({orgId: testOrgId, contentType: 'blogPosts'});
 }
 
 function deleteAllTemplateRegenTemplates() {
@@ -171,6 +271,18 @@ function deleteAllPageRegenTemplates() {
 
 function deleteAllQueryRegenTemplates() {
     return database.queries.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^RegenerateQuery/ }});
+}
+
+function deleteAllEndToEndQueries() {
+    return database.queries.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^EndToEndQuery/ }});
+}
+
+function deleteAllEndToEndTemplates() {
+    return database.templates.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^EndToEndTemplate/ }});
+}
+
+function deleteAllEndToEndPages() {
+    return database.templates.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^EndToEndPage/ }});
 }
 
 module.exports = pubTestHelper;
