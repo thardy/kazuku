@@ -2,6 +2,7 @@
 
 var database = require("../database/database");
 var PublishingService = require("./publishingService");
+var CustomDataService = require("../customData/customDataService");
 var QueryService = require("../queries/queryService");
 var TemplateService = require("../templates/templateService");
 var pubTestHelper = require("./publishingTestHelper");
@@ -114,12 +115,13 @@ describe("PublishingService", function () {
     });
 
     describe("End to End Testing", function () {
+        let customDataService = {};
         before(() => {
-
+            customDataService = new CustomDataService(database);
         });
 
         after(() => {
-
+            return pubTestHelper.deleteAllEndToEndData();
         });
 
         it("upon customData change, all dependent queries and pages get regenerated", function () {
@@ -133,19 +135,53 @@ describe("PublishingService", function () {
                 .then((resultsArray) => {
                     // update some custom data, which should cause queries to get flagged for regeneration, which should
                     //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
-                    //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
-                    var customData = { orgId: testOrgId, contentType: testContentType, title: 'New Test Blog Post', template: testBlogContent };
+                    //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved/updated.
+                    // contentType must be 'blogPosts' in order to get cleaned up by testing helpers
+                    var customData = { orgId: pubTestHelper.testOrgId, contentType: 'blogPosts', title: 'New Test Blog Post', template: 'New blog post. It is new.' };
 
-                    return customDataService.create(testOrgId, customData);
+                    return customDataService.create(pubTestHelper.testOrgId, customData);
                 })
                 .then((result) => {
                     // verify outcome
-                    
+                    // Here is the chain of dependencies that should get
+                    let expectedQueriesFlaggedForRegeneration = [
+                        { type: "query", name: "EndToEndQuery-AllBlogs" }
+                    ];
+                    //  only be pages should get flagged, no plain templates
+                    let expectedPagesFlaggedForRegeneration = [
+                        { type: "page", name: "EndToEndTemplate-Home" },
+                        { type: "page", name: "EndToEndTemplate-About" }
+                    ];
 
+                    let promises = [];
+                    // Go get all the queries that have regenerate = 1
+                    promises.push(queryService.getRegenerateList(pubTestHelper.testOrgId)
+                        .then((queriesFlaggedForRegeneration) => {
+                            // Make sure we found all the queries in our expected list
+                            expect(queriesFlaggedForRegeneration.length).to.equal(expectedQueriesFlaggedForRegeneration.length);
+
+                            // verify that the expectedQueriesFlaggedForRegeneration are present and no others
+                            for (let query of queriesFlaggedForRegeneration) {
+                                let foundInExpected = _.find(expectedQueriesFlaggedForRegeneration, (item) => { return item.name === query.name});
+                                expect(foundInExpected).to.exist; // make sure each query found is in our expected list
+                            }
+                        }));
+
+                    // Go get all the templates that have regenerate = 1
+                    promises.push(templateService.getRegenerateList(pubTestHelper.orgId)
+                        .then((templatesFlaggedForRegeneration) => {
+                            // Make sure we found all the templates in our expected list
+                            expect(templatesFlaggedForRegeneration.length).to.equal(expectedPagesFlaggedForRegeneration.length);
+
+                            // verify that each template found is in the expectedTemplatesFlaggedForRegeneration list
+                            for (let template of templatesFlaggedForRegeneration) {
+                                let foundInExpected = _.find(expectedPagesFlaggedForRegeneration, (item) => { return item.name === template.name});
+                                expect(foundInExpected).to.exist; // make sure each template found is in our expected list
+                            }
+                        }));
+
+                    return Promise.all(promises);
                 });
-
-
-
 
         });
 

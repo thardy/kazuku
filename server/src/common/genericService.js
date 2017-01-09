@@ -80,14 +80,14 @@ class GenericService {
 
         conversionService.convertISOStringDateTimesToMongoDates(doc);
 
-        return this.onBeforeCreate(doc)
+        return this.onBeforeCreate(orgId, doc)
             .then((result) => {
                 return this.collection.insert(doc)
             })
             .then((doc) => {
                 this.useFriendlyId(doc);
-                this.onAfterCreate(doc); // we don't wait for whatever is done in onAfter
-                return doc;
+                return this.onAfterCreate(orgId, doc)
+                    .then(() => { return doc }); // ignore the result of onAfter and return what the original call returned
             });
     }
 
@@ -101,13 +101,13 @@ class GenericService {
 
         let queryObject = { _id: id, orgId: orgId };
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-        return this.onBeforeUpdate(clone)
+        return this.onBeforeUpdate(orgId, clone)
             .then((result) => {
                 return this.collection.update(queryObject, {$set: clone})
             })
             .then((result) => {
-                this.onAfterUpdate(clone); // we don't wait for whatever is done in onAfter
-                return result;
+                return this.onAfterUpdate(orgId, clone)
+                    .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
             });
     }
 
@@ -122,13 +122,13 @@ class GenericService {
 
         mongoQueryObject.orgId = orgId;
 
-        return this.onBeforeUpdate(clone)
+        return this.onBeforeUpdate(orgId, clone)
             .then((result) => {
                 return this.collection.update(mongoQueryObject, {$set: clone});
             })
             .then((result) => {
-                this.onAfterUpdate(clone); // we don't wait for whatever is done in on After
-                return result;
+                return this.onAfterUpdate(orgId, clone)
+                    .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
             });
     }
 
@@ -151,13 +151,13 @@ class GenericService {
             throw new Error('Incorrect number of arguments passed to GenericService.delete');
         }
         let queryObject = { _id: id, orgId: orgId };
-        return this.onBeforeDelete(queryObject)
+        return this.onBeforeDelete(orgId, queryObject)
             .then((result) => {
                 return this.collection.remove(queryObject)
             })
             .then((result) => {
-                this.onAfterDelete(queryObject);
-                return result;
+                return this.onAfterDelete(orgId, queryObject)
+                    .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
             });
     }
 
@@ -177,14 +177,12 @@ class GenericService {
         }
     }
 
-    onBeforeCreate(doc) {
-        return Promise.resolve();
-    }
-    onBeforeUpdate(doc) { return Promise.resolve(); }
-    onBeforeDelete(doc) { return Promise.resolve(); }
-    onAfterCreate(doc) { }
-    onAfterUpdate(doc) { }
-    onAfterDelete(doc) { }
+    onBeforeCreate(orgId, result) { return Promise.resolve(result); }
+    onBeforeUpdate(orgId, result) { return Promise.resolve(result); }
+    onBeforeDelete(orgId, result) { return Promise.resolve(result); }
+    onAfterCreate(orgId, result) { return Promise.resolve(result); }
+    onAfterUpdate(orgId, result) { return Promise.resolve(result); }
+    onAfterDelete(orgId, result) { return Promise.resolve(result); }
 }
 
 module.exports = GenericService;

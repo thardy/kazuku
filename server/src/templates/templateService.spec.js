@@ -91,7 +91,7 @@ describe("TemplateService", function () {
                 .then(function (result) {
                     let regeneratePromise = templateService.getRegenerateList(templateTestHelper.testOrgId);
 
-                    return regeneratePromise.should.eventually.deep.equal(templateTestHelper.existingRegenerateList);
+                    return regeneratePromise.should.eventually.deep.include.members(templateTestHelper.existingRegenerateList);
                 });
         });
 
@@ -180,7 +180,7 @@ describe("TemplateService", function () {
             ];
             let promise = templateService.getAllDependentsOfItem(item);
 
-            return promise.should.eventually.deep.equal(expectedDependents);
+            return promise.should.eventually.deep.include.members(expectedDependents);
         });
 
         it("getAllDependentsOfItem with query item returns item array of dependent templates", function () {
@@ -190,7 +190,7 @@ describe("TemplateService", function () {
             ];
             let promise = templateService.getAllDependentsOfItem(item);
 
-            return promise.should.eventually.deep.equal(expectedDependents);
+            return promise.should.eventually.deep.include.members(expectedDependents);
         });
 
         it("can save dependencies on create", function () {
@@ -219,7 +219,7 @@ describe("TemplateService", function () {
                         .then((retrievedDoc) => {
                             retrievedDoc.site.should.equal(templateTestHelper.testSiteId);
                             retrievedDoc.name.should.equal(testName);
-                            return retrievedDoc.dependencies.should.deep.equal(expectedDependencies);
+                            return retrievedDoc.dependencies.should.deep.include.members(expectedDependencies);
                         });
                 });
         });
@@ -247,7 +247,7 @@ describe("TemplateService", function () {
                     // verify dependencies value
                     var getByIdPromise = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);
 
-                    return getByIdPromise.should.eventually.have.property("dependencies").deep.equal(expectedDependencies);
+                    return getByIdPromise.should.eventually.have.property("dependencies").deep.include.members(expectedDependencies);
                 });
         });
     });
@@ -276,7 +276,7 @@ describe("TemplateService", function () {
                 let dependencies = templateService.getDependenciesOfTemplate(template);
 
                 dependencies.should.have.length(2);
-                dependencies.should.deep.equal(expectedDependencies);
+                dependencies.should.deep.include.members(expectedDependencies);
 
             });
 
@@ -299,7 +299,7 @@ describe("TemplateService", function () {
                 let dependencies = templateService.getDependenciesOfTemplate(template);
 
                 dependencies.should.have.length(4);
-                dependencies.should.deep.equal(expectedDependencies);
+                dependencies.should.deep.include.members(expectedDependencies);
             });
         });
     });
@@ -498,6 +498,7 @@ describe("TemplateService", function () {
             };
 
             var convertPromise = templateService.convertTemplateObjectQueriesToResultSets(templateObject);
+            // ??? - I think this is a misuse of Promise.all
             return Promise.all([
                 convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),
                 convertPromise.should.eventually.have.property("template").deep.equal(expectedBody)

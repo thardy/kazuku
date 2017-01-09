@@ -2,13 +2,17 @@
 var _ = require("lodash");
 var util = require("util");
 var GenericService = require("../common/genericService");
+var DependencyService = require("../dependencies/dependencyService");
 var mongoRql = require('mongo-rql');
 //var Query = require('rql/query').Query;
 
 class CustomDataService extends GenericService {
     constructor(database) {
         super(database, 'customData');
+        this._dependencyService = new DependencyService(database);
     }
+
+    get dependencyService() { return this._dependencyService; }
 
     getByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
@@ -103,27 +107,30 @@ class CustomDataService extends GenericService {
         }
     }
 
-    // flagDependentsForRegeneration(doc) {
-    //     // get list of all dependents of this data item
-    //     let item = {type: "data", name: doc.contentType};
-    //
-    //     // flag dependents for regeneration
-    //     this.dependencyService.getAllDependentsOfItem(item);
-    //     // let dependents = this.templateService.getAllDependentsOfItem(item);
-    //     // this.templateService.flagForRegeneration(dependents);
-    //     // this.queryService.flagForRegeneration(dependents);
-    // }
-    // onAfterCreate(doc) {
-    //     this.flagDependentsForRegeneration(doc);
-    // }
-    //
-    // onAfterUpdate(doc) {
-    //     this.flagDependentsForRegeneration(doc);
-    // }
-    //
-    // onAfterDelete(doc) {
-    //     this.flagDependentsForRegeneration(doc);
-    // }
+    onAfterCreate(orgId, customDataObject) {
+        // An item is created - recursively get everything dependent on the contentType that changed
+        return this.dependencyService.getRegenerationListForItem(orgId, {type: 'data', name: customDataObject.contentType })
+            .then((dependentItems) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            });
+    }
+
+    onAfterUpdate(orgId, customDataObject) {
+        // An item changes - recursively get everything dependent on the contentType that changed
+        return this.dependencyService.getRegenerationListForItem(orgId, {type: 'data', name: customDataObject.contentType })
+            .then((dependentItems) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            });
+    }
+
+    onAfterDelete(orgId, customDataObject) {
+        // An item changes - recursively get everything dependent on the contentType that changed
+        return this.dependencyService.getRegenerationListForItem(orgId, {type: 'data', name: customDataObject.contentType })
+            .then((dependentItems) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            });
+    }
+
 }
 
 module.exports = CustomDataService;

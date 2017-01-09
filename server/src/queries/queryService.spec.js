@@ -53,7 +53,7 @@ describe("QueryService", function () {
                 .then(function (result) {
                     let regeneratePromise = queryService.getRegenerateList(queryTestHelper.testOrgId);
 
-                    return regeneratePromise.should.eventually.deep.equal(queryTestHelper.existingRegenerateList);
+                    return regeneratePromise.should.eventually.deep.include.members(queryTestHelper.existingRegenerateList);
                 });
         });
 
@@ -144,7 +144,7 @@ describe("QueryService", function () {
                 .then(() => {
                     let promise = queryService.getAllDependentsOfItem(item);
 
-                    return promise.should.eventually.deep.equal(expectedDependents);
+                    return promise.should.eventually.deep.include.members(expectedDependents);
                 });
         });
 
@@ -166,7 +166,7 @@ describe("QueryService", function () {
                         .then((retrievedDoc) => {
                             retrievedDoc.name.should.equal(myQuery.name);
                             retrievedDoc.query.should.equal(myQuery.query);
-                            return retrievedDoc.dependencies.should.deep.equal(expectedDependencies);
+                            return retrievedDoc.dependencies.should.deep.include.members(expectedDependencies);
                         });
                 });
         });
@@ -191,7 +191,7 @@ describe("QueryService", function () {
                     // verify dependencies value
                     var getByIdPromise = queryService.getById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id);
 
-                    return getByIdPromise.should.eventually.have.property("dependencies").deep.equal(expectedDependencies);
+                    return getByIdPromise.should.eventually.have.property("dependencies").deep.include.members(expectedDependencies);
                 });
         });
 
@@ -232,7 +232,7 @@ describe("QueryService", function () {
             let resolvePromise = queryService.resolve(testHelper.testOrgId, query);
 
             return Promise.all([
-                resolvePromise.should.eventually.deep.equal(expectedResults)
+                resolvePromise.should.eventually.deep.include.members(expectedResults)
             ]);
         });
 
@@ -306,7 +306,7 @@ describe("QueryService", function () {
                 let dependencies = queryService.getDependenciesOfQuery(query.query);
 
                 dependencies.should.have.length(1);
-                dependencies.should.deep.equal(expectedDependencies);
+                dependencies.should.deep.include.members(expectedDependencies);
             });
         });
     });

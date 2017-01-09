@@ -3,13 +3,6 @@
 
 //// ***** Pages ****************************************
 // NOTE:  I don't think we're going to use a Pages collection - pages will be represented by Templates with a url property
-//db.createCollection('pages', {});
-//db.pages.createIndex( { "orgId": 1, "siteId": 1, "url": 1 }, { unique: true } );
-//
-//// sample document
-//var newPage = {orgId: 1, name: '$Test Page1', siteId: 1, url: '#/test', content: '#Test Page 1 - Existing',
-//                created: new Date(), createdBy: 1, updated: null, updatedBy: null};
-//
 
 //// ***** CustomData ****************************************
 //db.createCollection('customData', {});
@@ -23,7 +16,7 @@
 
 //// ***** CustomSchemas ****************************************
 //db.createCollection('customSchemas', {});
-//db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
+//db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true }); // OLD
 //
 //// sample document
 //var newCustomSchema = {
@@ -55,7 +48,8 @@
 
 //// ***** Templates ****************************************
 //db.createCollection('templates', {});
-//db.templates.createIndex( { "orgId": 1, "siteId": 1, "name": 1 }, { unique: true });
+// Case-insensitive index
+//db.templates.createIndex( { "orgId": 1, "name": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true } );
 
 //// sample document
 //var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', template: '#Test Page 1 - Existing',
@@ -67,7 +61,8 @@
 
 //// ***** Queries ****************************************
 //db.createCollection('queries', {});
-//db.customSchemas.createIndex( { "orgId": 1, "siteId": 1, "name": 1 }, { unique: true });
+// Case-insensitive index (requires MongoDb 3.4)
+//db.queries.createIndex( { "orgId": 1, "name": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true } );
 
 //// sample document
 //var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', query: 'blah blah', results: [],

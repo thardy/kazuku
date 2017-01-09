@@ -3,16 +3,19 @@ var _ = require("lodash");
 var Promise = require("bluebird");
 var GenericService = require("../common/genericService");
 var CustomDataService = require("../customData/customDataService");
+var DependencyService = require("../dependencies/dependencyService");
 var cache = require("memory-cache");
 
 class QueryService extends GenericService {
     constructor(database) {
         super(database, 'queries');
         this._customDataService = new CustomDataService(database);
+        this._dependencyService = new DependencyService(database);
         this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
     }
 
     get customDataService() { return this._customDataService; }
+    get dependencyService() { return this._dependencyService; }
 
     getRegenerateList(orgId) {
         return this.collection.find({orgId: orgId, regenerate: 1})
@@ -188,16 +191,27 @@ class QueryService extends GenericService {
         }
     }
 
-    onBeforeCreate(queryObject) {
+    onBeforeCreate(orgId, queryObject) {
         // add/overwrite dependencies property
         queryObject["dependencies"] = this.getDependenciesOfQuery(queryObject.query);
-        return Promise.resolve();
+        return Promise.resolve(queryObject);
     }
 
-    onBeforeUpdate(queryObject) {
+    onBeforeUpdate(orgId, queryObject) {
         // add/overwrite dependencies property
         queryObject["dependencies"] = this.getDependenciesOfQuery(queryObject.query);
-        return Promise.resolve();
+        return Promise.resolve(queryObject);
+    }
+
+    onAfterCreate(orgId, queryObject) {
+        return Promise.resolve(queryObject);
+    }
+    onAfterUpdate(orgId, queryObject) {
+        // An item changes - recursively get everything dependent on the item that changed
+        return this.dependencyService.getRegenerationListForItem(orgId, {type: 'query', name: queryObject.name })
+            .then((dependentItems) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            });
     }
 
 }

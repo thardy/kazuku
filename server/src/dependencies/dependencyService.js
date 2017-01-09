@@ -73,6 +73,26 @@ class DependencyService {
             });
     }
 
+    flagDependentItemsForRegeneration(orgId, dependentItems) {
+        let promises = [];
+
+        for (let item of items) {
+            let queryObject = {orgId: orgId, name: item.name};
+            let changes = {regenerate: 1};
+
+            switch (item.type) {
+                case 'query':
+                    promises.push(database.queries.update(queryObject, {$set: changes}));
+                    break;
+                case 'page':
+                    promises.push(database.templates.update(queryObject, {$set: changes}));
+                    break;
+            }
+        }
+
+        return Promise.all(promises);
+    }
+
     // getDependenciesOfItem(itemObject) {
     //     // Expect templateObject or queryObject
     //     // Determine if itemObject is template or query

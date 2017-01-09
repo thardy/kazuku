@@ -17,6 +17,7 @@ describe("DependencyService", function () {
     let testOrgId = 1;
     let testContentType = 'testType';
 
+    // These are unit tests, using fakes for customDataService, templateService, and queryService
     describe("getRegenerationListForItem", function () {
         before(function () {
 
@@ -44,7 +45,7 @@ describe("DependencyService", function () {
             // An item changes - recursively get everything dependent on the item that changed
             let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationListPromise.should.eventually.deep.equal(expectedRegenerationList);
+            regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
         });
 
         it("should get list of all items that need to be regenerated when a query changes", function () {
@@ -68,7 +69,7 @@ describe("DependencyService", function () {
             // An item changes - recursively get everything dependent on the item that changed
             let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationListPromise.should.eventually.deep.equal(expectedRegenerationList);
+            regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
         });
 
         it("should get list of all items that need to be regenerated when data is added/updated/deleted", function () {
@@ -93,10 +94,23 @@ describe("DependencyService", function () {
             // An item changes - recursively get everything dependent on the item that changed
             let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationListPromise.should.eventually.deep.equal(expectedRegenerationList);
+            regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
         });
     });
 
+    describe("flagDependentItemsForRegeneration", () => {
+        before(() => {
+
+        });
+
+        after(() => {
+
+        });
+
+        it("should set regenerate flag for all items in itemArray", () => {
+            // itemArray is an array of objects with type and name - [{type: "data", name: "products"}, {type: "template, name: "header"}]
+        });
+    });
 
 });
 

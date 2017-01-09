@@ -6,6 +6,7 @@ var TemplateService = require("../templates/templateService");
 var QueryService = require("../queries/queryService");
 var CustomSchemaService = require("../customSchemas/customSchemaService");
 var sinon = require("sinon");
+var Promise = require("bluebird");
 
 let testOrgId = 1;
 let testSiteId = 1;
@@ -22,7 +23,7 @@ let existingTestimonials = [
     { orgId: testOrgId, contentType: "testimonials", name: 'Joe Shmoe', testimonial: 'It\'s cool.', created: new Date('2016-05-01T00:00:00') }
 ];
 
-let templatesForRegenerationTests = [
+let existingTemplatesForRegenerationTests = [
     {
         orgId: testOrgId,
         siteId: testSiteId,
@@ -115,7 +116,8 @@ var pubTestHelper = {
     createPagesForEndToEndTests: createPagesForEndToEndTests,
     //expectedRenderedTemplates: expectedRenderedTemplates,
     expectedRenderedPages: expectedRenderedPages,
-    expectedRenderedQueries: expectedRenderedQueries
+    expectedRenderedQueries: expectedRenderedQueries,
+    deleteAllEndToEndData: deleteAllEndToEndData
 };
 
 // todo: refactor all the common code out of these...
@@ -160,10 +162,10 @@ function createCustomDataForEndToEndTests() {
 function createTemplatesForRegenerationTests() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
-            database.templates.insert(templatesForRegenerationTests)
+            database.templates.insert(existingTemplatesForRegenerationTests)
                 .then(function(docs) {
-                    templatesForRegenerationTests = docs;
-                    _.forEach(templatesForRegenerationTests, function (item) {
+                    existingTemplatesForRegenerationTests = docs;
+                    _.forEach(existingTemplatesForRegenerationTests, function (item) {
                         item.id = item._id.toHexString();
                     });
                     return docs;
@@ -251,6 +253,15 @@ function createQueriesForEndToEndTests() {
                     return docs;
                 });
         });
+}
+
+function deleteAllEndToEndData() {
+    let promises = [];
+    promises.push(deleteCustomDataForEndToEndTests());
+    promises.push(deleteAllEndToEndTemplates);
+    promises.push(deleteAllEndToEndQueries());
+    promises.push(deleteAllEndToEndPages());
+    return Promise.all(promises);
 }
 
 function deleteAllTestCustomData() {

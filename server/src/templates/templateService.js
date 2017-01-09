@@ -3,6 +3,7 @@
 var GenericService = require("../common/genericService");
 var TemplateEngine = require("./templateEngine");
 var CustomDataService = require("../customData/customDataService");
+var DependencyService = require("../dependencies/dependencyService");
 var QueryService = require("../queries/queryService");
 var Promise = require("bluebird");
 var frontMatter = require('front-matter');
@@ -21,6 +22,7 @@ class TemplateService extends GenericService {
         this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
         this._queryService = (queryService) ? queryService : new QueryService(database);
         this._customDataService = new CustomDataService(database);
+        this._dependencyService = new DependencyService(database);
         this._templateEngine = new TemplateEngine({
             engineType: 'liquid',
             getTemplate: this._getTemplateFunction,
@@ -32,6 +34,7 @@ class TemplateService extends GenericService {
     get templateEngine() { return this._templateEngine; }
     get queryService() { return this._queryService; }
     get customDataService() { return this._customDataService; }
+    get dependencyService() { return this._dependencyService; }
     get orgId() { return this._orgId; }
     get getTemplateFunction() { return this._getTemplateFunction; }
 
@@ -247,18 +250,28 @@ class TemplateService extends GenericService {
         }
     }
 
-    onBeforeCreate(templateObject) {
+    onBeforeCreate(orgId, templateObject) {
         // add/overwrite dependencies property
         templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
         return Promise.resolve();
     }
 
-    onBeforeUpdate(templateObject) {
+    onBeforeUpdate(orgId, templateObject) {
         // add/overwrite dependencies property
         templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
         return Promise.resolve();
     }
 
+    onAfterCreate(orgId, templateObject) {
+        return Promise.resolve(templateObject);
+    }
+    onAfterUpdate(orgId, templateObject) {
+        // An item changes - recursively get everything dependent on the item that changed
+        return this.dependencyService.getRegenerationListForItem(orgId, {type: 'template', name: templateObject.name })
+            .then((dependentItems) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            });
+    }
 }
 
 module.exports = TemplateService;
