@@ -110,24 +110,24 @@ class CustomDataService extends GenericService {
     onAfterCreate(orgId, customDataObject) {
         // An item is created - recursively get everything dependent on the contentType that changed
         return this.dependencyService.getRegenerationListForItem(orgId, {type: 'data', name: customDataObject.contentType })
-            .then((dependentItems) => {
-                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            .then((dependentObjects) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
     }
 
     onAfterUpdate(orgId, customDataObject) {
         // An item changes - recursively get everything dependent on the contentType that changed
         return this.dependencyService.getRegenerationListForItem(orgId, {type: 'data', name: customDataObject.contentType })
-            .then((dependentItems) => {
-                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            .then((dependentObjects) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
     }
 
     onAfterDelete(orgId, customDataObject) {
         // An item changes - recursively get everything dependent on the contentType that changed
         return this.dependencyService.getRegenerationListForItem(orgId, {type: 'data', name: customDataObject.contentType })
-            .then((dependentItems) => {
-                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            .then((dependentObjects) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
     }
 

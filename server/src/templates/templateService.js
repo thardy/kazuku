@@ -268,8 +268,8 @@ class TemplateService extends GenericService {
     onAfterUpdate(orgId, templateObject) {
         // An item changes - recursively get everything dependent on the item that changed
         return this.dependencyService.getRegenerationListForItem(orgId, {type: 'template', name: templateObject.name })
-            .then((dependentItems) => {
-                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentItems);
+            .then((dependentObjects) => {
+                return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
     }
 }

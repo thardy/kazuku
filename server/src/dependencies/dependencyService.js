@@ -73,14 +73,15 @@ class DependencyService {
             });
     }
 
-    flagDependentItemsForRegeneration(orgId, dependentItems) {
+    flagDependentItemsForRegeneration(orgId, dependentObjects) {
         let promises = [];
 
-        for (let item of items) {
-            let queryObject = {orgId: orgId, name: item.name};
+        for (let dependentObject of dependentObjects) {
+            let type = this.getTypeOfItem(dependentObject);
+            let queryObject = {orgId: orgId, name: dependentObject.name};
             let changes = {regenerate: 1};
 
-            switch (item.type) {
+            switch (type) {
                 case 'query':
                     promises.push(database.queries.update(queryObject, {$set: changes}));
                     break;

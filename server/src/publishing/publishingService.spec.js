@@ -124,7 +124,7 @@ describe("PublishingService", function () {
             return pubTestHelper.deleteAllEndToEndData();
         });
 
-        it("upon customData change, all dependent queries and pages get regenerated", function () {
+        it("upon customData change, all dependent queries and pages get flagged for regeneration", function () {
             let promises = [];
             // setup our data
             promises.push(pubTestHelper.createCustomDataForEndToEndTests());
@@ -168,7 +168,7 @@ describe("PublishingService", function () {
                         }));
 
                     // Go get all the templates that have regenerate = 1
-                    promises.push(templateService.getRegenerateList(pubTestHelper.orgId)
+                    promises.push(templateService.getRegenerateList(pubTestHelper.testOrgId)
                         .then((templatesFlaggedForRegeneration) => {
                             // Make sure we found all the templates in our expected list
                             expect(templatesFlaggedForRegeneration.length).to.equal(expectedPagesFlaggedForRegeneration.length);
@@ -185,7 +185,7 @@ describe("PublishingService", function () {
 
         });
 
-        it("upon template change, all dependent queries and pages get regenerated", function () {
+        it("upon template change, all dependent queries and pages get flagged for regeneration", function () {
             // update some custom data, which should cause queries to get flagged for regeneration, which should
             //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
             //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
