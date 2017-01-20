@@ -107,11 +107,7 @@ describe("PublishingService", function () {
                 });
         });
 
-        it("regenerates queries");
-
-        it("regenerates pages");
-
-        it("saves pages to the file system when they are regenerated");
+        it("saves pages to the file system at their configured location when they are regenerated");
     });
 
     describe("End to End Testing", function () {
@@ -185,10 +181,48 @@ describe("PublishingService", function () {
 
         });
 
-        it("upon template change, all dependent queries and pages get flagged for regeneration", function () {
-            // update some custom data, which should cause queries to get flagged for regeneration, which should
-            //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
-            //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
+        it("upon template change, all dependent pages get flagged for regeneration", function () {
+            let promises = [];
+            // setup our data
+            promises.push(pubTestHelper.createTemplatesForEndToEndTests());
+            promises.push(pubTestHelper.createPagesForEndToEndTests());
+            return Promise.all(promises)
+                .then((resultsArray) => {
+                    // update a template, which should cause other templates to get flagged for regeneration, which should
+                    //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
+                    //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
+                    let blogNavTemplate = _.find(pubTestHelper.existingTemplatesForEndToEndTests, (template) => { return template.name === "EndToEndTemplate-BlogNav"});
+                    // We need to always update the entire templateObject.  Partial updates can cause the dependencies check
+                    //  and subsequent overwrite in templateService.OnBeforeUpdate to be inaccurate, saving a faulty dependencies array
+                    blogNavTemplate.template = "<h1>Updated!</h1><ul class='cool-blog-list'>{% for blog in blogs %}<li><h3>{{blog.name}}</h3></li>{% endfor %}</ul>";
+
+                    return templateService.updateById(pubTestHelper.testOrgId, blogNavTemplate.id, blogNavTemplate);
+                })
+                .then((result) => {
+                    // verify outcome
+                    // Here is the chain of dependencies that should get flagged for regeneration
+                    //  only be pages should get flagged, no plain templates
+                    let expectedPagesFlaggedForRegeneration = [
+                        { type: "page", name: "EndToEndTemplate-Home" },
+                        { type: "page", name: "EndToEndTemplate-About" }
+                    ];
+
+                    let promises = [];
+                    // Go get all the templates that have regenerate = 1
+                    promises.push(templateService.getRegenerateList(pubTestHelper.testOrgId)
+                        .then((templatesFlaggedForRegeneration) => {
+                            // Make sure we found all the templates in our expected list
+                            expect(templatesFlaggedForRegeneration.length).to.equal(expectedPagesFlaggedForRegeneration.length);
+
+                            // verify that each template found is in the expectedTemplatesFlaggedForRegeneration list
+                            for (let template of templatesFlaggedForRegeneration) {
+                                let foundInExpected = _.find(expectedPagesFlaggedForRegeneration, (item) => { return item.name === template.name});
+                                expect(foundInExpected).to.exist; // make sure each template found is in our expected list
+                            }
+                        }));
+
+                    return Promise.all(promises);
+                });
 
         });
     });

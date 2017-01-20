@@ -257,6 +257,8 @@ class TemplateService extends GenericService {
     }
 
     onBeforeUpdate(orgId, templateObject) {
+        // !!! We need to always update the entire templateObject.  Partial updates can cause this dependencies check
+        //  and subsequent overwrite to be inaccurate, saving a faulty dependencies array
         // add/overwrite dependencies property
         templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
         return Promise.resolve();
