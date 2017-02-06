@@ -1,10 +1,13 @@
 "use strict";
-var _ = require("lodash");
-var Promise = require("bluebird");
-var database = require("../database/database");
-var QueryService = require("../queries/queryService");
-var TemplateService = require('../templates/templateService');
-var cache = require("memory-cache");
+let _ = require("lodash");
+let Promise = require("bluebird");
+let database = require("../database/database");
+let QueryService = require("../queries/queryService");
+let TemplateService = require('../templates/templateService');
+let cache = require("memory-cache");
+let fs = require("fs-extra");
+let path = require("path");
+Promise.promisifyAll(fs);
 
 class PublishingService {
 
@@ -58,6 +61,7 @@ class PublishingService {
             // get the list of templates that need to be regenerated.  Right now it should just be pages, but there
             //  might be a need for non-page templates to be generated in the future, so let's keep it generic.
             .then((result) => {
+                // todo: clean up this promise implementation (flatten, etc)
                 return this.templateService.getRegenerateList(orgId)
                     .then((templatesToRegenerate) => {
                         // Regenerate/render all of the templates
@@ -69,25 +73,29 @@ class PublishingService {
                                         templateObject.renderedPage = renderedTemplate;
                                         templateObject.regenerate = 0;         // reset the regenerate flag
 
-                                        // save the templates back to the database
-                                        // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
-                                        return this.templateService.updateById(orgId, templateObject.id, templateObject);
+                                        // todo: output the page to the file system
+                                        return this.publishPage(orgId, templateObject)
+                                            .then((renderedPage) => {
+                                                // save the templates back to the database
+                                                // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
+                                                return this.templateService.updateById(orgId, templateObject.id, templateObject);
+                                            });
                                     }
                                     return;
-                                });
+                                })
+
                         })
 //                    // todo: save the templateObjects back to the database as a batch instead of looping through them one at a time
-//                    .then((result) => {
+//                    .then((templatesToRegenerate) => {
 //                        // reset the regenerate flag on all the queries we resolved
-//                        for (var queryObject of queriesToRegenerate) {
-//                            queryObject.regenerate = 0;
+//                        for (var templateObject of templatesToRegenerate) {
+//                            templateObject.regenerate = 0;
 //                        }
 //                        return this.templateService.updateBatch(orgId, templatesToRegenerate);
 //                    })
                         .catch(e => {
                             throw e;
                         });
-                        // todo: regenerating a template with a url (a page) should output the page to the file system
                     });
             })
             .then((results) => {
@@ -104,6 +112,22 @@ class PublishingService {
             });
 
     }
+
+    publishPage(orgId, templateObject) {
+        // verify that templateObject is a page (has a url)
+        if (!templateObject.url) {
+            console.log(`templateObject with name ${templateObject.name} does not have url property in publishingService.publishPage()`);
+        }
+
+        let masterBasePath = '/sites';
+        let orgBasePath = 'test-org';
+        let fileFolder =  path.join(masterBasePath, orgBasePath, templateObject.siteId.toString());
+        let filePath = path.join(fileFolder, `${templateObject.url}.html`);
+
+        // Overwrites file if it exists, creates it otherwise.  Creates directories if they don't exist.
+        return fs.outputFileAsync(filePath, templateObject.renderedPage, { flag: 'w' });
+    }
+
 }
 
 module.exports = PublishingService;

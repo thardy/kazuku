@@ -1,19 +1,22 @@
 "use strict";
 
-var database = require("../database/database");
-var PublishingService = require("./publishingService");
-var CustomDataService = require("../customData/customDataService");
-var QueryService = require("../queries/queryService");
-var TemplateService = require("../templates/templateService");
-var pubTestHelper = require("./publishingTestHelper");
-var templateTestHelper = require("../templates/templateTestHelper");
-var queryTestHelper = require("../queries/queryTestHelper");
-var Promise = require("bluebird");
-var _ = require("lodash");
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
+let database = require("../database/database");
+let PublishingService = require("./publishingService");
+let CustomDataService = require("../customData/customDataService");
+let QueryService = require("../queries/queryService");
+let TemplateService = require("../templates/templateService");
+let pubTestHelper = require("./publishingTestHelper");
+let templateTestHelper = require("../templates/templateTestHelper");
+let queryTestHelper = require("../queries/queryTestHelper");
+let fs = require("fs-extra");
+let path = require("path");
+let Promise = require("bluebird");
+let _ = require("lodash");
+let chai = require("chai");
+let should = chai.Should();
+let expect = chai.expect;
 
+Promise.promisifyAll(fs);
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
@@ -102,12 +105,48 @@ describe("PublishingService", function () {
                         .then(null, e => {
                             throw e;
                         });
-
-                        // todo: for pages, also compare expected outputs to file outputs OR relegate this to a separate test
                 });
         });
 
-        it("saves pages to the file system at their configured location when they are regenerated");
+        it("saves pages to the file system at their configured location when they are regenerated", () => {
+            // Create all our test data
+            return pubTestHelper.createCustomData()
+                .then((result) => {
+                    return pubTestHelper.createQueryRegenerateList();
+                })
+                .then((result) => {
+                    return pubTestHelper.createTemplatesForRegenerationTests();
+                })
+                .then((result) => {
+                    return pubTestHelper.createPageRegenerateList();
+                })
+                .then((result) => {
+                    // Call regenerateItems
+                    return publishingService.regenerateItems(pubTestHelper.testOrgId, pubTestHelper.testSiteId);
+                })
+                .then((result) => {
+                    // Verify file outputs for pages
+                    let promises = [];
+                    let nameArray = [];
+                    for (let expectedTemplate of pubTestHelper.expectedRenderedPages) {
+                        nameArray.push(expectedTemplate[0]);
+                    }
+
+
+                    for (let template of pubTestHelper.existingPageRegenerateList) {
+                        let expectedPageOutput = pubTestHelper.expectedRenderedPages.get(template.name);
+                        let folder = `/sites/test-org/${pubTestHelper.testSiteId}`;
+                        let filePath = path.join(folder, `${template.url}.html`);
+
+                        promises.push(fs.readFileAsync(filePath, 'utf8')
+                            .then((data) => {
+                                data.should.equal(expectedPageOutput);
+                            }));
+                    }
+
+                    return Promise.all(promises);
+                });
+        });
     });
 
     describe("End to End Testing", function () {

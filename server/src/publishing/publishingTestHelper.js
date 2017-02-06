@@ -118,6 +118,7 @@ var pubTestHelper = {
     expectedRenderedPages: expectedRenderedPages,
     expectedRenderedQueries: expectedRenderedQueries,
     existingTemplatesForEndToEndTests: existingTemplatesForEndToEndTests,
+    existingPageRegenerateList: existingPageRegenerateList,
     deleteAllEndToEndData: deleteAllEndToEndData
 };
 
