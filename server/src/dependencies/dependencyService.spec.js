@@ -18,7 +18,7 @@ describe("DependencyService", function () {
     let testContentType = 'testType';
 
     // These are unit tests, using fakes for customDataService, templateService, and queryService
-    describe("getRegenerationListForItem", function () {
+    describe("getAllDependentsOfItem", function () {
         before(function () {
 
         });
@@ -43,9 +43,12 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
-
-            regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
+            let regenerationListPromise = dependencyService.getAllDependentsOfItem(dependencyTestHelper.testOrgId, changedItem);
+            return regenerationListPromise
+                .then((list) => {
+                    expect(list).to.include.members(expectedRegenerationList);
+                });
+            //return regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
         });
 
         it("should get list of all items that need to be regenerated when a query changes", function () {
@@ -67,9 +70,9 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
+            let regenerationListPromise = dependencyService.getAllDependentsOfItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
+            return regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
         });
 
         it("should get list of all items that need to be regenerated when data is added/updated/deleted", function () {
@@ -92,9 +95,9 @@ describe("DependencyService", function () {
             ];
 
             // An item changes - recursively get everything dependent on the item that changed
-            let regenerationListPromise = dependencyService.getRegenerationListForItem(dependencyTestHelper.testOrgId, changedItem);
+            let regenerationListPromise = dependencyService.getAllDependentsOfItem(dependencyTestHelper.testOrgId, changedItem);
 
-            regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
+            return regenerationListPromise.should.eventually.deep.include.members(expectedRegenerationList);
         });
     });
 

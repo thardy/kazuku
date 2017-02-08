@@ -107,7 +107,7 @@ describe("CustomDataService", function () {
                 // verify customData was updated
                 var getByIdPromise = customDataService.getById(testOrgId, existingCustomData1.id);
 
-                getByIdPromise.should.eventually.have.property("content", newContent);
+                return getByIdPromise.should.eventually.have.property("template", newContent);
             });
         });
 

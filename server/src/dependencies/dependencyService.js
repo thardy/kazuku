@@ -8,12 +8,12 @@ class DependencyService {
     constructor() {
     }
 
-    getRegenerationListForItem(orgId, item) {
-        // Expect simple type objects - e.g. { type: "data", name: "products" }
-        let regenerationList = this.getAllDependentsOfItem(orgId, item);
-
-        return regenerationList;
-    }
+    // getRegenerationListForItem(orgId, item) {
+    //     // Expect simple type objects - e.g. { type: "data", name: "products" }
+    //     let regenerationList = this.getAllDependentsOfItem(orgId, item);
+    //
+    //     return regenerationList;
+    // }
 
     // returns array of dependents in "item" format,
     //  e.g. [{type:"query", name:"top5Products"}, {type:"template", name:"master"}]

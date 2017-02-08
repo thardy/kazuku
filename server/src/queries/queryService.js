@@ -208,7 +208,7 @@ class QueryService extends GenericService {
     }
     onAfterUpdate(orgId, queryObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getRegenerationListForItem(orgId, {type: 'query', name: queryObject.name })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', name: queryObject.name })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
