@@ -30,7 +30,7 @@ class CustomSchemasController extends CrudController {
 
                 return res.status(200).send(doc);
             })
-            .then(null, (err) => {
+            .catch(err => {
                 err.message = 'ERROR: customSchemasController -> customSchemaService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
                     return next(err);
             });
@@ -51,7 +51,7 @@ class CustomSchemasController extends CrudController {
 
                 return res.status(200).json({});
             })
-            .then(null, (err) => {
+            .catch(err => {
                 err.message = 'ERROR: customSchemasController -> customSchemaService.updateByContentType({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, body, err.message);
                 return next(err);
             });
@@ -67,7 +67,7 @@ class CustomSchemasController extends CrudController {
 
                     return res.status(204).json({});
             })
-            .then(null, (err) => {
+            .catch(err => {
                 err.message = 'ERROR: customSchemasController -> customSchemaService.deleteByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
                 return next(err);
             });

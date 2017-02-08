@@ -79,7 +79,7 @@ function setupTestQueries() {
             queryTestHelper.existingQuery2.id = queryTestHelper.existingQuery2._id.toHexString();
             return doc;
         })
-        .then(null, (error) => {
+        .catch(error => {
             console.log(error);
             throw error;
         });

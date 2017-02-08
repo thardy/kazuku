@@ -43,8 +43,8 @@ class QueryService extends GenericService {
 
                 return dependentItems;
             })
-            .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
-                throw error;
+            .catch(e => {
+                throw e;
             });
     }
 
@@ -73,7 +73,7 @@ class QueryService extends GenericService {
                             return this.resolve(orgId, queryObject.query);
                         }
                     })
-                    .then(null, (error) => {
+                    .catch(error => {
                         console.log(error);
                     });
             }

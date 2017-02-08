@@ -75,7 +75,7 @@ function setupTestProducts() {
         .then(function(result) {
             return createTestProducts();
         })
-        .then(null, function(error) {
+        .catch(error => {
             console.log(error);
             throw error;
         });
@@ -96,7 +96,7 @@ function createTestProducts() {
             });
             return docs;
         })
-        .then(null, function(error) {
+        .catch(error => {
             console.log(error);
             throw error;
         });
@@ -116,7 +116,7 @@ function setupTestSchemas() {
         .then(function(result) {
             return createTestSchemas();
         })
-        .then(null, function(error) {
+        .catch(error => {
             console.log(error);
             throw error;
         });
@@ -136,7 +136,7 @@ function createTestSchemas() {
             });
             return docs;
         })
-        .then(null, function(error) {
+        .catch(error => {
             console.log(error);
             throw error;
         });

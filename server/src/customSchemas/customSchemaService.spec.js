@@ -74,7 +74,7 @@ describe("CustomSchemaService CRUD", function () {
                 existingCustomSchema2.id = existingCustomSchema2._id.toHexString();
                 return doc;
             })
-            .then(null, function(error) {
+            .catch(error => {
                 console.log(error);
                 throw error;
             });

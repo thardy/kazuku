@@ -106,8 +106,7 @@ class PublishingService {
                 }
                 return results;
             })
-            // todo: replace with catch as soon as I get rid of Monk
-            .then(null, (e) => {
+            .catch(e => {
                 throw e;
             });
 

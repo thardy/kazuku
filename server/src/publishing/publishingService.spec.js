@@ -39,8 +39,6 @@ describe("PublishingService", function () {
             templateService = new TemplateService(database);
         });
 
-        it("regenerates items on a schedule");
-
         it("regenerates all items that need to be regenerated", function () {
             // Create all our test data
             return pubTestHelper.createCustomData()
@@ -78,7 +76,7 @@ describe("PublishingService", function () {
                             }
                             return retrievedQueries;
                         })
-                        .then(null, e => {
+                        .catch(e => {
                             throw e;
                         });
                 })
@@ -102,7 +100,7 @@ describe("PublishingService", function () {
                             }
                             return retrievedTemplates;
                         })
-                        .then(null, e => {
+                        .catch(e => {
                             throw e;
                         });
                 });
@@ -266,10 +264,15 @@ describe("PublishingService", function () {
         });
     });
 
-    describe("Scheduling", function () {
+    describe("Regeneration Scheduling", function() {
+        it("regenerates items on a schedule");
+    });
+
+    describe("Content Scheduling", function () {
         it("moves draft customData to live when scheduled");
         it("moves draft templates to live when scheduled");
-
+        it("moves draft data to live collection when it is scheduled to go live");
+        it("moves draft templates to live collection when they are scheduled to go live");
     });
     
 
@@ -281,6 +284,5 @@ describe("PublishingService", function () {
 
     it("should delete pages when they need to be deleted");
 
-    it("moves draft data to live collection when it is scheduled to go live");
-    it("moves draft templates to live collection when they are scheduled to go live");
+
 });

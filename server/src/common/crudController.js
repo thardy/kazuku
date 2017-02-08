@@ -34,10 +34,11 @@ class CrudController {
             .then((docs) => {
                 return res.status(200).json(docs);
             })
-            .then(null, (err) => {
+            .catch(err => {
                 err.message = 'ERROR: {0}Controller -> getAll({1}) - {2}'.format(this.resourceName, this.orgId, err.message);
                 return next(err);
             });
+
     }
 
     getById (req, res, next) {
@@ -50,7 +51,7 @@ class CrudController {
 
                 return res.status(200).send(doc);
             })
-            .then(null, (err) => {
+            .catch(err => {
                 err.message = 'ERROR: {0}Controller -> getById({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
                 return next(err);
             });
@@ -63,7 +64,7 @@ class CrudController {
             .then((doc) => {
                 return res.status(201).json(doc);
             })
-            .then(null, (err) => {
+            .catch(err => {
                 if (err.constructor == TypeError) {
                     return res.status(400).json({'Errors': [err.message]});
                 }
@@ -87,7 +88,7 @@ class CrudController {
 
                 return res.status(200).json({});
             })
-            .then(null, (err) => {
+            .catch(err => {
                 if (err.code) {
 
                 }
@@ -105,7 +106,7 @@ class CrudController {
 
                 return res.status(204).json({});
             })
-            .then(null, (err) => {
+            .catch(err => {
                 err.message = 'ERROR: {0}Controller -> delete({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
                 return next(err);
             });

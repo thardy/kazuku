@@ -81,7 +81,7 @@ class TemplateService extends GenericService {
                                     return output; // just for debugging
                                 });
                         })
-                        .then(null, (e) => { //.catch(e => {  todo: have to do this until I get rid of monk, whose promises don't have a catch
+                        .catch(e => {
                             throw e;
                         });
                 }
@@ -137,7 +137,7 @@ class TemplateService extends GenericService {
                             templateObject.model[property] = result;
                             return deferred.resolve(templateObject);
                         })
-                        .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
+                        .catch(error => {
                             return deferred.reject(error);
                         });
                 })(property);
@@ -196,7 +196,7 @@ class TemplateService extends GenericService {
 
                 return dependentItems;
             })
-            .then(null, (error) => { // todo: replace with catch once I fix the promises coming back from Monk.
+            .catch(error => {
                 throw error;
             });
     }

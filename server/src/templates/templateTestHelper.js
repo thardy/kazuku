@@ -67,7 +67,7 @@ let templateTestHelper = {
 //            templateTestHelper.existingTemplate2.id = templateTestHelper.existingTemplate2._id.toHexString();
 //            return doc;
 //        })
-//        .then(null, (error) => {
+//        .catch(error => {
 //            console.log(error);
 //            throw error;
 //        });

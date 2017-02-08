@@ -68,7 +68,7 @@ class CustomDataController {
                 .then(function (docs) {
                     return res.status(200).json(docs);
                 })
-                .then(null, function (err) {
+                .catch(err => {
                     err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
                     return next(err);
                 });
@@ -78,7 +78,7 @@ class CustomDataController {
                 .then(function (docs) {
                     return res.status(200).json(docs);
                 })
-                .then(null, function (err) {
+                .catch(err => {
                     err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
                     return next(err);
                 });
@@ -97,7 +97,7 @@ class CustomDataController {
 
                 return res.status(200).send(doc);
             })
-            .then(null, function (err) {
+            .catch(err => {
                 err.message = 'ERROR: customDataController -> customDataService.getByTypeAndId({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, id, err.message);
                 return next(err);
             });
@@ -115,7 +115,7 @@ class CustomDataController {
             .then(function (customData) {
                 return res.status(201).json(customData);
             })
-            .then(null, function (err) {
+            .catch(err => {
                 err.message = 'ERROR: customDataController -> customDataService.create({0}, {1}) - {2}'.format(this.orgId, body, err.message);
                 return next(err);
             });
@@ -138,7 +138,7 @@ class CustomDataController {
 
                 return res.status(200).json({});
             })
-            .then(null, function (err) {
+            .catch(err => {
                 err.message = 'ERROR: customDataController -> customDataService.updateById({0}, {1}, {2}) - {3}'.format(this.orgId, id, body, err.message);
                 return next(err);
             });
@@ -154,7 +154,7 @@ class CustomDataController {
 
                 return res.status(204).json({});
             })
-            .then(null, function (err) {
+            .catch(err => {
                 err.message = 'customDataController -> customDataService.deleteByTypeAndId({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, id, err.message);
                 return next(err);
             });
