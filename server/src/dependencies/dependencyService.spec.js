@@ -28,19 +28,12 @@ describe("DependencyService", function () {
             // pass simple item object -> {type: 'data', name: 'products'}
             dependencyTestHelper.initMockDependencyChain();
 
-            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
-                                                      dependencyTestHelper.fakeTemplateService,
-                                                      dependencyTestHelper.fakeQueryService);
+            dependencyService = new DependencyService(dependencyTestHelper.fakeDatabase);
 
             let changedItem = { type: "template", name: "header" };
-            let expectedRegenerationList = [
-                { type: "template", name: "master" },
-                { type: "template", name: "christmasMaster" },
-                { type: "page", name: "home" },
-                { type: "page", name: "about" },
-                { type: "page", name: "christmasHome" },
-                { type: "page", name: "christmasAbout" }
-            ];
+            let expectedRegenerationList = dependencyTestHelper.fakeHeaderTemplateDependents
+                .concat(dependencyTestHelper.fakeMasterTemplateDependents)
+                .concat(dependencyTestHelper.fakeChristmasMasterTemplateDependents);
 
             // An item changes - recursively get everything dependent on the item that changed
             let regenerationListPromise = dependencyService.getAllDependentsOfItem(dependencyTestHelper.testOrgId, changedItem);
@@ -54,20 +47,13 @@ describe("DependencyService", function () {
         it("should get list of all items that need to be regenerated when a query changes", function () {
             dependencyTestHelper.initMockDependencyChain();
 
-            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
-                dependencyTestHelper.fakeTemplateService,
-                dependencyTestHelper.fakeQueryService);
+            dependencyService = new DependencyService(dependencyTestHelper.fakeDatabase);
 
             let changedItem = { type: "query", name: "headerNavigation" };
-            let expectedRegenerationList = [
-                { type: "template", name: "header" },
-                { type: "template", name: "master" },
-                { type: "template", name: "christmasMaster" },
-                { type: "page", name: "home" },
-                { type: "page", name: "about" },
-                { type: "page", name: "christmasHome" },
-                { type: "page", name: "christmasAbout" }
-            ];
+            let expectedRegenerationList = dependencyTestHelper.fakeHeaderNavigationQueryDependents
+                .concat(dependencyTestHelper.fakeHeaderTemplateDependents)
+                .concat(dependencyTestHelper.fakeMasterTemplateDependents)
+                .concat(dependencyTestHelper.fakeChristmasMasterTemplateDependents);
 
             // An item changes - recursively get everything dependent on the item that changed
             let regenerationListPromise = dependencyService.getAllDependentsOfItem(dependencyTestHelper.testOrgId, changedItem);
@@ -78,21 +64,14 @@ describe("DependencyService", function () {
         it("should get list of all items that need to be regenerated when data is added/updated/deleted", function () {
             dependencyTestHelper.initMockDependencyChain();
 
-            dependencyService = new DependencyService(dependencyTestHelper.fakeCustomDataService,
-                                                      dependencyTestHelper.fakeTemplateService,
-                                                      dependencyTestHelper.fakeQueryService);
+            dependencyService = new DependencyService(dependencyTestHelper.fakeDatabase);
 
             let changedItem = { type: "data", name: "navItems" };
-            let expectedRegenerationList = [
-                { type: "query", name: "headerNavigation" },
-                { type: "template", name: "header" },
-                { type: "template", name: "master" },
-                { type: "template", name: "christmasMaster" },
-                { type: "page", name: "home" },
-                { type: "page", name: "about" },
-                { type: "page", name: "christmasHome" },
-                { type: "page", name: "christmasAbout" }
-            ];
+            let expectedRegenerationList = dependencyTestHelper.fakeNavItemsDataDependents
+                .concat(dependencyTestHelper.fakeHeaderNavigationQueryDependents)
+                .concat(dependencyTestHelper.fakeHeaderTemplateDependents)
+                .concat(dependencyTestHelper.fakeMasterTemplateDependents)
+                .concat(dependencyTestHelper.fakeChristmasMasterTemplateDependents);
 
             // An item changes - recursively get everything dependent on the item that changed
             let regenerationListPromise = dependencyService.getAllDependentsOfItem(dependencyTestHelper.testOrgId, changedItem);

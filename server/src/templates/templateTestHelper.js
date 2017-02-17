@@ -1,5 +1,5 @@
 "use strict";
-let database = require("../database/database");
+let database = require("../database/database").database;
 let _ = require("lodash");
 
 let testOrgId = 1;

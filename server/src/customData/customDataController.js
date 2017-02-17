@@ -1,5 +1,5 @@
 "use strict";
-var database = require("../database/database");
+var database = require("../database/database").database;
 var CustomDataService = require("./customDataService");
 
 class CustomDataController {

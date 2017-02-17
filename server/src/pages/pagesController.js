@@ -1,4 +1,4 @@
-var database = require("../database/database");
+var database = require("../database/database").database;
 var crudController = require("../common/crudController");
 var PageService = require("./pageService");
 

@@ -1,6 +1,6 @@
 var CustomSchemaService = require("./customSchemaService");
 var Promise = require("bluebird");
-var database = require("../database/database");
+var database = require("../database/database").database;
 var _ = require("lodash");
 var chai = require("chai");
 var should = chai.Should();
@@ -74,7 +74,7 @@ describe("CustomSchemaService CRUD", function () {
                 existingCustomSchema2.id = existingCustomSchema2._id.toHexString();
                 return doc;
             })
-            .catch(error => {
+            .then(null, function(error) {
                 console.log(error);
                 throw error;
             });

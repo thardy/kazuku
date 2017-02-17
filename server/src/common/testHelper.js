@@ -1,6 +1,6 @@
 var config = require("../env-config");
 var Promise = require("bluebird");
-var database = require("../database/database");
+var database = require("../database/database").database;
 var _ = require("lodash");
 var moment = require("moment");
 

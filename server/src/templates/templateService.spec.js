@@ -2,7 +2,7 @@
 
 var TemplateService = require("./templateService");
 var templateTestHelper = require("./templateTestHelper");
-var database = require("../database/database");
+var database = require("../database/database").database;
 var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
 var _ = require("lodash");

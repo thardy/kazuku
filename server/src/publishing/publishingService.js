@@ -1,7 +1,7 @@
 "use strict";
 let _ = require("lodash");
 let Promise = require("bluebird");
-let database = require("../database/database");
+let database = require("../database/database").database;
 let QueryService = require("../queries/queryService");
 let TemplateService = require('../templates/templateService');
 let cache = require("memory-cache");

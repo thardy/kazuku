@@ -1,6 +1,6 @@
 "use strict";
 
-let database = require("../database/database");
+let database = require("../database/database").database;
 let PublishingService = require("./publishingService");
 let CustomDataService = require("../customData/customDataService");
 let QueryService = require("../queries/queryService");

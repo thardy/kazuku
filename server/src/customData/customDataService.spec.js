@@ -1,7 +1,7 @@
 "use strict";
 var CustomDataService = require("./customDataService");
 var Promise = require("bluebird");
-var database = require("../database/database");
+var database = require("../database/database").database;
 var _ = require("lodash");
 var chai = require("chai");
 var should = chai.Should();

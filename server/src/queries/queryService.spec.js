@@ -2,7 +2,7 @@
 
 var QueryService = require("./queryService");
 var queryTestHelper = require("./queryTestHelper");
-var database = require("../database/database");
+var database = require("../database/database").database;
 var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
 var _ = require("lodash");

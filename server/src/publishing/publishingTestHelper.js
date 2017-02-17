@@ -1,5 +1,5 @@
 "use strict";
-var database = require("../database/database");
+var database = require("../database/database").database;
 var _ = require("lodash");
 var CustomDataService = require("../customData/customDataService");
 var TemplateService = require("../templates/templateService");

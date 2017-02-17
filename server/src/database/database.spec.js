@@ -1,4 +1,4 @@
-var database = require("./database");
+var database = require("./database").database;
 var Promise = require("bluebird");
 var chai = require("chai");
 var should = chai.Should();
