@@ -87,11 +87,15 @@ describe("TemplateService", function () {
         });
 
         it("can get all templates that need to be regenerated", function () {
-            templateTestHelper.createRegenerateList()
+            return templateTestHelper.createRegenerateList()
                 .then(function (result) {
                     let regeneratePromise = templateService.getRegenerateList(templateTestHelper.testOrgId);
 
-                    return regeneratePromise.should.eventually.deep.include.members(templateTestHelper.existingRegenerateList);
+                    //return regeneratePromise.should.eventually.deep.include.members(templateTestHelper.existingRegenerateList);
+                    return regeneratePromise
+                        .then((templates) => {
+                            return expect(templates).to.deep.include.members(templateTestHelper.existingRegenerateList);
+                        });
                 });
         });
 

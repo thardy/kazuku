@@ -93,7 +93,14 @@ function createTemplateList() {
 function createRegenerateList() {
     return deleteAllRegenTemplates()
         .then((result) => {
-            database.templates.insert(templateTestHelper.existingRegenerateList);
+            return database.templates.insert(templateTestHelper.existingRegenerateList)
+                .then((docs) => {
+                    templateTestHelper.existingRegenerateList = docs;
+                    _.forEach(templateTestHelper.existingRegenerateList, function (item) {
+                        item.id = item._id.toHexString();
+                    });
+                    return docs;
+                });
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0

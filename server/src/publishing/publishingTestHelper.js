@@ -126,7 +126,7 @@ var pubTestHelper = {
 function createCustomData() {
     return deleteAllTestCustomData()
         .then((result) => {
-            database.customData.insert(existingNavItems)
+            return database.customData.insert(existingNavItems)
                 .then(function(docs) {
                     existingNavItems = docs;
                     _.forEach(existingNavItems, function (item) {
@@ -150,7 +150,7 @@ function createCustomData() {
 function createCustomDataForEndToEndTests() {
     return deleteCustomDataForEndToEndTests()
         .then((result) => {
-            database.customData.insert(existingBlogPosts)
+            return database.customData.insert(existingBlogPosts)
                 .then(function(docs) {
                     existingBlogPosts = docs;
                     _.forEach(existingBlogPosts, function (item) {
@@ -164,7 +164,7 @@ function createCustomDataForEndToEndTests() {
 function createTemplatesForRegenerationTests() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
-            database.templates.insert(existingTemplatesForRegenerationTests)
+            return database.templates.insert(existingTemplatesForRegenerationTests)
                 .then(function(docs) {
                     existingTemplatesForRegenerationTests = docs;
                     _.forEach(existingTemplatesForRegenerationTests, function (item) {
@@ -182,7 +182,7 @@ function createTemplatesForRegenerationTests() {
 function createTemplatesForEndToEndTests() {
     return deleteAllEndToEndTemplates()
         .then((result) => {
-            database.templates.insert(existingTemplatesForEndToEndTests)
+            return database.templates.insert(existingTemplatesForEndToEndTests)
                 .then(function(docs) {
                     existingTemplatesForEndToEndTests = docs;
                     _.forEach(existingTemplatesForEndToEndTests, function (item) {
@@ -196,7 +196,7 @@ function createTemplatesForEndToEndTests() {
 function createPagesForEndToEndTests() {
     return deleteAllEndToEndPages()
         .then((result) => {
-            database.templates.insert(existingPagesForEndToEndTests)
+            return database.templates.insert(existingPagesForEndToEndTests)
                 .then(function(docs) {
                     existingPagesForEndToEndTests = docs;
                     _.forEach(existingPagesForEndToEndTests, function (item) {
@@ -210,7 +210,7 @@ function createPagesForEndToEndTests() {
 function createPageRegenerateList() {
     return deleteAllPageRegenTemplates()
         .then((result) => {
-            database.templates.insert(existingPageRegenerateList)
+            return database.templates.insert(existingPageRegenerateList)
                 .then(function(docs) {
                     existingPageRegenerateList = docs;
                     _.forEach(existingPageRegenerateList, function (item) {
@@ -260,7 +260,7 @@ function createQueriesForEndToEndTests() {
 function deleteAllEndToEndData() {
     let promises = [];
     promises.push(deleteCustomDataForEndToEndTests());
-    promises.push(deleteAllEndToEndTemplates);
+    promises.push(deleteAllEndToEndTemplates());
     promises.push(deleteAllEndToEndQueries());
     promises.push(deleteAllEndToEndPages());
     return Promise.all(promises);
@@ -275,27 +275,27 @@ function deleteCustomDataForEndToEndTests() {
 }
 
 function deleteAllTemplateRegenTemplates() {
-    return database.templates.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^RegenerateTemplate/ }});
+    return database.templates.remove({orgId: testOrgId, name: { $regex: /^RegenerateTemplate/ }});
 }
 
 function deleteAllPageRegenTemplates() {
-    return database.templates.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^RegeneratePage/ }});
+    return database.templates.remove({orgId: testOrgId, name: { $regex: /^RegeneratePage/ }});
 }
 
 function deleteAllQueryRegenTemplates() {
-    return database.queries.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^RegenerateQuery/ }});
+    return database.queries.remove({orgId: testOrgId, name: { $regex: /^RegenerateQuery/ }});
 }
 
 function deleteAllEndToEndQueries() {
-    return database.queries.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^EndToEndQuery/ }});
+    return database.queries.remove({orgId: testOrgId, name: { $regex: /^EndToEndQuery/ }});
 }
 
 function deleteAllEndToEndTemplates() {
-    return database.templates.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^EndToEndTemplate/ }});
+    return database.templates.remove({orgId: testOrgId, name: { $regex: /^EndToEndTemplate/ }});
 }
 
 function deleteAllEndToEndPages() {
-    return database.templates.remove({orgId: pubTestHelper.testOrgId, name: { $regex: /^EndToEndPage/ }});
+    return database.templates.remove({orgId: testOrgId, name: { $regex: /^EndToEndPage/ }});
 }
 
 module.exports = pubTestHelper;
