@@ -74,9 +74,9 @@ class TemplateService extends GenericService {
                 let renderPromise = null;
 
                 if (objectWithTemplate.layout) {
-                    renderPromise = this.getTemplateFunction(objectWithTemplate.layout)
+                    renderPromise = this.getTemplateFunction(orgId, objectWithTemplate.layout)
                         .then((layoutObject) => {
-                            return this.renderInsideLayout(objectWithTemplate.template, model, layoutObject)
+                            return this.renderInsideLayout(orgId, objectWithTemplate.template, model, layoutObject)
                                 .then((output) => {
                                     return output; // just for debugging
                                 });
@@ -101,10 +101,11 @@ class TemplateService extends GenericService {
     }
 
     // getTemplate returns a templateObject
-    getTemplate(templateName) {
-        return this.find(this.orgId, {name: templateName})
-            .then((templateObjectArray) => { // todo: do we need to add a catch here as well since we are altering the output from an array to a single object?
-                return templateObjectArray[0];
+    getTemplate(orgId, templateName) {
+        return this.collection.findOne({orgId: orgId, name: templateName})
+            .then((doc) => {
+                this.useFriendlyId(doc);
+                return doc;
             });
     }
 
@@ -122,7 +123,7 @@ class TemplateService extends GenericService {
 //        return deferred.promise;
     }
 
-    convertTemplateObjectQueriesToResultSets(templateObject) {
+    convertTemplateObjectQueriesToResultSets(orgId, templateObject) {
         // todo: refactor to use cleaner/newer Promise usage
         var deferred = Promise.pending();
         var hasRQL = false;
@@ -132,7 +133,7 @@ class TemplateService extends GenericService {
                 hasRQL = true;
                 // have to wrap property in a closure, otherwise property is different by the time the "then" gets called
                 ((property) => {
-                    this.customDataService.find(this.orgId, templateObject.model[property])
+                    this.customDataService.find(orgId, templateObject.model[property])
                         .then((result) => {
                             templateObject.model[property] = result;
                             return deferred.resolve(templateObject);
@@ -151,12 +152,12 @@ class TemplateService extends GenericService {
         return deferred.promise;
     }
 
-    renderInsideLayout(template, model, layoutObject) {
+    renderInsideLayout(orgId, template, model, layoutObject) {
         var layoutTemplate = layoutObject.template;
         var layoutModel = _.omit(layoutObject, 'template');
 
         // Need to resolve any query properties on the layout model
-        return this.queryService.resolveQueryPropertiesOnModel(this.orgId, layoutModel)
+        return this.queryService.resolveQueryPropertiesOnModel(orgId, layoutModel)
             .then((result) => {
                 // merge contentTemplate's model with layoutTemplate's model
                 var combinedModel = _.assign(layoutModel, model);
@@ -183,10 +184,10 @@ class TemplateService extends GenericService {
 
 
     // item should be of format - { type: "template", name: "master" }
-    getAllDependentsOfItem(item) {
+    getAllDependentsOfItem(orgId, item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
         // look like this - { dependencies: [{type: 'template', name: 'master' }] }
-        return this.collection.find({orgId: this.orgId, dependencies: item })
+        return this.collection.find({orgId: orgId, dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {

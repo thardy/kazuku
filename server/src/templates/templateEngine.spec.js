@@ -22,28 +22,34 @@ var FakeTemplateRepo = function() {
 
     var templateObjects = [];
     templateObjects.push({
+        orgId: 1,
         name: 'master',
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
+        orgId: 1,
         name: 'masterWithModel',
         title: 'Master Title',
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
+        orgId: 1,
         name: 'dog',
         template: "dogs are nice"
     });
     templateObjects.push({
+        orgId: 1,
         name: 'cat',
         template: "cats are ok"
     });
     templateObjects.push({
+        orgId: 1,
         name: 'chicken',
         template: "chickens are {{disposition}}"
     });
     templateObjects.push({
+        orgId: 1,
         name: 'partialWithModel',
         title: 'Default Title',
         template: "title is {{title}}"
@@ -51,9 +57,9 @@ var FakeTemplateRepo = function() {
     templateObjects.push(partialWithModelQuery);
 
     // getTemplate returns a templateObject
-    templateRepo.getTemplate = function(templateName) {
+    templateRepo.getTemplate = function(orgId, templateName) {
         var resolver = Promise.defer();
-        var foundTemplateObject = _.clone(_.find(templateObjects, {name: templateName}));
+        var foundTemplateObject = _.clone(_.find(templateObjects, {orgId: orgId, name: templateName}));
         setTimeout(function () {
             resolver.resolve(foundTemplateObject);
         }, 100);

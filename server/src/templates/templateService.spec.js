@@ -19,32 +19,37 @@ var FakeTemplateRepo = function() {
 
     var templateObjects = [];
     templateObjects.push({
+        orgId: 1,
         name: "master",
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
+        orgId: 1,
         name: "masterWithModel",
         title: "Master Title",
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
+        orgId: 1,
         name: "dog",
         template: "dogs are nice"
     });
     templateObjects.push({
+        orgId: 1,
         name: "cat",
         template: "cats are ok"
     });
     templateObjects.push({
+        orgId: 1,
         name: "chicken",
         template: "chickens are {{disposition}}"
     });
 
     // getTemplate returns a templateObject
-    templateRepo.getTemplate = function(templateName) {
+    templateRepo.getTemplate = function(orgId, templateName) {
         var resolver = Promise.defer();
-        var foundTemplateObject = _.find(templateObjects, {name: templateName});
+        var foundTemplateObject = _.find(templateObjects, {orgId: orgId, name: templateName});
         setTimeout(function () {
             resolver.resolve(foundTemplateObject);
         }, 100);
@@ -182,7 +187,7 @@ describe("TemplateService", function () {
                 {type: "template", name: "NewAnotherTemplateWithInclude"},
                 {type: "page", name: "NewTemplateThatIsPage"},
             ];
-            let promise = templateService.getAllDependentsOfItem(item);
+            let promise = templateService.getAllDependentsOfItem(templateTestHelper.testOrgId, item);
 
             return promise.should.eventually.deep.include.members(expectedDependents);
         });
@@ -192,7 +197,7 @@ describe("TemplateService", function () {
             let expectedDependents = [
                 {type: "page", name: "NewTemplateThatIsPage"}
             ];
-            let promise = templateService.getAllDependentsOfItem(item);
+            let promise = templateService.getAllDependentsOfItem(templateTestHelper.testOrgId, item);
 
             return promise.should.eventually.deep.include.members(expectedDependents);
         });
@@ -388,7 +393,7 @@ describe("TemplateService", function () {
         it("can render using a layout", function () {
             let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithLayout");
 
-            return templateService.getTemplate("NewTemplateWithLayout")
+            return templateService.getTemplate(templateTestHelper.testOrgId, "NewTemplateWithLayout")
                 .then((templateObject) => {
                     return expect(templateService.renderObject(templateTestHelper.testOrgId, templateObject)).to.eventually.equal(expected);
                 });
@@ -397,7 +402,7 @@ describe("TemplateService", function () {
         it("can render includes when include has a model", function () {
             let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithIncludes");
 
-            return templateService.getTemplate("NewTemplateWithIncludes")
+            return templateService.getTemplate(templateTestHelper.testOrgId, "NewTemplateWithIncludes")
                 .then((templateObject) => {
                     return expect(templateService.renderObject(templateTestHelper.testOrgId, templateObject)).to.eventually.equal(expected);
                 });
@@ -501,7 +506,7 @@ describe("TemplateService", function () {
                 title: expectedTitle
             };
 
-            var convertPromise = templateService.convertTemplateObjectQueriesToResultSets(templateObject);
+            var convertPromise = templateService.convertTemplateObjectQueriesToResultSets(templateTestHelper.testOrgId, templateObject);
             // ??? - I think this is a misuse of Promise.all
             return Promise.all([
                 convertPromise.should.eventually.have.property("model").deep.equal(expectedModel),

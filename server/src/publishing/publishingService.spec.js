@@ -265,7 +265,9 @@ describe("PublishingService", function () {
     });
 
     describe("Regeneration Scheduling", function() {
-        it("regenerates items on a schedule");
+        it("regenerates items on a schedule", () => {
+
+        });
     });
 
     describe("Content Scheduling", function () {

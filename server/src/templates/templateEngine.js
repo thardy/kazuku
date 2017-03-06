@@ -24,7 +24,7 @@ var TemplateEngine = function(args) {
 
     // Override shopify-liquid's getTemplate lookup to use our own mechanism for getting templates by name
     templateEngine.engine.getTemplate = function(path) {
-        return templateEngine.getTemplate(path)
+        return templateEngine.getTemplate(orgId, path)
            .then((templateObject) => {
                if (templateObject && templateObject.template) {
                    return queryService.resolveQueryPropertiesOnModel(orgId, templateObject)
