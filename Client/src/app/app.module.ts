@@ -9,11 +9,10 @@ import {SitesComponent} from './sites/sites.component';
 import {PagesComponent} from './pages/pages.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
-import { TemplatesComponent } from './templates/templates.component';
-import { CustomSchemaComponent } from './custom-schema/custom-schema.component';
-import { CustomSchemasComponent } from './custom-schemas/custom-schemas.component';
-import { CustomDataComponent } from './custom-data/custom-data.component';
-import { QueriesComponent } from './queries/queries.component';
+import {TemplatesComponent} from './templates/templates.component';
+import {CustomSchemasComponent} from './custom-schemas/custom-schemas.component';
+import {CustomDataComponent} from './custom-data/custom-data.component';
+import {QueriesComponent} from './queries/queries.component';
 
 @NgModule({
     declarations: [
@@ -23,7 +22,6 @@ import { QueriesComponent } from './queries/queries.component';
         DashboardComponent,
         NavBarComponent,
         TemplatesComponent,
-        CustomSchemaComponent,
         CustomSchemasComponent,
         CustomDataComponent,
         QueriesComponent
