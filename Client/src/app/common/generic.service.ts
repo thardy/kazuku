@@ -18,33 +18,38 @@ export class GenericService<T> {
         this.http = http;
     }
 
-    getAll() {
+    getAll(): Observable<T[]> {
         return this.http.get(this.baseUrl)
-            .map(response => this.extractData(response))
+            .map(response => this.extractDataList(response))
             .catch(error => this.handleError(error));
     }
 
-    getById(id: number) {
+    getById(id: number): Observable<T> {
         return this.http.get(`${this.baseUrl}/${id}`)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }
 
-    create(item: T) {
+    create(item: T): Observable<T> {
         return this.http.post(`${this.baseUrl}`, item)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }
 
-    update(item: T) {
+    update(item: T): Observable<T> {
         return this.http.put(`${this.baseUrl}`, item)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }
 
-    extractData(item: Response) {
-        let data = item.json();
-        return data.data || {};
+    extractDataList(response: Response) {
+        let data = response.json();
+        return <T[]>data.data || [];
+    }
+
+    extractData(response: Response) {
+        let data = response.json();
+        return <T>data.data || {};
     }
 
     handleError(error) {
@@ -52,4 +57,5 @@ export class GenericService<T> {
         return Observable.throw(error.json().error || 'Server error');
     }
 }
+
 
