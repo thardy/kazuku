@@ -1,18 +1,34 @@
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 import {Template} from "./templates/template.model";
+import {Site} from "./sites/site.model";
+import {Organization} from "./organizations/organization.model";
 //import {Resource} from "./resources/resource.model";
 
 export class InMemoryDataService implements InMemoryDbService {
     createDb() {
+        let organizations = ORGS;
+        let sites = SITES;
         let templates = TEMPLATES;
-        // let sites = SITES;
+        // let organizations = SITES;
         // let queries = QUERIES;
         // let orgs = ORGS;
 
-        return {templates};
+        return {organizations, sites, templates};
     }
 
 }
+
+const ORGS = [
+    new Organization({id: 1, name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext'}),
+    new Organization({id: 2, name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer'}),
+];
+
+const SITES = [
+    new Site({id: 1, name: 'Acme Corp', domainName: 'acme.com', orgId: 1, code: 'acme'}),
+    new Site({id: 2, name: 'Super Church', domainName: 'superchurch.com', orgId: 1, code: 'superchurch'}),
+    new Site({id: 3, name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: 1, code: 'apartmentsrus'}),
+    new Site({id: 4, name: 'My Blog', domainName: 'designerx.com', orgId: 1, code: 'designerx'}),
+];
 
 const TEMPLATES = [
     new Template({id: 1, name: 'master', orgId: 1, siteId: 1, template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),

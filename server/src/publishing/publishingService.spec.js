@@ -278,7 +278,7 @@ describe("PublishingService", function () {
     });
     
 
-    it("can publish an entire site on demand");
+    it("can publish an entire organization on demand");
 
     it("creates page-per-item pages");
 

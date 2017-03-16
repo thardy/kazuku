@@ -120,7 +120,7 @@ describe("TemplateService", function () {
                 .then((doc) => {
                     return templateService.getById(templateTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            expect(retrievedDoc).to.have.property("site", templateTestHelper.testSiteId);
+                            expect(retrievedDoc).to.have.property("organization", templateTestHelper.testSiteId);
                             return expect(retrievedDoc).to.have.property("name", testName);
                         });
                 });
@@ -226,7 +226,7 @@ describe("TemplateService", function () {
                 .then((doc) => {
                     return templateService.getById(templateTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            retrievedDoc.site.should.equal(templateTestHelper.testSiteId);
+                            retrievedDoc.organization.should.equal(templateTestHelper.testSiteId);
                             retrievedDoc.name.should.equal(testName);
                             return retrievedDoc.dependencies.should.deep.include.members(expectedDependencies);
                         });

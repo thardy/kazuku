@@ -118,7 +118,7 @@ class PublishingService {
             console.log(`templateObject with name ${templateObject.name} does not have url property in publishingService.publishPage()`);
         }
 
-        let masterBasePath = '/sites';
+        let masterBasePath = '/organizations';
         let orgBasePath = 'test-org';
         let fileFolder =  path.join(masterBasePath, orgBasePath, templateObject.siteId.toString());
         let filePath = path.join(fileFolder, `${templateObject.url}.html`);

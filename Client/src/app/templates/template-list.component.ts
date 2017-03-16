@@ -3,7 +3,7 @@ import {TemplateService} from "./template.service";
 import {Template} from "./template.model";
 
 @Component({
-    selector: 'kz-templates',
+    selector: 'kz-template-list',
     templateUrl: './template-list.component.html',
     styleUrls: []
 })

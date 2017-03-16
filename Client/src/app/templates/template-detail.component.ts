@@ -10,6 +10,7 @@ import 'rxjs/add/operator/mergemap';
     styleUrls: []
 })
 export class TemplateDetailComponent implements OnInit {
+
     template: Template = new Template();
 
     constructor(private route: ActivatedRoute, private templateService: TemplateService) {
