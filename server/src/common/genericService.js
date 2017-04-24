@@ -4,20 +4,17 @@ var Promise = require("bluebird");
 var conversionService = require("./conversionService");
 
 class GenericService {
-
     constructor(database, collectionName) {
-        this._db = database;
-        this._collection = database[collectionName];
+        this.db = database;
+        this.collection = database[collectionName];
     }
-
-    get collection() { return this._collection; }
-    get db() { return this._db; }
 
     getAll(orgId) {
         if (arguments.length !== 1) {
             throw new Error('Incorrect number of arguments passed to GenericService.getAll');
         }
 
+        // todo: FIX (this.collection is undefined)
         return this.collection.find({orgId: orgId})
             .then((docs) => {
                 var transformedDocs = [];

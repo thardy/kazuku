@@ -29,4 +29,6 @@ client/vendor/*/*
 client/vendor/*/*/*
 client/vendor/*/*/*/*
 env-config.js
+*.env
+
 

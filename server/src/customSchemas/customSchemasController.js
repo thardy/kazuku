@@ -5,19 +5,22 @@ var CustomSchemaService = require("./customSchemaService");
 
 class CustomSchemasController extends CrudController {
     constructor(app) {
-        super('customSchemas', app, new CustomSchemaService(database));
+        let paramValidation = {
+            createResource: {},
+            updateResource: {}
+        };
 
-        this.mapRoutes();
+        super('customSchemas', app, new CustomSchemaService(database), paramValidation);
     }
 
-    mapRoutes() {
+    mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        this.app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-        this.app.get(`/api/${this.resourceName}/:contentType`, this.getByContentType.bind(this));
-        this.app.post(`/api/${this.resourceName}`, this.create.bind(this));
-        this.app.put(`/api/${this.resourceName}/:contentType`, this.updateByContentType.bind(this));
-        this.app.delete(`/api/${this.resourceName}/:contentType`, this.deleteByContentType.bind(this));
+        app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
+        app.get(`/api/${this.resourceName}/:contentType`, this.getByContentType.bind(this));
+        app.post(`/api/${this.resourceName}`, this.create.bind(this));
+        app.put(`/api/${this.resourceName}/:contentType`, this.updateByContentType.bind(this));
+        app.delete(`/api/${this.resourceName}/:contentType`, this.deleteByContentType.bind(this));
     }
 
     getByContentType(req, res, next) {

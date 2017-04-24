@@ -1,30 +1,28 @@
 "use strict";
-var Promise = require("bluebird");
+const validate = require('express-validation');
 
 class CrudController {
 
-    constructor(resourceName, app, service) {
+    constructor(resourceName, app, service, paramValidation) {
+        this.app = app;
         // todo: change to use auth mechanism
         // todo: test that this gets written on every request and not reused between them
-        this._app = app;
-        this._orgId = 1;
-        this._service = service;
-        this._resourceName = resourceName;
+        this.orgId = 1;
+        this.service = service;
+        this.resourceName = resourceName;
+        this.paramValidation = paramValidation;
+
+        this.mapRoutes(app);
     }
 
-    get app() { return this._app; }
-    get orgId() { return this._orgId; }
-    get service() { return this._service; }
-    get resourceName() { return this._resourceName; }
-
-    mapRoutes() {
+    mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        this.app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-        this.app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
-        this.app.post(`/api/${this.resourceName}`, this.create.bind(this));
-        this.app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
-        this.app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
+        app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
+        app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
+        app.post(`/api/${this.resourceName}`, validate(this.paramValidation.createResource), this.create.bind(this));
+        app.put(`/api/${this.resourceName}/:id`, validate(this.paramValidation.updateResource), this.updateById.bind(this));
+        app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
     }
 
     getAll(req, res, next) {

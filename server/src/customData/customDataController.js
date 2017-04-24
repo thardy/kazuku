@@ -3,20 +3,15 @@ var database = require("../database/database").database;
 var CustomDataService = require("./customDataService");
 
 class CustomDataController {
-
     constructor(app) {
         // todo: change to use auth mechanism
         // todo: test that this gets written on every request (might need to move out of constructor)
-        this._app = app;
-        this._orgId = 1;
-        this._service = new CustomDataService(database);
+        this.app = app;
+        this.orgId = 1;
+        this.service = new CustomDataService(database);
 
         this.mapRoutes();
     }
-
-    get app() { return this._app; }
-    get orgId() { return this._orgId; }
-    get service() { return this._service; }
 
     mapRoutes() {
         // Map routes

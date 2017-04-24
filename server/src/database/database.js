@@ -12,6 +12,7 @@ class Database {
         this.customSchemas = this.db.get("customSchemas");
         this.templates = this.db.get("templates");
         this.queries = this.db.get("queries");
+        this.users = this.db.get("users");
     }
 
     // get db() { return this._db; }
