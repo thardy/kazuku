@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -20,7 +21,10 @@ if (config.env === 'development') {
     app.use(logger('dev'));
 }
 
-// parse body params and attache them to req.body
+app.use(passport.initialize());
+require('./passport')(passport);
+
+// parse body params and attach them to req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

@@ -35,6 +35,8 @@
     "mongo-rql": "https://github.com/thardy/mongo-rql/tarball/master",
     "monk": "^3.1.4",
     "morgan": "1.7.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "request": "^2.51.0",
     "rql": "https://github.com/persvr/rql/tarball/master",
     "serve-favicon": "~2.1.3",

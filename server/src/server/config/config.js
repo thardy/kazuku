@@ -2,6 +2,7 @@ const Joi = require('joi');
 
 // require and configure dotenv, will load vars in .env in PROCESS.ENV
 require('dotenv').config();
+//require('dotenv').config({path: './.env'});
 
 const envVarsSchema = Joi.object({
     env: Joi.string()

@@ -89,10 +89,10 @@
 //db.createCollection('users', {});
 //db.users.createIndex({ "username": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true });
 // Case-insensitive index
-//db.users.createIndex( { "orgId": 1, "username": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true } );
+//db.users.createIndex({ "email": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true });
 
 //// sample document - password will be bcrypt hash (which has both hash and salt built in)
-//var newUser = { orgId: 1, username: 'joe@gmail.com', password: 'test', lastLoggedIn: '1/1/2017'
-//                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
+//var newUser = { orgId: 1, firstName: 'Joe', lastName: 'Smith', email: 'joe@gmail.com', password: 'test', lastLoggedIn: '1/1/2017'
+//                      created: new Date(), createdBy: 1, updated: new Date(), updatedBy: 1};
 //
 //

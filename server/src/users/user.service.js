@@ -7,8 +7,8 @@ class UserService extends GenericService {
         super(database, 'users');
     }
 
-    getByUserName(username) {
-        return this.collection.findOne({username: username})
+    getByEmail(email) {
+        return this.collection.findOne({email: email})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -16,12 +16,12 @@ class UserService extends GenericService {
     }
 
     validate(doc) {
-        if (doc.username && doc.password) {
+        if (doc.email && doc.password) {
             // call base validation, which should return nothing if valid
             return super.validate(doc);
         }
         else {
-            return "Need username and password";
+            return "Need email and password";
         }
     }
 

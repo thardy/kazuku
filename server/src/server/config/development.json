@@ -1,0 +1,28 @@
+{
+  "host": "http://localhost:3001",
+  "dbURI": "mongodb://chatcatuser:chatcatpassword@ds135680.mlab.com:35680/chatcat",
+  "sessionSecret": "340dc5dfe64e7edc5e8265ac816acd532d13bb267db30fbf",
+  "fb": {
+    "clientID": "1369629133097724",
+    "clientSecret": "f04539db54bcf12580d566ade3bf2e37",
+    "callbackURL": "//localhost:3001/auth/facebook/callback",
+    "profileFields": ["id", "displayName", "photos"]
+  },
+  "twitter": {
+    "consumerKey": "avJ4JTcdYpAI6xYJ0Pg8Rgfr9",
+    "consumerSecret": "0YmX36AT7GLrzU5ks7MUaHcd3dFlrHuxthRzF4kDhdq25YiVoG",
+    "callbackURL": "//localhost:3001/auth/twitter/callback",
+    "profileFields": ["id", "displayName", "photos"]
+  },
+  "google": {
+    "clientID": "546987768089-sk6crmrd6chmak0rues2jonv0k9pekj0.apps.googleusercontent.com",
+    "clientSecret": "ezX8gwPIryqd3sFBgZzXnTN1",
+    "callbackURL": "//localhost:3001/auth/google/callback",
+    "profileFields": ["id", "displayName", "photos"]
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "password": ""
+  }
+}
