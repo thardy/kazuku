@@ -7,6 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 
     module.exports = {
         host: process.env.host || '',
+        port: process.env.port,
         dbURI: process.env.dbURI,
         sessionSecret: process.env.sessionSecret,
         fb: {

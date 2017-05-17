@@ -1,5 +1,6 @@
 {
   "host": "http://localhost:3001",
+  "port": 3001,
   "dbURI": "mongodb://chatcatuser:chatcatpassword@ds135680.mlab.com:35680/chatcat",
   "sessionSecret": "340dc5dfe64e7edc5e8265ac816acd532d13bb267db30fbf",
   "fb": {

@@ -1,21 +1,16 @@
-const express = require('express');
-//var pagesController = require('../pages/pagesController');
 const CustomDataController = require('../customData/customDataController');
 const CustomSchemasController = require('../customSchemas/customSchemasController');
 const TemplatesController = require('../templates/templatesController');
 const AuthController = require('../users/auth.controller');
 const UsersController = require('../users/users.controller');
-//var sitesController = require("../sites/sitesController");
 
 // todo: convert this to be more modular (one file in each folder that aggregates all the controllers inside it)
 exports.map = function(app) {
-    //pagesController.init(app);
     let customDataController = new CustomDataController(app);
     let customSchemasController = new CustomSchemasController(app);
     let templatesController = new TemplatesController(app);
     let authController = new AuthController(app);
     let usersController = new UsersController(app);
-    //sitesController.init(app);
 };
 
 // const express = require('express');
