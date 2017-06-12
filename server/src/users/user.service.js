@@ -1,14 +1,15 @@
 "use strict";
-let _ = require("lodash");
-let GenericService = require("../common/genericService");
+const _ = require("lodash");
+const GenericService = require("../common/genericService");
+const User = require('./user.model');
 
 class UserService extends GenericService {
-    constructor(database) {
-        super(database, 'users');
+    constructor() {
+        super(User);
     }
 
     getByEmail(email) {
-        return this.collection.findOne({email: email})
+        return this.Model.findOne({email: email})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;

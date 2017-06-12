@@ -64,6 +64,7 @@ class CrudController {
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
+                    console.log('here');
                     return res.status(400).json({'Errors': [err.message]});
                 }
 

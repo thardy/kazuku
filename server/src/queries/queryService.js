@@ -5,12 +5,13 @@ var GenericService = require("../common/genericService");
 var CustomDataService = require("../customData/customDataService");
 var DependencyService = require("../dependencies/dependencyService");
 var cache = require("memory-cache");
+const Query = require('./query.model');
 
 class QueryService extends GenericService {
-    constructor(database) {
-        super(database, 'queries');
-        this._customDataService = new CustomDataService(database);
-        this._dependencyService = new DependencyService(database);
+    constructor() {
+        super(Query);
+        this._customDataService = new CustomDataService();
+        this._dependencyService = new DependencyService();
         this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
     }
 
@@ -18,7 +19,7 @@ class QueryService extends GenericService {
     get dependencyService() { return this._dependencyService; }
 
     getRegenerateList(orgId) {
-        return this.collection.find({orgId: orgId, regenerate: 1})
+        return this.Model.find({orgId: orgId, regenerate: 1})
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -34,7 +35,7 @@ class QueryService extends GenericService {
     getAllDependentsOfItem(item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
         // look like this - { dependencies: [{type: 'query', name: 'someQuery' }] }
-        return this.collection.find({orgId: this._orgId, dependencies: item })
+        return this.Model.find({orgId: this._orgId, dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {
@@ -118,7 +119,7 @@ class QueryService extends GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to QueryService.getByName');
         }
-        return this.collection.findOne({orgId: orgId, name: name})
+        return this.Model.findOne({orgId: orgId, name: name})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;

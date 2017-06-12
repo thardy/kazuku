@@ -1,15 +1,16 @@
 "use strict";
-var _ = require("lodash");
-var util = require("util");
-var GenericService = require("../common/genericService");
-var DependencyService = require("../dependencies/dependencyService");
-var mongoRql = require('mongo-rql');
+const _ = require("lodash");
+const util = require("util");
+const GenericService = require("../common/genericService");
+const DependencyService = require("../dependencies/dependencyService");
+const mongoRql = require('mongo-rql');
+const CustomData = require('./customData.model');
 //var Query = require('rql/query').Query;
 
 class CustomDataService extends GenericService {
-    constructor(database) {
-        super(database, 'customData');
-        this._dependencyService = new DependencyService(database);
+    constructor() {
+        super(CustomData);
+        this._dependencyService = new DependencyService();
     }
 
     get dependencyService() { return this._dependencyService; }
@@ -19,7 +20,7 @@ class CustomDataService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomDataService.getByContentType');
         }
 
-        return this.collection.find({orgId: orgId, contentType: contentType})
+        return this.Model.find({orgId: orgId, contentType: contentType})
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -36,7 +37,7 @@ class CustomDataService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId');
         }
 
-        return this.collection.findOne({_id: id, orgId: orgId, contentType: contentType})
+        return this.Model.findOne({_id: id, orgId: orgId, contentType: contentType})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -65,7 +66,7 @@ class CustomDataService extends GenericService {
             sort: mongoQuery.sort
         };
 
-        return this.collection.find(mongoQuery.criteria, projection)
+        return this.Model.find(mongoQuery.criteria, projection)
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -88,7 +89,7 @@ class CustomDataService extends GenericService {
 
         return this.onBeforeDelete(queryObject)
             .then((result) => {
-                return this.collection.remove(queryObject)
+                return this.Model.remove(queryObject)
             })
             .then((result) => {
                 this.onAfterDelete(queryObject);

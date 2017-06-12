@@ -1,45 +1,39 @@
-"use strict";
+'use strict';
 
-var GenericService = require("../common/genericService");
-var TemplateEngine = require("./templateEngine");
-var CustomDataService = require("../customData/customDataService");
-var DependencyService = require("../dependencies/dependencyService");
-var QueryService = require("../queries/queryService");
-var Promise = require("bluebird");
-var frontMatter = require('front-matter');
-var _ = require("lodash");
+const GenericService = require("../common/genericService");
+const TemplateEngine = require("./templateEngine");
+const CustomDataService = require("../customData/customDataService");
+const DependencyService = require("../dependencies/dependencyService");
+const QueryService = require("../queries/queryService");
+const Promise = require("bluebird");
+const frontMatter = require('front-matter');
+const _ = require("lodash");
+const Template = require('./template.model');
 
 const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 
 class TemplateService extends GenericService {
     constructor(database, queryService, getTemplate) {
-        super(database, 'templates');
+        super(Template);
 
         // TemplateService now implements the function getTemplate that the templateEngine requires.  Use that if
         //  a getTemplate function was not supplied.
-        this._getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
+        this.getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
 
-        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
-        this._queryService = (queryService) ? queryService : new QueryService(database);
-        this._customDataService = new CustomDataService(database);
-        this._dependencyService = new DependencyService(database);
-        this._templateEngine = new TemplateEngine({
+        this.orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
+        this.queryService = (queryService) ? queryService : new QueryService(database);
+        this.customDataService = new CustomDataService(database);
+        this.dependencyService = new DependencyService(database);
+        this.templateEngine = new TemplateEngine({
             engineType: 'liquid',
-            getTemplate: this._getTemplateFunction,
-            queryService: this._queryService, // templateEngine needs this to resolve queries on models
-            orgId: this._orgId // needed for resolving queries on models
+            getTemplate: this.getTemplateFunction,
+            queryService: this.queryService, // templateEngine needs this to resolve queries on models
+            orgId: this.orgId // needed for resolving queries on models
         });
     }
 
-    get templateEngine() { return this._templateEngine; }
-    get queryService() { return this._queryService; }
-    get customDataService() { return this._customDataService; }
-    get dependencyService() { return this._dependencyService; }
-    get orgId() { return this._orgId; }
-    get getTemplateFunction() { return this._getTemplateFunction; }
-
     getRegenerateList(orgId) {
-        return this.collection.find({orgId: orgId, regenerate: 1})
+        return this.Model.find({orgId: orgId, regenerate: 1})
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -102,7 +96,7 @@ class TemplateService extends GenericService {
 
     // getTemplate returns a templateObject
     getTemplate(orgId, templateName) {
-        return this.collection.findOne({orgId: orgId, name: templateName})
+        return this.Model.findOne({orgId: orgId, name: templateName})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -187,7 +181,7 @@ class TemplateService extends GenericService {
     getAllDependentsOfItem(orgId, item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
         // look like this - { dependencies: [{type: 'template', name: 'master' }] }
-        return this.collection.find({orgId: orgId, dependencies: item })
+        return this.Model.find({orgId: orgId, dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {

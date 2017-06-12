@@ -1,46 +1,61 @@
-var config = require("../env-config");
-var monk = require("monk");
+'use strict';
+const config = require('../server/config');
+const logger = require('../server/logger');
+const mongoose = require('mongoose').connect(config.dbURI);
+mongoose.Promise = require('bluebird');
 
-// connect to the database
-//var _db = monk(config.mongoDbUrl);
+// Log an error if the connection fails
+mongoose.connection.on('error', error => {
+    logger.log('error', 'Mongoose connection error: ' + error);
+});
 
-class Database {
-    constructor() {
-        // connect to the database
-        this.db = monk(config.mongoDbUrl);
-        this.customData = this.db.get("customData");
-        this.customSchemas = this.db.get("customSchemas");
-        this.templates = this.db.get("templates");
-        this.queries = this.db.get("queries");
-        this.users = this.db.get("users");
-    }
 
-    // get db() { return this._db; }
-    // get customData() { return this._customData; }
-    // get customSchemas() { return this._customSchemas; }
-    // get templates() { return this._templates; }
-    // get queries() { return this._queries; }
 
-    close() {
-        this.db.close();
-    }
-}
-
-// var database = {
-//     db: db,
-//     close: close,
-//     customData: db.get("customData"),
-//     customSchemas: db.get("customSchemas"),
-//     templates: db.get("templates"),
-//     queries: db.get("queries")
-// };
 //
-// function close() {
-//     db.close();
+//
+// var config = require("../env-config");
+// var monk = require("monk");
+//
+// // connect to the database
+// //var _db = monk(config.mongoDbUrl);
+//
+// class Database {
+//     constructor() {
+//         // connect to the database
+//         this.db = monk(config.mongoDbUrl);
+//         this.customData = this.db.get("customData");
+//         this.customSchemas = this.db.get("customSchemas");
+//         this.templates = this.db.get("templates");
+//         this.queries = this.db.get("queries");
+//         this.users = this.db.get("users");
+//     }
+//
+//     // get db() { return this._db; }
+//     // get customData() { return this._customData; }
+//     // get customSchemas() { return this._customSchemas; }
+//     // get templates() { return this._templates; }
+//     // get queries() { return this._queries; }
+//
+//     close() {
+//         this.db.close();
+//     }
 // }
-
-//module.exports = Database;
-module.exports = {
-    database: new Database(),
-    Database: Database
-};
+//
+// // var database = {
+// //     db: db,
+// //     close: close,
+// //     customData: db.get("customData"),
+// //     customSchemas: db.get("customSchemas"),
+// //     templates: db.get("templates"),
+// //     queries: db.get("queries")
+// // };
+// //
+// // function close() {
+// //     db.close();
+// // }
+//
+// //module.exports = Database;
+// module.exports = {
+//     database: new Database(),
+//     Database: Database
+// };

@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === 'production') {
     let redisPassword = redisURI.auth.split(':')[1];
 
     module.exports = {
+        env: process.env.NODE_ENV,
         host: process.env.host || '',
         port: process.env.port,
         dbURI: process.env.dbURI,

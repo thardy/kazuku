@@ -1,8 +1,8 @@
-const CustomDataController = require('../customData/customDataController');
-const CustomSchemasController = require('../customSchemas/customSchemasController');
-const TemplatesController = require('../templates/templatesController');
-const AuthController = require('../users/auth.controller');
-const UsersController = require('../users/users.controller');
+const CustomDataController = require('../../customData/customDataController');
+const CustomSchemasController = require('../../customSchemas/customSchemasController');
+const TemplatesController = require('../../templates/templatesController');
+const AuthController = require('../../users/auth.controller');
+const UsersController = require('../../users/users.controller');
 
 // todo: convert this to be more modular (one file in each folder that aggregates all the controllers inside it)
 exports.map = function(app) {

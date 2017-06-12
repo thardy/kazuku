@@ -1,16 +1,20 @@
 'use strict';
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./server/config');
 const session = require('./server/session');
 const logger = require('./server/logger');
-const routes = require('../server/routes');
+const routes = require('./server/routes');
+// Authentication Logic
+const auth = require('./server/auth')();
 
 app.set('port', config.port || 3001);
 
 // serve static files out of this folder - referenced as /css, /img, /js
 app.use(express.static('public'));
+app.use(bodyParser.json());
 
 // sessions has to be used before router is mounted
 app.use(session);
@@ -33,9 +37,11 @@ routes.map(app);
 if (!module.parent) {
     // listen on port config.port
     app.listen(config.port, () => {
-        console.info(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+        console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
     });
 }
+
+module.exports = app;
 
 // // const mongoose = require('mongoose');
 // // const util = require('util');

@@ -1,6 +1,11 @@
 "use strict";
-var _ = require("lodash");
-var Promise = require("bluebird");
+const _ = require("lodash");
+const Promise = require("bluebird");
+// I directly use these models because using their services would create a circular dependency.  Not the most desirable
+//  solution, but I haven't encountered any issues yet.  Ideally, the services would always be used to manipulate the
+//  models.
+const Template = require('../templates/template.model');
+const Query = require('../queries/query.model');
 
 class DependencyService {
 
@@ -32,12 +37,12 @@ class DependencyService {
         // I'm not looking for query children after the first batch because currently, queries can't depend on other
         //  queries. The first batch should have been all that we care about.
         if (recurseLevel <= 1) {
-            promise = this.db.queries.find({orgId: orgId, dependencies: item});
+            promise = Query.find({orgId: orgId, dependencies: item});
         }
         return promise
             .then((dependentQueries) => {
                 // get the dependentTemplates, and pass both those and the dependentQueries as the result - resultsArray
-                return Promise.all([dependentQueries, this.db.templates.find({orgId: orgId, dependencies:item})]);
+                return Promise.all([dependentQueries, Template.find({orgId: orgId, dependencies:item})]);
             })
             .then((resultsArray) => {
                 // dependentQueries should be index 0, and dependentTemplates index 1
@@ -85,10 +90,10 @@ class DependencyService {
 
             switch (type) {
                 case 'query':
-                    promises.push(this.db.queries.update(queryObject, {$set: changes}));
+                    promises.push(Query.update(queryObject, {$set: changes}));
                     break;
                 case 'page':
-                    promises.push(this.db.templates.update(queryObject, {$set: changes}));
+                    promises.push(Template.update(queryObject, {$set: changes}));
                     break;
             }
         }

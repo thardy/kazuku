@@ -1,12 +1,11 @@
-"use strict";
-var _ = require("lodash");
-var Promise = require("bluebird");
-var conversionService = require("./conversionService");
+'use strict';
+var _ = require('lodash');
+var Promise = require('bluebird');
+var conversionService = require('./conversionService');
 
 class GenericService {
-    constructor(database, collectionName) {
-        this.db = database;
-        this.collection = database[collectionName];
+    constructor(Model) {
+        this.Model = Model;
     }
 
     getAll(orgId) {
@@ -14,8 +13,7 @@ class GenericService {
             throw new Error('Incorrect number of arguments passed to GenericService.getAll');
         }
 
-        // todo: FIX (this.collection is undefined)
-        return this.collection.find({orgId: orgId})
+        return this.Model.find({orgId: orgId})
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -31,7 +29,7 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.getById');
         }
-        return this.collection.findOne({_id: id, orgId: orgId})
+        return this.Model.findOne({_id: id, orgId: orgId})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -53,7 +51,7 @@ class GenericService {
 //            sort: mongoQuery.sort
 //        };
 
-        return this.collection.find(mongoQueryObject, projection)
+        return this.Model.find(mongoQueryObject, projection)
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -79,7 +77,7 @@ class GenericService {
 
         return this.onBeforeCreate(orgId, doc)
             .then((result) => {
-                return this.collection.insert(doc)
+                return this.Model.create(doc)
             })
             .then((doc) => {
                 this.useFriendlyId(doc);
@@ -96,11 +94,13 @@ class GenericService {
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
+        // todo: make sure this works with mixed schema types. If Model is a mixed type, probably need to call markModified on all the properties
+
         let queryObject = { _id: id, orgId: orgId };
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
         return this.onBeforeUpdate(orgId, clone)
             .then((result) => {
-                return this.collection.update(queryObject, {$set: clone})
+                return this.Model.update(queryObject, {$set: clone})
             })
             .then((result) => {
                 return this.onAfterUpdate(orgId, clone)
@@ -119,9 +119,11 @@ class GenericService {
 
         mongoQueryObject.orgId = orgId;
 
+        // todo: make sure this works with mixed schema types. If Model is a mixed type, probably need to call markModified on all the properties
+
         return this.onBeforeUpdate(orgId, clone)
             .then((result) => {
-                return this.collection.update(mongoQueryObject, {$set: clone});
+                return this.Model.update(mongoQueryObject, {$set: clone});
             })
             .then((result) => {
                 return this.onAfterUpdate(orgId, clone)
@@ -140,7 +142,7 @@ class GenericService {
 //        conversionService.convertISOStringDateTimesToMongoDates(clone);
 //
 //        mongoQueryObject.orgId = orgId;
-//        return this.collection.update(mongoQueryObject, {$set: clone});
+//        return this.Model.update(mongoQueryObject, {$set: clone});
 //    }
 
     delete(orgId, id) {
@@ -150,7 +152,7 @@ class GenericService {
         let queryObject = { _id: id, orgId: orgId };
         return this.onBeforeDelete(orgId, queryObject)
             .then((result) => {
-                return this.collection.remove(queryObject)
+                return this.Model.remove(queryObject)
             })
             .then((result) => {
                 return this.onAfterDelete(orgId, queryObject)

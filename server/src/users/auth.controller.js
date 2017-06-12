@@ -8,7 +8,8 @@ const validate = require('express-validation');
 const expressJwt = require('express-jwt');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
-const config = require('./config');
+const config = require('../server/config');
+const authHelper = require('../helpers/authHelper');
 const Joi = require('joi');
 
 class AuthController {
@@ -17,17 +18,17 @@ class AuthController {
         // todo: change to use auth mechanism
         // todo: test that this gets written on every request and not reused between them
         this.orgId = 1;
-        this.userService = new UserService(database);
+        //this.userService = new UserService(database);
         this.resourceName = 'auth';
-        this.paramValidation = {
-            // POST /api/auth/login
-            login: {
-                body: {
-                    username: Joi.string().required(),
-                    password: Joi.string().required()
-                }
-            }
-        };
+        // this.paramValidation = {
+        //     // POST /api/auth/login
+        //     login: {
+        //         body: {
+        //             email: Joi.string().required(),
+        //             password: Joi.string().required()
+        //         }
+        //     }
+        // };
 
         this.mapRoutes(app);
     }
@@ -36,16 +37,19 @@ class AuthController {
         // Map routes
         //super.mapRoutes(app); // map the base CrudController routes
 
-        /** POST /api/auth/login - Returns token if correct username and password is provided */
+        /** POST /api/auth/login - Returns token if correct email and password is provided */
         //app.post(`/api/${this.resourceName}/login`, validate(this.paramValidation.login), this.login.bind(this));
 
-        /** POST /api/auth/login - Returns token if correct username and password is provided */
-        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local', { session: false }), this.generateToken, this.respond);
+        /** POST /api/auth/login - Returns token if correct email and password is provided */
+        // app.post(`/api/${this.resourceName}/login`, (req, res) => {
+        //     res.send('I am the login route');
+        // });
+        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond);
         //app.post(`/api/${this.resourceName}/login`, passport.authenticate('local', { session: false }), this.serialize, this.generateToken, this.respond);
 
         /** GET /api/auth/random-number - Protected route,
          * needs token returned by the above as header. Authorization: Bearer {token} */
-        app.get(`/api/${this.resourceName}/random-number`, expressJwt({ secret: config.jwtSecret }), this.getRandomNumber.bind(this));
+        app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
 
     }
 
@@ -74,8 +78,7 @@ class AuthController {
 
     respond(req, res) {
         res.status(200).json({
-            user: req.user,
-            token: req.token
+            user: req.user
         });
     }
 

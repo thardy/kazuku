@@ -1,11 +1,12 @@
 "use strict";
-var _ = require("lodash");
-var util = require("util");
-var GenericService = require("../common/genericService");
+const _ = require("lodash");
+const util = require("util");
+const GenericService = require("../common/genericService");
+const CustomSchema = require('./customSchema.model');
 
 class CustomSchemaService extends GenericService {
-    constructor(database) {
-        super(database, 'customSchemas');
+    constructor() {
+        super(CustomSchema);
     }
 
     getByContentType(orgId, contentType) {
