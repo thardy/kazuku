@@ -1,12 +1,12 @@
 export class Site {
-    id: number;
+    id: string;
     orgId: number;
     code: string;
     name: string;
     domainName: string;
 
     constructor(options: {
-        id?: number,
+        id?: string,
         orgId?: number,
         code?: string,
         name?: string,

@@ -9,7 +9,7 @@ class UserService extends GenericService {
     }
 
     getByEmail(email) {
-        return this.Model.findOne({email: email})
+        return this.Model.findOne({email: email}).lean()
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;

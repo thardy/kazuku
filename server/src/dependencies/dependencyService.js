@@ -37,12 +37,12 @@ class DependencyService {
         // I'm not looking for query children after the first batch because currently, queries can't depend on other
         //  queries. The first batch should have been all that we care about.
         if (recurseLevel <= 1) {
-            promise = Query.find({orgId: orgId, dependencies: item});
+            promise = Query.find({orgId: orgId.toString(), dependencies: item}).lean();
         }
         return promise
             .then((dependentQueries) => {
                 // get the dependentTemplates, and pass both those and the dependentQueries as the result - resultsArray
-                return Promise.all([dependentQueries, Template.find({orgId: orgId, dependencies:item})]);
+                return Promise.all([dependentQueries, Template.find({orgId: orgId, dependencies:item}).lean()]);
             })
             .then((resultsArray) => {
                 // dependentQueries should be index 0, and dependentTemplates index 1
@@ -85,7 +85,7 @@ class DependencyService {
 
         for (let dependentObject of dependentObjects) {
             let type = this.getTypeOfItem(dependentObject);
-            let queryObject = {orgId: orgId, name: dependentObject.name};
+            let queryObject = {orgId: orgId.toString(), name: dependentObject.name};
             let changes = {regenerate: 1};
 
             switch (type) {

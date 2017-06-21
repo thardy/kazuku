@@ -20,7 +20,7 @@ class CustomDataService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomDataService.getByContentType');
         }
 
-        return this.Model.find({orgId: orgId, contentType: contentType})
+        return this.Model.find({orgId: orgId.toString(), contentType: contentType}).lean()
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -37,7 +37,7 @@ class CustomDataService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId');
         }
 
-        return this.Model.findOne({_id: id, orgId: orgId, contentType: contentType})
+        return this.Model.findOne({_id: id.toString(), orgId: orgId.toString(), contentType: contentType}).lean()
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -51,22 +51,26 @@ class CustomDataService extends GenericService {
 
         // Hardwire orgId into every query
         if (typeof query === 'string' || query instanceof String) {
-            query = 'eq(orgId,' + orgId + ')&' + query;
+            query = 'eq(orgId,' + orgId.toString() + ')&' + query;
         }
         else {
             // todo: test that this actually shows up in the query - https://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/
-            query = query.eq('orgId', orgId);
+            query = query.eq('orgId', orgId.toString());
         }
 
         var mongoQuery = mongoRql(query);
         var projection = {
             skip: mongoQuery.skip,
-            limit: mongoQuery.limit,
-            fields: mongoQuery.projection,
-            sort: mongoQuery.sort
+            limit: mongoQuery.limit
         };
+        if (mongoQuery.fields) {
+            projection.fields = mongoQuery.projection;
+        }
+        if (mongoQuery.sort) {
+            projection.sort = mongoQuery.sort;
+        }
 
-        return this.Model.find(mongoQuery.criteria, projection)
+        return this.Model.find(mongoQuery.criteria, projection).lean()
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -85,7 +89,7 @@ class CustomDataService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');
         }
 
-        let queryObject = {_id: id, orgId: orgId, contentType: contentType};
+        let queryObject = {_id: id.toString(), orgId: orgId.toString(), contentType: contentType};
 
         return this.onBeforeDelete(queryObject)
             .then((result) => {

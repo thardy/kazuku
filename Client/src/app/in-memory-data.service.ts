@@ -19,24 +19,24 @@ export class InMemoryDataService implements InMemoryDbService {
 }
 
 const ORGS = [
-    new Organization({id: 1, name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext'}),
-    new Organization({id: 2, name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer'}),
+    new Organization({id: '5949fdeff8e794bdbbfd3d87', name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext'}),
+    new Organization({id: '5949fdeff8e794bdbbfd3d88', name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer'}),
 ];
 
 const SITES = [
-    new Site({id: 1, name: 'Acme Corp', domainName: 'acme.com', orgId: 1, code: 'acme'}),
-    new Site({id: 2, name: 'Super Church', domainName: 'superchurch.com', orgId: 1, code: 'superchurch'}),
-    new Site({id: 3, name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: 1, code: 'apartmentsrus'}),
-    new Site({id: 4, name: 'My Blog', domainName: 'designerx.com', orgId: 1, code: 'designerx'}),
+    new Site({id: '5949fdeff8e794bdbbfd3d89', name: 'Acme Corp', domainName: 'acme.com', orgId: '5949fdeff8e794bdbbfd3d85', code: 'acme'}),
+    new Site({id: '5949fdeff8e794bdbbfd3d8a', name: 'Super Church', domainName: 'superchurch.com', orgId: '5949fdeff8e794bdbbfd3d85', code: 'superchurch'}),
+    new Site({id: '5949fdeff8e794bdbbfd3d8b', name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: '5949fdeff8e794bdbbfd3d85', code: 'apartmentsrus'}),
+    new Site({id: '5949fdeff8e794bdbbfd3d8c', name: 'My Blog', domainName: 'designerx.com', orgId: '5949fdeff8e794bdbbfd3d85', code: 'designerx'}),
 ];
 
 const TEMPLATES = [
-    new Template({id: 1, name: 'master', orgId: 1, siteId: 1, template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),
-    new Template({id: 2, name: 'header', orgId: 1, siteId: 1, template: '<header>This is the header</header>'}),
-    new Template({id: 3, name: 'footer', orgId: 1, siteId: 1, template: '<footer>This is the footer</footer>'}),
-    new Template({id: 4, name: 'home', orgId: 1, siteId: 1, layout: 'master', template: '<h1>Home Page</h1>'}),
-    new Template({id: 5, name: 'blog-list', orgId: 1, siteId: 1, template: '<h1>Blog List</h1>'}),
-    new Template({id: 6, name: 'blog-detail', orgId: 1, siteId: 1, template: '<h1>Blog Detail</h1>'}),
+    new Template({id: '5949fdeff8e794bdbbfd3d8d', name: 'master', orgId: '5949fdeff8e794bdbbfd3d85', siteId: '5949fdeff8e794bdbbfd3d86', template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),
+    new Template({id: '5949fdeff8e794bdbbfd3d8e', name: 'header', orgId: '5949fdeff8e794bdbbfd3d85', siteId: '5949fdeff8e794bdbbfd3d86', template: '<header>This is the header</header>'}),
+    new Template({id: '5949fdeff8e794bdbbfd3d8f', name: 'footer', orgId: '5949fdeff8e794bdbbfd3d85', siteId: '5949fdeff8e794bdbbfd3d86', template: '<footer>This is the footer</footer>'}),
+    new Template({id: '5949fdeff8e794bdbbfd3d90', name: 'home', orgId: '5949fdeff8e794bdbbfd3d85', siteId: '5949fdeff8e794bdbbfd3d86', layout: 'master', template: '<h1>Home Page</h1>'}),
+    new Template({id: '5949fdeff8e794bdbbfd3d91', name: 'blog-list', orgId: '5949fdeff8e794bdbbfd3d85', siteId: '5949fdeff8e794bdbbfd3d86', template: '<h1>Blog List</h1>'}),
+    new Template({id: '5949fdeff8e794bdbbfd3d92', name: 'blog-detail', orgId: '5949fdeff8e794bdbbfd3d85', siteId: '5949fdeff8e794bdbbfd3d86', template: '<h1>Blog Detail</h1>'}),
 ];
 
 //const RESOURCES = [

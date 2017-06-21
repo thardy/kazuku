@@ -22,34 +22,34 @@ var FakeTemplateRepo = function() {
 
     var templateObjects = [];
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: 'master',
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: 'masterWithModel',
         title: 'Master Title',
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: 'dog',
         template: "dogs are nice"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: 'cat',
         template: "cats are ok"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: 'chicken',
         template: "chickens are {{disposition}}"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: 'partialWithModel',
         title: 'Default Title',
         template: "title is {{title}}"
@@ -89,7 +89,7 @@ describe('TemplateEngine basics', function() {
             engineType: engineType,
             getTemplate: fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo),
             queryService: fakeQueryService, // templateEngine needs this to resolve queries on models
-            orgId: 1
+            orgId: '5949fdeff8e794bdbbfd3d85'
         });
     });
 
@@ -152,7 +152,7 @@ describe('TemplateEngine basics', function() {
     //
     //     // How can I change a passed-in argument with sinon???  I need to change the model they pass in to replace
     //     //  the products property with an array of products.
-    //     fakeQueryService.resolveQueryPropertiesOnModel.withArgs(1, partialWithModelQuery).returns(Promise.resolve(''));
+    //     fakeQueryService.resolveQueryPropertiesOnModel.withArgs('5949fdeff8e794bdbbfd3d85', partialWithModelQuery).returns(Promise.resolve(''));
     //
     //     return expect(templateEngine.Render(templateString, model)).to.eventually.equal('<p>title is Parent Title</p>');
     // });

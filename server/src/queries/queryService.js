@@ -1,25 +1,26 @@
 "use strict";
-var _ = require("lodash");
-var Promise = require("bluebird");
-var GenericService = require("../common/genericService");
-var CustomDataService = require("../customData/customDataService");
-var DependencyService = require("../dependencies/dependencyService");
-var cache = require("memory-cache");
+const _ = require("lodash");
+const Promise = require("bluebird");
+const GenericService = require("../common/genericService");
+const CustomDataService = require("../customData/customDataService");
+const DependencyService = require("../dependencies/dependencyService");
+const cache = require("memory-cache");
 const Query = require('./query.model');
+const ObjectID = require('mongodb').ObjectID;
 
 class QueryService extends GenericService {
     constructor() {
         super(Query);
         this._customDataService = new CustomDataService();
         this._dependencyService = new DependencyService();
-        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
+        this._orgId = '5949fdeff8e794bdbbfd3d85'; // todo: alter to use auth mechanism (currently logged in user's orgId)
     }
 
     get customDataService() { return this._customDataService; }
     get dependencyService() { return this._dependencyService; }
 
     getRegenerateList(orgId) {
-        return this.Model.find({orgId: orgId, regenerate: 1})
+        return this.Model.find({orgId: orgId.toString(), regenerate: 1}).lean()
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -35,7 +36,7 @@ class QueryService extends GenericService {
     getAllDependentsOfItem(item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
         // look like this - { dependencies: [{type: 'query', name: 'someQuery' }] }
-        return this.Model.find({orgId: this._orgId, dependencies: item })
+        return this.Model.find({orgId: this._orgId.toString(), dependencies: item }).lean()
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {
@@ -119,7 +120,7 @@ class QueryService extends GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to QueryService.getByName');
         }
-        return this.Model.findOne({orgId: orgId, name: name})
+        return this.Model.findOne({orgId: orgId.toString(), name: name}).lean()
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;

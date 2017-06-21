@@ -14,7 +14,7 @@ class CustomSchemaService extends GenericService {
             throw new Error('Incorrect number of arguments passed to CustomSchemaService.getByContentType');
         }
 
-        return this.collection.findOne({orgId: orgId, contentType: contentType})
+        return this.Model.findOne({orgId: orgId, contentType: contentType}).lean()
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -28,14 +28,14 @@ class CustomSchemaService extends GenericService {
         var clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-        return this.collection.update({orgId: orgId, contentType: contentType}, {$set: clone});
+        return this.Model.update({orgId: orgId, contentType: contentType}, {$set: clone});
     }
 
     deleteByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to CustomSchemaService.deleteByContentType');
         }
-        return this.collection.remove({orgId: orgId, contentType: contentType});
+        return this.Model.remove({orgId: orgId, contentType: contentType});
     }
 
     validate(doc) {

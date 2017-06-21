@@ -1,15 +1,14 @@
 "use strict";
-var database = require("../database/database").database;
-var _ = require("lodash");
-var CustomDataService = require("../customData/customDataService");
-var TemplateService = require("../templates/templateService");
-var QueryService = require("../queries/queryService");
-var CustomSchemaService = require("../customSchemas/customSchemaService");
-var sinon = require("sinon");
-var Promise = require("bluebird");
+const _ = require("lodash");
+const CustomData = require('../customData/customData.model');
+const Template = require('../templates/template.model');
+const Query = require('../queries/query.model');
+const sinon = require("sinon");
+const Promise = require("bluebird");
+const ObjectID = require('mongodb').ObjectID;
 
-let testOrgId = 1;
-let testSiteId = 1;
+let testOrgId = '5949fdeff8e794bdbbfd3d85';
+let testSiteId = '5949fdeff8e794bdbbfd3d85';
 
 let existingNavItems = [
     { orgId: testOrgId, contentType: "navItems", name: 'Nav1', url: '/nav1', sortOrder: 1, created: new Date('2014-01-01T00:00:00') },
@@ -126,7 +125,7 @@ var pubTestHelper = {
 function createCustomData() {
     return deleteAllTestCustomData()
         .then((result) => {
-            return database.customData.insert(existingNavItems)
+            return CustomData.insert(existingNavItems)
                 .then(function(docs) {
                     existingNavItems = docs;
                     _.forEach(existingNavItems, function (item) {
@@ -136,7 +135,7 @@ function createCustomData() {
                 });
         })
         .then((result) => {
-            return database.customData.insert(existingTestimonials)
+            return CustomData.insert(existingTestimonials)
                 .then(function(docs) {
                     existingTestimonials = docs;
                     _.forEach(existingTestimonials, function (item) {
@@ -150,7 +149,7 @@ function createCustomData() {
 function createCustomDataForEndToEndTests() {
     return deleteCustomDataForEndToEndTests()
         .then((result) => {
-            return database.customData.insert(existingBlogPosts)
+            return CustomData.create(existingBlogPosts)
                 .then(function(docs) {
                     existingBlogPosts = docs;
                     _.forEach(existingBlogPosts, function (item) {
@@ -164,7 +163,7 @@ function createCustomDataForEndToEndTests() {
 function createTemplatesForRegenerationTests() {
     return deleteAllTemplateRegenTemplates()
         .then((result) => {
-            return database.templates.insert(existingTemplatesForRegenerationTests)
+            return Template.create(existingTemplatesForRegenerationTests)
                 .then(function(docs) {
                     existingTemplatesForRegenerationTests = docs;
                     _.forEach(existingTemplatesForRegenerationTests, function (item) {
@@ -175,14 +174,14 @@ function createTemplatesForRegenerationTests() {
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.templates.insert({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegenerateTemplateNOT1", template: "do not regenerate me", regenerate: 0 });
+            return Template.create({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegenerateTemplateNOT1", template: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function createTemplatesForEndToEndTests() {
     return deleteAllEndToEndTemplates()
         .then((result) => {
-            return database.templates.insert(existingTemplatesForEndToEndTests)
+            return Template.create(existingTemplatesForEndToEndTests)
                 .then(function(docs) {
                     existingTemplatesForEndToEndTests = docs;
                     _.forEach(existingTemplatesForEndToEndTests, function (item) {
@@ -196,7 +195,7 @@ function createTemplatesForEndToEndTests() {
 function createPagesForEndToEndTests() {
     return deleteAllEndToEndPages()
         .then((result) => {
-            return database.templates.insert(existingPagesForEndToEndTests)
+            return Template.create(existingPagesForEndToEndTests)
                 .then(function(docs) {
                     existingPagesForEndToEndTests = docs;
                     _.forEach(existingPagesForEndToEndTests, function (item) {
@@ -210,7 +209,7 @@ function createPagesForEndToEndTests() {
 function createPageRegenerateList() {
     return deleteAllPageRegenTemplates()
         .then((result) => {
-            return database.templates.insert(existingPageRegenerateList)
+            return Template.create(existingPageRegenerateList)
                 .then(function(docs) {
                     existingPageRegenerateList = docs;
                     _.forEach(existingPageRegenerateList, function (item) {
@@ -221,14 +220,14 @@ function createPageRegenerateList() {
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.templates.insert({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegeneratePageNOT1", url: "no-regen-page1", template: "do not regenerate me", regenerate: 0 });
+            return Template.create({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegeneratePageNOT1", url: "no-regen-page1", template: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function createQueryRegenerateList() {
     return deleteAllQueryRegenTemplates()
         .then((result) => {
-            return database.queries.insert(existingQueryRegenerateList)
+            return Query.create(existingQueryRegenerateList)
                 .then(function(docs) {
                     existingQueryRegenerateList = docs;
                     _.forEach(existingQueryRegenerateList, function (item) {
@@ -239,14 +238,14 @@ function createQueryRegenerateList() {
         })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.queries.insert({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegenerateQueryNOT", query: "do not regenerate me", regenerate: 0 });
+            return Query.create({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegenerateQueryNOT", query: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function createQueriesForEndToEndTests() {
     return deleteAllEndToEndQueries()
         .then((result) => {
-            return database.queries.insert(existingQueriesForEndToEndTests)
+            return Query.create(existingQueriesForEndToEndTests)
                 .then(function(docs) {
                     existingQueriesForEndToEndTests = docs;
                     _.forEach(existingQueriesForEndToEndTests, function (item) {
@@ -267,35 +266,35 @@ function deleteAllEndToEndData() {
 }
 
 function deleteAllTestCustomData() {
-    return database.customData.remove({orgId: testOrgId});
+    return CustomData.remove({orgId: testOrgId});
 }
 
 function deleteCustomDataForEndToEndTests() {
-    return database.customData.remove({orgId: testOrgId, contentType: 'blogPosts'});
+    return CustomData.remove({orgId: testOrgId, contentType: 'blogPosts'});
 }
 
 function deleteAllTemplateRegenTemplates() {
-    return database.templates.remove({orgId: testOrgId, name: { $regex: /^RegenerateTemplate/ }});
+    return Template.remove({orgId: testOrgId, name: { $regex: /^RegenerateTemplate/ }});
 }
 
 function deleteAllPageRegenTemplates() {
-    return database.templates.remove({orgId: testOrgId, name: { $regex: /^RegeneratePage/ }});
+    return Template.remove({orgId: testOrgId, name: { $regex: /^RegeneratePage/ }});
 }
 
 function deleteAllQueryRegenTemplates() {
-    return database.queries.remove({orgId: testOrgId, name: { $regex: /^RegenerateQuery/ }});
+    return Query.remove({orgId: testOrgId, name: { $regex: /^RegenerateQuery/ }});
 }
 
 function deleteAllEndToEndQueries() {
-    return database.queries.remove({orgId: testOrgId, name: { $regex: /^EndToEndQuery/ }});
+    return Query.remove({orgId: testOrgId, name: { $regex: /^EndToEndQuery/ }});
 }
 
 function deleteAllEndToEndTemplates() {
-    return database.templates.remove({orgId: testOrgId, name: { $regex: /^EndToEndTemplate/ }});
+    return Template.remove({orgId: testOrgId, name: { $regex: /^EndToEndTemplate/ }});
 }
 
 function deleteAllEndToEndPages() {
-    return database.templates.remove({orgId: testOrgId, name: { $regex: /^EndToEndPage/ }});
+    return Template.remove({orgId: testOrgId, name: { $regex: /^EndToEndPage/ }});
 }
 
 module.exports = pubTestHelper;

@@ -1,12 +1,12 @@
 export class Organization {
-    id: number;
+    id: string;
     name: string;
     code: string;
     description: string;
     statusId: number;
 
     constructor(options: {
-        id?: number,
+        id?: string,
         name?: string,
         code?: string,
         description?: string,

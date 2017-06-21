@@ -1,9 +1,11 @@
 "use strict";
-let database = require("../database/database").database;
-let _ = require("lodash");
 
-let testOrgId = 1;
-let testSiteId = 1;
+const _ = require("lodash");
+const Template = require('./template.model');
+const ObjectID = require('mongodb').ObjectID;
+
+let testOrgId = '5949fdeff8e794bdbbfd3d85';
+let testSiteId = '5949fdeff8e794bdbbfd3d85';
 let existingTemplate1 = {};
 let existingTemplate2= {};
 
@@ -52,7 +54,7 @@ let templateTestHelper = {
 //
 //    return deleteAllTestTemplates()
 //        .then((result) => {
-//            return database.templates.insert(newTemplate1);
+//            return Template.create(newTemplate1);
 //        })
 //        .then((doc) => {
 //            templateTestHelper.existingTemplate1 = doc;
@@ -60,7 +62,7 @@ let templateTestHelper = {
 //            return doc;
 //        })
 //        .then((result) => {
-//            return database.templates.insert(newTemplate2);
+//            return Template.create(newTemplate2);
 //        })
 //        .then((doc) => {
 //            templateTestHelper.existingTemplate2 = doc;
@@ -73,18 +75,27 @@ let templateTestHelper = {
 //        });
 //}
 
+// todo: consider moving to a common helper to be used globally
+function useFriendlyId(doc) {
+    if (doc && doc._id) {
+        doc.id = doc._id.toHexString();
+    }
+}
+
 function createTemplateList() {
     return deleteAllNewTemplates()
         .then((result) => {
-            database.templates.insert(existingTemplateList)
+            Template.create(existingTemplateList)
                 .then((docs) => {
                     existingTemplateList = docs;
                     _.forEach(existingTemplateList, function (item) {
                         item.id = item._id.toHexString();
                     });
 
-                    templateTestHelper.existingTemplate1 = _.find(existingTemplateList, {name: "NewTemplate1"});
-                    templateTestHelper.existingTemplate2 = _.find(existingTemplateList, {name: "NewTemplate2"});
+                    templateTestHelper.existingTemplate1 = _.find(existingTemplateList, {name: "NewTemplate1"}).toObject();
+                    useFriendlyId(templateTestHelper.existingTemplate1);
+                    templateTestHelper.existingTemplate2 = _.find(existingTemplateList, {name: "NewTemplate2"}).toObject();
+                    useFriendlyId(templateTestHelper.existingTemplate2);
                     return docs;
                 });
         });
@@ -93,7 +104,7 @@ function createTemplateList() {
 function createRegenerateList() {
     return deleteAllRegenTemplates()
         .then((result) => {
-            return database.templates.insert(templateTestHelper.existingRegenerateList)
+            return Template.create(templateTestHelper.existingRegenerateList)
                 .then((docs) => {
                     templateTestHelper.existingRegenerateList = docs;
                     _.forEach(templateTestHelper.existingRegenerateList, function (item) {
@@ -104,21 +115,22 @@ function createRegenerateList() {
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.templates.insert({ orgId: templateTestHelper.testOrgId, siteId: templateTestHelper.testSiteId, name: "RegenerateTemplateNOT1", template: "do not regenerate me", regenerate: 0 });
+            return Template.create({ orgId: templateTestHelper.testOrgId, siteId: templateTestHelper.testSiteId, name: "RegenerateTemplateNOT1", template: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function deleteAllNewTemplates() {
-    return database.templates.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^NewTemplate/ }});
+    return Template.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^NewTemplate/ }});
 }
 
 function deleteAllTestTemplates() {
-    return database.templates.remove({orgId: templateTestHelper.testOrgId});
+    return Template.remove({orgId: templateTestHelper.testOrgId});
 }
 
 function deleteAllRegenTemplates() {
-    return database.templates.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^RegenerateTemplate/ }});
+    return Template.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^RegenerateTemplate/ }});
 }
+
 
 module.exports = templateTestHelper;
 

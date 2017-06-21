@@ -1,5 +1,6 @@
 "use strict";
 const validate = require('express-validation');
+const ObjectID = require('mongodb').ObjectID;
 
 class CrudController {
 
@@ -7,7 +8,7 @@ class CrudController {
         this.app = app;
         // todo: change to use auth mechanism
         // todo: test that this gets written on every request and not reused between them
-        this.orgId = 1;
+        this.orgId = '5949fdeff8e794bdbbfd3d85';
         this.service = service;
         this.resourceName = resourceName;
         this.paramValidation = paramValidation;

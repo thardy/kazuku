@@ -32,16 +32,21 @@ app.use(require('morgan')('combined', {
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
 routes.map(app);
 
-// module.parent check is required to support mocha watch
-// src: https://github.com/mochajs/mocha/issues/1912
-if (!module.parent) {
-    // listen on port config.port
-    app.listen(config.port, () => {
-        console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
-    });
-}
-
+// // module.parent check is required to support mocha watch
+// // src: https://github.com/mochajs/mocha/issues/1912
+// if (!module.parent) {
+//     // listen on port config.port
+//     app.listen(config.port, () => {
+//         console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+//     });
+// }
+//
 module.exports = app;
+
+
+
+
+
 
 // // const mongoose = require('mongoose');
 // // const util = require('util');

@@ -13,7 +13,7 @@ class GenericService {
             throw new Error('Incorrect number of arguments passed to GenericService.getAll');
         }
 
-        return this.Model.find({orgId: orgId})
+        return this.Model.find({orgId: orgId.toString()}).lean()
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -29,7 +29,7 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.getById');
         }
-        return this.Model.findOne({_id: id, orgId: orgId})
+        return this.Model.findOne({_id: id.toString(), orgId: orgId.toString()}).lean()
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -42,7 +42,7 @@ class GenericService {
         }
 
         // Hardwire orgId into every query
-        mongoQueryObject.orgId = orgId;
+        mongoQueryObject.orgId = orgId.toString();
 
 //        var projection = {
 //            skip: mongoQuery.skip,
@@ -51,7 +51,7 @@ class GenericService {
 //            sort: mongoQuery.sort
 //        };
 
-        return this.Model.find(mongoQueryObject, projection)
+        return this.Model.find(mongoQueryObject, projection).lean()
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -67,7 +67,7 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.create');
         }
-        doc.orgId = orgId;
+        doc.orgId = orgId.toString();
         var valError = this.validate(doc);
         if (valError) {
             return Promise.reject(new TypeError(valError));
@@ -80,6 +80,7 @@ class GenericService {
                 return this.Model.create(doc)
             })
             .then((doc) => {
+                doc = doc.toObject();
                 this.useFriendlyId(doc);
                 return this.onAfterCreate(orgId, doc)
                     .then(() => { return doc }); // ignore the result of onAfter and return what the original call returned
@@ -117,7 +118,7 @@ class GenericService {
 
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
-        mongoQueryObject.orgId = orgId;
+        mongoQueryObject.orgId = orgId.toString();
 
         // todo: make sure this works with mixed schema types. If Model is a mixed type, probably need to call markModified on all the properties
 
@@ -149,7 +150,7 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.delete');
         }
-        let queryObject = { _id: id, orgId: orgId };
+        let queryObject = { _id: id.toString(), orgId: orgId.toString() };
         return this.onBeforeDelete(orgId, queryObject)
             .then((result) => {
                 return this.Model.remove(queryObject)

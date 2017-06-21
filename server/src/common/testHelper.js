@@ -1,11 +1,13 @@
-var config = require("../env-config");
-var Promise = require("bluebird");
-var database = require("../database/database").database;
-var _ = require("lodash");
-var moment = require("moment");
+const config = require("../env-config");
+const Promise = require("bluebird");
+const CustomData = require('../customData/customData.model');
+const CustomSchema = require('../customSchemas/customSchema.model');
+const _ = require("lodash");
+const moment = require("moment");
+const ObjectID = require('mongodb').ObjectID;
 
 //var existingProducts = [];
-var testOrgId = 1;
+var testOrgId = '5949fdeff8e794bdbbfd3d85';
 var testProductsContentType = 'testProducts';
 var newProduct1 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
 var newProduct2 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
@@ -85,9 +87,9 @@ function createTestProducts() {
     //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
 
     return Promise.all([
-        database.customData.insert(newProduct1),
-        database.customData.insert(newProduct2),
-        database.customData.insert(newProduct3)
+        CustomData.create(newProduct1),
+        CustomData.create(newProduct2),
+        CustomData.create(newProduct3)
     ])
         .then(function(docs) {
             testHelper.existingProducts = docs;
@@ -104,11 +106,11 @@ function createTestProducts() {
 }
 
 function deleteAllTestProducts() {
-    return database.customData.remove({orgId: testOrgId, contentType: testProductsContentType});
+    return CustomData.remove({orgId: testOrgId, contentType: testProductsContentType});
 }
 
 function deleteAllTestOrgCustomData() {
-    return database.customData.remove({orgId: testOrgId});
+    return CustomData.remove({orgId: testOrgId});
 }
 
 function setupTestSchemas() {
@@ -126,8 +128,8 @@ function createTestSchemas() {
     //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
 
     return Promise.all([
-        database.customSchemas.insert(newSchema1),
-        database.customSchemas.insert(newSchema2)
+        CustomSchema.create(newSchema1),
+        CustomSchema.create(newSchema2)
     ])
         .then(function(docs) {
             testHelper.existingSchemas = docs;
@@ -144,7 +146,7 @@ function createTestSchemas() {
 }
 
 function deleteAllTestSchemas() {
-    return database.customSchemas.remove({orgId: testOrgId});
+    return CustomSchema.remove({orgId: testOrgId});
 }
 
 function stripFriendlyIdsFromModel(model) {

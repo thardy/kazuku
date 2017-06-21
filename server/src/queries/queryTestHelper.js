@@ -1,9 +1,11 @@
 "use strict";
-var database = require("../database/database").database;
-var _ = require("lodash");
+const Query = require('./query.model');
+const CustomData = require('../customData/customData.model');
+const _ = require("lodash");
+const ObjectID = require('mongodb').ObjectID;
 
-let testOrgId = 1;
-let testSiteId = 1;
+let testOrgId = '5949fdeff8e794bdbbfd3d85';
+let testSiteId = '5949fdeff8e794bdbbfd3d85';
 let existingQuery1 = {};
 let existingQuery2= {};
 let testQueryDataContentType = "testQueryDataContentType";
@@ -64,7 +66,7 @@ function setupTestQueries() {
 
     return deleteAllTestQueries()
         .then((result) => {
-            return database.queries.insert(newQuery1);
+            return Query.create(newQuery1);
         })
         .then((doc) => {
             queryTestHelper.existingQuery1 = doc;
@@ -72,7 +74,7 @@ function setupTestQueries() {
             return doc;
         })
         .then((result) => {
-            return database.queries.insert(newQuery2);
+            return Query.create(newQuery2);
         })
         .then((doc) => {
             queryTestHelper.existingQuery2 = doc;
@@ -88,7 +90,7 @@ function setupTestQueries() {
 function createExistingDataQueries() {
     return deleteAllDataQueries()
         .then((result) => {
-            return database.queries.insert(existingDataQueries)
+            return Query.create(existingDataQueries)
                 .then(function(docs) {
                     existingDataQueries = docs;
                     _.forEach(existingDataQueries, function (item) {
@@ -102,7 +104,7 @@ function createExistingDataQueries() {
 function createExistingQueryData() {
     return deleteAllQueryData()
         .then((result) => {
-            return database.customData.insert(existingQueryData)
+            return CustomData.create(existingQueryData)
                 .then(function(docs) {
                     existingQueryData = docs;
                     _.forEach(existingQueryData, function (item) {
@@ -116,7 +118,7 @@ function createExistingQueryData() {
 function createRegenerateList() {
     return deleteAllRegenQueries()
         .then((result) => {
-            return database.queries.insert(existingRegenerateList)
+            return Query.create(existingRegenerateList)
                 .then(function(docs) {
                     existingRegenerateList = docs;
                     _.forEach(existingRegenerateList, function (item) {
@@ -127,24 +129,24 @@ function createRegenerateList() {
         })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.queries.insert({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "RegenerateQueryNOT", query: "do not regenerate me", regenerate: 0 });
+            return Query.create({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "RegenerateQueryNOT", query: "do not regenerate me", regenerate: 0 });
         });
 }
 
 function deleteAllTestQueries() {
-    return database.queries.remove({orgId: queryTestHelper.testOrgId});
+    return Query.remove({orgId: queryTestHelper.testOrgId});
 }
 
 function deleteAllRegenQueries() {
-    return database.queries.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^RegenerateQuery/ }});
+    return Query.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^RegenerateQuery/ }});
 }
 
 function deleteAllDataQueries() {
-    return database.queries.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^DataQuery-/ }});
+    return Query.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^DataQuery-/ }});
 }
 
 function deleteAllQueryData() {
-    return database.customData.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^QueryData-/ }});
+    return CustomData.remove({orgId: queryTestHelper.testOrgId, name: { $regex: /^QueryData-/ }});
 }
 
 

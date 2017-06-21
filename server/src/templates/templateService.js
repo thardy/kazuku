@@ -9,21 +9,22 @@ const Promise = require("bluebird");
 const frontMatter = require('front-matter');
 const _ = require("lodash");
 const Template = require('./template.model');
+const ObjectID = require('mongodb').ObjectID;
 
 const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 
 class TemplateService extends GenericService {
-    constructor(database, queryService, getTemplate) {
+    constructor(queryService, getTemplate) {
         super(Template);
 
         // TemplateService now implements the function getTemplate that the templateEngine requires.  Use that if
         //  a getTemplate function was not supplied.
         this.getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
 
-        this.orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
-        this.queryService = (queryService) ? queryService : new QueryService(database);
-        this.customDataService = new CustomDataService(database);
-        this.dependencyService = new DependencyService(database);
+        this.orgId = '5949fdeff8e794bdbbfd3d85'; // todo: alter to use auth mechanism (currently logged in user's orgId)
+        this.queryService = (queryService) ? queryService : new QueryService();
+        this.customDataService = new CustomDataService();
+        this.dependencyService = new DependencyService();
         this.templateEngine = new TemplateEngine({
             engineType: 'liquid',
             getTemplate: this.getTemplateFunction,
@@ -33,7 +34,7 @@ class TemplateService extends GenericService {
     }
 
     getRegenerateList(orgId) {
-        return this.Model.find({orgId: orgId, regenerate: 1})
+        return this.Model.find({orgId: orgId.toString(), regenerate: 1}).lean()
             .then((docs) => {
                 var transformedDocs = [];
                 _.forEach(docs, (doc) => {
@@ -96,7 +97,7 @@ class TemplateService extends GenericService {
 
     // getTemplate returns a templateObject
     getTemplate(orgId, templateName) {
-        return this.Model.findOne({orgId: orgId, name: templateName})
+        return this.Model.findOne({orgId: orgId.toString(), name: templateName}).lean()
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
@@ -127,7 +128,7 @@ class TemplateService extends GenericService {
                 hasRQL = true;
                 // have to wrap property in a closure, otherwise property is different by the time the "then" gets called
                 ((property) => {
-                    this.customDataService.find(orgId, templateObject.model[property])
+                    this.customDataService.find(orgId.toString(), templateObject.model[property])
                         .then((result) => {
                             templateObject.model[property] = result;
                             return deferred.resolve(templateObject);
@@ -181,7 +182,7 @@ class TemplateService extends GenericService {
     getAllDependentsOfItem(orgId, item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
         // look like this - { dependencies: [{type: 'template', name: 'master' }] }
-        return this.Model.find({orgId: orgId, dependencies: item })
+        return this.Model.find({orgId: orgId.toString(), dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {

@@ -1,12 +1,13 @@
 "use strict";
-var CustomDataService = require("../customData/customDataService");
-var TemplateService = require("../templates/templateService");
-var QueryService = require("../queries/queryService");
-let Database = require("../database/database").Database;
-var sinon = require("sinon");
+const CustomDataService = require("../customData/customDataService");
+const TemplateService = require("../templates/templateService");
+const QueryService = require("../queries/queryService");
+const Database = require("../database/database").Database;
+const sinon = require("sinon");
+const ObjectID = require('mongodb').ObjectID;
 
-let testOrgId = 1;
-let testSiteId = 1;
+let testOrgId = '5949fdeff8e794bdbbfd3d85';
+let testSiteId = '5949fdeff8e794bdbbfd3d85';
 let fakeNavItemsDataDependents = [
     { orgId: testOrgId, siteId: testSiteId, name: "headerNavigation", query: 'blah'}
 ];

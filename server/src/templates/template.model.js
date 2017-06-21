@@ -7,10 +7,7 @@ const templateSchema = new mongoose.Schema({
     name: String,
     layout: String,
     template: String,
-    dependencies: {
-        type: [{ type: String, name: String}],
-        default: undefined
-    },
+    dependencies: [{}],
     regenerate: Boolean,
     created: { type: Date, default: Date.now },
     createdBy: mongoose.Schema.ObjectId,

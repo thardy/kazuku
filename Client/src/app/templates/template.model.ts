@@ -1,5 +1,5 @@
 export class Template {
-    id: number;
+    id: string;
     orgId: number;
     siteId: number;
     name: string;
@@ -7,7 +7,7 @@ export class Template {
     template: string;
 
     constructor(options: {
-        id?: number,
+        id?: string,
         orgId?: number,
         siteId?: number,
         name?: string,

@@ -1,23 +1,20 @@
 "use strict";
-let _ = require("lodash");
-let Promise = require("bluebird");
-let database = require("../database/database").database;
-let QueryService = require("../queries/queryService");
-let TemplateService = require('../templates/templateService');
-let cache = require("memory-cache");
-let fs = require("fs-extra");
-let path = require("path");
+const _ = require("lodash");
+const Promise = require("bluebird");
+const QueryService = require("../queries/queryService");
+const TemplateService = require('../templates/templateService');
+const cache = require("memory-cache");
+const fs = require("fs-extra");
+const path = require("path");
 Promise.promisifyAll(fs);
 
 class PublishingService {
 
-    constructor(database) {
-        this._db = database;
-        this._queryService = new QueryService(database);
-        this._templateService = new TemplateService(database, this._queryService);
+    constructor() {
+        this._queryService = new QueryService();
+        this._templateService = new TemplateService(this._queryService);
     }
 
-    get db() { return this._db; }
     get queryService() { return this._queryService; }
     get templateService() { return this._templateService; }
 

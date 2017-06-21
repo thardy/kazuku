@@ -298,7 +298,7 @@ describe("QueryService", function () {
                 let expectedDependencies = [{type: "data", name: "products"}];
                 let query = {
                     orgId: queryTestHelper.testOrgId,
-                    siteId: 1,
+                    siteId: '5949ff1cf8e794bdbbfd3d86',
                     name: "top5Products",
                     query: "eq(contentType,products)&sort(created)&limit(5,0)"
                 };

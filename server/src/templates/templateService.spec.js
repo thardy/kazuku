@@ -19,29 +19,29 @@ var FakeTemplateRepo = function() {
 
     var templateObjects = [];
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: "master",
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: "masterWithModel",
         title: "Master Title",
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: "dog",
         template: "dogs are nice"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: "cat",
         template: "cats are ok"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: '5949fdeff8e794bdbbfd3d85',
         name: "chicken",
         template: "chickens are {{disposition}}"
     });
@@ -275,7 +275,7 @@ describe("TemplateService", function () {
                 let expectedDependencies =  [ { type: 'template', name: 'master' }, { type: 'query', name: 'top5Products' } ];
                 let template = {
                     orgId: templateTestHelper.testOrgId,
-                    siteId: 1,
+                    siteId: '5949fdeff8e794bdbbfd3d86',
                     url: "home",
                     layout: "master",
                     products: "query(top5Products)",
@@ -298,7 +298,7 @@ describe("TemplateService", function () {
                 ];
                 let template = {
                     orgId: templateTestHelper.testOrgId,
-                    siteId: 1,
+                    siteId: '5949fdeff8e794bdbbfd3d86',
                     url: "home",
                     layout: "master",
                     products: "query(top10Events)",

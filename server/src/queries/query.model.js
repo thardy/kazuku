@@ -7,10 +7,7 @@ const querySchema = new mongoose.Schema({
     name: String,
     query: String,
     results: [{}],
-    dependencies: {
-        type: [{ type: String, name: String}],
-        default: undefined
-    },
+    dependencies: [{}],
     regenerate: Boolean,
     created: { type: Date, default: Date.now },
     createdBy: mongoose.Schema.ObjectId,

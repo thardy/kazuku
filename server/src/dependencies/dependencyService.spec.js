@@ -1,20 +1,21 @@
 "use strict";
-var DependencyService = require("./dependencyService");
-var dependencyTestHelper = require("./dependencyTestHelper");
-var Promise = require("bluebird");
-var _ = require("lodash");
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
-var moment = require("moment");
-var sinon = require("sinon");
+const DependencyService = require("./dependencyService");
+const dependencyTestHelper = require("./dependencyTestHelper");
+const Promise = require("bluebird");
+const _ = require("lodash");
+const chai = require("chai");
+const should = chai.Should();
+const expect = chai.expect;
+const moment = require("moment");
+const sinon = require("sinon");
+const ObjectID = require('mongodb').ObjectID;
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
 describe("DependencyService", function () {
     let dependencyService = {};
-    let testOrgId = 1;
+    let testOrgId = '5949fdeff8e794bdbbfd3d85';
     let testContentType = 'testType';
 
     // These are unit tests, using fakes for customDataService, templateService, and queryService

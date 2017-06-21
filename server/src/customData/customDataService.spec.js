@@ -1,13 +1,14 @@
 "use strict";
-var CustomDataService = require("./customDataService");
-var Promise = require("bluebird");
-var database = require("../database/database").database;
-var _ = require("lodash");
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
-var moment = require("moment");
-var Query = require("rql/query").Query;
+const CustomDataService = require("./customDataService");
+const Promise = require("bluebird");
+const _ = require("lodash");
+const chai = require("chai");
+const should = chai.Should();
+const expect = chai.expect;
+const moment = require("moment");
+const Query = require("rql/query").Query;
+const ObjectID = require('mongodb').ObjectID;
+const CustomData = require('./customData.model');
 
 //temp
 var mongoRql = require('mongo-rql');
@@ -21,11 +22,11 @@ describe("CustomDataService", function () {
         var existingCustomData1 = {};
         var existingCustomData2 = {};
         var theUpdatedCustomData = {};
-        var testOrgId = 1;
+        var testOrgId = '5949fdeff8e794bdbbfd3d85';
         var testContentType = 'testType';
 
         before(function () {
-            customDataService = new CustomDataService(database);
+            customDataService = new CustomDataService();
             // Insert some docs to be present before all tests start
             // All test data should belong to a specific orgId (a test org)
             var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', template: 'Imagine a well written blog here.'};
@@ -33,7 +34,7 @@ describe("CustomDataService", function () {
 
             return deleteAllTestData()
                 .then(function(result) {
-                    return database.customData.insert(newCustomData1);
+                    return CustomData.create(newCustomData1);
                 })
                 .then(function(doc) {
                     existingCustomData1 = doc;
@@ -41,7 +42,7 @@ describe("CustomDataService", function () {
                     return doc;
                 })
                 .then(function(result) {
-                    return database.customData.insert(newCustomData2);
+                    return CustomData.create(newCustomData2);
                 })
                 .then(function(doc) {
                     existingCustomData2 = doc;
@@ -129,7 +130,7 @@ describe("CustomDataService", function () {
         });
 
         function deleteAllTestData() {
-            return database.customData.remove({orgId: 1, contentType: testContentType});
+            return CustomData.remove({orgId: '5949fdeff8e794bdbbfd3d85', contentType: testContentType});
         }
 
         describe("CRUD with dates", function () {
@@ -164,7 +165,7 @@ describe("CustomDataService", function () {
     describe("Resource Query Language", function () {
         var customDataService = {};
         var existingProducts = [];
-        var testOrgId = 1;
+        var testOrgId = '5949fdeff8e794bdbbfd3d85';
         var testContentType = 'testProducts';
         var now = moment().format('MMMM Do YYYY, h:mm:ss a');
         var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
@@ -172,15 +173,15 @@ describe("CustomDataService", function () {
         var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00')  };
 
         before(function () {
-            customDataService = new CustomDataService(database);
+            customDataService = new CustomDataService();
             // Insert some docs to be present before all tests start
 
             return deleteAllTestData()
                 .then(function(result) {
                     return Promise.all([
-                        database.customData.insert(newProduct1),
-                        database.customData.insert(newProduct2),
-                        database.customData.insert(newProduct3)
+                        CustomData.create(newProduct1),
+                        CustomData.create(newProduct2),
+                        CustomData.create(newProduct3)
                     ]);
                 })
                 .then(function(docs) {
@@ -203,7 +204,7 @@ describe("CustomDataService", function () {
         });
 
         function deleteAllTestData() {
-            return database.customData.remove({orgId: testOrgId, contentType: testContentType});
+            return CustomData.remove({orgId: testOrgId, contentType: testContentType});
         }
 
         it("can query using an RQL query object", function () {
@@ -253,7 +254,7 @@ describe("CustomDataService", function () {
 //        });
 
         it("can query using RQL limit", function () {
-            var query = "eq(orgId,1)&eq(contentType,testContentType)&sort(created)&limit(2,0)"; // limit must be last
+            var query = `eq(orgId,${testOrgId})&eq(contentType,testContentType)&sort(created)&limit(2,0)`; // limit must be last
             var actual = mongoRql(query);
             let expected = {
                 sort: { created: 1 },

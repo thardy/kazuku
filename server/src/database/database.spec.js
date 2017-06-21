@@ -1,40 +1,42 @@
-var database = require("./database").database;
-var Promise = require("bluebird");
-var chai = require("chai");
-var should = chai.Should();
-var chaiAsPromised = require("chai-as-promised");
-var expect = chai.expect;
+const database = require("./database").database;
+const mongoose = require('mongoose')
+const Promise = require("bluebird");
+const chai = require("chai");
+const should = chai.Should();
+const chaiAsPromised = require("chai-as-promised");
+const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
 describe("database", function () {
 
-    after(function () {
-        // Remove all documents we added
-        return database.templates.remove({name: /^\$Test.*/, siteId: 2});
-    });
+    // after(function () {
+    //     // Remove all documents we added
+    //     return database.templates.remove({name: /^\$Test.*/, siteId: 2});
+    // });
 
     it("can connect to mongo", function () {
-        should.exist(database.db);
+        mongoose.connection.readyState.should.be.ok;
     });
 
-    it("can retrieve collections", function () {
-        should.exist(database.templates);
-    });
-
-    it("can add to collections", function () {
-        var testTemplate = '#Test Template';
-        var insertPromise = database.templates.insert({name: '$TestTemplate', siteId: 2, template: testTemplate});
-
-        return insertPromise.should.eventually.have.property("template", testTemplate);
-    });
-
-    it("can query using regex", function () {
-        var findPromise = database.templates.find({name: /^\$Test.*/, siteId: 2});
-
-        return Promise.all([
-            findPromise.should.eventually.be.instanceOf(Array),
-            findPromise.should.eventually.have.length.greaterThan(0)
-        ]);
-    });
+    // todo: consider moving into a simple mongoose model test
+    // it("can retrieve collections", function () {
+    //     should.exist(database.templates);
+    // });
+    //
+    // it("can add to collections", function () {
+    //     var testTemplate = '#Test Template';
+    //     var insertPromise = database.templates.insert({name: '$TestTemplate', siteId: 2, template: testTemplate});
+    //
+    //     return insertPromise.should.eventually.have.property("template", testTemplate);
+    // });
+    //
+    // it("can query using regex", function () {
+    //     var findPromise = database.templates.find({name: /^\$Test.*/, siteId: 2});
+    //
+    //     return Promise.all([
+    //         findPromise.should.eventually.be.instanceOf(Array),
+    //         findPromise.should.eventually.have.length.greaterThan(0)
+    //     ]);
+    // });
 });

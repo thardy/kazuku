@@ -1,12 +1,13 @@
-var CustomSchemaService = require("./customSchemaService");
-var Promise = require("bluebird");
-var database = require("../database/database").database;
-var _ = require("lodash");
-var chai = require("chai");
-var should = chai.Should();
-var chaiAsPromised = require("chai-as-promised");
-var expect = chai.expect;
-var moment = require("moment");
+const CustomSchemaService = require("./customSchemaService");
+const Promise = require("bluebird");
+const _ = require("lodash");
+const chai = require("chai");
+const should = chai.Should();
+const chaiAsPromised = require("chai-as-promised");
+const expect = chai.expect;
+const moment = require("moment");
+const ObjectID = require('mongodb').ObjectID;
+const CustomSchema = require('./customSchema.model');
 
 chai.use(chaiAsPromised);
 
@@ -15,12 +16,12 @@ describe("CustomSchemaService CRUD", function () {
     var existingCustomSchema1 = {};
     var existingCustomSchema2= {};
     var theUpdatedCustomSchema = {};
-    var testOrgId = 1;
+    var testOrgId = '5949fdeff8e794bdbbfd3d85';
     var testContentType1 = 'testType1';
     var testContentType2 = 'testType2';
 
     before(function () {
-        customSchemaService = new CustomSchemaService(database);
+        customSchemaService = new CustomSchemaService();
         // Insert some docs to be present before all tests start
         // All test data should belong to a specific orgId (a test org)
         var newCustomSchema1 = {
@@ -59,7 +60,7 @@ describe("CustomSchemaService CRUD", function () {
 
         return deleteAllTestSchema()
             .then(function(result) {
-                return database.customSchemas.insert(newCustomSchema1);
+                return CustomSchema.create(newCustomSchema1);
             })
             .then(function(doc) {
                 existingCustomSchema1 = doc;
@@ -67,7 +68,7 @@ describe("CustomSchemaService CRUD", function () {
                 return doc;
             })
             .then(function(result) {
-                return database.customSchemas.insert(newCustomSchema2);
+                return CustomSchema.create(newCustomSchema2);
             })
             .then(function(doc) {
                 existingCustomSchema2 = doc;
@@ -130,13 +131,18 @@ describe("CustomSchemaService CRUD", function () {
             jsonSchema: myJsonSchema
         };
 
-        var createPromise = customSchemaService.create(testOrgId, customSchema);
+        var createPromise = customSchemaService.create(testOrgId, customSchema)
+            .then((result) => {
+                expect(result).to.be.an('object');
+                expect(result).to.have.property('contentType', createdContentType);
+                expect(result).to.have.property('jsonSchema', myJsonSchema);
+            });
 
-        return Promise.all([
-            createPromise.should.eventually.be.an("object"),
-            createPromise.should.eventually.have.property("contentType", createdContentType),
-            createPromise.should.eventually.have.property("jsonSchema", myJsonSchema)
-        ]);
+        // return Promise.all([
+        //     createPromise.should.eventually.be.an("object"),
+        //     createPromise.should.eventually.have.property("contentType", createdContentType),
+        //     createPromise.should.eventually.have.property("jsonSchema", myJsonSchema)
+        // ]);
     });
 
     it("validates customSchemas on create using extended validation - contentType and jsonSchema", function () {
@@ -208,7 +214,7 @@ describe("CustomSchemaService CRUD", function () {
     });
 
     function deleteAllTestSchema() {
-        return database.customSchemas.remove({orgId: testOrgId});
+        return CustomSchema.remove({orgId: testOrgId});
     }
 });
 

@@ -11,13 +11,14 @@ const APIError = require('../helpers/APIError');
 const config = require('../server/config');
 const authHelper = require('../helpers/authHelper');
 const Joi = require('joi');
+const ObjectID = require('mongodb').ObjectID;
 
 class AuthController {
     constructor(app) {
         this.app = app;
         // todo: change to use auth mechanism
         // todo: test that this gets written on every request and not reused between them
-        this.orgId = 1;
+        this.orgId = '5949fdeff8e794bdbbfd3d85';
         //this.userService = new UserService(database);
         this.resourceName = 'auth';
         // this.paramValidation = {
