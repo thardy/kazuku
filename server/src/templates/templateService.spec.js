@@ -110,7 +110,7 @@ describe("TemplateService", function () {
             let myTemplate = {
                 orgId: templateTestHelper.testOrgId,
                 name: testName,
-                site: templateTestHelper.testSiteId,
+                siteId: templateTestHelper.testSiteId,
                 template: "<h1>newly created template</h1>"
             };
 
@@ -120,7 +120,7 @@ describe("TemplateService", function () {
                 .then((doc) => {
                     return templateService.getById(templateTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            expect(retrievedDoc).to.have.property("organization", templateTestHelper.testSiteId);
+                            expect(retrievedDoc).to.have.property("orgId", templateTestHelper.testOrgId);
                             return expect(retrievedDoc).to.have.property("name", testName);
                         });
                 });
@@ -208,7 +208,7 @@ describe("TemplateService", function () {
                 orgId: templateTestHelper.testOrgId,
                 url: "somePage",
                 name: testName,
-                site: templateTestHelper.testSiteId,
+                siteId: templateTestHelper.testSiteId,
                 products: "query(top5Products)",
                 testimonials: `eq(contentType,testimonials)&sort(created)`,
                 template: "{% include 'header' %}<h1>newly created template</h1>{% include 'footer' %}"
@@ -226,7 +226,7 @@ describe("TemplateService", function () {
                 .then((doc) => {
                     return templateService.getById(templateTestHelper.testOrgId, doc.id)
                         .then((retrievedDoc) => {
-                            retrievedDoc.organization.should.equal(templateTestHelper.testSiteId);
+                            retrievedDoc.orgId.should.equal(templateTestHelper.testOrgId);
                             retrievedDoc.name.should.equal(testName);
                             return retrievedDoc.dependencies.should.deep.include.members(expectedDependencies);
                         });
