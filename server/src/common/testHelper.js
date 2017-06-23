@@ -1,4 +1,4 @@
-var config = require("../env-config");
+var config = require('../server/config');
 var Promise = require("bluebird");
 var database = require("../database/database").database;
 var _ = require("lodash");

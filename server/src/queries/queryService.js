@@ -9,13 +9,10 @@ var cache = require("memory-cache");
 class QueryService extends GenericService {
     constructor(database) {
         super(database, 'queries');
-        this._customDataService = new CustomDataService(database);
-        this._dependencyService = new DependencyService(database);
-        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
+        this.customDataService = new CustomDataService(database);
+        this.dependencyService = new DependencyService(database);
+        this.orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
     }
-
-    get customDataService() { return this._customDataService; }
-    get dependencyService() { return this._dependencyService; }
 
     getRegenerateList(orgId) {
         return this.collection.find({orgId: orgId, regenerate: 1})

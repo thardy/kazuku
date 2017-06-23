@@ -1,4 +1,4 @@
-var config = require("../env-config");
+var config = require('../server/config');
 var monk = require("monk");
 
 // connect to the database
@@ -12,13 +12,8 @@ class Database {
         this.customSchemas = this.db.get("customSchemas");
         this.templates = this.db.get("templates");
         this.queries = this.db.get("queries");
+        this.users = this.db.get("users");
     }
-
-    // get db() { return this._db; }
-    // get customData() { return this._customData; }
-    // get customSchemas() { return this._customSchemas; }
-    // get templates() { return this._templates; }
-    // get queries() { return this._queries; }
 
     close() {
         this.db.close();

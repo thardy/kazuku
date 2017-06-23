@@ -6,12 +6,9 @@ var conversionService = require("./conversionService");
 class GenericService {
 
     constructor(database, collectionName) {
-        this._db = database;
-        this._collection = database[collectionName];
+        this.db = database;
+        this.collection = database[collectionName];
     }
-
-    get collection() { return this._collection; }
-    get db() { return this._db; }
 
     getAll(orgId) {
         if (arguments.length !== 1) {

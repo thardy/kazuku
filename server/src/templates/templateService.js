@@ -17,26 +17,19 @@ class TemplateService extends GenericService {
 
         // TemplateService now implements the function getTemplate that the templateEngine requires.  Use that if
         //  a getTemplate function was not supplied.
-        this._getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
+        this.getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
 
-        this._orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
-        this._queryService = (queryService) ? queryService : new QueryService(database);
-        this._customDataService = new CustomDataService(database);
-        this._dependencyService = new DependencyService(database);
-        this._templateEngine = new TemplateEngine({
+        this.orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
+        this.queryService = (queryService) ? queryService : new QueryService(database);
+        this.customDataService = new CustomDataService(database);
+        this.dependencyService = new DependencyService(database);
+        this.templateEngine = new TemplateEngine({
             engineType: 'liquid',
-            getTemplate: this._getTemplateFunction,
-            queryService: this._queryService, // templateEngine needs this to resolve queries on models
-            orgId: this._orgId // needed for resolving queries on models
+            getTemplate: this.getTemplateFunction,
+            queryService: this.queryService, // templateEngine needs this to resolve queries on models
+            orgId: this.orgId // needed for resolving queries on models
         });
     }
-
-    get templateEngine() { return this._templateEngine; }
-    get queryService() { return this._queryService; }
-    get customDataService() { return this._customDataService; }
-    get dependencyService() { return this._dependencyService; }
-    get orgId() { return this._orgId; }
-    get getTemplateFunction() { return this._getTemplateFunction; }
 
     getRegenerateList(orgId) {
         return this.collection.find({orgId: orgId, regenerate: 1})

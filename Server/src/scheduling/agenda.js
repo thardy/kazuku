@@ -1,5 +1,5 @@
 var Agenda = require('agenda');
-var config = require("../env-config");
+var config = require('../server/config');
 
 
 var agenda = new Agenda({db: {address: config.mongoDbUrl}});

@@ -6,16 +6,11 @@ class CrudController {
     constructor(resourceName, app, service) {
         // todo: change to use auth mechanism
         // todo: test that this gets written on every request and not reused between them
-        this._app = app;
-        this._orgId = 1;
-        this._service = service;
-        this._resourceName = resourceName;
+        this.app = app;
+        this.orgId = 1;
+        this.service = service;
+        this.resourceName = resourceName;
     }
-
-    get app() { return this._app; }
-    get orgId() { return this._orgId; }
-    get service() { return this._service; }
-    get resourceName() { return this._resourceName; }
 
     mapRoutes() {
         // Map routes

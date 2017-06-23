@@ -9,10 +9,8 @@ var mongoRql = require('mongo-rql');
 class CustomDataService extends GenericService {
     constructor(database) {
         super(database, 'customData');
-        this._dependencyService = new DependencyService(database);
+        this.dependencyService = new DependencyService(database);
     }
-
-    get dependencyService() { return this._dependencyService; }
 
     getByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
