@@ -53,7 +53,7 @@ describe("QueryService", function () {
                 .then(function (result) {
                     let regeneratePromise = queryService.getRegenerateList(queryTestHelper.testOrgId);
 
-                    return regeneratePromise.should.eventually.deep.include.members(queryTestHelper.existingRegenerateList);
+                    return regeneratePromise.should.eventually.deep.include.members(queryTestHelper.existingRegenerateListObjects);
                 });
         });
 
@@ -144,7 +144,8 @@ describe("QueryService", function () {
                 .then(() => {
                     let promise = queryService.getAllDependentsOfItem(item);
 
-                    return promise.should.eventually.deep.include.members(expectedDependents);
+                    // return promise.should.eventually.deep.include.members(expectedDependents);
+                    return promise.should.eventually.deep.include.members(queryTestHelper.existingDataQueryObjects);
                 });
         });
 

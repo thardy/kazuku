@@ -186,9 +186,11 @@ describe("CustomDataService", function () {
                 })
                 .then(function(docs) {
                     // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
-                    existingProducts = docs;
-                    _.forEach(existingProducts, function (item) {
-                        item.id = item._id.toHexString();
+                    existingProducts = [];
+                    _.forEach(docs, function (item) {
+                        let existingProduct = item.toObject();
+                        existingProduct.id = item._id.toHexString();
+                        existingProducts.push(existingProduct);
                     });
                     return docs;
                 })
@@ -208,10 +210,11 @@ describe("CustomDataService", function () {
         }
 
         it("can query using an RQL query object", function () {
-            var name = 'Widget';
-            var query = new Query().eq('name', name);
-            var expected = [];
-            expected.push(newProduct1);
+            let name = 'Widget';
+            let query = new Query().eq('name', name);
+            let expected = [];
+            let existingProduct = _.find(existingProducts, {name: name});
+            expected.push(existingProduct);
             var findPromise = customDataService.find(testOrgId, query);
 
             return findPromise.should.eventually.deep.equal(expected);

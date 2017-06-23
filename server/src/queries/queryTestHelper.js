@@ -43,6 +43,10 @@ let existingRegenerateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "query needz regenerating", regenerate: 1 },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-TopProducts", query: "query regen ftw", regenerate: 1 }
 ];
+// stupid Mongoose is driving me crazy.  Apparently I need these.
+let existingDataQueryObjects = [];
+let existingQueryDataObjects = [];
+let existingRegenerateListObjects = [];
 
 
 let queryTestHelper = {
@@ -55,10 +59,13 @@ let queryTestHelper = {
     createRegenerateList: createRegenerateList,
     createExistingDataQueries: createExistingDataQueries,
     createExistingQueryData: createExistingQueryData,
-    existingRegenerateList: existingRegenerateList,
-    existingQueryData: existingQueryData,
+    // existingRegenerateList: existingRegenerateList,
+    // existingQueryData: existingQueryData,
     existingQuery1: existingQuery1,
-    existingQuery2: existingQuery2
+    existingQuery2: existingQuery2,
+    existingDataQueryObjects: existingDataQueryObjects,
+    existingQueryDataObjects: existingQueryDataObjects,
+    existingRegenerateListObjects: existingRegenerateListObjects
 };
 
 function setupTestQueries() {
@@ -69,7 +76,7 @@ function setupTestQueries() {
             return Query.create(newQuery1);
         })
         .then((doc) => {
-            queryTestHelper.existingQuery1 = doc;
+            queryTestHelper.existingQuery1 = doc.toObject();
             queryTestHelper.existingQuery1.id = queryTestHelper.existingQuery1._id.toHexString();
             return doc;
         })
@@ -77,7 +84,7 @@ function setupTestQueries() {
             return Query.create(newQuery2);
         })
         .then((doc) => {
-            queryTestHelper.existingQuery2 = doc;
+            queryTestHelper.existingQuery2 = doc.toObject();
             queryTestHelper.existingQuery2.id = queryTestHelper.existingQuery2._id.toHexString();
             return doc;
         })
@@ -92,9 +99,13 @@ function createExistingDataQueries() {
         .then((result) => {
             return Query.create(existingDataQueries)
                 .then(function(docs) {
-                    existingDataQueries = docs;
-                    _.forEach(existingDataQueries, function (item) {
-                        item.id = item._id.toHexString();
+                    // existingDataQueries = docs;
+                    // _.forEach(existingDataQueries, function (item) {
+                    _.forEach(docs, function (item) {
+                        // item.id = item._id.toHexString();
+                        let existingItem = item.toObject();
+                        existingItem.id = existingItem._id.toHexString();
+                        existingDataQueryObjects.push(existingItem);
                     });
                     return docs;
                 });
@@ -106,9 +117,13 @@ function createExistingQueryData() {
         .then((result) => {
             return CustomData.create(existingQueryData)
                 .then(function(docs) {
-                    existingQueryData = docs;
-                    _.forEach(existingQueryData, function (item) {
-                        item.id = item._id.toHexString();
+                    // existingQueryData = docs;
+                    // _.forEach(existingQueryData, function (item) {
+                    _.forEach(docs, function (item) {
+                        // item.id = item._id.toHexString();
+                        let existingItem = item.toObject();
+                        existingItem.id = existingItem._id.toHexString();
+                        existingQueryDataObjects.push(existingItem);
                     });
                     return docs;
                 });
@@ -120,9 +135,13 @@ function createRegenerateList() {
         .then((result) => {
             return Query.create(existingRegenerateList)
                 .then(function(docs) {
-                    existingRegenerateList = docs;
-                    _.forEach(existingRegenerateList, function (item) {
-                        item.id = item._id.toHexString();
+                    //existingRegenerateList = docs;
+                    // _.forEach(existingRegenerateList, function (item) {
+                    _.forEach(docs, function (item) {
+                        // item.id = item._id.toHexString();
+                        let existingItem = item.toObject();
+                        existingItem.id = existingItem._id.toHexString();
+                        existingRegenerateListObjects.push(existingItem);
                     });
                     return docs;
                 });

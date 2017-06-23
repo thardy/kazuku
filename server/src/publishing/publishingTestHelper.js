@@ -125,7 +125,7 @@ var pubTestHelper = {
 function createCustomData() {
     return deleteAllTestCustomData()
         .then((result) => {
-            return CustomData.insert(existingNavItems)
+            return CustomData.create(existingNavItems)
                 .then(function(docs) {
                     existingNavItems = docs;
                     _.forEach(existingNavItems, function (item) {
@@ -135,7 +135,7 @@ function createCustomData() {
                 });
         })
         .then((result) => {
-            return CustomData.insert(existingTestimonials)
+            return CustomData.create(existingTestimonials)
                 .then(function(docs) {
                     existingTestimonials = docs;
                     _.forEach(existingTestimonials, function (item) {
