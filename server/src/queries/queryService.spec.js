@@ -142,7 +142,7 @@ describe("QueryService", function () {
 
             return queryTestHelper.createExistingDataQueries()
                 .then(() => {
-                    let promise = queryService.getAllDependentsOfItem(item);
+                    let promise = queryService.getAllDependentsOfItem(queryTestHelper.testOrgId, item);
 
                     return promise.should.eventually.deep.include.members(expectedDependents);
                 });

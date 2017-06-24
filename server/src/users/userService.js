@@ -4,7 +4,18 @@ const GenericService = require("../common/genericService");
 
 class UserService extends GenericService {
     constructor(database) {
-        super(database, 'templates');
+        super(database, 'users');
+    }
+
+    getById(id) {
+        if (arguments.length !== 1) {
+            throw new Error('Incorrect number of arguments passed to UserService.getById');
+        }
+        return this.collection.findOne({_id: id})
+            .then((doc) => {
+                this.useFriendlyId(doc);
+                return doc;
+            });
     }
 
     getByEmail(email) {

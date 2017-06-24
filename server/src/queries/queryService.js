@@ -28,10 +28,10 @@ class QueryService extends GenericService {
     }
 
     // item should be of format - { type: "data", name: "someQuery" }
-    getAllDependentsOfItem(item) {
+    getAllDependentsOfItem(orgId, item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
         // look like this - { dependencies: [{type: 'query', name: 'someQuery' }] }
-        return this.collection.find({orgId: this._orgId, dependencies: item })
+        return this.collection.find({orgId: orgId, dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {
