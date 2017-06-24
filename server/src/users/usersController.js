@@ -35,14 +35,14 @@ class UsersController extends CrudController {
     }
 
     mapRoutes(app) {
-        // Map routes
-        super.mapRoutes(app); // map the base CrudController routes
+        // GET /api/auth/random-number - Sample Protected route,
+        app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
 
         app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond);
         //app.post(`/api/${this.resourceName}/login`, passport.authenticate('local', { session: false }), this.serialize, this.generateToken, this.respond);
 
-        // GET /api/auth/random-number - Sample Protected route,
-        app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
+        // Map routes
+        super.mapRoutes(app); // map the base CrudController routes
 
         /** Load user when API with userId route parameter is hit */
         //app.param('userId', userCtrl.load);
