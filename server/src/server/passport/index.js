@@ -7,6 +7,10 @@ const TwitterStrategy = require('passport-twitter').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const UserService = require('../../users/userService');
+const moment = require('moment');
+const bcrypt = require('bcrypt-nodejs');
+
+const SALT_WORK_FACTOR = 10;
 
 module.exports = (passport) => {
     let userService = new UserService(database);
@@ -18,7 +22,10 @@ module.exports = (passport) => {
     passport.deserializeUser((id, done) => {
         // Find the user using id
         userService.getById(id)
-            .then(user => done(null, user))
+            .then(user => {
+                delete user.password;
+                done(null, user);
+            })
             .catch(error => logger.log('error', 'Error when deserializing the user: ' + error));
     });
 
@@ -57,22 +64,29 @@ module.exports = (passport) => {
                             return done(null, false, {message: `Email '${email}' not found`});
                         }
 
-                        if (email === user.email && password === user.password) {
-                            // todo: save new lastLoggedIn date
-                            return done(null, {
-                                id: user.id,
-                                email: user.email,
-                                firstName: user.firstName,
-                                lastName: user.lastName,
-                                lastLoggedIn: user.lastLoggedIn
+                        userService.verifyPassword(password, user.password)
+                            .then((isMatch) => {
+                                if (isMatch) {
+                                    // todo: save new lastLoggedIn date
+                                    return done(null, {
+                                        id: user.id,
+                                        email: user.email,
+                                        firstName: user.firstName,
+                                        lastName: user.lastName,
+                                        lastLoggedIn: user.lastLoggedIn
+                                    });
+                                }
+                                else {
+                                    return done(null, false, {message: `Invalid email or password`});
+                                }
+                            })
+                            .catch(err => {
+                                err.message = `ERROR: passport/index.js -> attempted login with email = ${email}.  Message: ${err.message}`;
+                                return done(err);
                             });
-                        }
-                        else {
-                            return done(null, false, {message: `Invalid email or password`});
-                        }
                     })
                     .catch(err => {
-                        err.message = `ERROR: ${this.resourceName}Controller -> login with email = ${email}.  Message: ${err.message}`;
+                        err.message = `ERROR: passport/index.js -> attempted login with email = ${email}.  Message: ${err.message}`;
                         return done(err);
                     });
             }

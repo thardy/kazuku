@@ -48,7 +48,10 @@ class UsersController extends CrudController {
         //app.param('userId', userCtrl.load);
     }
 
-   respond(req, res) {
+    respond(req, res) {
+        const user = req.user;
+        // don't return password
+        delete user.password;
         res.status(200).json({
             user: req.user
         });
