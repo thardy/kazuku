@@ -1,6 +1,7 @@
 'use strict';
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+//const SkinStore = require('connect-mongoskin');
 const config = require('../config');
 const db = require('../../database/database').database;
 
@@ -18,6 +19,9 @@ if (process.env.NODE_ENV === 'production') {
     module.exports = session({
         secret: config.sessionSecret,
         resave: false,
-        saveUninitialized: true
+        saveUninitialized: true,
+        // todo: figure this out (use existing connection)
+        //store: new SkinStore(db.db)
+        store: new MongoStore({ url: config.mongoDbUrl })
     });
 }
