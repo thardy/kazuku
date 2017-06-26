@@ -35,8 +35,14 @@ class UsersController extends CrudController {
     }
 
     mapRoutes(app) {
-        // GET /api/auth/random-number - Sample Protected route,
+        // GET /api/users/random-number - Sample Protected route,
         app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
+        app.get(`/api/${this.resourceName}/facebook`, passport.authenticate('facebook'));
+        app.get(`/api/${this.resourceName}/facebook/callback`, passport.authenticate('facebook'));
+        app.get(`/api/${this.resourceName}/twitter`, passport.authenticate('twitter'));
+        app.get(`/api/${this.resourceName}/twitter/callback`, passport.authenticate('twitter'));
+        app.get(`/api/${this.resourceName}/google`, passport.authenticate('google', { scope : ['profile', 'email'] }));
+        app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google'));
 
         app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond);
         //app.post(`/api/${this.resourceName}/login`, passport.authenticate('local', { session: false }), this.serialize, this.generateToken, this.respond);

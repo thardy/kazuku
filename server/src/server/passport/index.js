@@ -34,15 +34,22 @@ module.exports = (passport) => {
 
         // If the user is found, return the user data using the done()
         // If the user is not found, create one in the local db and return
-        userService.getById(profile.id)
-            .then(result => {
-                if (result) {
-                    done(null, result);
+        userService.getByEmail(profile.email)
+            .then((existingUser) => {
+                if (existingUser) {
+                    done(null, existingUser);
                 } else {
                     // Create a new user and return
-                    userService.create(profile)
-                        .then(newUser => done(null, newUser))
-                        .catch(error => logger.log('error', 'Error when creating new user: ' + error));
+                    let newUser = {
+                        email: profile.email,
+                        orgId: 1,
+                    };
+                    userService.create(newUser)
+                        .then(createdUser => done(null, createdUser))
+                        .catch(error => {
+                            logger.log('error', `Error when creating new user with email, ${newUser.email}. Error: ${error}`);
+                            return done(error);
+                        });
                 }
             });
     };
@@ -85,9 +92,9 @@ module.exports = (passport) => {
                                 return done(err);
                             });
                     })
-                    .catch(err => {
-                        err.message = `ERROR: passport/index.js -> attempted login with email = ${email}.  Message: ${err.message}`;
-                        return done(err);
+                    .catch(error => {
+                        error.message = `ERROR: passport/index.js -> attempted login with email = ${email}.  Message: ${error.message}`;
+                        return done(error);
                     });
             }
             catch(ex) {

@@ -22,6 +22,7 @@ import {InMemoryDataService} from "./in-memory-data.service";
 import {TemplateService} from "./templates/template.service";
 import {OrganizationService} from "./organizations/organization.service";
 import {SiteService} from "./sites/sites.service";
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import {SiteService} from "./sites/sites.service";
         TemplateDetailComponent,
         CustomSchemasComponent,
         CustomDataComponent,
-        QueriesComponent
+        QueriesComponent,
+        LoginComponent
     ],
     imports: [
         BrowserModule,
