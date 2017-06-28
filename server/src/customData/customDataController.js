@@ -64,7 +64,7 @@ class CustomDataController {
                     query += req.query[property] ? '=' + req.query[property] : '';
                 }
             }
-            this.service.find(this.orgId, query)
+            return this.service.find(this.orgId, query)
                 .then(function (docs) {
                     return res.status(200).json(docs);
                 })
@@ -74,7 +74,7 @@ class CustomDataController {
                 });
         }
         else {
-            this.service.getByContentType(this.orgId, contentType)
+            return this.service.getByContentType(this.orgId, contentType)
                 .then(function (docs) {
                     return res.status(200).json(docs);
                 })
@@ -91,13 +91,19 @@ class CustomDataController {
         var id = req.params.id;
         res.set("Content-Type", "application/json");
 
-        this.service.getByTypeAndId(this.orgId, contentType, id)
+        return this.service.getByTypeAndId(this.orgId, contentType, id)
             .then(function (doc) {
-                if (doc === null) return next();
+                if (doc === null) {
+                    return res.status(404).json({'Errors': ['id not found']});
+                }
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
+                }
+
                 err.message = 'ERROR: customDataController -> customDataService.getByTypeAndId({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, id, err.message);
                 return next(err);
             });
@@ -111,7 +117,7 @@ class CustomDataController {
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        this.service.create(this.orgId, body)
+        return this.service.create(this.orgId, body)
             .then(function (customData) {
                 return res.status(201).json(customData);
             })
@@ -130,7 +136,7 @@ class CustomDataController {
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        this.service.updateById(this.orgId, id, body)
+        return this.service.updateById(this.orgId, id, body)
             .then(function (result) {
                 if (result.nModified <= 0) {
                     return res.status(404).json({'Errors': ['Document not found']});
@@ -139,6 +145,9 @@ class CustomDataController {
                 return res.status(200).json({});
             })
             .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
+                }
                 err.message = 'ERROR: customDataController -> customDataService.updateById({0}, {1}, {2}) - {3}'.format(this.orgId, id, body, err.message);
                 return next(err);
             });
@@ -148,13 +157,17 @@ class CustomDataController {
         var contentType = req.params.contentType;
         // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;
-        this.service.deleteByTypeAndId(this.orgId, contentType, id)
+        return this.service.deleteByTypeAndId(this.orgId, contentType, id)
             .then(function (numAffected) {
                 if (numAffected <= 0) return next();
 
                 return res.status(204).json({});
             })
             .catch(err => {
+                // This is not happening!!!
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
+                }
                 err.message = 'customDataController -> customDataService.deleteByTypeAndId({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, id, err.message);
                 return next(err);
             });

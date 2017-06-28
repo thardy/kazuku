@@ -31,6 +31,9 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.getById');
         }
+        if (!this.isValidObjectId(id)) {
+            throw new TypeError('id is not a valid ObjectId');
+        }
         return this.collection.findOne({_id: id, orgId: orgId})
             .then((doc) => {
                 this.useFriendlyId(doc);
@@ -92,6 +95,9 @@ class GenericService {
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to GenericService.updateById');
         }
+        if (!this.isValidObjectId(id)) {
+            throw new TypeError('id is not a valid ObjectId');
+        }
         let clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         conversionService.convertISOStringDateTimesToMongoDates(clone);
@@ -147,6 +153,10 @@ class GenericService {
         if (arguments.length !== 2) {
             throw new Error('Incorrect number of arguments passed to GenericService.delete');
         }
+        if (!this.isValidObjectId(id)) {
+            throw new TypeError('id is not a valid ObjectId');
+        }
+
         let queryObject = { _id: id, orgId: orgId };
         return this.onBeforeDelete(orgId, queryObject)
             .then((result) => {
@@ -173,6 +183,11 @@ class GenericService {
             doc.id = doc._id.toHexString();
         }
     }
+
+    isValidObjectId(id) {
+        return id.match(/^[0-9a-fA-F]{24}$/);
+    }
+
 
     onBeforeCreate(orgId, result) { return Promise.resolve(result); }
     onBeforeUpdate(orgId, result) { return Promise.resolve(result); }

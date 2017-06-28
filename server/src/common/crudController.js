@@ -47,6 +47,10 @@ class CrudController {
                 return res.status(200).send(doc);
             })
             .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
+                }
+
                 err.message = 'ERROR: {0}Controller -> getById({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
                 return next(err);
             });
@@ -84,8 +88,8 @@ class CrudController {
                 return res.status(200).json({});
             })
             .catch(err => {
-                if (err.code) {
-
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
                 }
 
                 err.message = 'ERROR: {0}Controller -> updateById({1}, {2}, {3}) - {4}'.format(this.resourceName, this.orgId, id, body, err.message);
@@ -102,6 +106,10 @@ class CrudController {
                 return res.status(204).json({});
             })
             .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
+                }
+
                 err.message = 'ERROR: {0}Controller -> delete({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
                 return next(err);
             });

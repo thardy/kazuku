@@ -1,15 +1,13 @@
-var _ = require("lodash");
-var express = require("express");
-var request = require("supertest-as-promised");
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
-var moment = require("moment");
-var testHelper = require("../common/testHelper");
-var utils = require('../utils/index');
-
-// todo: consider moving this into a more global spot before running all api-related tests.  See http://beletsky.net/2014/03/testable-apis-with-node-dot-js.html
-var app = require('../../bin/www'); // This starts up the api server (I'm assuming it shuts down when mocha is done)
+const _ = require("lodash");
+const express = require("express");
+const app = require('../server');
+const request = require("supertest-as-promised");
+const chai = require("chai");
+const should = chai.Should();
+const expect = chai.expect;
+const moment = require("moment");
+const testHelper = require("../common/testHelper");
+const utils = require('../utils/index');
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
@@ -31,7 +29,7 @@ describe("ApiTests", function () {
         describe("when authorized", function () {
             describe("getAll", function () {
                 it("should return all customSchemas for a given org", function () {
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customschemas')
                         .expect(200)
                         .then(function (result) {
@@ -45,7 +43,7 @@ describe("ApiTests", function () {
             });
             describe("getByContentType", function () {
                 it("should return a customSchema for a given org and contentType", function () {
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[0].contentType))
                         .expect(200)
                         .then(function (result) {
@@ -55,7 +53,7 @@ describe("ApiTests", function () {
                 });
                 it("should return a 404 for a contentType that is not found", function () {
                     var badContentType = "123456789012";
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customschemas/{0}'.format(badContentType))
                         .expect(404);
                 });
@@ -80,7 +78,7 @@ describe("ApiTests", function () {
                     };
 
                     var relativeUrl = '/api/customschemas';
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .post(relativeUrl)
                         .send(newSchema)
                         .expect(201)
@@ -95,7 +93,7 @@ describe("ApiTests", function () {
                     var invalidCustomSchema = {
                         contentType: testHelper.testContentType2
                     };
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .post('/api/customschemas')
                         .send(invalidCustomSchema)
                         .expect(400);
@@ -106,7 +104,7 @@ describe("ApiTests", function () {
                         contentType: testHelper.existingSchemas[0].contentType,
                         jsonSchema: {}
                     };
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .post('/api/customschemas')
                         .send(body)
                         .expect(409);
@@ -129,13 +127,13 @@ describe("ApiTests", function () {
                     };
 
                     var relativeUrl = '/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .put(relativeUrl)
                         .send(updatedSchema)
                         .expect(200)
                         .then(function(result) {
                             // verify customSchema was updated
-                            return request(testHelper.apiUrl)
+                            return request(app)
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
                                 .expect(200)
                                 .then(function (result) {
@@ -151,7 +149,7 @@ describe("ApiTests", function () {
 
                     // 557f30402598f1243c14403c
                     var relativeUrl = '/api/customschemas/{0}'.format('nonExistentContentType');
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .put(relativeUrl)
                         .send(body)
                         .expect(404);
@@ -160,19 +158,19 @@ describe("ApiTests", function () {
             describe("delete", function () {
                 it("should delete an existing customSchema", function () {
                     var id = testHelper.existingSchemas[1].id;
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .delete('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
                         .expect(204)
                         .then(function(result) {
                             // verify customData was deleted
-                            return request(testHelper.apiUrl)
+                            return request(app)
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1]))
                                 .expect(404);
                         });
                 });
                 it("should return 404 for a non-existent contentType", function () {
                     var relativeUrl = '/api/customData/{0}'.format('nonExistentContentType');
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .delete(relativeUrl)
                         .expect(404);
                 });

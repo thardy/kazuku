@@ -1,11 +1,12 @@
-var _ = require("lodash");
-var express = require("express");
-var request = require("supertest-as-promised");
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
-var moment = require("moment");
-var testHelper = require("../common/testHelper");
+const _ = require("lodash");
+const express = require("express");
+const app = require('../server');
+const request = require("supertest-as-promised")
+const chai = require("chai");
+const should = chai.Should();
+const expect = chai.expect;
+const moment = require("moment");
+const testHelper = require("../common/testHelper");
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
@@ -15,8 +16,7 @@ describe("ApiTests", function () {
     //  or split mocha tests up somehow, preferably by tag or somesuch instead of by location.
     //  Perhaps just leave in each spec until Mocha tagging api is completed, and use that to split up api and non-api test runs.
     // Update: I'm currently using grep to run api tests and it's working, but it doesn't address loading this in every spec.
-    var app = require('../../bin/www'); // This starts up the api server (I'm assuming it shuts down when mocha is done)
-
+    // var app = require('../../bin/www'); // This starts up the api server (I'm assuming it shuts down when mocha is done)
 
     describe("customDataController", function () {
 
@@ -34,7 +34,7 @@ describe("ApiTests", function () {
 
                 describe("getAll", function () {
                     it("should return all customData for a given org and contentType", function () {
-                        return request(testHelper.apiUrl)
+                        return request(app)
                             .get('/api/customData/{0}'.format(testHelper.testProductsContentType))
                             .expect(200)
                             .then(function (result) {
@@ -48,7 +48,7 @@ describe("ApiTests", function () {
                 });
                 describe("getById", function () {
                     it("should return a customData for a given org, contentType, and id", function () {
-                        return request(testHelper.apiUrl)
+                        return request(app)
                             .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[0].id))
                             .expect(200)
                             .then(function (result) {
@@ -58,10 +58,16 @@ describe("ApiTests", function () {
                             });
                     });
                     it("should return a 404 for an id that is not found", function () {
-                        var badId = "thisisabadid";
-                        return request(testHelper.apiUrl)
+                        let badId = '111111111111111111111111';
+                        return request(app)
                             .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, badId))
                             .expect(404);
+                    });
+                    it("should return a 400 for an id that is not a valid ObjectId", function () {
+                        var badId = "thisisabadid";
+                        return request(app)
+                            .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, badId))
+                            .expect(400);
                     });
                 });
                 describe("create", function () {
@@ -76,7 +82,7 @@ describe("ApiTests", function () {
                         };
 
                         var relativeUrl = '/api/customData/{0}'.format(testHelper.testProductsContentType);
-                        return request(testHelper.apiUrl)
+                        return request(app)
                             .post(relativeUrl)
                             .send(body)
                             .expect(201)
@@ -90,7 +96,7 @@ describe("ApiTests", function () {
                     // There are currently no validation errors for customData, since it can be anything
 //                it("should return a 400 for validation error", function () {
 //                    var badData = "somethingbadgoeshere";
-//                    return request(testHelper.apiUrl)
+//                    return request(app)
 //                        .post('/api/customData/{0}'.format(testHelper.testProductsContentType))
 //                        .send(body)
 //                        .expect(400);
@@ -102,7 +108,7 @@ describe("ApiTests", function () {
 //                        orgId: testHelper.testOrgId,
 //                        contentType: testHelper.testProductsContentType
 //                    };
-//                    return request(testHelper.apiUrl)
+//                    return request(app)
 //                        .post('/api/customData/{0}'.format(testHelper.testProductsContentType))
 //                        .send(body)
 //                        .expect(409);
@@ -118,13 +124,13 @@ describe("ApiTests", function () {
                         };
 
                         var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id);
-                        return request(testHelper.apiUrl)
+                        return request(app)
                             .put(relativeUrl)
                             .send(body)
                             .expect(200)
                             .then(function(result) {
                                 // verify customData was updated
-                                return request(testHelper.apiUrl)
+                                return request(app)
                                     .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id))
                                     .expect(200)
                                     .then(function (result) {
@@ -142,7 +148,7 @@ describe("ApiTests", function () {
                         };
                         // 557f30402598f1243c14403c
                         var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
-                        return request(testHelper.apiUrl)
+                        return request(app)
                             .put(relativeUrl)
                             .send(body)
                             .expect(404);
@@ -151,19 +157,25 @@ describe("ApiTests", function () {
                 describe("delete", function () {
                     it("should delete an existing customData document", function () {
                         var id = testHelper.existingProducts[1].id;
-                        return request(testHelper.apiUrl)
+                        return request(app)
                             .delete('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
                             .expect(204)
                             .then(function(result) {
                                 // verify customData was deleted
-                                return request(testHelper.apiUrl)
+                                return request(app)
                                     .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
                                     .expect(404);
                             });
                     });
-                    it("should return 404 for a non-existent id", function () {
+                    it("should return 400 for a invalid ObjectId", function () {
                         var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
-                        return request(testHelper.apiUrl)
+                        return request(app)
+                            .delete(relativeUrl)
+                            .expect(400);
+                    });
+                    it("should return 404 for a non-existent id", function () {
+                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
+                        return request(app)
                             .delete(relativeUrl)
                             .expect(404);
                     });
@@ -183,7 +195,7 @@ describe("ApiTests", function () {
 
                 it("can query custom number fields by value", function () {
                     var query = 'quantity={0}'.format(testHelper.newProduct1.quantity);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {
@@ -195,7 +207,7 @@ describe("ApiTests", function () {
                 });
                 it("can query custom number fields greater than value", function () {
                     var query = 'quantity=gt={0}'.format(90);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {
@@ -206,7 +218,7 @@ describe("ApiTests", function () {
                 });
                 it("can query custom number fields greater than value with a sort", function () {
                     var query = 'price=gt={0}&sort(price)'.format(10.00);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {
@@ -219,7 +231,7 @@ describe("ApiTests", function () {
                 });
                 it("can query custom number fields in range", function () {
                     var query = 'price=ge={0}&price=le={1}&sort(price)'.format(5.50, 20.00);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {
@@ -234,7 +246,7 @@ describe("ApiTests", function () {
                 it("can query custom date fields by value", function () {
                     var findDate = moment(testHelper.newProduct2.created).toISOString(); //'2015-06-10T00:00:00Z';
                     var query = 'created=date:{0}'.format(findDate);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {
@@ -246,7 +258,7 @@ describe("ApiTests", function () {
                 it("can query custom date fields greater than value", function () {
                     var findDate = '2014-01-01';
                     var query = 'created=gt=date:{0}&sort(-created)'.format(findDate);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {
@@ -261,7 +273,7 @@ describe("ApiTests", function () {
                     var startDate = '2015-01-27';
                     var endDate = '2015-05-20';
                     var query = 'created=ge=date:{0}&created=le=date:{1}&sort(-created)'.format(startDate, endDate);
-                    return request(testHelper.apiUrl)
+                    return request(app)
                         .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
                         .expect(200)
                         .then(function (result) {

@@ -33,6 +33,9 @@ class CustomDataService extends GenericService {
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId');
         }
+        if (!this.isValidObjectId(id)) {
+            throw new TypeError('id is not a valid ObjectId');
+        }
 
         return this.collection.findOne({_id: id, orgId: orgId, contentType: contentType})
             .then((doc) => {
@@ -78,8 +81,12 @@ class CustomDataService extends GenericService {
     // todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
     //  update in order to check and enforce the context - something I'll have to do in order to enforce orgId context anyway)
     deleteByTypeAndId(orgId, contentType, id) {
+        // throw new Error('testing my catch'); // Feel free to put this in and see how the catch does not trigger in customDataController.deleteByTypeAndId
         if (arguments.length !== 3) {
             throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');
+        }
+        if (!this.isValidObjectId(id)) {
+            throw new TypeError('id is not a valid ObjectId');
         }
 
         let queryObject = {_id: id, orgId: orgId, contentType: contentType};
