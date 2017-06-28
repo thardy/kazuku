@@ -3,6 +3,7 @@ var Promise = require("bluebird");
 var database = require("../database/database").database;
 var _ = require("lodash");
 var moment = require("moment");
+const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
 
 //var existingProducts = [];
 var testOrgId = 1;
@@ -13,6 +14,12 @@ var newProduct3 = { orgId: testOrgId, contentType: testProductsContentType, name
 
 var testContentType1 = 'testType1';
 var testContentType2 = 'testType2';
+
+var newUser1 = {
+    orgId: testOrgId,
+    email: "one@test.com"
+};
+
 var newSchema1 = {
     orgId: testOrgId,
     contentType: testContentType1,
@@ -47,29 +54,6 @@ var newSchema2 = {
     }
 };
 
-var testHelper = {
-    apiUrl: 'http://localhost:3000',
-    testOrgId: testOrgId,
-    testProductsContentType: testProductsContentType,
-    newProduct1: newProduct1,
-    newProduct2: newProduct2,
-    newProduct3: newProduct3,
-    existingProducts: [],
-    testContentType1: testContentType1,
-    testContentType2: testContentType2,
-    newSchema1: newSchema1,
-    newSchema2: newSchema2,
-    existingSchemas: [],
-    setupTestProducts: setupTestProducts,
-    createTestProducts: createTestProducts,
-    deleteAllTestProducts: deleteAllTestProducts,
-    deleteAllTestOrgCustomData: deleteAllTestOrgCustomData,
-    setupTestSchemas: setupTestSchemas,
-    createTestSchemas: createTestSchemas,
-    deleteAllTestSchemas: deleteAllTestSchemas,
-    stripFriendlyIdsFromModel: stripFriendlyIdsFromModel
-};
-
 function setupTestProducts() {
     return deleteAllTestProducts()
         .then(function(result) {
@@ -79,36 +63,6 @@ function setupTestProducts() {
             console.log(error);
             throw error;
         });
-}
-
-function createTestProducts() {
-    //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
-
-    return Promise.all([
-        database.customData.insert(newProduct1),
-        database.customData.insert(newProduct2),
-        database.customData.insert(newProduct3)
-    ])
-        .then(function(docs) {
-            testHelper.existingProducts = docs;
-            _.forEach(testHelper.existingProducts, function (item) {
-                item.id = item._id.toHexString();
-            });
-            return docs;
-        })
-        .catch(error => {
-            console.log(error);
-            throw error;
-        });
-
-}
-
-function deleteAllTestProducts() {
-    return database.customData.remove({orgId: testOrgId, contentType: testProductsContentType});
-}
-
-function deleteAllTestOrgCustomData() {
-    return database.customData.remove({orgId: testOrgId});
 }
 
 function setupTestSchemas() {
@@ -122,16 +76,51 @@ function setupTestSchemas() {
         });
 }
 
-function createTestSchemas() {
-    //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
+function setupTestUsers() {
+  return deleteAllTestUsers()
+    .then(result => {
+        return createTestUsers();
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
 
+function createTestProducts() {
+    //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
     return Promise.all([
-        database.customSchemas.insert(newSchema1),
-        database.customSchemas.insert(newSchema2)
+        database.customData.insert(newProduct1),
+        database.customData.insert(newProduct2),
+        database.customData.insert(newProduct3)
     ])
-        .then(function(docs) {
-            testHelper.existingSchemas = docs;
-            _.forEach(testHelper.existingSchemas, function (item) {
+    .then(function(docs) {
+        testHelper.existingProducts = docs;
+        _.forEach(testHelper.existingProducts, function (item) {
+            item.id = item._id.toHexString();
+        });
+        return docs;
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
+
+function createTestUsers() {
+    var password = "one";
+    bcrypt.genSaltAsync(config.saltWorkFactor)
+      .then(salt => {
+        return bcrypt.hashAsync(password, salt, null);
+      })
+      .then(hash => {
+        newUser1.password = hash;
+        return Promise.all([
+            database.users.insert(newUser1),
+        ])
+        .then(docs => {
+            testHelper.existingUsers = docs;
+            _.forEach(testHelper.existingUsers, item => {
                 item.id = item._id.toHexString();
             });
             return docs;
@@ -140,17 +129,72 @@ function createTestSchemas() {
             console.log(error);
             throw error;
         });
+    });
+}
 
+function createTestSchemas() {
+    //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
+    return Promise.all([
+        database.customSchemas.insert(newSchema1),
+        database.customSchemas.insert(newSchema2)
+    ])
+    .then(function(docs) {
+        testHelper.existingSchemas = docs;
+        _.forEach(testHelper.existingSchemas, function (item) {
+            item.id = item._id.toHexString();
+        });
+        return docs;
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
+
+function deleteAllTestProducts() {
+    return database.customData.remove({orgId: testOrgId, contentType: testProductsContentType});
+}
+
+function deleteAllTestOrgCustomData() {
+    return database.customData.remove({orgId: testOrgId});
 }
 
 function deleteAllTestSchemas() {
     return database.customSchemas.remove({orgId: testOrgId});
 }
 
-function stripFriendlyIdsFromModel(model) {
-
-
+function deleteAllTestUsers() {
+    return database.users.remove({orgId: testOrgId});
 }
 
+function stripFriendlyIdsFromModel(model) { }
+
+var testHelper = {
+    apiUrl: 'http://localhost:3001',
+    testOrgId: testOrgId,
+    testProductsContentType: testProductsContentType,
+    newProduct1: newProduct1,
+    newProduct2: newProduct2,
+    newProduct3: newProduct3,
+    existingProducts: [],
+    testContentType1: testContentType1,
+    testContentType2: testContentType2,
+    newSchema1: newSchema1,
+    newSchema2: newSchema2,
+    existingSchemas: [],
+    newUser1: newUser1,
+    existingUsers: [],
+    setupTestProducts: setupTestProducts,
+    createTestProducts: createTestProducts,
+    deleteAllTestProducts: deleteAllTestProducts,
+    deleteAllTestOrgCustomData: deleteAllTestOrgCustomData,
+    setupTestSchemas: setupTestSchemas,
+    createTestSchemas: createTestSchemas,
+    deleteAllTestSchemas: deleteAllTestSchemas,
+    setupTestUsers: setupTestUsers,
+    createTestUsers: createTestUsers,
+    deleteAllTestUsers: deleteAllTestUsers,
+    stripFriendlyIdsFromModel: stripFriendlyIdsFromModel
+};
 
 module.exports = testHelper;
