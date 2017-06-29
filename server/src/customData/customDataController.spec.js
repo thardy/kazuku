@@ -147,7 +147,7 @@ describe("ApiTests", function () {
                             quantity: 55
                         };
                         // 557f30402598f1243c14403c
-                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
+                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
                         return request(app)
                             .put(relativeUrl)
                             .send(body)

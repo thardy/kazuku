@@ -100,8 +100,10 @@ class CrudController {
     deleteById (req, res, next) {
         let id = req.params.id;
         this.service.delete(this.orgId, id)
-            .then((numAffected) => {
-                if (numAffected <= 0) return next();
+            .then((commandResult) => {
+                if (commandResult.result.n <= 0) {
+                    return res.status(404).json({'Errors': ['id not found']});
+                }
 
                 return res.status(204).json({});
             })

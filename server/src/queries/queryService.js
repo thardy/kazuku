@@ -113,7 +113,7 @@ class QueryService extends GenericService {
 
     getByName(orgId, name) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to QueryService.getByName');
+            return Promise.reject(new Error('Incorrect number of arguments passed to QueryService.getByName'));
         }
         return this.collection.findOne({orgId: orgId, name: name})
             .then((doc) => {

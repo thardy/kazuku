@@ -21,14 +21,18 @@ app.use(bodyParser.json());
 app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(require('morgan')('combined', {
-    stream: {
-        write: (message) => {
-            // Write to logs
-            logger.log('info', message);
+
+if (!module.parent) {
+    // Only use morgan if we aren't running tests.  It clutters up the test output.
+    app.use(require('morgan')('combined', {
+        stream: {
+            write: (message) => {
+                // Write to logs
+                logger.log('info', message);
+            }
         }
-    }
-}));
+    }));
+}
 
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
 routes.map(app);

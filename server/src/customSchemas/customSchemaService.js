@@ -10,7 +10,7 @@ class CustomSchemaService extends GenericService {
 
     getByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to CustomSchemaService.getByContentType');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomSchemaService.getByContentType'));
         }
 
         return this.collection.findOne({orgId: orgId, contentType: contentType})
@@ -22,7 +22,7 @@ class CustomSchemaService extends GenericService {
 
     updateByContentType(orgId, contentType, updatedDoc) {
         if (arguments.length !== 3) {
-            throw new Error('Incorrect number of arguments passed to CustomSchemaService.updateByContentType');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomSchemaService.updateByContentType'));
         }
         var clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
@@ -32,7 +32,7 @@ class CustomSchemaService extends GenericService {
 
     deleteByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to CustomSchemaService.deleteByContentType');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomSchemaService.deleteByContentType'));
         }
         return this.collection.remove({orgId: orgId, contentType: contentType});
     }

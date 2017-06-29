@@ -12,7 +12,7 @@ class GenericService {
 
     getAll(orgId) {
         if (arguments.length !== 1) {
-            throw new Error('Incorrect number of arguments passed to GenericService.getAll');
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.getAll'));
         }
 
         return this.collection.find({orgId: orgId})
@@ -29,10 +29,10 @@ class GenericService {
 
     getById(orgId, id) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to GenericService.getById');
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.getById'));
         }
         if (!this.isValidObjectId(id)) {
-            throw new TypeError('id is not a valid ObjectId');
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
         return this.collection.findOne({_id: id, orgId: orgId})
             .then((doc) => {
@@ -43,7 +43,7 @@ class GenericService {
 
     find(orgId, mongoQueryObject, projection) {
         if (arguments.length < 2) { // need at least the first two
-            throw new Error('Incorrect number of arguments passed to CustomDataService.find');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.find'));
         }
 
         // Hardwire orgId into every query
@@ -70,7 +70,7 @@ class GenericService {
 
     create(orgId, doc) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to GenericService.create');
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.create'));
         }
         doc.orgId = orgId;
         var valError = this.validate(doc);
@@ -93,10 +93,10 @@ class GenericService {
 
     updateById(orgId, id, updatedDoc) {
         if (arguments.length !== 3) {
-            throw new Error('Incorrect number of arguments passed to GenericService.updateById');
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateById'));
         }
         if (!this.isValidObjectId(id)) {
-            throw new TypeError('id is not a valid ObjectId');
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
         let clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
@@ -116,9 +116,9 @@ class GenericService {
 
     update(orgId, mongoQueryObject, updatedDoc) {
         if (arguments.length !== 3) {
-            throw new Error('Incorrect number of arguments passed to GenericService.update');
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.update'));
         }
-        var clone = _.clone(updatedDoc);
+        let clone = _.clone(updatedDoc);
         delete clone.id;
 
         conversionService.convertISOStringDateTimesToMongoDates(clone);
@@ -138,7 +138,7 @@ class GenericService {
     // todo: Make Work!!! just started
 //    updateBatch(orgId, updatedDocs) {
 //        if (arguments.length !== 2) {
-//            throw new Error('Incorrect number of arguments passed to GenericService.updateBatch');
+//            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateBatch'));
 //        }
 //        var clone = _.clone(updatedDoc);
 //        delete clone.id;
@@ -151,10 +151,10 @@ class GenericService {
 
     delete(orgId, id) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to GenericService.delete');
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.delete'));
         }
         if (!this.isValidObjectId(id)) {
-            throw new TypeError('id is not a valid ObjectId');
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
 
         let queryObject = { _id: id, orgId: orgId };

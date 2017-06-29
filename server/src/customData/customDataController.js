@@ -158,8 +158,10 @@ class CustomDataController {
         // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;
         return this.service.deleteByTypeAndId(this.orgId, contentType, id)
-            .then(function (numAffected) {
-                if (numAffected <= 0) return next();
+            .then((commandResult) => {
+                if (commandResult.result.n <= 0) {
+                    return res.status(404).json({'Errors': ['id not found']});
+                }
 
                 return res.status(204).json({});
             })

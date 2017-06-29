@@ -14,7 +14,7 @@ class CustomDataService extends GenericService {
 
     getByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to CustomDataService.getByContentType');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.getByContentType'));
         }
 
         return this.collection.find({orgId: orgId, contentType: contentType})
@@ -31,10 +31,10 @@ class CustomDataService extends GenericService {
 
     getByTypeAndId(orgId, contentType, id) {
         if (arguments.length !== 3) {
-            throw new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.getByTypeAndId'));
         }
         if (!this.isValidObjectId(id)) {
-            throw new TypeError('id is not a valid ObjectId');
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
 
         return this.collection.findOne({_id: id, orgId: orgId, contentType: contentType})
@@ -46,7 +46,7 @@ class CustomDataService extends GenericService {
 
     find(orgId, query) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to CustomDataService.find');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.find'));
         }
 
         // Hardwire orgId into every query
@@ -78,25 +78,22 @@ class CustomDataService extends GenericService {
             });
     }
 
-    // todo: replace updateById with an updateByTypeAndId (pretty sure I'm going to have to turn it into a get then an
-    //  update in order to check and enforce the context - something I'll have to do in order to enforce orgId context anyway)
     deleteByTypeAndId(orgId, contentType, id) {
-        // throw new Error('testing my catch'); // Feel free to put this in and see how the catch does not trigger in customDataController.deleteByTypeAndId
         if (arguments.length !== 3) {
-            throw new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId');
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.deleteByTypeAndId'));
         }
         if (!this.isValidObjectId(id)) {
-            throw new TypeError('id is not a valid ObjectId');
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
 
-        let queryObject = {_id: id, orgId: orgId, contentType: contentType};
+        let customDataObject = {_id: id, orgId: orgId, contentType: contentType};
 
-        return this.onBeforeDelete(queryObject)
+        return this.onBeforeDelete(orgId, customDataObject)
             .then((result) => {
-                return this.collection.remove(queryObject)
+                return this.collection.remove(customDataObject)
             })
             .then((result) => {
-                this.onAfterDelete(queryObject);
+                this.onAfterDelete(orgId, customDataObject);
                 return result;
             });
     }
