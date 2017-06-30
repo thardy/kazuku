@@ -8,9 +8,11 @@ import {TemplateListComponent} from "./templates/template-list.component";
 import {TemplateDetailComponent} from "./templates/template-detail.component";
 import {OrganizationListComponent} from "./organizations/organization-list.component";
 import {OrganizationDetailComponent} from "./organizations/organization-detail.component";
+import {LoginComponent} from "./login/login.component";
 
 // This is where we setup our routes!
 const APP_ROUTES: Routes = [
+    {path: 'login', component: LoginComponent},
     {path: 'dashboard', component: DashboardComponent},
     {path: 'organizations', component: OrganizationListComponent},
     {path: 'organizations/:id', component: OrganizationDetailComponent},
@@ -20,7 +22,6 @@ const APP_ROUTES: Routes = [
     {path: 'templates', component: TemplateListComponent},
     {path: 'templates/:id', component: TemplateDetailComponent},
     {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
-    // {path: '**', redirectTo: '/dashboard'},
 ];
 
 @NgModule({

@@ -52,6 +52,9 @@ class UserService extends GenericService {
             })
             .then((user) => {
                 this.useFriendlyId(user);
+                if (user) {
+                    delete user.password;
+                }
                 return this.onAfterCreate(orgId, user)
                     .then(() => { return user }); // ignore the result of onAfterCreate and return what the original call returned
             });

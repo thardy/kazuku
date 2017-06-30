@@ -44,14 +44,20 @@ class UsersController extends CrudController {
         app.get(`/api/${this.resourceName}/google`, passport.authenticate('google', { scope : ['profile', 'email'] }));
         app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google'));
 
-        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond);
-        //app.post(`/api/${this.resourceName}/login`, passport.authenticate('local', { session: false }), this.serialize, this.generateToken, this.respond);
+        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond.bind(this));
+        app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
+        app.get(`/api/${this.resourceName}/logout`, this.logout.bind(this));
 
         // Map routes
         super.mapRoutes(app); // map the base CrudController routes
 
         /** Load user when API with userId route parameter is hit */
         //app.param('userId', userCtrl.load);
+    }
+
+    logout(req, res) {
+        req.logOut();
+        res.send(200);
     }
 
     respond(req, res) {
@@ -61,6 +67,27 @@ class UsersController extends CrudController {
         res.status(200).json({
             user: req.user
         });
+    }
+
+    registerUser(req, res, next) {
+        let body = req.body;
+
+        this.service.create(this.orgId, body)
+            .then((doc) => {
+                return res.status(201).json(doc);
+            })
+            .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'Errors': [err.message]});
+                }
+
+                if (err.code === 11000) {
+                    return res.status(409).json({'Errors': ['Duplicate Key Error']});
+                }
+
+                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, this.orgId, body, err.message);
+                return next(err);
+            });
     }
 
     getRandomNumber (req, res, next) {

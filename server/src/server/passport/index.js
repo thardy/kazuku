@@ -23,7 +23,12 @@ module.exports = (passport) => {
         // Find the user using id
         userService.getById(id)
             .then(user => {
-                delete user.password;
+                if (user) {
+                    delete user.password;
+                }
+                else {
+                    logger.log('error', 'Error when deserializing the user: User not found');
+                }
                 done(null, user);
             })
             .catch(error => logger.log('error', 'Error when deserializing the user: ' + error));
