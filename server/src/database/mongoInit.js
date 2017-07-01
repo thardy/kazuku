@@ -18,7 +18,7 @@
 //db.createCollection('customSchemas', {});
 //db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true }); // OLD
 //
-//// sample document
+//// sample document - https://github.com/dschnelldavis/angular2-json-schema-form
 //var newCustomSchema = {
 //id: 1,
 //    orgId: 1,
@@ -49,7 +49,7 @@
 //// ***** Templates ****************************************
 //db.createCollection('templates', {});
 // Case-insensitive index
-//db.templates.createIndex( { "orgId": 1, "name": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true } );
+//db.templates.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 
 //// sample document
 //var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', template: '#Test Page 1 - Existing',
@@ -62,7 +62,7 @@
 //// ***** Queries ****************************************
 //db.createCollection('queries', {});
 // Case-insensitive index (requires MongoDb 3.4)
-//db.queries.createIndex( { "orgId": 1, "name": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true } );
+//db.queries.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 
 //// sample document
 //var newQuery = { orgId: 1, siteId: 1, name: '$Test Template1', query: 'blah blah', results: [],
@@ -76,7 +76,7 @@
 //// ***** Sites ****************************************
 //db.createCollection('sites', {});
 // Case-insensitive index
-//db.sites.createIndex( { "orgId": 1, "siteCode": 1 }, { collation: { locale: 'en', strength: 1 }}, { unique: true } );
+//db.sites.createIndex( { "orgId": 1, "siteCode": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
 
 //// sample document
 //var newSite = { orgId: 1, siteCode: 1, name: 'Acme Corp', domainName: 'mydomain.com',
