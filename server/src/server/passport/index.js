@@ -3,7 +3,6 @@ const config = require('../config');
 const logger = require('../logger');
 const database = require("../../database/database").database;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const UserService = require('../../users/userService');
@@ -24,7 +23,7 @@ module.exports = (passport) => {
         userService.getById(id)
             .then(user => {
                 if (user) {
-                    delete user.password;
+                    userService.cleanUser(user);
                 }
                 else {
                     logger.log('error', 'Error when deserializing the user: User not found');
@@ -34,23 +33,65 @@ module.exports = (passport) => {
             .catch(error => logger.log('error', 'Error when deserializing the user: ' + error));
     });
 
-    let authProcessor = (accessToken, refreshToken, profile, done) => {
-        // Find a user in the local db using profile.id
+    let addSocialProfileProperties = (newUser, socialLogin, accessToken, refreshToken, profile) => {
+        switch (socialLogin) {
+            case 'facebook':
+                newUser.facebook = {};
+                newUser.facebook.id = profile.id;
+                newUser.facebook.token = accessToken;
+                newUser.facebook.name = profile.displayName;
+                if (profile.emails && profile.emails[0]) {
+                    newUser.facebook.email = profile.emails[0].value;
+                }
+                break;
+            case 'google':
+                newUser.google = {};
+                newUser.google.id = profile.id;
+                newUser.google.token = accessToken;
+                newUser.google.name = profile.displayName;
+                if (profile.emails && profile.emails[0]) {
+                    newUser.google.email = profile.emails[0].value;
+                }
+                break;
+        }
+
+    };
+
+    let authProcessor = (socialLogin, accessToken, refreshToken, profile, done) => {
+        // todo: replace orgId assignment with whatever org the user is logging in to
+        let orgId = 1;
+
+        // Find a user in db based on their social id
+        let query = {};
+        switch (socialLogin) {
+            case 'facebook':
+                query = { 'facebook.id': profile.id };
+                break;
+            case 'google':
+                query = { 'google.id': profile.id };
+                break;
+        }
+
 
         // If the user is found, return the user data using the done()
         // If the user is not found, create one in the local db and return
-        userService.getByEmail(profile.email)
+        return userService.findOne(orgId, query)
             .then((existingUser) => {
                 if (existingUser) {
                     done(null, existingUser);
                 } else {
                     // Create a new user and return
                     let newUser = {
-                        email: profile.email,
-                        orgId: 1,
+                        orgId: orgId,
+                        email: ''
                     };
-                    userService.create(newUser)
-                        .then(createdUser => done(null, createdUser))
+
+                    addSocialProfileProperties(newUser, socialLogin, accessToken, refreshToken, profile);
+
+                    return userService.create(orgId, newUser)
+                        .then(createdUser => {
+                            return done(null, createdUser);
+                        })
                         .catch(error => {
                             logger.log('error', `Error when creating new user with email, ${newUser.email}. Error: ${error}`);
                             return done(error);
@@ -59,9 +100,16 @@ module.exports = (passport) => {
             });
     };
 
-    passport.use(new FacebookStrategy(config.fb, authProcessor));
-    passport.use(new TwitterStrategy(config.twitter, authProcessor));
-    passport.use(new GoogleStrategy(config.google, authProcessor));
+    let facebookAuthProcessor = (accessToken, refreshToken, profile, done) => {
+        authProcessor('facebook', accessToken, refreshToken, profile, done);
+    };
+
+    let googleAuthProcessor = (accessToken, refreshToken, profile, done) => {
+        authProcessor('google', accessToken, refreshToken, profile, done);
+    };
+
+    passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
+    passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
     passport.use('local', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password'

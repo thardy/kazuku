@@ -15,19 +15,13 @@ if (process.env.NODE_ENV === 'production') {
             clientID: process.env.fbClientID,
             clientSecret: process.env.fbClientSecret,
             callbackURL: process.env.host + "/auth/facebook/callback",
-            profileFields: ['id', 'displayName', 'photos']
-        },
-        twitter: {
-            consumerKey: process.env.twitterConsumerKey,
-            consumerSecret: process.env.twitterConsumerSecret,
-            callbackURL: process.env.host + "/auth/twitter/callback",
-            profileFields: ['id', 'displayName', 'photos']
+            profileFields: ['id', 'email', 'displayName', 'photos']
         },
         google: {
             clientID: process.env.googleClientID,
             clientSecret: process.env.googleClientSecret,
             callbackURL: process.env.host + "/auth/google/callback",
-            profileFields: ['id', 'displayName', 'photos']
+            profileFields: ['id', 'email', 'displayName', 'photos']
         },
         redis: {
             host: redisURI.hostname,

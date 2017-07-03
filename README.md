@@ -26,12 +26,6 @@ Create a development.json file in the server/src/server/config folder. Here is a
     "callbackURL": "//localhost:3001/auth/facebook/callback",
     "profileFields": ["id", "email", "displayName", "photos"]
   },
-  "twitter": {
-    "consumerKey": "yourTwitterConsumerKey",
-    "consumerSecret": "yourTwitterConsumerSecret",
-    "callbackURL": "//localhost:3001/auth/twitter/callback",
-    "profileFields": ["id", "email", "displayName", "photos"]
-  },
   "google": {
     "clientID": "yourGoogleAppClientId.apps.googleusercontent.com",
     "clientSecret": "yourGoogleClientSecret",

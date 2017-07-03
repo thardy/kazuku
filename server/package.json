@@ -34,7 +34,6 @@
     "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
-    "passport-twitter": "^1.0.4",
     "request": "^2.51.0",
     "rql": "https://github.com/persvr/rql/tarball/master",
     "serve-favicon": "~2.1.3",

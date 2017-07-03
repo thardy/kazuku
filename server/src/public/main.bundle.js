@@ -643,7 +643,7 @@ var NavBarComponent = (function () {
 /***/ "../../../../../src/app/login/login.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Login</h1>\r\n\r\n<div class=\"loginButton\">\r\n    <a href=\"/api/auth/google\">\r\n        <img id=\"googleLoginBtnImg\" src=\"/assets/images/googleLoginBtn.png\" alt=\"Sign-In with Google\">\r\n    </a>\r\n\r\n    <a href=\"/api/auth/facebook\">\r\n        <img id=\"facebookLoginBtnImg\" src=\"/assets/images/fbLoginBtn.png\" alt=\"Sign-In with Facebook\">\r\n    </a>\r\n\r\n    <a href=\"/api/auth/twitter\">\r\n        <img id=\"twitterLoginBtnImg\" src=\"/assets/images/twLoginBtn.png\" alt=\"Sign-In with Twitter\">\r\n    </a>\r\n</div>\r\n"
+module.exports = "<h1>Login</h1>\r\n\r\n<div class=\"loginButton\">\r\n    <a href=\"/api/users/google\">\r\n        <img id=\"googleLoginBtnImg\" src=\"/assets/images/googleLoginBtn.png\" alt=\"Sign-In with Google\">\r\n    </a>\r\n\r\n    <a href=\"/api/users/facebook\">\r\n        <img id=\"facebookLoginBtnImg\" src=\"/assets/images/fbLoginBtn.png\" alt=\"Sign-In with Facebook\">\r\n    </a>\r\n\r\n</div>\r\n"
 
 /***/ }),
 

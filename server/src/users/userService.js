@@ -13,7 +13,7 @@ class UserService extends GenericService {
 
     getById(id) {
         if (arguments.length !== 1) {
-            throw new Error('Incorrect number of arguments passed to UserService.getById');
+            return Promise.reject(new Error('Incorrect number of arguments passed to UserService.getById'));
         }
         return this.collection.findOne({_id: id})
             .then((doc) => {
@@ -32,7 +32,7 @@ class UserService extends GenericService {
 
     create(orgId, user) {
         if (arguments.length !== 2) {
-            throw new Error('Incorrect number of arguments passed to UserService.create');
+            return Promise.reject(new Error('Incorrect number of arguments passed to UserService.create'));
         }
         user.orgId = orgId;
         let valError = this.validate(user);
@@ -53,7 +53,7 @@ class UserService extends GenericService {
             .then((user) => {
                 this.useFriendlyId(user);
                 if (user) {
-                    delete user.password;
+                    this.cleanUser(user);
                 }
                 return this.onAfterCreate(orgId, user)
                     .then(() => { return user }); // ignore the result of onAfterCreate and return what the original call returned
@@ -61,12 +61,16 @@ class UserService extends GenericService {
     }
 
     validate(doc) {
-        if (doc.email && doc.password) {
+        // todo: update to handle social auth (which might not have email or password)
+        let valid = false;
+        if (doc.email && doc.password
+            || doc.facebook && doc.facebook.id
+            || doc.google && doc.google.id) {
             // call base validation, which should return nothing if valid
             return super.validate(doc);
         }
         else {
-            return "Need email and password";
+            return "Need email and password, or facebook id, or google id";
         }
     }
 
@@ -83,6 +87,17 @@ class UserService extends GenericService {
 
     verifyPassword(candidatePassword, hashedPassword) {
         return bcrypt.compareAsync(candidatePassword, hashedPassword);
+    }
+
+    cleanUser(user) {
+        // Remove any sensitive information
+        delete user.password;
+        if (user.facebook) {
+            delete user.facebook.token;
+        }
+        if (user.google) {
+            delete user.google.token;
+        }
     }
 }
 

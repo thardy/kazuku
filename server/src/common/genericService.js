@@ -68,6 +68,22 @@ class GenericService {
             });
     }
 
+    findOne(orgId, mongoQueryObject, projection) {
+        if (arguments.length < 2) { // need at least the first two
+            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.find'));
+        }
+
+        // Hardwire orgId into every query
+        mongoQueryObject.orgId = orgId;
+
+        return this.collection.findOne(mongoQueryObject, projection)
+            .then((doc) => {
+                this.useFriendlyId(doc);
+
+                return doc;
+            });
+    }
+
     create(orgId, doc) {
         if (arguments.length !== 2) {
             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.create'));

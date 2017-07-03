@@ -37,12 +37,16 @@ class UsersController extends CrudController {
     mapRoutes(app) {
         // GET /api/users/random-number - Sample Protected route,
         app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
-        app.get(`/api/${this.resourceName}/facebook`, passport.authenticate('facebook'));
-        app.get(`/api/${this.resourceName}/facebook/callback`, passport.authenticate('facebook'));
-        app.get(`/api/${this.resourceName}/twitter`, passport.authenticate('twitter'));
-        app.get(`/api/${this.resourceName}/twitter/callback`, passport.authenticate('twitter'));
+        app.get(`/api/${this.resourceName}/facebook`, passport.authenticate('facebook', { scope : 'email' }));
+        app.get(`/api/${this.resourceName}/facebook/callback`, passport.authenticate('facebook', {
+            successRedirect: '/dashboard',
+            failureRedirect: '/login'
+        }));
         app.get(`/api/${this.resourceName}/google`, passport.authenticate('google', { scope : ['profile', 'email'] }));
-        app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google'));
+        app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google', {
+            successRedirect: '/dashboard',
+            failureRedirect: '/login'
+        }));
 
         app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
@@ -63,7 +67,7 @@ class UsersController extends CrudController {
     respond(req, res) {
         const user = req.user;
         // don't return password
-        delete user.password;
+        this.service.cleanUser(user);
         res.status(200).json({
             user: req.user
         });

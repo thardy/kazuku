@@ -16,7 +16,7 @@
 
 //// ***** CustomSchemas ****************************************
 //db.createCollection('customSchemas', {});
-//db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true }); // OLD
+//db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
 //
 //// sample document - https://github.com/dschnelldavis/angular2-json-schema-form
 //var newCustomSchema = {
@@ -88,3 +88,19 @@
 //// ***** Users ****************************************
 // db.createCollection('users', {});
 // db.users.createIndex({ "email": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
+
+////sample document
+// var newUser = { orgId: 1, email: "joe@test.com", password: "lkj234oiulkj", firstName: "Joe", lastName: "Smith", lastLoggedIn: "1/1/2017",
+//                 facebook: {
+//                     id: String,
+//                     token: String,
+//                     email: String,
+//                     name: String
+//                 },
+//                 google: {
+//                     id: String,
+//                     token: String,
+//                     email: String,
+//                     name: String
+//                 },
+//                 created: new Date(), createdBy: 1, updated: null, updatedBy: null};
