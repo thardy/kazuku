@@ -42,6 +42,7 @@ module.exports = (passport) => {
                 newUser.facebook.name = profile.displayName;
                 if (profile.emails && profile.emails[0]) {
                     newUser.facebook.email = profile.emails[0].value;
+                    newUser.email = newUser.facebook.email;
                 }
                 break;
             case 'google':
@@ -51,6 +52,7 @@ module.exports = (passport) => {
                 newUser.google.name = profile.displayName;
                 if (profile.emails && profile.emails[0]) {
                     newUser.google.email = profile.emails[0].value;
+                    newUser.email = newUser.google.email;
                 }
                 break;
         }
