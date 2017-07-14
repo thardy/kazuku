@@ -59,7 +59,7 @@ module.exports = (passport) => {
 
     };
 
-    let authProcessor = (socialLogin, accessToken, refreshToken, profile, done) => {
+    let authProcessor = (socialLogin, req, accessToken, refreshToken, profile, done) => {
         // todo: replace orgId assignment with whatever org the user is logging in to
         let orgId = 1;
 
@@ -90,6 +90,19 @@ module.exports = (passport) => {
 
                     addSocialProfileProperties(newUser, socialLogin, accessToken, refreshToken, profile);
 
+                    req.session.authenticatedUser = newUser;
+
+                    // do we really need to get an email for a socially authenticated user?
+                    // if so, we'll want to verify the email they provide
+
+                    // todo: When I want to collect more info after authenticating with google or facebook, just return
+                    //  done() and return some sort of success to client (in next middleware), have client display the
+                    //  "you're almost done" form, collect the extra data, complete the account
+                    //  (call create-social-account), and log them in with req.login().
+                    // After calling done(), test that the next middleware gets executed, but that req.isAuthenticated
+                    //  is still false
+                    // return done();
+
                     return userService.create(orgId, newUser)
                         .then(createdUser => {
                             return done(null, createdUser);
@@ -102,21 +115,31 @@ module.exports = (passport) => {
             });
     };
 
-    let facebookAuthProcessor = (accessToken, refreshToken, profile, done) => {
-        authProcessor('facebook', accessToken, refreshToken, profile, done);
+    // move the following to usercontroller
+    // completeRegistration() {
+    //     // verify that we are not yet authenticated
+    //     const isAuthenticated = req.isAuthenticated();
+    //
+    //     // create the user now and call req.login(newUser) to log the user in, and of course test it all
+    // }
+
+
+    let facebookAuthProcessor = (req, accessToken, refreshToken, profile, done) => {
+        authProcessor('facebook', req, accessToken, refreshToken, profile, done);
     };
 
-    let googleAuthProcessor = (accessToken, refreshToken, profile, done) => {
-        authProcessor('google', accessToken, refreshToken, profile, done);
+    let googleAuthProcessor = (req, accessToken, refreshToken, profile, done) => {
+        authProcessor('google', req, accessToken, refreshToken, profile, done);
     };
 
     passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
     passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
     passport.use('local', new LocalStrategy({
             usernameField: 'email',
-            passwordField: 'password'
+            passwordField: 'password',
+            passReqToCallback: true
         },
-        function(email, password, done) {
+        function(req, email, password, done) {
             console.log('inside local strategy');
             try {
                 userService.getByEmail(email)

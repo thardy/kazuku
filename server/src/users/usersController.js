@@ -38,17 +38,12 @@ class UsersController extends CrudController {
         // GET /api/users/random-number - Sample Protected route,
         app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
         app.get(`/api/${this.resourceName}/facebook`, passport.authenticate('facebook', { scope : 'email' }));
-        app.get(`/api/${this.resourceName}/facebook/callback`, passport.authenticate('facebook', {
-            successRedirect: '/dashboard',
-            failureRedirect: '/login'
-        }));
+        app.get(`/api/${this.resourceName}/facebook/callback`, passport.authenticate('facebook'), this.afterAuth.bind(this));
         app.get(`/api/${this.resourceName}/google`, passport.authenticate('google', { scope : ['profile', 'email'] }));
-        app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google', {
-            successRedirect: '/dashboard',
-            failureRedirect: '/login'
-        }));
+        app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google'), this.afterAuth.bind(this));
 
-        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.respond.bind(this));
+        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.afterAuth.bind(this));
+        //app.post(`/api/${this.resourceName}/create-social-account`, this.createSocialAccount.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
         app.get(`/api/${this.resourceName}/logout`, this.logout.bind(this));
 
@@ -64,7 +59,7 @@ class UsersController extends CrudController {
         res.send(200);
     }
 
-    respond(req, res) {
+    afterAuth(req, res) {
         const user = req.user;
         // don't return password
         this.service.cleanUser(user);
@@ -73,6 +68,13 @@ class UsersController extends CrudController {
         });
     }
 
+    createSocialAccount(req, res, next) {
+        // todo: move the user creation from server/passport/index.js authProcessor function to here, once I change
+        //  social auth to collect more info before creating a new account.
+        return next()
+    }
+
+    // I don't think I need this anymore (consider removing or relegating to an admin-only function)
     registerUser(req, res, next) {
         let body = req.body;
 

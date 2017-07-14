@@ -3,13 +3,17 @@
 > A cms.
 
 ## Setting Up Your Development Environment
-Clone the repository
+Clone the repository.
 
-Run npm install in the server folder and again in client folder
+Run npm install in the server folder and again in client folder.
 
-Install MongoDb
+Install MongoDb.
+
+Uncomment the server/database/mongoInit.js file and execute that on your database to setup indexes.
 
 Create a development.json file in the server/src/server/config folder. Here is a sample, minus the social media client ids and secrets...
+
+
 
 ```json
 {

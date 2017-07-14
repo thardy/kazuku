@@ -1,5 +1,5 @@
-var config = require('../server/config');
-var monk = require("monk");
+const config = require('../server/config');
+const monk = require("monk");
 
 // connect to the database
 //var _db = monk(config.mongoDbUrl);
@@ -13,6 +13,7 @@ class Database {
         this.templates = this.db.get("templates");
         this.queries = this.db.get("queries");
         this.users = this.db.get("users");
+        this.organizations = this.db.get("organizations");
     }
 
     close() {

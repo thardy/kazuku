@@ -9,19 +9,22 @@ if (process.env.NODE_ENV === 'production') {
     // Initialize session with settings for prod
     module.exports = session({
         secret: config.sessionSecret,
-        resave: false,
+        rolling: true,
+        resave: true,
         saveUninitialized: false,
-        // todo: figure this out (no Mongoose)
-        store  : new MongoStore({db: db})
+        store: new MongoStore({ url: config.mongoDbUrl }),
+        cookie: { maxAge: 3600000 }
     });
 } else {
     // Initialize session with settings for dev
     module.exports = session({
         secret: config.sessionSecret,
-        resave: false,
+        rolling: true,
+        resave: true,
         saveUninitialized: true,
         // todo: figure this out (use existing connection)
         //store: new SkinStore(db.db)
-        store: new MongoStore({ url: config.mongoDbUrl })
+        store: new MongoStore({ url: config.mongoDbUrl }),
+        cookie: { maxAge: 3600000 }
     });
 }

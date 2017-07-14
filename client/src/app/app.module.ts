@@ -22,7 +22,11 @@ import {InMemoryDataService} from "./in-memory-data.service";
 import {TemplateService} from "./templates/template.service";
 import {OrganizationService} from "./organizations/organization.service";
 import {SiteService} from "./sites/sites.service";
-import { LoginComponent } from './login/login.component';
+import {LoginComponent} from './login/login.component';
+import {UsersComponent} from './users/users.component';
+import {QueryService} from "./queries/query.service";
+import {UserService} from "./users/user.service";
+import { InitialSetupComponent } from './initial-setup/initial-setup.component';
 
 @NgModule({
     declarations: [
@@ -39,7 +43,9 @@ import { LoginComponent } from './login/login.component';
         CustomSchemasComponent,
         CustomDataComponent,
         QueriesComponent,
-        LoginComponent
+        LoginComponent,
+        UsersComponent,
+        InitialSetupComponent
     ],
     imports: [
         BrowserModule,
@@ -51,7 +57,9 @@ import { LoginComponent } from './login/login.component';
     providers: [
         OrganizationService,
         SiteService,
-        TemplateService
+        TemplateService,
+        QueryService,
+        UserService
     ],
     bootstrap: [AppComponent]
 })

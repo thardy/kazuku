@@ -15,13 +15,15 @@ if (process.env.NODE_ENV === 'production') {
             clientID: process.env.fbClientID,
             clientSecret: process.env.fbClientSecret,
             callbackURL: process.env.host + "/auth/facebook/callback",
-            profileFields: ['id', 'email', 'displayName', 'photos']
+            profileFields: ['id', 'email', 'displayName', 'photos'],
+            passReqToCallback: true
         },
         google: {
             clientID: process.env.googleClientID,
             clientSecret: process.env.googleClientSecret,
             callbackURL: process.env.host + "/auth/google/callback",
-            profileFields: ['id', 'email', 'displayName', 'photos']
+            profileFields: ['id', 'email', 'displayName', 'photos'],
+            passReqToCallback: true
         },
         redis: {
             host: redisURI.hostname,

@@ -7,7 +7,7 @@
 //// ***** CustomData ****************************************
 //db.createCollection('customData', {});
 //db.customData.createIndex( { "orgId": 1, "contentType": 1 });
-//db.customData.createIndex( { "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true } );
+//db.customData.createIndex( { "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true } ); // created because we will always provide an orgId on lookups, to enforce multi-tenant
 //
 //// sample document
 //var newCustomData = { orgId: 1, contentType: 'blogPost', title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
@@ -73,6 +73,20 @@
 
 
 
+//// ***** Organizations ****************************************
+//db.createCollection('organizations', {});
+// Case-insensitive index
+//db.organizations.createIndex( { "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
+//db.organizations.createIndex( { "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
+
+//// sample document
+//var newOrg = { name: 'Acme Corp', code: 'acme', description: 'A cool company.', statusId: 1, isMetaOrg: 0,
+//                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
+//
+//
+
+
+
 //// ***** Sites ****************************************
 //db.createCollection('sites', {});
 // Case-insensitive index
@@ -83,6 +97,8 @@
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
 //
+
+
 
 
 //// ***** Users ****************************************

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var _ = require("lodash");
 var Promise = require("bluebird");
 var GenericService = require("../common/genericService");
