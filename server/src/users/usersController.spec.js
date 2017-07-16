@@ -39,9 +39,6 @@ describe("ApiTests", function () {
                     result.body.should.have.property('id');
                     result.body.should.have.property("orgId").deep.equal(newUser.orgId);
                     result.body.should.have.property("email").deep.equal(newUser.email);
-                    bcrypt.compareAsync(newUser.password, result.body.password).then(isMatch => {
-                        expect(isMatch).to.be.true;
-                    });
                 });
         });
 

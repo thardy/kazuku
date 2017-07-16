@@ -47,12 +47,12 @@ describe("OrganizationService CRUD", function () {
 
     it("can throw error while getting org by Id, if the id is not specified", () => {
         let getByIdPromise = orgService.getById();
-        getByIdPromise.should.throw(Error, "Incorrect number of arguments passed to OrganizationService.getById");
+        getByIdPromise.should.be.rejectedWith('Incorrect number of arguments passed to OrganizationService.getById');
     });
 
     it("can get orgs by code", () => {
         let getByCodePromise = orgService.getByCode(existingOrgs[0].code);
-        return getByCodePromise.should.eventually.have.property("id").deep.equal(existingOrgs[0].id);
+        return getByCodePromise.should.eventually.have.property('id').deep.equal(existingOrgs[0].id);
     });
 
     it("can create orgs", () => {
@@ -60,13 +60,15 @@ describe("OrganizationService CRUD", function () {
 
         let createOrgPromise = orgService.create(newOrg);
 
-        return createOrgPromise.should.eventually.have.property("name").equal(newOrg.name)
-            .and.have.property('code').equal(newOrg.code);
+        return Promise.all([
+            createOrgPromise.should.eventually.have.property('name').equal(newOrg.name),
+            createOrgPromise.should.eventually.have.property('code').equal(newOrg.code)
+        ]);
     });
 
     it("can throw error while creating org, if name and code is not specified", () => {
         let createPromise = orgService.create({});
-        return createPromise.should.throw(Error, 'Need name and code to create organization');
+        return createPromise.should.be.rejectedWith('Need name and code to create organization');
     });
 
     it("can update orgs by id", function () {
@@ -85,8 +87,10 @@ describe("OrganizationService CRUD", function () {
             // verify org was updated
             let getByIdPromise = orgService.getById(existingOrgs[1].id);
 
-            return getByIdPromise.should.eventually.have.property('description').equal(updatedDescription)
-                .and.have.property('statusId').equal(updatedStatusId);
+            return Promise.all([
+                getByIdPromise.should.eventually.have.property('description').equal(updatedOrgDescription),
+                getByIdPromise.should.eventually.have.property('statusId').equal(updatedStatusId)
+            ]);
         });
     });
 

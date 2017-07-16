@@ -15,6 +15,9 @@ class UserService extends GenericService {
         if (arguments.length !== 1) {
             return Promise.reject(new Error('Incorrect number of arguments passed to UserService.getById'));
         }
+        if (!this.isValidObjectId(id)) {
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
+        }
         return this.collection.findOne({_id: id})
             .then((doc) => {
                 this.useFriendlyId(doc);

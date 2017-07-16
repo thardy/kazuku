@@ -46,7 +46,7 @@ describe("UserService CRUD", function () {
 
     it("can throw error while getting user by Id, if the id is not specified", () => {
         let getByIdPromise = userService.getById();
-        return getByIdPromise.should.be.rejectedWith("Incorrect number of arguments passed to UserService.getById");
+        return getByIdPromise.should.be.rejectedWith('Incorrect number of arguments passed to UserService.getById');
     });
 
     it("can get user by email", () => {
