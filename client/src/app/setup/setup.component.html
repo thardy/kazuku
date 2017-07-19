@@ -1,0 +1,18 @@
+<form #theForm="ngForm" (ngSubmit)="save(theForm)" class="ui form" >
+    <p>Admin username/email is simply "admin".  Let's go ahead and set the initial password for the admin user...</p>
+    <label for="adminPassword">Admin Password:</label>
+    <input [(ngModel)]="setupConfig.adminPassword" id="adminPassword" name="adminPassword" type="password" required>
+    <label for="adminPasswordConfirm">Confirm Admin Password:</label>
+    <input [(ngModel)]="setupConfig.adminPasswordConfirm" id="adminPasswordConfirm" name="adminPasswordConfirm" type="password" required><br/>
+    <label for="metaOrgName">Meta Organization Name:</label>
+    <p>
+        All content in Kazuku belongs to organizations, and while Kazuku is capable of hosting many organizations, you don't have to use Kazuku
+        to host multiple organizations.  There does need to be one "meta" organization, however - this will be the name of the
+        host organization for this instance of Kazuku.  This can simply be the name of your organization or just your name.
+    </p>
+    <input [(ngModel)]="setupConfig.metaOrgName" id="metaOrgName"  name="metaOrgName" type="text" required><br/>
+    <label for="metaOrgCode">Meta Organization Code:</label>
+    <p>Every organization has an organization code.  For simplicity, the meta org always has a hardwired code of "admin".</p>
+    <input [(ngModel)]="setupConfig.metaOrgCode" id="metaOrgCode"  name="metaOrgCode" type="text" disabled>
+    <button type="submit">Save</button>
+</form>

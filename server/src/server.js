@@ -14,7 +14,8 @@ const passportAuthStrategies = require('./server/passport')(passport); // pass p
 app.set('port', config.port || 3001);
 
 // serve static files out of this folder - referenced as /css, /img, /js
-app.use(express.static('public'));
+console.log('about to load static middleware');
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
 // sessions has to be used before router is mounted

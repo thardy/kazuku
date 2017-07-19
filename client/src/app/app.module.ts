@@ -27,6 +27,8 @@ import {UsersComponent} from './users/users.component';
 import {QueryService} from "./queries/query.service";
 import {UserService} from "./users/user.service";
 import { InitialSetupComponent } from './initial-setup/initial-setup.component';
+import { SetupComponent } from './setup/setup.component';
+import {SetupService} from "./setup/setup.service";
 
 @NgModule({
     declarations: [
@@ -45,7 +47,8 @@ import { InitialSetupComponent } from './initial-setup/initial-setup.component';
         QueriesComponent,
         LoginComponent,
         UsersComponent,
-        InitialSetupComponent
+        InitialSetupComponent,
+        SetupComponent
     ],
     imports: [
         BrowserModule,
@@ -59,7 +62,8 @@ import { InitialSetupComponent } from './initial-setup/initial-setup.component';
         SiteService,
         TemplateService,
         QueryService,
-        UserService
+        UserService,
+        SetupService
     ],
     bootstrap: [AppComponent]
 })

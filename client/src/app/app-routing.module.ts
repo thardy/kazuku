@@ -9,6 +9,7 @@ import {TemplateDetailComponent} from "./templates/template-detail.component";
 import {OrganizationListComponent} from "./organizations/organization-list.component";
 import {OrganizationDetailComponent} from "./organizations/organization-detail.component";
 import {LoginComponent} from "./login/login.component";
+import {SetupComponent} from "./setup/setup.component";
 
 // This is where we setup our routes!
 const APP_ROUTES: Routes = [
@@ -19,6 +20,7 @@ const APP_ROUTES: Routes = [
     {path: 'sites', component: SiteListComponent},
     {path: 'sites/:id', component: SiteDetailComponent},
     {path: 'pages', component: PagesComponent},
+    {path: 'setup', component: SetupComponent},
     {path: 'templates', component: TemplateListComponent},
     {path: 'templates/:id', component: TemplateDetailComponent},
     {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
