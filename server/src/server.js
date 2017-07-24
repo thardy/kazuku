@@ -38,6 +38,30 @@ if (!module.parent) {
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
 routes.map(app);
 
+// custom 404 handler.  This will prevent html being returned for 404s.
+app.use((req, res, next) => {
+    res.status(404).json({error: "Not Found"});
+});
+
+// custom error handler.  This will prevent html being returned for errors.
+app.use((err, req, res, next) => {
+    if (req.app.get('env') !== 'development') {
+        delete err.stack;
+    }
+
+    if (typeof err === 'string' || err instanceof String) {
+        err = { error: err };
+    }
+    else {
+        let newErr = {};
+        newErr.message = err.message || '';
+        newErr.stack = err.stack || '';
+        err = newErr;
+    }
+
+    res.status(err.statusCode || 500).json(err);
+});
+
 // the following is now handled in www/bin
 // // module.parent check is required to support mocha watch
 // // src: https://github.com/mochajs/mocha/issues/1912

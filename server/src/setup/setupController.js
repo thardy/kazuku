@@ -10,12 +10,14 @@ class SetupController {
         // todo: test that this gets written on every request and not reused between them
         this.app = app;
         this.setupService = new SetupService(database);
+
+        this.mapRoutes(app);
     }
 
-    mapRoutes() {
+    mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        this.app.post(`/api/setup/initialsetup`, this.initialSetup.bind(this));
+        app.post(`/api/setup/initialsetup`, this.initialSetup.bind(this));
     }
 
     initialSetup(req, res, next) {

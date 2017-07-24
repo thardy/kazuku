@@ -54,7 +54,13 @@ export class GenericService<T> {
 
     handleError(error) {
         console.error(error);
-        return Observable.throw(error.json().error || 'Server error');
+        if (error.json) {
+            return Observable.throw(error.json() || 'Server error');
+        }
+        else {
+            return Observable.throw(error || 'Server error');
+        }
+
     }
 }
 

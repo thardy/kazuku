@@ -6,13 +6,11 @@ const OrganizationService = require("./organizationService");
 class OrganizationsController extends CrudController {
     constructor(app) {
         super('organizations', app, new OrganizationService(database));
-
-        this.mapAdditionalRoutes();
     }
 
-    mapAdditionalRoutes() {
+    mapRoutes(app) {
         // Map routes
-        this.mapRoutes(); // map the base CrudController routes
+        super.mapRoutes(app); // map the base CrudController routes
 
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
         this.app.get(`/api/${this.resourceName}/getbyname/:name`, this.getByName.bind(this));

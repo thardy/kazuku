@@ -30,8 +30,6 @@ class UsersController extends CrudController {
         // };
 
         super('users', app, new UserService(database));
-
-        this.mapRoutes(app);
     }
 
     mapRoutes(app) {

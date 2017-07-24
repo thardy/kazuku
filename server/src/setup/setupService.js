@@ -16,7 +16,7 @@ class SetupService {
         if (arguments.length !== 1) {
             return Promise.reject(new Error('Incorrect number of arguments passed to SetupService.initialSetup'));
         }
-        let valError = this.validate(doc);
+        let valError = this.validate(setupConfig);
         if (valError) {
             return Promise.reject(new TypeError(valError));
         }
@@ -25,20 +25,16 @@ class SetupService {
         let metaOrg = this.extractMetaOrg(setupConfig);
         let adminUser = this.extractAdminUser(setupConfig);
 
-        return this.organizationsCollection.insert(metaOrg)
+        return this.organizationService.create(metaOrg)
             .then((org) => {
-                this.useFriendlyId(org);
-                return org;
-            })
-            .then((org) => {
-                return this.usersCollection.insert(adminUser);
+                return this.userService.create(org.id, adminUser);
             });
     }
 
     extractMetaOrg(setupConfig) {
         let metaOrg = {};
-        metaOrg.name = setupConfig.name;
-        metaOrg.code = setupConfig.code;
+        metaOrg.name = setupConfig.metaOrgName;
+        metaOrg.code = setupConfig.metaOrgCode;
 
         return metaOrg;
     }
@@ -46,18 +42,18 @@ class SetupService {
     extractAdminUser(setupConfig) {
         let adminUser = {};
         adminUser.email = 'admin';
-        adminUser.password = setupConfig.password;
+        adminUser.password = setupConfig.adminPassword;
 
         return adminUser;
     }
 
     validate(doc) {
-        if (doc.orgId) {
+        if (doc.adminPassword && doc.metaOrgCode && doc.metaOrgName) {
             // simply do nothing if valid
             return;
         }
         else {
-            return "Need orgId";
+            return "Need admin password, meta org code, and meta org name";
         }
     }
 

@@ -11,21 +11,21 @@ class CustomDataController {
         this._orgId = 1;
         this._service = new CustomDataService(database);
 
-        this.mapRoutes();
+        this.mapRoutes(app);
     }
 
     get app() { return this._app; }
     get orgId() { return this._orgId; }
     get service() { return this._service; }
 
-    mapRoutes() {
+    mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        this.app.get('/api/customData/:contentType', this.getAllByContentType.bind(this));
-        this.app.get('/api/customData/:contentType/:id', this.getByContentType.bind(this));
-        this.app.post('/api/customData/:contentType', this.createByContentType.bind(this));
-        this.app.put('/api/customData/:contentType/:id', this.updateByTypeAndId.bind(this));
-        this.app.delete('/api/customData/:contentType/:id', this.deleteByTypeAndId.bind(this));
+        app.get('/api/customData/:contentType', this.getAllByContentType.bind(this));
+        app.get('/api/customData/:contentType/:id', this.getByContentType.bind(this));
+        app.post('/api/customData/:contentType', this.createByContentType.bind(this));
+        app.put('/api/customData/:contentType/:id', this.updateByTypeAndId.bind(this));
+        app.delete('/api/customData/:contentType/:id', this.deleteByTypeAndId.bind(this));
     }
 
     getAllByContentType(req, res, next) {

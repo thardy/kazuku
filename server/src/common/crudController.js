@@ -10,16 +10,18 @@ class CrudController {
         this.orgId = 1;
         this.service = service;
         this.resourceName = resourceName;
+
+        this.mapRoutes(app);
     }
 
-    mapRoutes() {
+    mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        this.app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-        this.app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
-        this.app.post(`/api/${this.resourceName}`, this.create.bind(this));
-        this.app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
-        this.app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
+        app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
+        app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
+        app.post(`/api/${this.resourceName}`, this.create.bind(this));
+        app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
+        app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
     }
 
     getAll(req, res, next) {

@@ -26,7 +26,6 @@ import {LoginComponent} from './login/login.component';
 import {UsersComponent} from './users/users.component';
 import {QueryService} from "./queries/query.service";
 import {UserService} from "./users/user.service";
-import { InitialSetupComponent } from './initial-setup/initial-setup.component';
 import { SetupComponent } from './setup/setup.component';
 import {SetupService} from "./setup/setup.service";
 
@@ -47,7 +46,6 @@ import {SetupService} from "./setup/setup.service";
         QueriesComponent,
         LoginComponent,
         UsersComponent,
-        InitialSetupComponent,
         SetupComponent
     ],
     imports: [
