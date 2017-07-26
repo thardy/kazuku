@@ -26,8 +26,9 @@ import {LoginComponent} from './login/login.component';
 import {UsersComponent} from './users/users.component';
 import {QueryService} from "./queries/query.service";
 import {UserService} from "./users/user.service";
-import { SetupComponent } from './setup/setup.component';
+import {SetupComponent} from './setup/setup.component';
 import {SetupService} from "./setup/setup.service";
+import {SetupGuardService} from "./setup/setup-guard.service";
 
 @NgModule({
     declarations: [
@@ -61,7 +62,8 @@ import {SetupService} from "./setup/setup.service";
         TemplateService,
         QueryService,
         UserService,
-        SetupService
+        SetupService,
+        SetupGuardService
     ],
     bootstrap: [AppComponent]
 })

@@ -53,6 +53,19 @@ class OrganizationService extends GenericService {
             });
     }
 
+    findOne(mongoQueryObject, projection) {
+        if (arguments.length < 1) { // need at least the queryObject
+            return Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.findOne'));
+        }
+
+        return this.collection.findOne(mongoQueryObject, projection)
+            .then((doc) => {
+                this.useFriendlyId(doc);
+
+                return doc;
+            });
+    }
+
     create(doc) {
         if (arguments.length !== 1) {
             return Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.create'));

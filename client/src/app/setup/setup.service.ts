@@ -22,4 +22,14 @@ export class SetupService extends GenericService<SetupConfig> {
             .catch(error => this.handleError(error));
     }
 
+    canWeSetup() {
+        return this.http.get(`${this.baseUrl}/setupstate`)
+            .map((response) => {
+                let data = response.json()
+                let setupCompleted = (data && data.data && data.data.setupCompleted) ? data.data.setupCompleted : false;
+                return !setupCompleted;
+            })
+            .catch(error => this.handleError(error));
+    }
+
 }

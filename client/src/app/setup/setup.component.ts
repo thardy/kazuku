@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Router} from '@angular/router';
 import {SetupService} from "./setup.service";
 import {SetupConfig} from "./setup-config.model";
 import {Subject} from 'rxjs/Subject';
@@ -13,7 +14,7 @@ export class SetupComponent implements OnInit, OnDestroy {
     setupConfig: SetupConfig;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private setupService: SetupService) {
+    constructor(private setupService: SetupService, private router: Router) {
         this.setupConfig = new SetupConfig();
         this.setupConfig.metaOrgCode = 'admin';
     }
@@ -30,6 +31,8 @@ export class SetupComponent implements OnInit, OnDestroy {
     save(form) {
         this.setupService.initialSetup(this.setupConfig)
             .takeUntil(this.ngUnsubscribe)
-            .subscribe();
+            .subscribe((result) => {
+                this.router.navigate(['dashboard']);
+            });
     }
 }

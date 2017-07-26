@@ -102,6 +102,18 @@ class UserService extends GenericService {
             delete user.google.token;
         }
     }
+
+    transformList(users) {
+        return users.map((user) => {
+            this.cleanUser(user);
+            return user;
+        });
+    }
+
+    transformSingle(user) {
+        this.cleanUser(user);
+        return user;
+    }
 }
 
 

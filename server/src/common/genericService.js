@@ -1,7 +1,7 @@
 "use strict";
-var _ = require("lodash");
-var Promise = require("bluebird");
-var conversionService = require("./conversionService");
+const _ = require("lodash");
+const Promise = require("bluebird");
+const conversionService = require("./conversionService");
 
 class GenericService {
 
@@ -17,13 +17,14 @@ class GenericService {
 
         return this.collection.find({orgId: orgId})
             .then((docs) => {
-                var transformedDocs = [];
+                let friendlyDocs = [];
                 _.forEach(docs, (doc) => {
                     this.useFriendlyId(doc);
-                    transformedDocs.push(doc);
+                    friendlyDocs.push(doc);
                 });
 
-                return transformedDocs;
+                // allow derived classes to transform the result
+                return this.transformList(friendlyDocs);;
             });
     }
 
@@ -37,19 +38,21 @@ class GenericService {
         return this.collection.findOne({_id: id, orgId: orgId})
             .then((doc) => {
                 this.useFriendlyId(doc);
-                return doc;
+
+                // allow derived classes to transform the result
+                return this.transformSingle(doc);;
             });
     }
 
     find(orgId, mongoQueryObject, projection) {
         if (arguments.length < 2) { // need at least the first two
-            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.find'));
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.find'));
         }
 
         // Hardwire orgId into every query
         mongoQueryObject.orgId = orgId;
 
-//        var projection = {
+//        let projection = {
 //            skip: mongoQuery.skip,
 //            limit: mongoQuery.limit,
 //            fields: mongoQuery.projection,
@@ -58,19 +61,20 @@ class GenericService {
 
         return this.collection.find(mongoQueryObject, projection)
             .then((docs) => {
-                var transformedDocs = [];
+                let friendlyDocs = [];
                 _.forEach(docs, (doc) => {
                     this.useFriendlyId(doc);
-                    transformedDocs.push(doc);
+                    friendlyDocs.push(doc);
                 });
 
-                return transformedDocs;
+                // allow derived classes to transform the result
+                return this.transformList(friendlyDocs);
             });
     }
 
     findOne(orgId, mongoQueryObject, projection) {
         if (arguments.length < 2) { // need at least the first two
-            return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.find'));
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.find'));
         }
 
         // Hardwire orgId into every query
@@ -80,7 +84,8 @@ class GenericService {
             .then((doc) => {
                 this.useFriendlyId(doc);
 
-                return doc;
+                // allow derived classes to transform the result
+                return this.transformSingle(doc);
             });
     }
 
@@ -89,7 +94,7 @@ class GenericService {
             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.create'));
         }
         doc.orgId = orgId;
-        var valError = this.validate(doc);
+        let valError = this.validate(doc);
         if (valError) {
             return Promise.reject(new TypeError(valError));
         }
@@ -156,7 +161,7 @@ class GenericService {
 //        if (arguments.length !== 2) {
 //            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateBatch'));
 //        }
-//        var clone = _.clone(updatedDoc);
+//        let clone = _.clone(updatedDoc);
 //        delete clone.id;
 //
 //        conversionService.convertISOStringDateTimesToMongoDates(clone);
@@ -211,6 +216,9 @@ class GenericService {
     onAfterCreate(orgId, result) { return Promise.resolve(result); }
     onAfterUpdate(orgId, result) { return Promise.resolve(result); }
     onAfterDelete(orgId, result) { return Promise.resolve(result); }
+
+    transformList(list) { return list; }
+    transformSingle(single) { return single; }
 }
 
 module.exports = GenericService;

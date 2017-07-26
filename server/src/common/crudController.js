@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var Promise = require("bluebird");
 
 class CrudController {
@@ -32,7 +32,7 @@ class CrudController {
                 return res.status(200).json(docs);
             })
             .catch(err => {
-                err.message = 'ERROR: {0}Controller -> getAll({1}) - {2}'.format(this.resourceName, this.orgId, err.message);
+                err.message = `ERROR: ${this.resourceName}Controller -> getAll(${this.orgId}) - ${err.message}`;
                 return next(err);
             });
 
@@ -53,7 +53,7 @@ class CrudController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = 'ERROR: {0}Controller -> getById({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
+                err.message = `ERROR: ${this.resourceName}Controller -> getById(${this.orgId}, ${id}) - ${err.message}`;
                 return next(err);
             });
     }
@@ -74,7 +74,7 @@ class CrudController {
                     return res.status(409).json({'Errors': ['Duplicate Key Error']});
                 }
 
-                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, this.orgId, body, err.message);
+                err.message = `ERROR: ${this.resourceName}Controller -> create(${this.orgId}, ${body}) - ${err.message}`;
                 return next(err);
             });
     }
@@ -94,7 +94,7 @@ class CrudController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = 'ERROR: {0}Controller -> updateById({1}, {2}, {3}) - {4}'.format(this.resourceName, this.orgId, id, body, err.message);
+                err.message = `ERROR: ${this.resourceName}Controller -> updateById(${this.orgId}, ${id}, ${body}}) - ${err.message}`;
                 return next(err);
             });
     }
@@ -114,7 +114,7 @@ class CrudController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = 'ERROR: {0}Controller -> delete({1}, {2}) - {3}'.format(this.resourceName, this.orgId, id, err.message);
+                err.message = `ERROR: ${this.resourceName}Controller -> delete(${this.orgId}, ${id}) - ${err.message}`;
                 return next(err);
             });
     }
