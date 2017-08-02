@@ -2,6 +2,7 @@
 const database = require("../database/database").database;
 const CrudController = require("../common/crudController");
 const TemplateService = require("./templateService");
+const authHelper = require('../common/authHelper');
 
 class TemplatesController extends CrudController {
     constructor(app) {
@@ -13,7 +14,7 @@ class TemplatesController extends CrudController {
         super.mapRoutes(app); // map the base CrudController routes
 
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.get(`/api/${this.resourceName}/getbyname/:name`, this.getByName.bind(this));
+        app.get(`/api/${this.resourceName}/getbyname/:name`, authHelper.isAuthenticated, this.getByName.bind(this));
     }
 
     getByName(req, res, next) {

@@ -1,6 +1,7 @@
 "use strict";
-var database = require("../database/database").database;
-var CustomDataService = require("./customDataService");
+const database = require("../database/database").database;
+const CustomDataService = require("./customDataService");
+const authHelper = require('../common/authHelper');
 
 class CustomDataController {
 
@@ -21,11 +22,11 @@ class CustomDataController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.get('/api/customData/:contentType', this.getAllByContentType.bind(this));
-        app.get('/api/customData/:contentType/:id', this.getByContentType.bind(this));
-        app.post('/api/customData/:contentType', this.createByContentType.bind(this));
-        app.put('/api/customData/:contentType/:id', this.updateByTypeAndId.bind(this));
-        app.delete('/api/customData/:contentType/:id', this.deleteByTypeAndId.bind(this));
+        app.get('/api/customData/:contentType', authHelper.isAuthenticated, this.getAllByContentType.bind(this));
+        app.get('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.getByContentType.bind(this));
+        app.post('/api/customData/:contentType', authHelper.isAuthenticated, this.createByContentType.bind(this));
+        app.put('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.updateByTypeAndId.bind(this));
+        app.delete('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.deleteByTypeAndId.bind(this));
     }
 
     getAllByContentType(req, res, next) {

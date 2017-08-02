@@ -29,6 +29,7 @@ import {UserService} from "./users/user.service";
 import {SetupComponent} from './setup/setup.component';
 import {SetupService} from "./setup/setup.service";
 import {SetupGuardService} from "./setup/setup-guard.service";
+import {AuthGuardService} from "./common/auth/auth-guard.service";
 
 @NgModule({
     declarations: [
@@ -63,7 +64,8 @@ import {SetupGuardService} from "./setup/setup-guard.service";
         QueryService,
         UserService,
         SetupService,
-        SetupGuardService
+        SetupGuardService,
+        AuthGuardService
     ],
     bootstrap: [AppComponent]
 })

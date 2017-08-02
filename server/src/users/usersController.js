@@ -43,7 +43,8 @@ class UsersController extends CrudController {
         app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.afterAuth.bind(this));
         //app.post(`/api/${this.resourceName}/create-social-account`, this.createSocialAccount.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
-        app.get(`/api/${this.resourceName}/logout`, this.logout.bind(this));
+        app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));
+        app.get(`/api/${this.resourceName}/getloggedinuser`, authHelper.isAuthenticated, this.getLoggedInUser.bind(this));
 
         // Map routes
         super.mapRoutes(app); // map the base CrudController routes
@@ -54,7 +55,7 @@ class UsersController extends CrudController {
 
     logout(req, res) {
         req.logOut();
-        res.send(200);
+        res.status(200).json({});
     }
 
     afterAuth(req, res) {
@@ -94,7 +95,13 @@ class UsersController extends CrudController {
             });
     }
 
-    getRandomNumber (req, res, next) {
+    getLoggedInUser(req, res, next) {
+        let loggedInUser = req.user;
+
+        return res.status(200).json(loggedInUser);
+    }
+
+    getRandomNumber(req, res, next) {
         // req.user is assigned by jwt middleware if valid token is provided
         return res.json({
             user: req.user,

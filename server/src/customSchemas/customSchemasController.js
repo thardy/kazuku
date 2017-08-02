@@ -1,7 +1,8 @@
 "use strict";
-var database = require("../database/database").database;
-var CrudController = require("../common/crudController");
-var CustomSchemaService = require("./customSchemaService");
+const database = require("../database/database").database;
+const CrudController = require("../common/crudController");
+const CustomSchemaService = require("./customSchemaService");
+const authHelper = require('../common/authHelper');
 
 class CustomSchemasController extends CrudController {
     constructor(app) {
@@ -11,11 +12,11 @@ class CustomSchemasController extends CrudController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-        app.get(`/api/${this.resourceName}/:contentType`, this.getByContentType.bind(this));
-        app.post(`/api/${this.resourceName}`, this.create.bind(this));
-        app.put(`/api/${this.resourceName}/:contentType`, this.updateByContentType.bind(this));
-        app.delete(`/api/${this.resourceName}/:contentType`, this.deleteByContentType.bind(this));
+        app.get(`/api/${this.resourceName}`, authHelper.isAuthenticated, this.getAll.bind(this));
+        app.get(`/api/${this.resourceName}/:contentType`, authHelper.isAuthenticated, this.getByContentType.bind(this));
+        app.post(`/api/${this.resourceName}`, authHelper.isAuthenticated, this.create.bind(this));
+        app.put(`/api/${this.resourceName}/:contentType`, authHelper.isAuthenticated, this.updateByContentType.bind(this));
+        app.delete(`/api/${this.resourceName}/:contentType`, authHelper.isAuthenticated, this.deleteByContentType.bind(this));
     }
 
     getByContentType(req, res, next) {

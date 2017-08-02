@@ -11,19 +11,20 @@ import {OrganizationDetailComponent} from "./organizations/organization-detail.c
 import {LoginComponent} from "./login/login.component";
 import {SetupComponent} from "./setup/setup.component";
 import {SetupGuardService} from "./setup/setup-guard.service";
+import {AuthGuardService} from './common/auth/auth-guard.service';
 
 // This is where we setup our routes!
 const APP_ROUTES: Routes = [
     {path: 'login', component: LoginComponent},
-    {path: 'dashboard', component: DashboardComponent},
-    {path: 'organizations', component: OrganizationListComponent},
-    {path: 'organizations/:id', component: OrganizationDetailComponent},
-    {path: 'sites', component: SiteListComponent},
-    {path: 'sites/:id', component: SiteDetailComponent},
-    {path: 'pages', component: PagesComponent},
+    {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
+    {path: 'organizations', component: OrganizationListComponent, canActivate: [AuthGuardService]},
+    {path: 'organizations/:id', component: OrganizationDetailComponent, canActivate: [AuthGuardService]},
+    {path: 'sites', component: SiteListComponent, canActivate: [AuthGuardService]},
+    {path: 'sites/:id', component: SiteDetailComponent, canActivate: [AuthGuardService]},
+    {path: 'pages', component: PagesComponent, canActivate: [AuthGuardService]},
     {path: 'setup', component: SetupComponent, canActivate: [SetupGuardService]},
-    {path: 'templates', component: TemplateListComponent},
-    {path: 'templates/:id', component: TemplateDetailComponent},
+    {path: 'templates', component: TemplateListComponent, canActivate: [AuthGuardService]},
+    {path: 'templates/:id', component: TemplateDetailComponent, canActivate: [AuthGuardService]},
     {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
 

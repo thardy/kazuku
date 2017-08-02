@@ -1,5 +1,6 @@
 'use strict';
-var Promise = require("bluebird");
+const Promise = require("bluebird");
+const authHelper = require('../common/authHelper');
 
 class CrudController {
 
@@ -17,11 +18,11 @@ class CrudController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-        app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
-        app.post(`/api/${this.resourceName}`, this.create.bind(this));
-        app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
-        app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
+        app.get(`/api/${this.resourceName}`, authHelper.isAuthenticated, this.getAll.bind(this));
+        app.get(`/api/${this.resourceName}/:id`, authHelper.isAuthenticated, this.getById.bind(this));
+        app.post(`/api/${this.resourceName}`, authHelper.isAuthenticated, this.create.bind(this));
+        app.put(`/api/${this.resourceName}/:id`, authHelper.isAuthenticated, this.updateById.bind(this));
+        app.delete(`/api/${this.resourceName}/:id`, authHelper.isAuthenticated, this.deleteById.bind(this));
     }
 
     getAll(req, res, next) {

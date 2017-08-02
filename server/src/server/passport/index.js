@@ -28,7 +28,7 @@ module.exports = (passport) => {
                 else {
                     logger.log('error', 'Error when deserializing the user: User not found');
                 }
-                done(null, user);
+                done(null, user); // user attaches to the request as req.user
             })
             .catch(error => logger.log('error', 'Error when deserializing the user: ' + error));
     });
