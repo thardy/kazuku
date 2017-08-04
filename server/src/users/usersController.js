@@ -4,6 +4,7 @@ const passport = require('passport');
 const CrudController = require("../common/crudController");
 const UserService = require("./userService");
 const authHelper = require('../common/authHelper');
+require('zone.js/dist/zone-node.js');
 // const Joi = require('joi');
 
 class UsersController extends CrudController {
@@ -103,6 +104,9 @@ class UsersController extends CrudController {
 
     getRandomNumber(req, res, next) {
         // req.user is assigned by jwt middleware if valid token is provided
+        console.log(`Zone id is: ${Zone.current.id}`);
+        console.log(`Zone currentUser.email = ${Zone.current.currentUser.email}`);
+        console.log(`Zone currentUser.orgId = ${Zone.current.currentUser.orgId}`);
         return res.json({
             user: req.user,
             num: Math.random() * 100

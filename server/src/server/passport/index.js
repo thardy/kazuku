@@ -8,7 +8,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const UserService = require('../../users/userService');
 const moment = require('moment');
 const bcrypt = require('bcrypt-nodejs');
-
+require('zone.js/dist/zone-node.js');
 const SALT_WORK_FACTOR = 10;
 
 module.exports = (passport) => {
@@ -28,6 +28,7 @@ module.exports = (passport) => {
                 else {
                     logger.log('error', 'Error when deserializing the user: User not found');
                 }
+                Zone.current.currentUser = user;
                 done(null, user); // user attaches to the request as req.user
             })
             .catch(error => logger.log('error', 'Error when deserializing the user: ' + error));
@@ -105,6 +106,7 @@ module.exports = (passport) => {
 
                     return userService.create(orgId, newUser)
                         .then(createdUser => {
+                            Zone.current.currentUser = newUser;
                             return done(null, createdUser);
                         })
                         .catch(error => {

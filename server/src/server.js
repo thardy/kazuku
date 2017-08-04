@@ -7,9 +7,21 @@ const config = require('./server/config');
 const session = require('./server/session');
 const logger = require('./server/logger');
 const routes = require('./server/routes');
+require('zone.js/dist/zone-node.js');
 
 // Setup passport auth strategies
 const passportAuthStrategies = require('./server/passport')(passport); // pass passport for configuration
+
+
+function setupAuthZone(req, res, next) {
+    return Zone.current.fork({
+        name: 'api'
+    })
+    .run(() => {
+        Zone.current.id = Math.random();
+        next();
+    })
+}
 
 app.set('port', config.port || 3001);
 
@@ -19,6 +31,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
 // sessions has to be used before router is mounted
+app.use(setupAuthZone);
 app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
