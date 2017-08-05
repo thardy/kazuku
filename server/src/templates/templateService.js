@@ -8,6 +8,7 @@ var QueryService = require("../queries/queryService");
 var Promise = require("bluebird");
 var frontMatter = require('front-matter');
 var _ = require("lodash");
+const current = require('../common/current');
 
 const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 
@@ -19,7 +20,6 @@ class TemplateService extends GenericService {
         //  a getTemplate function was not supplied.
         this.getTemplateFunction = (getTemplate) ? getTemplate : this.getTemplate.bind(this);
 
-        this.orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
         this.queryService = (queryService) ? queryService : new QueryService(database);
         this.customDataService = new CustomDataService(database);
         this.dependencyService = new DependencyService(database);
@@ -27,7 +27,7 @@ class TemplateService extends GenericService {
             engineType: 'liquid',
             getTemplate: this.getTemplateFunction,
             queryService: this.queryService, // templateEngine needs this to resolve queries on models
-            orgId: this.orgId // needed for resolving queries on models
+            //orgId: this.orgId // needed for resolving queries on models
         });
     }
 

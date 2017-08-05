@@ -61,7 +61,7 @@ module.exports = (passport) => {
     };
 
     let authProcessor = (socialLogin, req, accessToken, refreshToken, profile, done) => {
-        // todo: replace orgId assignment with whatever org the user is logging in to
+        // todo: replace orgId assignment with whatever org the user is logging in to (get orgId from site or host or sumpin)
         let orgId = 1;
 
         // Find a user in db based on their social id

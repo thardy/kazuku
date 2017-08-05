@@ -85,7 +85,6 @@ describe("CustomSchemaService CRUD", function () {
         return deleteAllTestSchema();
     });
 
-    // todo: alter to enforce orgId (preferably in genericService). Add orgId to all service function parms, have controller pull orgId from auth mechanism.
     it("can get all customSchemas", function () {
         var getAllPromise = customSchemaService.getAll(testOrgId);
 

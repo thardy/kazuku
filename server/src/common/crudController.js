@@ -1,14 +1,12 @@
 'use strict';
 const Promise = require("bluebird");
 const authHelper = require('../common/authHelper');
+const current = require('../common/current');
 
 class CrudController {
 
     constructor(resourceName, app, service) {
-        // todo: change to use auth mechanism
-        // todo: test that this gets written on every request and not reused between them
         this.app = app;
-        this.orgId = 1;
         this.service = service;
         this.resourceName = resourceName;
 
@@ -28,12 +26,12 @@ class CrudController {
     getAll(req, res, next) {
         res.set("Content-Type", "application/json");
 
-        this.service.getAll(this.orgId)
+        this.service.getAll(current.user.orgId)
             .then((docs) => {
                 return res.status(200).json(docs);
             })
             .catch(err => {
-                err.message = `ERROR: ${this.resourceName}Controller -> getAll(${this.orgId}) - ${err.message}`;
+                err.message = `ERROR: ${this.resourceName}Controller -> getAll(${current.user.orgId}) - ${err.message}`;
                 return next(err);
             });
 
@@ -43,7 +41,7 @@ class CrudController {
         let id = req.params.id;
         res.set("Content-Type", "application/json");
 
-        this.service.getById(this.orgId, id)
+        this.service.getById(current.user.orgId, id)
             .then((doc) => {
                 if (doc === null) return next();
 
@@ -54,7 +52,7 @@ class CrudController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = `ERROR: ${this.resourceName}Controller -> getById(${this.orgId}, ${id}) - ${err.message}`;
+                err.message = `ERROR: ${this.resourceName}Controller -> getById(${current.user.orgId}, ${id}) - ${err.message}`;
                 return next(err);
             });
     }
@@ -62,7 +60,7 @@ class CrudController {
     create(req, res, next) {
         let body = req.body;
 
-        this.service.create(this.orgId, body)
+        this.service.create(current.user.orgId, body)
             .then((doc) => {
                 return res.status(201).json(doc);
             })
@@ -75,7 +73,7 @@ class CrudController {
                     return res.status(409).json({'Errors': ['Duplicate Key Error']});
                 }
 
-                err.message = `ERROR: ${this.resourceName}Controller -> create(${this.orgId}, ${body}) - ${err.message}`;
+                err.message = `ERROR: ${this.resourceName}Controller -> create(${current.user.orgId}, ${body}) - ${err.message}`;
                 return next(err);
             });
     }
@@ -84,7 +82,7 @@ class CrudController {
         let id = req.params.id;
         let body = req.body;
 
-        this.service.updateById(this.orgId, id, body)
+        this.service.updateById(current.user.orgId, id, body)
             .then((result) => {
                 if (result.nModified <= 0) return next();
 
@@ -95,14 +93,14 @@ class CrudController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = `ERROR: ${this.resourceName}Controller -> updateById(${this.orgId}, ${id}, ${body}}) - ${err.message}`;
+                err.message = `ERROR: ${this.resourceName}Controller -> updateById(${current.user.orgId}, ${id}, ${body}}) - ${err.message}`;
                 return next(err);
             });
     }
 
     deleteById (req, res, next) {
         let id = req.params.id;
-        this.service.delete(this.orgId, id)
+        this.service.delete(current.user.orgId, id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
                     return res.status(404).json({'Errors': ['id not found']});
@@ -115,7 +113,7 @@ class CrudController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = `ERROR: ${this.resourceName}Controller -> delete(${this.orgId}, ${id}) - ${err.message}`;
+                err.message = `ERROR: ${this.resourceName}Controller -> delete(${current.user.orgId}, ${id}) - ${err.message}`;
                 return next(err);
             });
     }

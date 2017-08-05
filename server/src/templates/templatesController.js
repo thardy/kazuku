@@ -3,6 +3,7 @@ const database = require("../database/database").database;
 const CrudController = require("../common/crudController");
 const TemplateService = require("./templateService");
 const authHelper = require('../common/authHelper');
+const current = require('../common/current');
 
 class TemplatesController extends CrudController {
     constructor(app) {
@@ -21,14 +22,14 @@ class TemplatesController extends CrudController {
         let templateName = req.params.name;
         res.set("Content-Type", "application/json");
 
-        this.service.getTemplate(this.orgId, templateName)
+        this.service.getTemplate(current.user.orgId, templateName)
             .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
-                err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(this.orgId, templateName, err.message);
+                err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(current.user.orgId, templateName, err.message);
                 return next(err);
             });
     }

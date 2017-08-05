@@ -3,6 +3,7 @@ const database = require("../database/database").database;
 const CrudController = require("../common/crudController");
 const CustomSchemaService = require("./customSchemaService");
 const authHelper = require('../common/authHelper');
+const current = require('../common/current');
 
 class CustomSchemasController extends CrudController {
     constructor(app) {
@@ -23,14 +24,14 @@ class CustomSchemasController extends CrudController {
         let contentType = req.params.contentType;
         res.set("Content-Type", "application/json");
 
-        this.service.getByContentType(this.orgId, contentType)
+        this.service.getByContentType(current.user.orgId, contentType)
             .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
-                err.message = 'ERROR: customSchemasController -> customSchemaService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
+                err.message = 'ERROR: customSchemasController -> customSchemaService.getByContentType({0}, {1}) - {2}'.format(current.user.orgId, contentType, err.message);
                     return next(err);
             });
     }
@@ -42,7 +43,7 @@ class CustomSchemasController extends CrudController {
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        this.service.updateByContentType(this.orgId, contentType, body)
+        this.service.updateByContentType(current.user.orgId, contentType, body)
             .then((result) => {
                 if (result.nModified <= 0) {
                     return res.status(404).json({'Errors': ['Document not found']});
@@ -51,7 +52,7 @@ class CustomSchemasController extends CrudController {
                 return res.status(200).json({});
             })
             .catch(err => {
-                err.message = 'ERROR: customSchemasController -> customSchemaService.updateByContentType({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, body, err.message);
+                err.message = 'ERROR: customSchemasController -> customSchemaService.updateByContentType({0}, {1}, {2}) - {3}'.format(current.user.orgId, contentType, body, err.message);
                 return next(err);
             });
     }
@@ -60,14 +61,14 @@ class CustomSchemasController extends CrudController {
         let contentType = req.params.contentType;
 
         // todo: Add some serious checking here.  Can't delete a schema unless all data for that schema is deleted first.
-        this.service.deleteByContentType(this.orgId, contentType)
+        this.service.deleteByContentType(current.user.orgId, contentType)
             .then((numAffected) => {
                 if (numAffected <= 0) return next();
 
                     return res.status(204).json({});
             })
             .catch(err => {
-                err.message = 'ERROR: customSchemasController -> customSchemaService.deleteByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
+                err.message = 'ERROR: customSchemasController -> customSchemaService.deleteByContentType({0}, {1}) - {2}'.format(current.user.orgId, contentType, err.message);
                 return next(err);
             });
     }

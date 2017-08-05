@@ -7,27 +7,26 @@ var Promise = require("bluebird");
 var Liquid = require('shopify-liquid');
 var util = require('util');
 var _ = require("lodash");
+const current = require('../common/current');
 
 // Constructor
 var TemplateEngine = function(args) {
     assert.ok(args.engineType, 'engineType is required');
     assert.ok(args.getTemplate, 'getTemplate is required');
     assert.ok(args.queryService, 'queryService is required');
-    assert.ok(args.orgId, 'orgId is required');
     var templateEngine = {};
     templateEngine.engineType = args.engineType;
     //templateEngine.engine = new Liquid.Engine();
     templateEngine.engine = new Liquid();
     templateEngine.getTemplate = args.getTemplate;
     let queryService = args.queryService;
-    let orgId = args.orgId;
 
     // Override shopify-liquid's getTemplate lookup to use our own mechanism for getting templates by name
     templateEngine.engine.getTemplate = function(path) {
-        return templateEngine.getTemplate(orgId, path)
+        return templateEngine.getTemplate(current.user.orgId, path)
            .then((templateObject) => {
                if (templateObject && templateObject.template) {
-                   return queryService.resolveQueryPropertiesOnModel(orgId, templateObject)
+                   return queryService.resolveQueryPropertiesOnModel(current.user.orgId, templateObject)
                        .then(result => {
                            // result is inconsequential.  The templateObject should have been altered directly.
                            return templateObject; // return the templateObject

@@ -2,14 +2,12 @@
 const database = require("../database/database").database;
 const CustomDataService = require("./customDataService");
 const authHelper = require('../common/authHelper');
+const current = require('../common/current');
 
 class CustomDataController {
 
     constructor(app) {
-        // todo: change to use auth mechanism
-        // todo: test that this gets written on every request (might need to move out of constructor)
         this._app = app;
-        this._orgId = 1;
         this._service = new CustomDataService(database);
 
         this.mapRoutes(app);
@@ -65,22 +63,22 @@ class CustomDataController {
                     query += req.query[property] ? '=' + req.query[property] : '';
                 }
             }
-            return this.service.find(this.orgId, query)
+            return this.service.find(current.user.orgId, query)
                 .then(function (docs) {
                     return res.status(200).json(docs);
                 })
                 .catch(err => {
-                    err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
+                    err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(current.user.orgId, contentType, err.message);
                     return next(err);
                 });
         }
         else {
-            return this.service.getByContentType(this.orgId, contentType)
+            return this.service.getByContentType(current.user.orgId, contentType)
                 .then(function (docs) {
                     return res.status(200).json(docs);
                 })
                 .catch(err => {
-                    err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(this.orgId, contentType, err.message);
+                    err.message = 'ERROR: customDataController -> customDataService.getByContentType({0}, {1}) - {2}'.format(current.user.orgId, contentType, err.message);
                     return next(err);
                 });
         }
@@ -92,7 +90,7 @@ class CustomDataController {
         var id = req.params.id;
         res.set("Content-Type", "application/json");
 
-        return this.service.getByTypeAndId(this.orgId, contentType, id)
+        return this.service.getByTypeAndId(current.user.orgId, contentType, id)
             .then(function (doc) {
                 if (doc === null) {
                     return res.status(404).json({'Errors': ['id not found']});
@@ -105,7 +103,7 @@ class CustomDataController {
                     return res.status(400).json({'Errors': [err.message]});
                 }
 
-                err.message = 'ERROR: customDataController -> customDataService.getByTypeAndId({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, id, err.message);
+                err.message = 'ERROR: customDataController -> customDataService.getByTypeAndId({0}, {1}, {2}) - {3}'.format(current.user.orgId, contentType, id, err.message);
                 return next(err);
             });
     }
@@ -118,12 +116,12 @@ class CustomDataController {
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        return this.service.create(this.orgId, body)
+        return this.service.create(current.user.orgId, body)
             .then(function (customData) {
                 return res.status(201).json(customData);
             })
             .catch(err => {
-                err.message = 'ERROR: customDataController -> customDataService.create({0}, {1}) - {2}'.format(this.orgId, body, err.message);
+                err.message = 'ERROR: customDataController -> customDataService.create({0}, {1}) - {2}'.format(current.user.orgId, body, err.message);
                 return next(err);
             });
     }
@@ -137,7 +135,7 @@ class CustomDataController {
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        return this.service.updateById(this.orgId, id, body)
+        return this.service.updateById(current.user.orgId, id, body)
             .then(function (result) {
                 if (result.nModified <= 0) {
                     return res.status(404).json({'Errors': ['Document not found']});
@@ -149,7 +147,7 @@ class CustomDataController {
                 if (err.constructor == TypeError) {
                     return res.status(400).json({'Errors': [err.message]});
                 }
-                err.message = 'ERROR: customDataController -> customDataService.updateById({0}, {1}, {2}) - {3}'.format(this.orgId, id, body, err.message);
+                err.message = 'ERROR: customDataController -> customDataService.updateById({0}, {1}, {2}) - {3}'.format(current.user.orgId, id, body, err.message);
                 return next(err);
             });
     }
@@ -158,7 +156,7 @@ class CustomDataController {
         var contentType = req.params.contentType;
         // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;
-        return this.service.deleteByTypeAndId(this.orgId, contentType, id)
+        return this.service.deleteByTypeAndId(current.user.orgId, contentType, id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
                     return res.status(404).json({'Errors': ['id not found']});
@@ -171,7 +169,7 @@ class CustomDataController {
                 if (err.constructor == TypeError) {
                     return res.status(400).json({'Errors': [err.message]});
                 }
-                err.message = 'customDataController -> customDataService.deleteByTypeAndId({0}, {1}, {2}) - {3}'.format(this.orgId, contentType, id, err.message);
+                err.message = 'customDataController -> customDataService.deleteByTypeAndId({0}, {1}, {2}) - {3}'.format(current.user.orgId, contentType, id, err.message);
                 return next(err);
             });
     }

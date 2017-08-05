@@ -8,8 +8,6 @@ const apiHelper = require('../common/apiHelper');
 class SetupController {
 
     constructor(app) {
-        // todo: change to use auth mechanism
-        // todo: test that this gets written on every request and not reused between them
         this.app = app;
         this.setupService = new SetupService(database);
         this.organizationService = new OrganizationService(database);

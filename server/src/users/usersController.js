@@ -4,7 +4,7 @@ const passport = require('passport');
 const CrudController = require("../common/crudController");
 const UserService = require("./userService");
 const authHelper = require('../common/authHelper');
-require('zone.js/dist/zone-node.js');
+const current = require('../common/current');
 // const Joi = require('joi');
 
 class UsersController extends CrudController {
@@ -29,7 +29,6 @@ class UsersController extends CrudController {
         //         }
         //     }
         // };
-
         super('users', app, new UserService(database));
     }
 
@@ -78,7 +77,7 @@ class UsersController extends CrudController {
     registerUser(req, res, next) {
         let body = req.body;
 
-        this.service.create(this.orgId, body)
+        this.service.create(current.user.orgId, body)
             .then((doc) => {
                 return res.status(201).json(doc);
             })
@@ -91,7 +90,7 @@ class UsersController extends CrudController {
                     return res.status(409).json({'Errors': ['Duplicate Key Error']});
                 }
 
-                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, this.orgId, body, err.message);
+                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, current.user.orgId, body, err.message);
                 return next(err);
             });
     }
@@ -104,9 +103,9 @@ class UsersController extends CrudController {
 
     getRandomNumber(req, res, next) {
         // req.user is assigned by jwt middleware if valid token is provided
-        console.log(`Zone id is: ${Zone.current.id}`);
-        console.log(`Zone currentUser.email = ${Zone.current.currentUser.email}`);
-        console.log(`Zone currentUser.orgId = ${Zone.current.currentUser.orgId}`);
+        //console.log(`Zone id is: ${Zone.current.id}`);
+        console.log(`Zone current.user.email = ${current.user.email}`);
+        console.log(`Zone current.user.orgId = ${current.user.orgId}`);
         return res.json({
             user: req.user,
             num: Math.random() * 100

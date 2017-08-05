@@ -75,7 +75,6 @@ describe("TemplateService", function () {
             return templateTestHelper.deleteAllTestTemplates();
         });
 
-        // todo: alter to enforce orgId (preferably in genericService). Add orgId to all service function parms, have controller pull orgId from auth mechanism.
         it("can get all templates", function () {
             let getAllPromise = templateService.getAll(templateTestHelper.testOrgId);
 

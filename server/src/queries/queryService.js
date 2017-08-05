@@ -11,7 +11,6 @@ class QueryService extends GenericService {
         super(database, 'queries');
         this.customDataService = new CustomDataService(database);
         this.dependencyService = new DependencyService(database);
-        this.orgId = 1; // todo: alter to use auth mechanism (currently logged in user's orgId)
     }
 
     getRegenerateList(orgId) {
