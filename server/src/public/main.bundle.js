@@ -306,15 +306,15 @@ var AuthGuardService = (function () {
         var _this = this;
         if (!this.userService.isLoggedIn()) {
             // check for logged-in user.  If we already have a cookie, don't make the user log in again
-            this.userService.getLoggedInUser()
+            this.userService.getUserContext()
                 .catch(function (error) {
                 if (error.status === 401) {
                     _this.router.navigate(['login']);
                 }
                 return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].of(null);
             })
-                .subscribe(function (user) {
-                if (!user) {
+                .subscribe(function (userContext) {
+                if (!userContext) {
                     // need to redirect to login screen
                     _this.router.navigateByUrl("login?returnUrl=" + state.url);
                 }
@@ -680,7 +680,7 @@ var TEMPLATES = [
 /***/ "../../../../../src/app/layout/nav-bar/nav-bar.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\r\n    <div class=\"row\">\r\n        <div class=\"col\">\r\n            <ul class=\"nav nav-pills flex-column text-md-left\">\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" [routerLink]=\"['/dashboard']\">\r\n                        <i class=\"fa fa-fw icon-graph\"></i>\r\n                        Dashboard\r\n                    </a>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" [routerLink]=\"['/organizations']\">\r\n                        <i class=\"fa fa-fw icon-graph\"></i>\r\n                        Orgs\r\n                    </a>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" [routerLink]=\"['/sites']\">\r\n                        <i class=\"fa fa-fw icon-graph\"></i>\r\n                        Sites\r\n                    </a>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" [routerLink]=\"['/pages']\">\r\n                        <i class=\"fa fa-fw icon-graph\"></i>\r\n                        Pages\r\n                    </a>\r\n                </li>\r\n                <li class=\"nav-item\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" [routerLink]=\"['/templates']\">\r\n                        <i class=\"fa fa-fw icon-graph\"></i>\r\n                        Templates\r\n                    </a>\r\n                </li>\r\n                <li class=\"nav-item\" style=\"cursor: pointer\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" (click)=\"logout()\">\r\n                        <i class=\"fa fa-fw icon-graph\"></i>\r\n                        Logout\r\n                    </a>\r\n                </li>\r\n            </ul>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n"
+module.exports = "<div class=\"container\">\r\n    <div class=\"row\">\r\n        <div class=\"col\">\r\n            <ul class=\"nav nav-pills flex-column text-md-left\">\r\n                <li *ngFor=\"let navItem of navItems\" class=\"nav-item\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" [routerLink]=\"['/' + navItem.destination]\">\r\n                        {{navItem.name | uppercase}}\r\n                    </a>\r\n                </li>\r\n                <li class=\"nav-item\" style=\"cursor: pointer\">\r\n                    <a class=\"nav-link\" routerLinkActive=\"active\" (click)=\"logout()\">\r\n                        Logout\r\n                    </a>\r\n                </li>\r\n            </ul>\r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n"
 
 /***/ }),
 
@@ -711,6 +711,7 @@ module.exports = module.exports.toString();
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Subject__ = __webpack_require__("../../../../rxjs/Subject.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Subject__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__users_user_service__ = __webpack_require__("../../../../../src/app/users/user.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__users_user_context_model__ = __webpack_require__("../../../../../src/app/users/user-context.model.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NavBarComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -725,13 +726,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var NavBarComponent = (function () {
     function NavBarComponent(userService, router) {
         this.userService = userService;
         this.router = router;
         this.ngUnsubscribe = new __WEBPACK_IMPORTED_MODULE_2_rxjs_Subject__["Subject"]();
+        this.userContext = new __WEBPACK_IMPORTED_MODULE_4__users_user_context_model__["a" /* UserContext */]();
     }
     NavBarComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.navItems = this.getNavItems();
+        this.userService.currentUserContext
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(function (userContext) {
+            _this.userContext = userContext;
+            // add extra navItems for metaOrg
+            if (userContext.org.isMetaOrg) {
+                _this.navItems.push({ name: 'Orgs', destination: 'organizations' });
+            }
+        });
     };
     NavBarComponent.prototype.ngOnDestroy = function () {
         this.ngUnsubscribe.next();
@@ -746,6 +760,14 @@ var NavBarComponent = (function () {
         }, function (error) {
             _this.router.navigate(['login']);
         });
+    };
+    NavBarComponent.prototype.getNavItems = function () {
+        var navItems = [];
+        navItems.push({ name: 'Dashboard', destination: 'dashboard' });
+        navItems.push({ name: 'Sites', destination: 'sites' });
+        navItems.push({ name: 'Pages', destination: 'pages' });
+        navItems.push({ name: 'Templates', destination: 'templates' });
+        return navItems;
     };
     NavBarComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({
@@ -1377,7 +1399,7 @@ var SetupGuardService = (function () {
 /***/ "../../../../../src/app/setup/setup.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #theForm=\"ngForm\" (ngSubmit)=\"save(theForm)\" class=\"ui form\" >\n    <p>Admin username/email is simply \"admin\".  Let's go ahead and set the initial password for the admin user...</p>\n    <label for=\"adminPassword\">Admin Password:</label>\n    <input [(ngModel)]=\"setupConfig.adminPassword\" id=\"adminPassword\" name=\"adminPassword\" type=\"password\" required>\n    <label for=\"adminPasswordConfirm\">Confirm Admin Password:</label>\n    <input [(ngModel)]=\"setupConfig.adminPasswordConfirm\" id=\"adminPasswordConfirm\" name=\"adminPasswordConfirm\" type=\"password\" required><br/>\n    <label for=\"metaOrgName\">Meta Organization Name:</label>\n    <p>\n        All content in Kazuku belongs to organizations, and while Kazuku is capable of hosting many organizations, you don't have to use Kazuku\n        to host multiple organizations.  There does need to be one \"meta\" organization, however - this will be the name of the\n        host organization for this instance of Kazuku.  This can simply be the name of your organization or just your name.\n    </p>\n    <input [(ngModel)]=\"setupConfig.metaOrgName\" id=\"metaOrgName\"  name=\"metaOrgName\" type=\"text\" required><br/>\n    <label for=\"metaOrgCode\">Meta Organization Code:</label>\n    <p>Every organization has an organization code.  For simplicity, the meta org always has a hardwired code of \"admin\".</p>\n    <input [(ngModel)]=\"setupConfig.metaOrgCode\" id=\"metaOrgCode\"  name=\"metaOrgCode\" type=\"text\" disabled>\n    <button type=\"submit\">Save</button>\n</form>\n"
+module.exports = "<form #theForm=\"ngForm\" (ngSubmit)=\"save(theForm)\" class=\"ui form\" >\r\n    <p>Admin username/email is simply \"admin\".  Let's go ahead and set the initial password for the admin user...</p>\r\n    <label for=\"adminPassword\">Admin Password:</label>\r\n    <input [(ngModel)]=\"setupConfig.adminPassword\" id=\"adminPassword\" name=\"adminPassword\" type=\"password\" required>\r\n    <label for=\"adminPasswordConfirm\">Confirm Admin Password:</label>\r\n    <input [(ngModel)]=\"setupConfig.adminPasswordConfirm\" id=\"adminPasswordConfirm\" name=\"adminPasswordConfirm\" type=\"password\" required><br/>\r\n    <label for=\"metaOrgName\">Meta Organization Name:</label>\r\n    <p>\r\n        All content in Kazuku belongs to organizations, and while Kazuku is capable of hosting many organizations, you don't have to use Kazuku\r\n        to host multiple organizations.  There does need to be one \"meta\" organization, however - this will be the name of the\r\n        host organization for this instance of Kazuku.  This can simply be the name of your organization or just your name.\r\n    </p>\r\n    <input [(ngModel)]=\"setupConfig.metaOrgName\" id=\"metaOrgName\"  name=\"metaOrgName\" type=\"text\" required><br/>\r\n    <label for=\"metaOrgCode\">Meta Organization Code:</label>\r\n    <p>Every organization has an organization code.  For simplicity, the meta org always has a hardwired code of \"admin\".</p>\r\n    <input [(ngModel)]=\"setupConfig.metaOrgCode\" id=\"metaOrgCode\"  name=\"metaOrgCode\" type=\"text\" disabled>\r\n    <button type=\"submit\">Save</button>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1967,6 +1989,27 @@ var TemplateService = (function (_super) {
 
 /***/ }),
 
+/***/ "../../../../../src/app/users/user-context.model.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__user_model__ = __webpack_require__("../../../../../src/app/users/user.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__organizations_organization_model__ = __webpack_require__("../../../../../src/app/organizations/organization.model.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UserContext; });
+
+
+var UserContext = (function () {
+    function UserContext(options) {
+        if (options === void 0) { options = {}; }
+        this.user = options.user || new __WEBPACK_IMPORTED_MODULE_0__user_model__["a" /* User */]();
+        this.org = options.org || new __WEBPACK_IMPORTED_MODULE_1__organizations_organization_model__["a" /* Organization */]();
+    }
+    return UserContext;
+}());
+//# sourceMappingURL=D:/dev/kazuku/client/src/user-context.model.js.map
+
+/***/ }),
+
 /***/ "../../../../../src/app/users/user.model.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2000,6 +2043,7 @@ var User = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__environments_environment__ = __webpack_require__("../../../../../src/environments/environment.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__user_model__ = __webpack_require__("../../../../../src/app/users/user.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__user_context_model__ = __webpack_require__("../../../../../src/app/users/user-context.model.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UserService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2017,16 +2061,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var UserService = (function () {
     function UserService(http) {
         this.http = http;
         this.baseUrl = __WEBPACK_IMPORTED_MODULE_5__environments_environment__["a" /* environment */].kazukuApiUrl + "/users";
-        this.dataStore = { user: null };
-        this._currentUser = new __WEBPACK_IMPORTED_MODULE_3_rxjs_BehaviorSubject__["BehaviorSubject"](new __WEBPACK_IMPORTED_MODULE_6__user_model__["a" /* User */]());
+        this.dataStore = { userContext: null };
+        this._currentUserContext = new __WEBPACK_IMPORTED_MODULE_3_rxjs_BehaviorSubject__["BehaviorSubject"](new __WEBPACK_IMPORTED_MODULE_7__user_context_model__["a" /* UserContext */]());
     }
-    Object.defineProperty(UserService.prototype, "currentUser", {
+    Object.defineProperty(UserService.prototype, "currentUserContext", {
         get: function () {
-            return this._currentUser.asObservable();
+            return this._currentUserContext.asObservable();
         },
         enumerable: true,
         configurable: true
@@ -2043,21 +2088,20 @@ var UserService = (function () {
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
-    UserService.prototype.getLoggedInUser = function () {
+    UserService.prototype.getUserContext = function () {
         var _this = this;
-        return this.http.get(this.baseUrl + "/getloggedinuser")
+        //return this.http.get(`${this.baseUrl}/getloggedinuser`)
+        return this.http.get(this.baseUrl + "/getusercontext")
             .map(function (response) { return _this.extractData(response); })
-            .do(function (user) {
-            _this.dataStore.user = user;
+            .do(function (userContext) {
+            _this.dataStore.userContext = userContext;
             // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
-            _this._currentUser.next(Object.assign(new __WEBPACK_IMPORTED_MODULE_6__user_model__["a" /* User */](), _this.dataStore.user));
-        }, function (error) {
-            _this.handleError(error);
+            _this._currentUserContext.next(Object.assign(new __WEBPACK_IMPORTED_MODULE_6__user_model__["a" /* User */](), _this.dataStore.userContext));
         })
             .catch(function (error) { return _this.handleError(error); });
     };
     UserService.prototype.isLoggedIn = function () {
-        return this.dataStore.user ? true : false;
+        return this.dataStore.userContext ? true : false;
     };
     UserService.prototype.extractData = function (response) {
         var data = response.json();
@@ -2081,7 +2125,7 @@ var UserService = (function () {
 /***/ "../../../../../src/app/users/users.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  users works!\n</p>\n"
+module.exports = "<p>\r\n  users works!\r\n</p>\r\n"
 
 /***/ }),
 

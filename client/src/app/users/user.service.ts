@@ -5,23 +5,24 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/do';
 import {environment} from "../../environments/environment";
 import {User} from "./user.model";
+import {UserContext} from "./user-context.model";
 
 @Injectable()
 export class UserService {
     private baseUrl: string;
-    private _currentUser: BehaviorSubject<User>;
+    private _currentUserContext: BehaviorSubject<UserContext>;
     private dataStore: {  // This is where we will store our data in memory
-        user: User
+        userContext: UserContext
     };
 
     constructor(private http: Http) {
         this.baseUrl = `${environment.kazukuApiUrl}/users`;
-        this.dataStore = { user: null };
-        this._currentUser = <BehaviorSubject<User>>new BehaviorSubject(new User());
+        this.dataStore = { userContext: null };
+        this._currentUserContext = <BehaviorSubject<UserContext>>new BehaviorSubject(new UserContext());
     }
 
-    get currentUser() {
-        return this._currentUser.asObservable();
+    get currentUserContext() {
+        return this._currentUserContext.asObservable();
     }
 
     login(email: string, password: string) {
@@ -36,24 +37,22 @@ export class UserService {
             .catch((error) => this.handleError(error));
     }
 
-    getLoggedInUser() {
-        return this.http.get(`${this.baseUrl}/getloggedinuser`)
-            .map(response => <User>this.extractData(response))
-            .do(
-                (user) => {
-                    this.dataStore.user = user;
+    getUserContext() {
+        //return this.http.get(`${this.baseUrl}/getloggedinuser`)
+        return this.http.get(`${this.baseUrl}/getusercontext`)
+            .map(response => <UserContext>this.extractData(response))
+            .do(userContext => {
+                    this.dataStore.userContext = userContext;
                     // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
-                    this._currentUser.next(Object.assign(new User(), this.dataStore.user));
-                },
-                (error) => {
-                    this.handleError(error);
+                    this._currentUserContext.next(Object.assign(new User(), this.dataStore.userContext));
                 }
             )
             .catch(error => this.handleError(error));
+
     }
 
     isLoggedIn() {
-        return this.dataStore.user ? true : false;
+        return this.dataStore.userContext ? true : false;
     }
 
     extractData(response: Response) {

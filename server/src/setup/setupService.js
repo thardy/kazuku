@@ -35,6 +35,7 @@ class SetupService {
         let metaOrg = {};
         metaOrg.name = setupConfig.metaOrgName;
         metaOrg.code = setupConfig.metaOrgCode;
+        metaOrg.isMetaOrg = true;
 
         return metaOrg;
     }

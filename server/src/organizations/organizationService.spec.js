@@ -16,8 +16,8 @@ describe("OrganizationService CRUD", function () {
 
     before(function () {
         orgService = new OrganizationService(database);
-        let newOrg1 = { name: `${testOrgPrefix}Acme Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: 0 };
-        let newOrg2 = { name: `${testOrgPrefix}Org to Update`, code: `${testOrgPrefix}updateorg`, description: 'A good org to update.', statusId: 1, isMetaOrg: 0 };
+        let newOrg1 = { name: `${testOrgPrefix}Acme Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: false };
+        let newOrg2 = { name: `${testOrgPrefix}Org to Update`, code: `${testOrgPrefix}updateorg`, description: 'A good org to update.', statusId: 1, isMetaOrg: false };
 
         return deleteAllTestOrganizations()
             .then(function(result) {
@@ -56,7 +56,7 @@ describe("OrganizationService CRUD", function () {
     });
 
     it("can create orgs", () => {
-        let newOrg = { name: `${testOrgPrefix}My New Org`, code: `${testOrgPrefix}myneworg`, description: 'Just a test.', statusId: 1, isMetaOrg: 0 };
+        let newOrg = { name: `${testOrgPrefix}My New Org`, code: `${testOrgPrefix}myneworg`, description: 'Just a test.', statusId: 1, isMetaOrg: false };
 
         let createOrgPromise = orgService.create(newOrg);
 
@@ -95,7 +95,7 @@ describe("OrganizationService CRUD", function () {
     });
 
     it("can delete orgs by id", function () {
-        let newOrg = { name: `${testOrgPrefix}Org to Delete`, code: `${testOrgPrefix}orgToDelete`, description: 'An org to delete.', statusId: 1, isMetaOrg: 0 };
+        let newOrg = { name: `${testOrgPrefix}Org to Delete`, code: `${testOrgPrefix}orgToDelete`, description: 'An org to delete.', statusId: 1, isMetaOrg: false };
 
         let createPromise = orgService.create(newOrg);
 

@@ -3,6 +3,7 @@ const database = require("../database/database").database;
 const passport = require('passport');
 const CrudController = require("../common/crudController");
 const UserService = require("./userService");
+const OrganizationService = require("../organizations/organizationService");
 const authHelper = require('../common/authHelper');
 const current = require('../common/current');
 // const Joi = require('joi');
@@ -30,6 +31,7 @@ class UsersController extends CrudController {
         //     }
         // };
         super('users', app, new UserService(database));
+        this.organizationService = new OrganizationService(database);
     }
 
     mapRoutes(app) {
@@ -44,7 +46,7 @@ class UsersController extends CrudController {
         //app.post(`/api/${this.resourceName}/create-social-account`, this.createSocialAccount.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
         app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));
-        app.get(`/api/${this.resourceName}/getloggedinuser`, authHelper.isAuthenticated, this.getLoggedInUser.bind(this));
+        app.get(`/api/${this.resourceName}/getusercontext`, authHelper.isAuthenticated, this.getUserContext.bind(this));
 
         // Map routes
         super.mapRoutes(app); // map the base CrudController routes
@@ -95,10 +97,15 @@ class UsersController extends CrudController {
             });
     }
 
-    getLoggedInUser(req, res, next) {
+    getUserContext(req, res, next) {
         let loggedInUser = req.user;
-
-        return res.status(200).json(loggedInUser);
+        // todo: test this!!!
+        // get the org for the loggedInUser
+        this.organizationService.getById(loggedInUser.orgId)
+            .then((org) => {
+                const userContext = {user: loggedInUser, org: org};
+                return res.status(200).json(userContext);
+            });
     }
 
     getRandomNumber(req, res, next) {

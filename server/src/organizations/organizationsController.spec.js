@@ -20,8 +20,8 @@ describe("ApiTests", function () {
                 let existingOrgs = [];
 
                 before(function () {
-                    let newOrg1 = { name: `${testOrgPrefix}Acme Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: 0 };
-                    let newOrg2 = { name: `${testOrgPrefix}Org to Update`, code: `${testOrgPrefix}updateorg`, description: 'A good org to update.', statusId: 1, isMetaOrg: 0 };
+                    let newOrg1 = { name: `${testOrgPrefix}Acme Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: false };
+                    let newOrg2 = { name: `${testOrgPrefix}Org to Update`, code: `${testOrgPrefix}updateorg`, description: 'A good org to update.', statusId: 1, isMetaOrg: false };
 
                     return deleteAllTestOrganizations()
                         .then(function(result) {
@@ -84,7 +84,7 @@ describe("ApiTests", function () {
                 });
                 describe("create", function () {
                     it("should create a new organization", function () {
-                        let newOrg = { name: `${testOrgPrefix}My New Controller Org`, code: `${testOrgPrefix}mynewcontrollerorg`, description: 'Just a test.', statusId: 2, isMetaOrg: 0 };
+                        let newOrg = { name: `${testOrgPrefix}My New Controller Org`, code: `${testOrgPrefix}mynewcontrollerorg`, description: 'Just a test.', statusId: 2, isMetaOrg: false };
 
                         let relativeUrl = '/api/organizations';
                         return request(app)
@@ -102,7 +102,7 @@ describe("ApiTests", function () {
 
                     it("should return a 400 for validation error", function () {
                        // code is required
-                       let invalidOrg = { name: `${testOrgPrefix}My New Controller Org`, description: 'Just a test.', statusId: 2, isMetaOrg: 0 };
+                       let invalidOrg = { name: `${testOrgPrefix}My New Controller Org`, description: 'Just a test.', statusId: 2, isMetaOrg: false };
                        return request(app)
                            .post('/api/organizations')
                            .send(invalidOrg)
@@ -110,7 +110,7 @@ describe("ApiTests", function () {
                     });
 
                     it("should return a 409 for duplicate key errors", function () {
-                        let dupeOrg = { name: `${testOrgPrefix}Dupe Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: 0 };
+                        let dupeOrg = { name: `${testOrgPrefix}Dupe Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: false };
                         return request(app)
                            .post('/api/organizations')
                            .send(dupeOrg)

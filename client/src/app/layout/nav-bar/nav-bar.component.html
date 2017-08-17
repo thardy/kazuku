@@ -2,39 +2,13 @@
     <div class="row">
         <div class="col">
             <ul class="nav nav-pills flex-column text-md-left">
-                <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/dashboard']">
-                        <i class="fa fa-fw icon-graph"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/organizations']">
-                        <i class="fa fa-fw icon-graph"></i>
-                        Orgs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/sites']">
-                        <i class="fa fa-fw icon-graph"></i>
-                        Sites
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/pages']">
-                        <i class="fa fa-fw icon-graph"></i>
-                        Pages
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/templates']">
-                        <i class="fa fa-fw icon-graph"></i>
-                        Templates
+                <li *ngFor="let navItem of navItems" class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/' + navItem.destination]">
+                        {{navItem.name | uppercase}}
                     </a>
                 </li>
                 <li class="nav-item" style="cursor: pointer">
                     <a class="nav-link" routerLinkActive="active" (click)="logout()">
-                        <i class="fa fa-fw icon-graph"></i>
                         Logout
                     </a>
                 </li>

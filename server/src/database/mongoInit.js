@@ -80,7 +80,7 @@
 //db.organizations.createIndex( { "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
 
 //// sample document
-//var newOrg = { name: 'Acme Corp', code: 'acme', description: 'A cool company.', statusId: 1, isMetaOrg: 0,
+//var newOrg = { name: 'Acme Corp', code: 'acme', description: 'A cool company.', statusId: 1, isMetaOrg: false,
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
 //

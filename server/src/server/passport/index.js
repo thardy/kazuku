@@ -28,6 +28,7 @@ module.exports = (passport) => {
                 else {
                     logger.log('error', 'Error when deserializing the user: User not found');
                 }
+
                 Zone.current.currentUser = user;
                 done(null, user); // user attaches to the request as req.user
             })

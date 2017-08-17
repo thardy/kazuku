@@ -12,7 +12,7 @@ export class AuthGuardService implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         if (!this.userService.isLoggedIn()) {
             // check for logged-in user.  If we already have a cookie, don't make the user log in again
-            this.userService.getLoggedInUser()
+            this.userService.getUserContext()
                 .catch((error: any) => {
                     if (error.status === 401) {
                         this.router.navigate(['login']);
@@ -20,8 +20,8 @@ export class AuthGuardService implements CanActivate {
 
                     return Observable.of(null);
                 })
-                .subscribe((user) => {
-                    if (!user) {
+                .subscribe((userContext) => {
+                    if (!userContext) {
                         // need to redirect to login screen
                         this.router.navigateByUrl(`login?returnUrl=${state.url}`);
                     }
