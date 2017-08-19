@@ -1,15 +1,15 @@
 export class Query {
-    id: number;
-    orgId: number;
-    siteId: number;
+    id: string;
+    orgId: string;
+    siteId: string;
     name: string;
     query: string;
     results: string;
 
     constructor(options: {
-        id?: number,
-        orgId?: number,
-        siteId?: number,
+        id?: string,
+        orgId?: string,
+        siteId?: string,
         name?: string,
         query?: string,
         results?: string

@@ -4,9 +4,9 @@ export class Page extends Template {
     url: string;
 
     constructor(options: {
-        id?: number,
-        orgId?: number,
-        siteId?: number,
+        id?: string,
+        orgId?: string,
+        siteId?: string,
         name?: string,
         layout?: string,
         template?: string,

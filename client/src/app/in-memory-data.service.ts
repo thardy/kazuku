@@ -13,30 +13,31 @@ export class InMemoryDataService implements InMemoryDbService {
         // let queries = QUERIES;
         // let orgs = ORGS;
 
-        return {organizations, sites, templates};
+        //return {organizations, sites, templates};
+        return {};
     }
 
 }
 
 const ORGS = [
-    new Organization({id: 1, name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext'}),
-    new Organization({id: 2, name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer'}),
+    new Organization({id: '1', name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext'}),
+    new Organization({id: '2', name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer'}),
 ];
 
 const SITES = [
-    new Site({id: 1, name: 'Acme Corp', domainName: 'acme.com', orgId: 1, code: 'acme'}),
-    new Site({id: 2, name: 'Super Church', domainName: 'superchurch.com', orgId: 1, code: 'superchurch'}),
-    new Site({id: 3, name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: 1, code: 'apartmentsrus'}),
-    new Site({id: 4, name: 'My Blog', domainName: 'designerx.com', orgId: 1, code: 'designerx'}),
+    new Site({id: '1', name: 'Acme Corp', domainName: 'acme.com', orgId: '1', code: 'acme'}),
+    new Site({id: '2', name: 'Super Church', domainName: 'superchurch.com', orgId: '1', code: 'superchurch'}),
+    new Site({id: '3', name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: '1', code: 'apartmentsrus'}),
+    new Site({id: '4', name: 'My Blog', domainName: 'designerx.com', orgId: '1', code: 'designerx'}),
 ];
 
 const TEMPLATES = [
-    new Template({id: 1, name: 'master', orgId: 1, siteId: 1, template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),
-    new Template({id: 2, name: 'header', orgId: 1, siteId: 1, template: '<header>This is the header</header>'}),
-    new Template({id: 3, name: 'footer', orgId: 1, siteId: 1, template: '<footer>This is the footer</footer>'}),
-    new Template({id: 4, name: 'home', orgId: 1, siteId: 1, layout: 'master', template: '<h1>Home Page</h1>'}),
-    new Template({id: 5, name: 'blog-list', orgId: 1, siteId: 1, template: '<h1>Blog List</h1>'}),
-    new Template({id: 6, name: 'blog-detail', orgId: 1, siteId: 1, template: '<h1>Blog Detail</h1>'}),
+    new Template({id: '1', name: 'master', orgId: '1', siteId: '1', template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),
+    new Template({id: '2', name: 'header', orgId: '1', siteId: '1', template: '<header>This is the header</header>'}),
+    new Template({id: '3', name: 'footer', orgId: '1', siteId: '1', template: '<footer>This is the footer</footer>'}),
+    new Template({id: '4', name: 'home', orgId: '1', siteId: '1', layout: 'master', template: '<h1>Home Page</h1>'}),
+    new Template({id: '5', name: 'blog-list', orgId: '1', siteId: '1', template: '<h1>Blog List</h1>'}),
+    new Template({id: '6', name: 'blog-detail', orgId: '1', siteId: '1', template: '<h1>Blog Detail</h1>'}),
 ];
 
 //const RESOURCES = [

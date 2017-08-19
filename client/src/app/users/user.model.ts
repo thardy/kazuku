@@ -1,12 +1,12 @@
 export class User {
-    id: number;
-    orgId: number;
+    id: string;
+    orgId: string;
     email: string;
     password: string;
 
     constructor(options: {
-        id?: number,
-        orgId?: number,
+        id?: string,
+        orgId?: string,
         email?: string,
         password?: string,
     } = {}) {

@@ -1,4 +1,5 @@
 export class SetupConfig {
+    id: string; // here just to satisfy BaseModel requirement (oh the joys of typed programming forced onto javascript)
     adminPassword: string;
     adminPasswordConfirm: string;
     metaOrgName: string;
@@ -10,6 +11,7 @@ export class SetupConfig {
         metaOrgName?: string,
         metaOrgCode?: string,
     } = {}) {
+        this.id = null;
         this.adminPassword = options.adminPassword || '';
         this.adminPasswordConfirm = options.adminPasswordConfirm || '';
         this.metaOrgName = options.metaOrgName || '';

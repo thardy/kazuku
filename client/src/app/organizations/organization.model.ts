@@ -1,5 +1,5 @@
 export class Organization {
-    id: number;
+    id: string;
     name: string;
     code: string;
     description: string;
@@ -7,7 +7,7 @@ export class Organization {
     isMetaOrg: boolean;
 
     constructor(options: {
-        id?: number,
+        id?: string,
         name?: string,
         code?: string,
         description?: string,

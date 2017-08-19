@@ -341,6 +341,46 @@ var AuthGuardService = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/common/base-component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__ = __webpack_require__("../../../../rxjs/Subject.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return BaseComponent; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var BaseComponent = (function () {
+    function BaseComponent() {
+        this.ngUnsubscribe = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__["Subject"]();
+    }
+    BaseComponent.prototype.ngOnDestroy = function () {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+    BaseComponent = __decorate([
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({
+            selector: 'kz-base-component',
+            template: ''
+        }), 
+        __metadata('design:paramtypes', [])
+    ], BaseComponent);
+    return BaseComponent;
+}());
+//# sourceMappingURL=D:/dev/kazuku/client/src/base-component.js.map
+
+/***/ }),
+
 /***/ "../../../../../src/app/common/generic.service.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -401,17 +441,17 @@ var GenericService = (function () {
     };
     GenericService.prototype.update = function (item) {
         var _this = this;
-        return this.http.put("" + this.baseUrl, item)
+        return this.http.put(this.baseUrl + "/" + item.id, item)
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
     GenericService.prototype.extractDataList = function (response) {
         var data = response.json();
-        return data.data || [];
+        return data || [];
     };
     GenericService.prototype.extractData = function (response) {
         var data = response.json();
-        return data.data || {};
+        return data || {};
     };
     GenericService.prototype.handleError = function (error) {
         console.error(error);
@@ -731,27 +771,28 @@ var InMemoryDataService = (function () {
         // let organizations = SITES;
         // let queries = QUERIES;
         // let orgs = ORGS;
-        return { organizations: organizations, sites: sites, templates: templates };
+        //return {organizations, sites, templates};
+        return {};
     };
     return InMemoryDataService;
 }());
 var ORGS = [
-    new __WEBPACK_IMPORTED_MODULE_2__organizations_organization_model__["a" /* Organization */]({ id: 1, name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext' }),
-    new __WEBPACK_IMPORTED_MODULE_2__organizations_organization_model__["a" /* Organization */]({ id: 2, name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer' }),
+    new __WEBPACK_IMPORTED_MODULE_2__organizations_organization_model__["a" /* Organization */]({ id: '1', name: 'Designer X', code: 'designerx', statusId: 1, description: 'D X is the coolext' }),
+    new __WEBPACK_IMPORTED_MODULE_2__organizations_organization_model__["a" /* Organization */]({ id: '2', name: 'Another Designer', code: 'another', statusId: 1, description: 'Yet another designer' }),
 ];
 var SITES = [
-    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: 1, name: 'Acme Corp', domainName: 'acme.com', orgId: 1, code: 'acme' }),
-    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: 2, name: 'Super Church', domainName: 'superchurch.com', orgId: 1, code: 'superchurch' }),
-    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: 3, name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: 1, code: 'apartmentsrus' }),
-    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: 4, name: 'My Blog', domainName: 'designerx.com', orgId: 1, code: 'designerx' }),
+    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: '1', name: 'Acme Corp', domainName: 'acme.com', orgId: '1', code: 'acme' }),
+    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: '2', name: 'Super Church', domainName: 'superchurch.com', orgId: '1', code: 'superchurch' }),
+    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: '3', name: 'Apartments R Us', domainName: 'apartmentsrus.com', orgId: '1', code: 'apartmentsrus' }),
+    new __WEBPACK_IMPORTED_MODULE_1__sites_site_model__["a" /* Site */]({ id: '4', name: 'My Blog', domainName: 'designerx.com', orgId: '1', code: 'designerx' }),
 ];
 var TEMPLATES = [
-    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: 1, name: 'master', orgId: 1, siteId: 1, template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}' }),
-    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: 2, name: 'header', orgId: 1, siteId: 1, template: '<header>This is the header</header>' }),
-    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: 3, name: 'footer', orgId: 1, siteId: 1, template: '<footer>This is the footer</footer>' }),
-    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: 4, name: 'home', orgId: 1, siteId: 1, layout: 'master', template: '<h1>Home Page</h1>' }),
-    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: 5, name: 'blog-list', orgId: 1, siteId: 1, template: '<h1>Blog List</h1>' }),
-    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: 6, name: 'blog-detail', orgId: 1, siteId: 1, template: '<h1>Blog Detail</h1>' }),
+    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: '1', name: 'master', orgId: '1', siteId: '1', template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}' }),
+    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: '2', name: 'header', orgId: '1', siteId: '1', template: '<header>This is the header</header>' }),
+    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: '3', name: 'footer', orgId: '1', siteId: '1', template: '<footer>This is the footer</footer>' }),
+    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: '4', name: 'home', orgId: '1', siteId: '1', layout: 'master', template: '<h1>Home Page</h1>' }),
+    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: '5', name: 'blog-list', orgId: '1', siteId: '1', template: '<h1>Blog List</h1>' }),
+    new __WEBPACK_IMPORTED_MODULE_0__templates_template_model__["a" /* Template */]({ id: '6', name: 'blog-detail', orgId: '1', siteId: '1', template: '<h1>Blog Detail</h1>' }),
 ];
 //const RESOURCES = [
 //  new Resource({id: 11, title: 'How to kill a mule.'}),
@@ -1028,8 +1069,7 @@ var OrganizationListComponent = (function () {
     OrganizationListComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({
             selector: 'kz-organization-list',
-            template: __webpack_require__("../../../../../src/app/organizations/organization-list.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/organizations/organizations.component.less")]
+            template: __webpack_require__("../../../../../src/app/organizations/organization-list.component.html")
         }), 
         __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */]) === 'function' && _a) || Object])
     ], OrganizationListComponent);
@@ -1043,7 +1083,7 @@ var OrganizationListComponent = (function () {
 /***/ "../../../../../src/app/organizations/organization.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"submitForm(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"organization.name\">\r\n        </div>\r\n\r\n        <div class=\"field\" [ngClass]=\"{'error':!form.controls.recognitionName?.valid}\">\r\n            <label>Code</label>\r\n            <input type=\"text\"\r\n                   name=\"code\"\r\n                   [(ngModel)]=\"organization.code\">\r\n        </div>\r\n\r\n        <div class=\"extra content\" *ngIf=\"form.dirty\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" [@cancelButton] (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n    </div>\r\n</form>\r\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"submitForm(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"organization.name\">\r\n        </div>\r\n\r\n        <div class=\"field\" [ngClass]=\"{'error':!form.controls.recognitionName?.valid}\">\r\n            <label>Code</label>\r\n            <input type=\"text\"\r\n                   name=\"code\"\r\n                   [(ngModel)]=\"organization.code\">\r\n        </div>\r\n\r\n        <div class=\"extra content\" *ngIf=\"form.dirty\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1053,11 +1093,15 @@ module.exports = "<form #form=\"ngForm\" (submit)=\"submitForm(form)\" novalidat
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/index.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__organization_model__ = __webpack_require__("../../../../../src/app/organizations/organization.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__organization_service__ = __webpack_require__("../../../../../src/app/organizations/organization.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_Subject__ = __webpack_require__("../../../../rxjs/Subject.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_Subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_Subject__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__common_base_component__ = __webpack_require__("../../../../../src/app/common/base-component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__organization_model__ = __webpack_require__("../../../../../src/app/organizations/organization.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__organization_service__ = __webpack_require__("../../../../../src/app/organizations/organization.service.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OrganizationComponent; });
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1072,30 +1116,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var OrganizationComponent = (function () {
+var OrganizationComponent = (function (_super) {
+    __extends(OrganizationComponent, _super);
     function OrganizationComponent(route, orgService) {
+        _super.call(this);
         this.route = route;
         this.orgService = orgService;
-        this.organization = new __WEBPACK_IMPORTED_MODULE_2__organization_model__["a" /* Organization */]();
+        this.organization = new __WEBPACK_IMPORTED_MODULE_3__organization_model__["a" /* Organization */]();
         this.saving = false;
         this.originalValues = {};
-        this.ngUnsubscribe = new __WEBPACK_IMPORTED_MODULE_4_rxjs_Subject__["Subject"]();
     }
     OrganizationComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.route.params
             .flatMap(function (params) {
-            var id = params['id'] || 0;
-            return _this.orgService.getById(id);
+            var id = params['id'] || '';
+            _this.orgId = id;
+            return _this.orgService.getById(_this.orgId);
         })
             .subscribe(function (org) {
             _this.organization = org;
             _this.originalValues = { 'name': org.name, 'code': org.code };
         });
-    };
-    OrganizationComponent.prototype.ngOnDestroy = function () {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
     };
     OrganizationComponent.prototype.submitForm = function (form) {
         var _this = this;
@@ -1104,16 +1146,14 @@ var OrganizationComponent = (function () {
             return;
         }
         this.saving = true;
-        var org = new __WEBPACK_IMPORTED_MODULE_2__organization_model__["a" /* Organization */](form.value);
+        var org = new __WEBPACK_IMPORTED_MODULE_3__organization_model__["a" /* Organization */](form.value);
+        org.id = this.orgId;
+        this.originalValues = { 'name': org.name, 'code': org.code };
         this.orgService.update(org)
             .takeUntil(this.ngUnsubscribe)
             .subscribe(function (org) {
-            _this.organization = org;
-            _this.originalValues = { 'name': org.name, 'code': org.code };
             _this.saving = false;
             form.form.markAsPristine();
-        }, function (err) {
-            console.log('error: ', err);
         });
     };
     OrganizationComponent.prototype.cancel = function (form) {
@@ -1126,11 +1166,11 @@ var OrganizationComponent = (function () {
             selector: 'kz-organization',
             template: __webpack_require__("../../../../../src/app/organizations/organization.component.html")
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_3__organization_service__["a" /* OrganizationService */]) === 'function' && _b) || Object])
+        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */]) === 'function' && _b) || Object])
     ], OrganizationComponent);
     return OrganizationComponent;
     var _a, _b;
-}());
+}(__WEBPACK_IMPORTED_MODULE_2__common_base_component__["a" /* BaseComponent */]));
 //# sourceMappingURL=D:/dev/kazuku/client/src/organization.component.js.map
 
 /***/ }),
@@ -1215,24 +1255,6 @@ var OrganizationService = (function (_super) {
     return OrganizationService;
 }(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
 //# sourceMappingURL=D:/dev/kazuku/client/src/organization.service.js.map
-
-/***/ }),
-
-/***/ "../../../../../src/app/organizations/organizations.component.less":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(true);
-// imports
-
-
-// module
-exports.push([module.i, "", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"organizations.component.less","sourceRoot":""}]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
 
 /***/ }),
 
@@ -1453,6 +1475,7 @@ var QueryService = (function () {
 var SetupConfig = (function () {
     function SetupConfig(options) {
         if (options === void 0) { options = {}; }
+        this.id = null;
         this.adminPassword = options.adminPassword || '';
         this.adminPasswordConfirm = options.adminPasswordConfirm || '';
         this.metaOrgName = options.metaOrgName || '';

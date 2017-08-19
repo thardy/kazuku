@@ -20,7 +20,7 @@
                     kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
                 <i class="checkmark icon"></i> Save
             </button>
-            <button type="button" class="ui negative button" [@cancelButton] (click)="cancel(form)">Cancel</button>
+            <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>
         </div>
     </div>
 </form>

@@ -4,8 +4,7 @@ import {OrganizationService} from "./organization.service";
 
 @Component({
   selector: 'kz-organization-list',
-  templateUrl: './organization-list.component.html',
-  styleUrls: ['./organizations.component.less']
+  templateUrl: './organization-list.component.html'
 })
 export class OrganizationListComponent implements OnInit {
 
