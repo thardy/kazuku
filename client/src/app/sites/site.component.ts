@@ -5,10 +5,9 @@ import {SiteService} from "./sites.service";
 
 @Component({
   selector: 'kz-site-detail',
-  templateUrl: './site-detail.component.html',
-  styleUrls: ['./site-detail.component.less']
+  templateUrl: './site.component.html'
 })
-export class SiteDetailComponent implements OnInit {
+export class SiteComponent implements OnInit {
 
     site: Site = new Site();
 

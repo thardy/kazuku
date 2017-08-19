@@ -1,0 +1,26 @@
+<form #form="ngForm" (submit)="submitForm(form)" novalidate class="ui form content">
+    <div>
+        <div class="field">
+            <label>Name</label>
+            <input type="text"
+                   pattern="[\D]*"
+                   name="name"
+                   [(ngModel)]="organization.name">
+        </div>
+
+        <div class="field" [ngClass]="{'error':!form.controls.recognitionName?.valid}">
+            <label>Code</label>
+            <input type="text"
+                   name="code"
+                   [(ngModel)]="organization.code">
+        </div>
+
+        <div class="extra content" *ngIf="form.dirty">
+            <button type="submit" class="ui positive button" [disabled]="form.invalid"
+                    kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                <i class="checkmark icon"></i> Save
+            </button>
+            <button type="button" class="ui negative button" [@cancelButton] (click)="cancel(form)">Cancel</button>
+        </div>
+    </div>
+</form>

@@ -7,9 +7,9 @@ import {AppRoutingModule} from "./app-routing.module";
 
 import {AppComponent} from './app.component';
 import {OrganizationListComponent} from './organizations/organization-list.component';
-import {OrganizationDetailComponent} from './organizations/organization-detail.component';
+import {OrganizationComponent} from './organizations/organization.component';
 import {SiteListComponent} from './sites/site-list.component';
-import {SiteDetailComponent} from './sites/site-detail.component';
+import {SiteComponent} from './sites/site.component';
 import {PagesComponent} from './pages/pages.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
@@ -30,14 +30,15 @@ import {SetupComponent} from './setup/setup.component';
 import {SetupService} from "./setup/setup.service";
 import {SetupGuardService} from "./setup/setup-guard.service";
 import {AuthGuardService} from "./common/auth/auth-guard.service";
+import {AsyncButtonDirective} from "./common/ui/async-button.directive";
 
 @NgModule({
     declarations: [
         AppComponent,
         OrganizationListComponent,
-        OrganizationDetailComponent,
+        OrganizationComponent,
         SiteListComponent,
-        SiteDetailComponent,
+        SiteComponent,
         PagesComponent,
         DashboardComponent,
         NavBarComponent,
@@ -48,7 +49,8 @@ import {AuthGuardService} from "./common/auth/auth-guard.service";
         QueriesComponent,
         LoginComponent,
         UsersComponent,
-        SetupComponent
+        SetupComponent,
+        AsyncButtonDirective
     ],
     imports: [
         BrowserModule,
