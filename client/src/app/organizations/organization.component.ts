@@ -40,12 +40,12 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
         }
 
         this.saving = true;
-        const org = new Organization(form.value);
-        org.id = this.orgId;
-        this.originalValues = {'name': org.name, 'code': org.code};
-        this.orgService.update(org)
+        this.organization.name = form.value.name;
+        this.organization.code = form.value.code;
+        this.originalValues = {'name': this.organization.name, 'code': this.organization.code};
+        this.orgService.update(this.organization)
             .takeUntil(this.ngUnsubscribe)
-            .subscribe((org) => {
+            .subscribe((result) => {
                 this.saving = false;
                 form.form.markAsPristine();
             });

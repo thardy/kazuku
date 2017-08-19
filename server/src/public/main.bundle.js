@@ -1146,12 +1146,12 @@ var OrganizationComponent = (function (_super) {
             return;
         }
         this.saving = true;
-        var org = new __WEBPACK_IMPORTED_MODULE_3__organization_model__["a" /* Organization */](form.value);
-        org.id = this.orgId;
-        this.originalValues = { 'name': org.name, 'code': org.code };
-        this.orgService.update(org)
+        this.organization.name = form.value.name;
+        this.organization.code = form.value.code;
+        this.originalValues = { 'name': this.organization.name, 'code': this.organization.code };
+        this.orgService.update(this.organization)
             .takeUntil(this.ngUnsubscribe)
-            .subscribe(function (org) {
+            .subscribe(function (result) {
             _this.saving = false;
             form.form.markAsPristine();
         });
