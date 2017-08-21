@@ -37,8 +37,8 @@ export class GenericService<T extends BaseModel> {
             .catch(error => this.handleError(error));
     }
 
-    update<T>(item): Observable<T> {
-        return this.http.put(`${this.baseUrl}/${item.id}`, item)
+    update<T>(id: string, item): Observable<T> {
+        return this.http.put(`${this.baseUrl}/${id}`, item)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }

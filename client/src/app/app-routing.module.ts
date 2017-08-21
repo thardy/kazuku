@@ -18,6 +18,7 @@ const APP_ROUTES: Routes = [
     {path: 'login', component: LoginComponent},
     {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
     {path: 'organizations', component: OrganizationListComponent, canActivate: [AuthGuardService]},
+    {path: 'organizations/create', component: OrganizationComponent, canActivate: [AuthGuardService]},
     {path: 'organizations/:id', component: OrganizationComponent, canActivate: [AuthGuardService]},
     {path: 'sites', component: SiteListComponent, canActivate: [AuthGuardService]},
     {path: 'sites/:id', component: SiteComponent, canActivate: [AuthGuardService]},

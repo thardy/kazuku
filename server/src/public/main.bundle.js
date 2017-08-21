@@ -60,6 +60,7 @@ var APP_ROUTES = [
     { path: 'login', component: __WEBPACK_IMPORTED_MODULE_10__login_login_component__["a" /* LoginComponent */] },
     { path: 'dashboard', component: __WEBPACK_IMPORTED_MODULE_2__dashboard_dashboard_component__["a" /* DashboardComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'organizations', component: __WEBPACK_IMPORTED_MODULE_8__organizations_organization_list_component__["a" /* OrganizationListComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
+    { path: 'organizations/create', component: __WEBPACK_IMPORTED_MODULE_9__organizations_organization_component__["a" /* OrganizationComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'organizations/:id', component: __WEBPACK_IMPORTED_MODULE_9__organizations_organization_component__["a" /* OrganizationComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'sites', component: __WEBPACK_IMPORTED_MODULE_3__sites_site_list_component__["a" /* SiteListComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'sites/:id', component: __WEBPACK_IMPORTED_MODULE_4__sites_site_component__["a" /* SiteComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
@@ -439,9 +440,9 @@ var GenericService = (function () {
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
-    GenericService.prototype.update = function (item) {
+    GenericService.prototype.update = function (id, item) {
         var _this = this;
-        return this.http.put(this.baseUrl + "/" + item.id, item)
+        return this.http.put(this.baseUrl + "/" + id, item)
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
@@ -1032,7 +1033,7 @@ var LoginComponent = (function () {
 /***/ "../../../../../src/app/organizations/organization-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Organizations</h1>\r\n<ul>\r\n    <li *ngFor=\"let organization of organizations\">\r\n        <a [routerLink]=\"['/organizations/' + organization.id]\">{{organization.name}}</a>\r\n    </li>\r\n</ul>\r\n"
+module.exports = "<h1>Organizations</h1>\r\n<ul>\r\n    <li *ngFor=\"let organization of organizations\">\r\n        <a [routerLink]=\"['/organizations/' + organization.id]\">{{organization.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -1042,6 +1043,7 @@ module.exports = "<h1>Organizations</h1>\r\n<ul>\r\n    <li *ngFor=\"let organiz
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/index.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__organization_service__ = __webpack_require__("../../../../../src/app/organizations/organization.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_router__ = __webpack_require__("../../../router/index.js");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OrganizationListComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1054,9 +1056,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
 var OrganizationListComponent = (function () {
-    function OrganizationListComponent(organizationService) {
+    function OrganizationListComponent(organizationService, router) {
         this.organizationService = organizationService;
+        this.router = router;
         this.organizations = [];
     }
     OrganizationListComponent.prototype.ngOnInit = function () {
@@ -1066,15 +1070,18 @@ var OrganizationListComponent = (function () {
             _this.organizations = organizations;
         });
     };
+    OrganizationListComponent.prototype.create = function () {
+        this.router.navigateByUrl('organizations/create');
+    };
     OrganizationListComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({
             selector: 'kz-organization-list',
             template: __webpack_require__("../../../../../src/app/organizations/organization-list.component.html")
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */]) === 'function' && _a) || Object])
+        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* Router */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* Router */]) === 'function' && _b) || Object])
     ], OrganizationListComponent);
     return OrganizationListComponent;
-    var _a;
+    var _a, _b;
 }());
 //# sourceMappingURL=D:/dev/kazuku/client/src/organization-list.component.js.map
 
@@ -1083,7 +1090,7 @@ var OrganizationListComponent = (function () {
 /***/ "../../../../../src/app/organizations/organization.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"submitForm(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"organization.name\">\r\n        </div>\r\n\r\n        <div class=\"field\" [ngClass]=\"{'error':!form.controls.recognitionName?.valid}\">\r\n            <label>Code</label>\r\n            <input type=\"text\"\r\n                   name=\"code\"\r\n                   [(ngModel)]=\"organization.code\">\r\n        </div>\r\n\r\n        <div class=\"extra content\" *ngIf=\"form.dirty\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n    </div>\r\n</form>\r\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"organization.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Code</label>\r\n            <input type=\"text\"\r\n                   name=\"code\"\r\n                   [(ngModel)]=\"organization.code\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                   name=\"description\"\r\n                   [(ngModel)]=\"organization.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\" *ngIf=\"!isCretae && form.dirty\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1096,6 +1103,8 @@ module.exports = "<form #form=\"ngForm\" (submit)=\"submitForm(form)\" novalidat
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__common_base_component__ = __webpack_require__("../../../../../src/app/common/base-component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__organization_model__ = __webpack_require__("../../../../../src/app/organizations/organization.model.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__organization_service__ = __webpack_require__("../../../../../src/app/organizations/organization.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OrganizationComponent; });
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1116,60 +1125,86 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var OrganizationComponent = (function (_super) {
     __extends(OrganizationComponent, _super);
-    function OrganizationComponent(route, orgService) {
+    function OrganizationComponent(route, orgService, router) {
         _super.call(this);
         this.route = route;
         this.orgService = orgService;
+        this.router = router;
         this.organization = new __WEBPACK_IMPORTED_MODULE_3__organization_model__["a" /* Organization */]();
         this.saving = false;
-        this.originalValues = {};
+        this.original = {};
+        this.isCreate = false;
     }
     OrganizationComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.route.params
             .flatMap(function (params) {
             var id = params['id'] || '';
-            _this.orgId = id;
-            return _this.orgService.getById(_this.orgId);
+            if (id) {
+                _this.orgId = id;
+                return _this.orgService.getById(_this.orgId);
+            }
+            else {
+                return __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__["Observable"].of(null);
+            }
         })
             .subscribe(function (org) {
-            _this.organization = org;
-            _this.originalValues = { 'name': org.name, 'code': org.code };
+            if (org) {
+                _this.organization = org;
+                _this.original = Object.assign({}, _this.organization);
+            }
+            else {
+                _this.isCreate = true;
+                _this.organization = new __WEBPACK_IMPORTED_MODULE_3__organization_model__["a" /* Organization */]();
+            }
         });
     };
-    OrganizationComponent.prototype.submitForm = function (form) {
+    OrganizationComponent.prototype.save = function (form) {
         var _this = this;
         // validate form
         if (!form.valid) {
             return;
         }
         this.saving = true;
-        this.organization.name = form.value.name;
-        this.organization.code = form.value.code;
-        this.originalValues = { 'name': this.organization.name, 'code': this.organization.code };
-        this.orgService.update(this.organization)
-            .takeUntil(this.ngUnsubscribe)
-            .subscribe(function (result) {
-            _this.saving = false;
-            form.form.markAsPristine();
-        });
+        if (this.isCreate) {
+            this.orgService.create(form.value)
+                .takeUntil(this.ngUnsubscribe)
+                .subscribe(function (result) {
+                _this.saving = false;
+                _this.router.navigateByUrl('organizations');
+            });
+        }
+        else {
+            this.orgService.update(this.orgId, form.value)
+                .takeUntil(this.ngUnsubscribe)
+                .subscribe(function (result) {
+                _this.saving = false;
+                _this.original = Object.assign({}, _this.organization);
+                form.form.markAsPristine();
+            });
+        }
     };
     OrganizationComponent.prototype.cancel = function (form) {
-        this.organization.name = this.originalValues['name'];
-        this.organization.code = this.originalValues['code'];
-        form.form.markAsPristine();
+        if (this.isCreate) {
+            this.router.navigateByUrl('organizations');
+        }
+        else {
+            this.organization = Object.assign({}, new __WEBPACK_IMPORTED_MODULE_3__organization_model__["a" /* Organization */](this.original));
+            form.form.markAsPristine();
+        }
     };
     OrganizationComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({
             selector: 'kz-organization',
             template: __webpack_require__("../../../../../src/app/organizations/organization.component.html")
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */]) === 'function' && _b) || Object])
+        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */]) === 'function' && _b) || Object, (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */]) === 'function' && _c) || Object])
     ], OrganizationComponent);
     return OrganizationComponent;
-    var _a, _b;
+    var _a, _b, _c;
 }(__WEBPACK_IMPORTED_MODULE_2__common_base_component__["a" /* BaseComponent */]));
 //# sourceMappingURL=D:/dev/kazuku/client/src/organization.component.js.map
 
