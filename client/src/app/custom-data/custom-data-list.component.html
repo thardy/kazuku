@@ -1,0 +1,8 @@
+<h1>Content</h1>
+<ul>
+    <li *ngFor="let content of contentItems">
+        <a [routerLink]="['/content/' + content.id]">{{content.name}}</a>
+    </li>
+</ul>
+
+<button class="btn primary" (click)="create()">Add</button>

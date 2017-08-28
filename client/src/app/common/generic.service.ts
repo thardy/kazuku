@@ -7,6 +7,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import JsonUtils from './utils/json-utils';
 
 @Injectable()
 export class GenericService<T extends BaseModel> {
@@ -55,8 +56,10 @@ export class GenericService<T extends BaseModel> {
 
     handleError(error) {
         console.error(error);
-        if (error.json) {
-            return Observable.throw(error.json() || 'Server error');
+        const jsonBody = JsonUtils.tryParseJSON(error._body);
+
+        if (error.json && jsonBody) {
+            return Observable.throw(jsonBody || 'Server error');
         }
         else {
             return Observable.throw(error || 'Server error');

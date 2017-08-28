@@ -1,8 +1,34 @@
-<h1>Site Detail</h1>
+<form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
+    <div>
+        <div class="field">
+            <label>Name</label>
+            <input type="text"
+                   pattern="[\D]*"
+                   name="name"
+                   [(ngModel)]="site.name">
+        </div>
 
-<h4>{{site.name}}</h4>
+        <div class="field">
+            <label>Site Code</label>
+            <input type="text"
+                   name="code"
+                   [(ngModel)]="site.code">
+        </div>
 
-<p>{{site.code}}</p>
+        <div class="field">
+            <label>Domain</label>
+            <input type="text"
+                   name="domain"
+                   [(ngModel)]="site.domain">
+        </div>
 
-<p>{{site.domainName}}</p>
+        <div class="extra content">
+            <button type="submit" class="ui positive button" [disabled]="form.invalid"
+                    kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                <i class="checkmark icon"></i> Save
+            </button>
+            <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>
+        </div>
 
+    </div>
+</form>

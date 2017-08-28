@@ -1,24 +1,35 @@
 import {Component, OnInit} from '@angular/core';
 import {Site} from "./site.model";
-import {SiteService} from "./sites.service";
+import {SiteService} from "./site.service";
+import {Router} from "@angular/router";
 
 @Component({
-  selector: 'kz-site-list',
-  templateUrl: './site-list.component.html',
-  styleUrls: ['./site-list.component.less']
+    selector: 'kz-site-list',
+    templateUrl: './site-list.component.html'
 })
 export class SiteListComponent implements OnInit {
 
-    // todo: alter to use orgId of the logged-in user.  Only return sites for the logged-in user
     sites: Site[] = [];
+    loading = true;
 
-    constructor(private siteService: SiteService) {
+    constructor(private siteService: SiteService, private router: Router) {
     }
 
     ngOnInit() {
         this.siteService.getAll()
-            .subscribe((sites) => {
-                this.sites = sites;
-            });
+            .subscribe(
+                (sites) => {
+                    this.sites = sites;
+                    this.loading = false;
+                },
+                (error) => {
+                    this.loading = false;
+                }
+            );
     }
+
+    create() {
+        this.router.navigateByUrl('sites/create');
+    }
+
 }

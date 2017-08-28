@@ -3,7 +3,7 @@ import {NgModule} from "@angular/core";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {SiteListComponent} from "./sites/site-list.component";
 import {SiteComponent} from "./sites/site.component";
-import {PagesComponent} from "./pages/pages.component";
+import {PageListComponent} from "./pages/page-list.component";
 import {TemplateListComponent} from "./templates/template-list.component";
 import {TemplateDetailComponent} from "./templates/template-detail.component";
 import {OrganizationListComponent} from "./organizations/organization-list.component";
@@ -21,8 +21,9 @@ const APP_ROUTES: Routes = [
     {path: 'organizations/create', component: OrganizationComponent, canActivate: [AuthGuardService]},
     {path: 'organizations/:id', component: OrganizationComponent, canActivate: [AuthGuardService]},
     {path: 'sites', component: SiteListComponent, canActivate: [AuthGuardService]},
+    {path: 'sites/create', component: SiteComponent, canActivate: [AuthGuardService]},
     {path: 'sites/:id', component: SiteComponent, canActivate: [AuthGuardService]},
-    {path: 'pages', component: PagesComponent, canActivate: [AuthGuardService]},
+    {path: 'pages', component: PageListComponent, canActivate: [AuthGuardService]},
     {path: 'setup', component: SetupComponent, canActivate: [SetupGuardService]},
     {path: 'templates', component: TemplateListComponent, canActivate: [AuthGuardService]},
     {path: 'templates/:id', component: TemplateDetailComponent, canActivate: [AuthGuardService]},

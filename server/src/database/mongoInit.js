@@ -90,10 +90,10 @@
 //// ***** Sites ****************************************
 //db.createCollection('sites', {});
 // Case-insensitive index
-//db.sites.createIndex( { "orgId": 1, "siteCode": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
+//db.sites.createIndex( { "orgId": 1, "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
 
 //// sample document
-//var newSite = { orgId: 1, siteCode: 1, name: 'Acme Corp', domainName: 'mydomain.com',
+//var newSite = { orgId: 1, code: 1, name: 'Acme Corp', domainName: 'mydomain.com',
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
 //

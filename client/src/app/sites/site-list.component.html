@@ -1,6 +1,13 @@
 <h1>Sites</h1>
-<ul>
+
+<div *ngIf="!loading && sites.length <= 0">
+    You haven't added any sites yet.  Add a site!
+</div>
+
+<ul *ngIf="!loading && sites.length > 0">
     <li *ngFor="let site of sites">
         <a [routerLink]="['/sites/' + site.id]">{{site.name}}</a>
     </li>
 </ul>
+
+<button class="btn primary" (click)="create()">Add</button>

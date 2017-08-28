@@ -10,20 +10,20 @@ import {OrganizationListComponent} from './organizations/organization-list.compo
 import {OrganizationComponent} from './organizations/organization.component';
 import {SiteListComponent} from './sites/site-list.component';
 import {SiteComponent} from './sites/site.component';
-import {PagesComponent} from './pages/pages.component';
+import {PageListComponent} from './pages/page-list.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
 import {TemplateListComponent} from './templates/template-list.component';
 import {TemplateDetailComponent} from './templates/template-detail.component';
-import {CustomSchemasComponent} from './custom-schemas/custom-schemas.component';
-import {CustomDataComponent} from './custom-data/custom-data.component';
-import {QueriesComponent} from './queries/queries.component';
+import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.component';
+import {CustomDataListComponent} from './custom-data/custom-data-list.component';
+import {QueryListComponent} from './queries/query-list.component';
 import {InMemoryDataService} from "./in-memory-data.service";
 import {TemplateService} from "./templates/template.service";
 import {OrganizationService} from "./organizations/organization.service";
-import {SiteService} from "./sites/sites.service";
+import {SiteService} from "./sites/site.service";
 import {LoginComponent} from './login/login.component';
-import {UsersComponent} from './users/users.component';
+import {UserListComponent} from './users/user-list.component';
 import {QueryService} from "./queries/query.service";
 import {UserService} from "./users/user.service";
 import {SetupComponent} from './setup/setup.component';
@@ -39,16 +39,16 @@ import {AsyncButtonDirective} from "./common/ui/async-button.directive";
         OrganizationComponent,
         SiteListComponent,
         SiteComponent,
-        PagesComponent,
+        PageListComponent,
         DashboardComponent,
         NavBarComponent,
         TemplateListComponent,
         TemplateDetailComponent,
-        CustomSchemasComponent,
-        CustomDataComponent,
-        QueriesComponent,
+        CustomSchemaListComponent,
+        CustomDataListComponent,
+        QueryListComponent,
         LoginComponent,
-        UsersComponent,
+        UserListComponent,
         SetupComponent,
         AsyncButtonDirective
     ],

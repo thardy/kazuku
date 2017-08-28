@@ -23,7 +23,7 @@
             </textarea>
         </div>
 
-        <div class="extra content" *ngIf="!isCretae && form.dirty">
+        <div class="extra content">
             <button type="submit" class="ui positive button" [disabled]="form.invalid"
                     kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
                 <i class="checkmark icon"></i> Save

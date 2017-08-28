@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Inject} from '@angular/core';
 import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
@@ -6,19 +6,20 @@ import 'rxjs/add/operator/do';
 import {environment} from "../../environments/environment";
 import {User} from "./user.model";
 import {UserContext} from "./user-context.model";
+import {GenericService} from "../common/generic.service";
 
 @Injectable()
-export class UserService {
-    private baseUrl: string;
+export class UserService extends GenericService<User> {
     private _currentUserContext: BehaviorSubject<UserContext>;
     private dataStore: {  // This is where we will store our data in memory
         userContext: UserContext
     };
 
-    constructor(private http: Http) {
-        this.baseUrl = `${environment.kazukuApiUrl}/users`;
+    constructor(@Inject(Http) http) {
+        super('users', http);
         this.dataStore = { userContext: null };
         this._currentUserContext = <BehaviorSubject<UserContext>>new BehaviorSubject(new UserContext());
+
     }
 
     get currentUserContext() {
