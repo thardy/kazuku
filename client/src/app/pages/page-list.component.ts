@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Page} from "./page.model";
 import {TemplateService} from "../templates/template.service";
 import {Router} from "@angular/router";
+import {Template} from "../templates/template.model";
 
 @Component({
     selector: 'kz-page-list',
@@ -9,16 +9,23 @@ import {Router} from "@angular/router";
 })
 export class PageListComponent implements OnInit {
 
-    pages: Page[] = [];
+    pages: Template[] = [];
+    loading = false;
 
     constructor(private templateService: TemplateService, private router: Router) {
     }
 
     ngOnInit() {
-        // this.templateService.getAllPages()
-        //     .subscribe((pages) => {
-        //         this.pages = pages;
-        //     });
+        this.templateService.getAll()
+            .subscribe(
+                (pages) => {
+                    this.pages = pages;
+                    this.loading = false;
+                },
+                (error) => {
+                    this.loading = false;
+                }
+            );
     }
 
     create() {

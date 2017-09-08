@@ -11,11 +11,12 @@ class TemplatesController extends CrudController {
     }
 
     mapRoutes(app) {
-        // Map routes
-        super.mapRoutes(app); // map the base CrudController routes
-
-        // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
+        // map routes
+        app.get(`/api/${this.resourceName}/getallpages`, authHelper.isAuthenticated, this.getAllPages.bind(this));
         app.get(`/api/${this.resourceName}/getbyname/:name`, authHelper.isAuthenticated, this.getByName.bind(this));
+
+        // map the base CrudController routes
+        super.mapRoutes(app);
     }
 
     getByName(req, res, next) {
@@ -30,6 +31,22 @@ class TemplatesController extends CrudController {
             })
             .catch(err => {
                 err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(current.user.orgId, templateName, err.message);
+                return next(err);
+            });
+    }
+
+    getAllPages(req, res, next) {
+        res.set("Content-Type", "application/json");
+
+        // Query mongo for templates that have a url property that is non-null
+        this.service.find(current.user.orgId, { "url" : { $ne : null, $exists : true } })
+            .then((templates) => {
+                if (templates === null) return next();
+
+                return res.status(200).send(templates);
+            })
+            .catch(err => {
+                err.message = 'ERROR: templatesController -> templateService.find({0}, { "url" : { $ne : null, $exists : true } }) - {1}'.format(current.user.orgId, err.message);
                 return next(err);
             });
     }

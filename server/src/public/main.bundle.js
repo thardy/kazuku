@@ -1324,12 +1324,17 @@ var PageListComponent = (function () {
         this.templateService = templateService;
         this.router = router;
         this.pages = [];
+        this.loading = false;
     }
     PageListComponent.prototype.ngOnInit = function () {
-        // this.templateService.getAllPages()
-        //     .subscribe((pages) => {
-        //         this.pages = pages;
-        //     });
+        var _this = this;
+        this.templateService.getAll()
+            .subscribe(function (pages) {
+            _this.pages = pages;
+            _this.loading = false;
+        }, function (error) {
+            _this.loading = false;
+        });
     };
     PageListComponent.prototype.create = function () {
         this.router.navigateByUrl('pages/create');
