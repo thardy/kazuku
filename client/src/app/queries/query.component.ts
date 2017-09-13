@@ -1,25 +1,25 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {BaseComponent} from "../common/base-component";
-import {Organization} from "./organization.model";
-import {OrganizationService} from "./organization.service";
+import {Query} from "./query.model";
+import {QueryService} from "./query.service";
 import {NgForm} from "@angular/forms";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
 
 @Component({
-  selector: 'kz-organization',
-  templateUrl: './organization.component.html'
+    selector: 'kz-query',
+    templateUrl: './query.component.html'
 })
-export class OrganizationComponent extends BaseComponent implements OnInit {
+export class QueryComponent extends BaseComponent implements OnInit {
 
-    organization: Organization = new Organization();
+    query: Query = new Query();
     saving = false;
     original = {};
-    orgId: string;
+    queryId: string;
     isCreate = false;
 
-    constructor(private route: ActivatedRoute, private orgService: OrganizationService, private router: Router) {
+    constructor(private route: ActivatedRoute, private queryService: QueryService, private router: Router) {
         super();
     }
 
@@ -28,21 +28,21 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
             .flatMap((params:Params) => {
                 const id = params['id'] || '';
                 if (id) {
-                    this.orgId = id;
-                    return this.orgService.getById(this.orgId);
+                    this.queryId = id;
+                    return this.queryService.getById(this.queryId);
                 }
                 else {
                     return Observable.of(null);
                 }
             })
-            .subscribe((org) => {
-                if (org) {
-                    this.organization = org;
-                    this.original = Object.assign({}, this.organization);
+            .subscribe((query) => {
+                if (query) {
+                    this.query = query;
+                    this.original = Object.assign({}, this.query);
                 }
                 else {
                     this.isCreate = true;
-                    this.organization = new Organization();
+                    this.query = new Query();
                 }
             });
     }
@@ -56,19 +56,19 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
         this.saving = true;
 
         if (this.isCreate) {
-            this.orgService.create(form.value)
+            this.queryService.create(form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
-                    this.router.navigateByUrl('organizations');
+                    this.router.navigateByUrl('queries');
                 });
         }
         else {
-            this.orgService.update(this.orgId, form.value)
+            this.queryService.update(this.queryId, form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
-                    this.original = Object.assign({}, this.organization);
+                    this.original = Object.assign({}, this.query);
                     form.form.markAsPristine();
                 });
         }
@@ -76,12 +76,13 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
 
     cancel(form: NgForm){
         if (this.isCreate) {
-            this.router.navigateByUrl('organizations');
+            this.router.navigateByUrl('queryies');
         }
         else {
-            this.organization = Object.assign({}, new Organization(this.original));
+            this.query = Object.assign({}, new Query(this.original));
             form.form.markAsPristine();
         }
     }
 
 }
+

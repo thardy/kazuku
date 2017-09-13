@@ -66,6 +66,7 @@
 
 //// sample document
 //var newQuery = { orgId: 1, siteId: 1, name: '$Test Template1', query: 'blah blah', results: [],
+//                      description: 'this is a cool query',
 //                      dependencies: [], regenerate: 0,
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //

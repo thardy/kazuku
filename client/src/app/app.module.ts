@@ -14,10 +14,11 @@ import {PageListComponent} from './pages/page-list.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
 import {TemplateListComponent} from './templates/template-list.component';
-import {TemplateDetailComponent} from './templates/template-detail.component';
+import {TemplateComponent} from './templates/template.component';
 import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.component';
 import {CustomDataListComponent} from './custom-data/custom-data-list.component';
 import {QueryListComponent} from './queries/query-list.component';
+import {QueryComponent} from './queries/query.component';
 import {InMemoryDataService} from "./in-memory-data.service";
 import {TemplateService} from "./templates/template.service";
 import {OrganizationService} from "./organizations/organization.service";
@@ -31,6 +32,7 @@ import {SetupService} from "./setup/setup.service";
 import {SetupGuardService} from "./setup/setup-guard.service";
 import {AuthGuardService} from "./common/auth/auth-guard.service";
 import {AsyncButtonDirective} from "./common/ui/async-button.directive";
+import {PageComponent} from "./pages/page.component";
 
 @NgModule({
     declarations: [
@@ -40,13 +42,15 @@ import {AsyncButtonDirective} from "./common/ui/async-button.directive";
         SiteListComponent,
         SiteComponent,
         PageListComponent,
+        PageComponent,
         DashboardComponent,
         NavBarComponent,
         TemplateListComponent,
-        TemplateDetailComponent,
+        TemplateComponent,
         CustomSchemaListComponent,
         CustomDataListComponent,
         QueryListComponent,
+        QueryComponent,
         LoginComponent,
         UserListComponent,
         SetupComponent,

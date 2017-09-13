@@ -1,25 +1,25 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {NgForm} from "@angular/forms";
-import {Site} from "./site.model";
-import {SiteService} from "./site.service";
+import {Template} from "../templates/template.model";
+import {TemplateService} from "../templates/template.service";
 import {BaseComponent} from "../common/base-component";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
 
 @Component({
-  selector: 'kz-site',
-  templateUrl: './site.component.html'
+    selector: 'kz-page',
+    templateUrl: './template.component.html'
 })
-export class SiteComponent extends BaseComponent implements OnInit {
+export class TemplateComponent extends BaseComponent implements OnInit {
 
-    site: Site = new Site();
+    page: Template = new Template(); // a page is just a Template with a url property
     saving = false;
     original = {};
-    siteId: string;
+    templateId: string;
     isCreate = false;
 
-    constructor(private route: ActivatedRoute, private siteService: SiteService, private router: Router) {
+    constructor(private route: ActivatedRoute, private templateService: TemplateService, private router: Router) {
         super();
     }
 
@@ -28,21 +28,21 @@ export class SiteComponent extends BaseComponent implements OnInit {
             .flatMap((params:Params) => {
                 const id = params['id'] || '';
                 if (id) {
-                    this.siteId = id;
-                    return this.siteService.getById(this.siteId);
+                    this.templateId = id;
+                    return this.templateService.getById(this.templateId);
                 }
                 else {
                     return Observable.of(null);
                 }
             })
-            .subscribe((site) => {
-                if (site) {
-                    this.site = site;
-                    this.original = Object.assign({}, this.site);
+            .subscribe((page) => {
+                if (page) {
+                    this.page = page;
+                    this.original = Object.assign({}, this.page);
                 }
                 else {
                     this.isCreate = true;
-                    this.site = new Site();
+                    this.page = new Template();
                 }
             });
 
@@ -57,12 +57,12 @@ export class SiteComponent extends BaseComponent implements OnInit {
         this.saving = true;
 
         if (this.isCreate) {
-            this.siteService.create(form.value)
+            this.templateService.create(form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe(
                     (result) => {
                         this.saving = false;
-                        this.router.navigateByUrl('sites');
+                        this.router.navigateByUrl('pages');
                     },
                     (error) => {
                         this.saving = false;
@@ -70,11 +70,11 @@ export class SiteComponent extends BaseComponent implements OnInit {
                 );
         }
         else {
-            this.siteService.update(this.siteId, form.value)
+            this.templateService.update(this.templateId, form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
-                    this.original = Object.assign({}, this.site);
+                    this.original = Object.assign({}, this.page);
                     form.form.markAsPristine();
                 });
         }
@@ -82,11 +82,12 @@ export class SiteComponent extends BaseComponent implements OnInit {
 
     cancel(form: NgForm){
         if (this.isCreate) {
-            this.router.navigateByUrl('sites');
+            this.router.navigateByUrl('pages');
         }
         else {
-            this.site = Object.assign({}, new Site(this.original));
+            this.page = Object.assign({}, new Template(this.original));
             form.form.markAsPristine();
         }
     }
 }
+

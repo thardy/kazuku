@@ -22,4 +22,10 @@ export class TemplateService extends GenericService<Template> {
             .catch(error => this.handleError(error));
     }
 
+    getAllPages() {
+        return this.http.get(`${this.baseUrl}/getallpages`)
+            .map(response => this.extractData(response))
+            .catch(error => this.handleError(error));
+    }
+
 }
