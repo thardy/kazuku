@@ -925,6 +925,7 @@ var NavBarComponent = (function () {
         navItems.push({ name: 'Sites', destination: 'sites' });
         navItems.push({ name: 'Pages', destination: 'pages' });
         navItems.push({ name: 'Templates', destination: 'templates' });
+        navItems.push({ name: 'Queries', destination: 'queries' });
         return navItems;
     };
     NavBarComponent = __decorate([
@@ -1377,7 +1378,7 @@ var PageListComponent = (function () {
 /***/ "../../../../../src/app/pages/page.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"page.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"page.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"14\" cols=\"200\"\r\n                      name=\"template\"\r\n                      [(ngModel)]=\"page.template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Site</label>\r\n            <select class=\"ui fluid dropdown\" [(ngModel)]=\"page.siteId\" name=\"siteId\" required>\r\n                <option value=\"undefined\" [selected]=\"page.siteId === undefined\">Select a site...</option>\r\n                <option *ngFor=\"let site of sites\" [(ngValue)]=\"site.id\"\r\n                        [selected]=\"page.siteId === site.id\">\r\n                    {{site.name}}\r\n                </option>\r\n            </select>\r\n        </div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"page.name\">\r\n        </div>\r\n        <div class=\"field\">\r\n            <label>Url</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"url\"\r\n                   [(ngModel)]=\"page.url\">\r\n        </div>\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"page.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"14\" cols=\"200\"\r\n                      name=\"template\"\r\n                      [(ngModel)]=\"page.template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1394,6 +1395,7 @@ module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate clas
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap__ = __webpack_require__("../../../../rxjs/add/operator/mergemap.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__sites_site_service__ = __webpack_require__("../../../../../src/app/sites/site.service.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PageComponent; });
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -1416,20 +1418,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var PageComponent = (function (_super) {
     __extends(PageComponent, _super);
-    function PageComponent(route, templateService, router) {
+    function PageComponent(route, templateService, router, siteService) {
         _super.call(this);
         this.route = route;
         this.templateService = templateService;
         this.router = router;
+        this.siteService = siteService;
         this.page = new __WEBPACK_IMPORTED_MODULE_2__templates_template_model__["a" /* Template */](); // a page is just a Template with a url property
+        this.sites = [];
         this.saving = false;
         this.original = {};
         this.isCreate = false;
     }
     PageComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.siteService.getAll()
+            .subscribe(function (sites) {
+            _this.sites = sites;
+        }, function (error) {
+        });
         this.route.params
             .flatMap(function (params) {
             var id = params['id'] || '';
@@ -1493,10 +1503,10 @@ var PageComponent = (function (_super) {
             selector: 'kz-page',
             template: __webpack_require__("../../../../../src/app/pages/page.component.html")
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */]) === 'function' && _b) || Object, (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */]) === 'function' && _c) || Object])
+        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */]) === 'function' && _b) || Object, (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */]) === 'function' && _c) || Object, (typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_7__sites_site_service__["a" /* SiteService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_7__sites_site_service__["a" /* SiteService */]) === 'function' && _d) || Object])
     ], PageComponent);
     return PageComponent;
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
 }(__WEBPACK_IMPORTED_MODULE_4__common_base_component__["a" /* BaseComponent */]));
 //# sourceMappingURL=D:/dev/kazuku/client/src/page.component.js.map
 
@@ -1562,7 +1572,7 @@ var QueryListComponent = (function () {
 /***/ "../../../../../src/app/queries/query.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"query.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Query</label>\r\n            <input type=\"text\"\r\n                   name=\"code\"\r\n                   [(ngModel)]=\"query.query\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"query.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"query.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Query</label>\r\n            <input type=\"text\"\r\n                   name=\"query\"\r\n                   [(ngModel)]=\"query.query\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"query.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -2303,7 +2313,7 @@ var TemplateListComponent = (function () {
     }
     TemplateListComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.templateService.getAll()
+        this.templateService.getAllNonPageTemplates()
             .subscribe(function (templates) {
             _this.templates = templates;
         });
@@ -2415,7 +2425,7 @@ var TemplateComponent = (function (_super) {
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe(function (result) {
                 _this.saving = false;
-                _this.router.navigateByUrl('pages');
+                _this.router.navigateByUrl('templates');
             }, function (error) {
                 _this.saving = false;
             });
@@ -2465,6 +2475,8 @@ var Template = (function () {
         this.orgId = options.orgId;
         this.siteId = options.siteId;
         this.name = options.name || '';
+        this.description = options.description;
+        this.url = options.url;
         this.layout = options.layout || '';
         this.template = options.template || '';
     }
@@ -2528,6 +2540,12 @@ var TemplateService = (function (_super) {
     TemplateService.prototype.getAllPages = function () {
         var _this = this;
         return this.http.get(this.baseUrl + "/getallpages")
+            .map(function (response) { return _this.extractData(response); })
+            .catch(function (error) { return _this.handleError(error); });
+    };
+    TemplateService.prototype.getAllNonPageTemplates = function () {
+        var _this = this;
+        return this.http.get(this.baseUrl + "/getallnonpagetemplates")
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };

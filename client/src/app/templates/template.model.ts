@@ -3,6 +3,8 @@ export class Template {
     orgId: string;
     siteId: string;
     name: string;
+    description: string;
+    url: string;
     layout: string;
     template: string;
 
@@ -11,6 +13,8 @@ export class Template {
         orgId?: string,
         siteId?: string,
         name?: string,
+        description?: string,
+        url?: string,
         layout?: string,
         template?: string
     } = {}) {
@@ -18,6 +22,8 @@ export class Template {
         this.orgId = options.orgId;
         this.siteId = options.siteId;
         this.name = options.name || '';
+        this.description = options.description;
+        this.url = options.url;
         this.layout = options.layout || '';
         this.template = options.template || '';
     }

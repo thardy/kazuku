@@ -6,6 +6,8 @@ import {TemplateService} from "../templates/template.service";
 import {BaseComponent} from "../common/base-component";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
+import {Site} from "../sites/site.model";
+import {SiteService} from "../sites/site.service";
 
 @Component({
     selector: 'kz-page',
@@ -14,16 +16,27 @@ import 'rxjs/add/operator/mergemap';
 export class PageComponent extends BaseComponent implements OnInit {
 
     page: Template = new Template(); // a page is just a Template with a url property
+    sites: Site[] = [];
     saving = false;
     original = {};
     pageId: string;
     isCreate = false;
 
-    constructor(private route: ActivatedRoute, private templateService: TemplateService, private router: Router) {
+    constructor(private route: ActivatedRoute, private templateService: TemplateService, private router: Router, private siteService: SiteService) {
         super();
     }
 
     ngOnInit() {
+        this.siteService.getAll()
+            .subscribe(
+                (sites) => {
+                    this.sites = sites;
+                },
+                (error) => {
+
+                }
+            );
+
         this.route.params
             .flatMap((params:Params) => {
                 const id = params['id'] || '';

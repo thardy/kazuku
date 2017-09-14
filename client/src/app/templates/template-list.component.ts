@@ -15,7 +15,7 @@ export class TemplateListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.templateService.getAll()
+        this.templateService.getAllNonPageTemplates()
             .subscribe((templates) => {
                 this.templates = templates;
             });

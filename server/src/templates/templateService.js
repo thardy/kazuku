@@ -206,7 +206,7 @@ class TemplateService extends GenericService {
         // any queries defined in the model are dependencies
         // look at all properties on the templateObject that aren't system properties to see if they are queries
         for (let property in templateObject) {
-            if (templateObject.hasOwnProperty(property) && !systemProperties.contains(property)) {
+            if (templateObject.hasOwnProperty(property) && !systemProperties.includes(property)) {
                 let queryDependencies = this.queryService.getDependenciesOfQuery(templateObject[property]);
                 if (queryDependencies !== undefined) {
                     dependencies = dependencies.concat(queryDependencies);

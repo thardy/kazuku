@@ -57,6 +57,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
         navItems.push({ name: 'Sites', destination: 'sites' });
         navItems.push({ name: 'Pages', destination: 'pages' });
         navItems.push({ name: 'Templates', destination: 'templates' });
+        navItems.push({ name: 'Queries', destination: 'queries' });
 
         return navItems;
     }

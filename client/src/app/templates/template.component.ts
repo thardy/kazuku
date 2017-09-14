@@ -62,7 +62,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
                 .subscribe(
                     (result) => {
                         this.saving = false;
-                        this.router.navigateByUrl('pages');
+                        this.router.navigateByUrl('templates');
                     },
                     (error) => {
                         this.saving = false;

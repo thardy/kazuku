@@ -13,6 +13,7 @@ class TemplatesController extends CrudController {
     mapRoutes(app) {
         // map routes
         app.get(`/api/${this.resourceName}/getallpages`, authHelper.isAuthenticated, this.getAllPages.bind(this));
+        app.get(`/api/${this.resourceName}/getallnonpagetemplates`, authHelper.isAuthenticated, this.getAllNonPageTemplates.bind(this));
         app.get(`/api/${this.resourceName}/getbyname/:name`, authHelper.isAuthenticated, this.getByName.bind(this));
 
         // map the base CrudController routes
@@ -47,6 +48,22 @@ class TemplatesController extends CrudController {
             })
             .catch(err => {
                 err.message = 'ERROR: templatesController -> templateService.find({0}, { "url" : { $ne : null, $exists : true } }) - {1}'.format(current.user.orgId, err.message);
+                return next(err);
+            });
+    }
+
+    getAllNonPageTemplates(req, res, next) {
+        res.set("Content-Type", "application/json");
+
+        // Query mongo for templates that do NOT have a url property
+        this.service.find(current.user.orgId, { "url" : { $exists: false } })
+            .then((templates) => {
+                if (templates === null) return next();
+
+                return res.status(200).send(templates);
+            })
+            .catch(err => {
+                err.message = 'ERROR: templatesController -> templateService.find({0},  { "url" : { $exists: false } }) - {1}'.format(current.user.orgId, err.message);
                 return next(err);
             });
     }

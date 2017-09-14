@@ -1,13 +1,29 @@
 <form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
     <div>
         <div class="field">
+            <label>Site</label>
+            <select class="ui fluid dropdown" [(ngModel)]="page.siteId" name="siteId" required>
+                <option value="undefined" [selected]="page.siteId === undefined">Select a site...</option>
+                <option *ngFor="let site of sites" [(ngValue)]="site.id"
+                        [selected]="page.siteId === site.id">
+                    {{site.name}}
+                </option>
+            </select>
+        </div>
+        <div class="field">
             <label>Name</label>
             <input type="text"
                    pattern="[\D]*"
                    name="name"
                    [(ngModel)]="page.name">
         </div>
-
+        <div class="field">
+            <label>Url</label>
+            <input type="text"
+                   pattern="[\D]*"
+                   name="url"
+                   [(ngModel)]="page.url">
+        </div>
         <div class="field">
             <label>Description</label>
             <textarea type="text" rows="4" cols="50"

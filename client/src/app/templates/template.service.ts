@@ -28,4 +28,10 @@ export class TemplateService extends GenericService<Template> {
             .catch(error => this.handleError(error));
     }
 
+    getAllNonPageTemplates() {
+        return this.http.get(`${this.baseUrl}/getallnonpagetemplates`)
+            .map(response => this.extractData(response))
+            .catch(error => this.handleError(error));
+    }
+
 }
