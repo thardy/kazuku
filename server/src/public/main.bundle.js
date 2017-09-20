@@ -273,6 +273,7 @@ var AppModule = (function () {
             imports: [
                 __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
                 __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
+                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["b" /* ReactiveFormsModule */],
                 __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* HttpModule */],
                 __WEBPACK_IMPORTED_MODULE_5__app_routing_module__["a" /* AppRoutingModule */],
                 __WEBPACK_IMPORTED_MODULE_4_angular_in_memory_web_api__["a" /* InMemoryWebApiModule */].forRoot(__WEBPACK_IMPORTED_MODULE_20__in_memory_data_service__["a" /* InMemoryDataService */], { apiBase: 'api/', passThruUnknownUrl: true })
@@ -2338,7 +2339,7 @@ var TemplateListComponent = (function () {
 /***/ "../../../../../src/app/templates/template.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"page.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"page.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"14\" cols=\"200\"\r\n                      name=\"template\"\r\n                      [(ngModel)]=\"page.template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
+module.exports = "<h2>Template</h2>\r\n<form [formGroup]=\"form\" (ngSubmit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   id=\"name\"\r\n                   formControlName=\"name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      id=\"description\"\r\n                      formControlName=\"description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <h5>Data Properties</h5>\r\n        <div formArrayName=\"dataProperties\">\r\n            <div *ngFor=\"let dataProperty of form.controls.dataProperties.controls; let i = index\" [formGroupName]=\"i\">\r\n                Name:\r\n                <input type=\"text\"\r\n                       formControlName=\"name\">\r\n                Value:\r\n                <input type=\"text\"\r\n                       formControlName=\"value\">\r\n                <!--<button type=\"button\" class=\"ui positive button\" (click)=\"saveDataProperty(dataProperty)\">Save Data Property</button>-->\r\n                <button type=\"button\" class=\"ui negative button\" (click)=\"deleteDataProperty(i)\">Delete</button><br/>\r\n            </div>\r\n        </div>\r\n        <button type=\"button\" class=\"ui negative button\" (click)=\"addDataProperty()\">Add</button>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"15\" cols=\"180\"\r\n                      id=\"template\"\r\n                      formControlName=\"template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -2348,11 +2349,10 @@ module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate clas
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/index.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_template_model__ = __webpack_require__("../../../../../src/app/templates/template.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_template_service__ = __webpack_require__("../../../../../src/app/templates/template.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__common_base_component__ = __webpack_require__("../../../../../src/app/common/base-component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__("../../../forms/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_template_model__ = __webpack_require__("../../../../../src/app/templates/template.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__templates_template_service__ = __webpack_require__("../../../../../src/app/templates/template.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__common_base_component__ = __webpack_require__("../../../../../src/app/common/base-component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap__ = __webpack_require__("../../../../rxjs/add/operator/mergemap.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TemplateComponent; });
@@ -2377,6 +2377,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+var systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "description", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 var TemplateComponent = (function (_super) {
     __extends(TemplateComponent, _super);
     function TemplateComponent(route, templateService, router) {
@@ -2384,35 +2385,67 @@ var TemplateComponent = (function (_super) {
         this.route = route;
         this.templateService = templateService;
         this.router = router;
-        this.page = new __WEBPACK_IMPORTED_MODULE_2__templates_template_model__["a" /* Template */](); // a page is just a Template with a url property
+        this.template = new __WEBPACK_IMPORTED_MODULE_3__templates_template_model__["a" /* Template */](); // a page is just a Template with a url property
         this.saving = false;
         this.original = {};
-        this.isCreate = false;
+        this.isEdit = false;
+        this.dataProperties = [];
+        this.form = new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({});
+        this.dataPropertiesFormArray = new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["d" /* FormArray */]([]);
     }
     TemplateComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.route.params
-            .flatMap(function (params) {
-            var id = params['id'] || '';
-            if (id) {
-                _this.templateId = id;
-                return _this.templateService.getById(_this.templateId);
-            }
-            else {
-                return __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__["Observable"].of(null);
-            }
-        })
-            .subscribe(function (page) {
-            if (page) {
-                _this.page = page;
-                _this.original = Object.assign({}, _this.page);
-            }
-            else {
-                _this.isCreate = true;
-                _this.page = new __WEBPACK_IMPORTED_MODULE_2__templates_template_model__["a" /* Template */]();
-            }
+            .subscribe(function (params) {
+            _this.templateId = params['id'];
+            _this.isEdit = params['id'] != null;
+            _this.initForm();
         });
     };
+    TemplateComponent.prototype.initForm = function () {
+        var _this = this;
+        if (this.isEdit) {
+            this.templateService.getById(this.templateId)
+                .subscribe(function (template) {
+                if (template) {
+                    _this.template = template;
+                    var controlArray = _this.form.controls['dataProperties'];
+                    for (var property in template) {
+                        if (template.hasOwnProperty(property) && !systemProperties.includes(property)) {
+                            controlArray.push(new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
+                                'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](property, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+                                'value': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](template[property])
+                            }));
+                        }
+                    }
+                    _this.original = Object.assign({}, _this.template);
+                    _this.form = _this.createFormGroup(_this.template, controlArray);
+                }
+            });
+        }
+        this.form = this.createFormGroup(this.template, this.dataPropertiesFormArray);
+    };
+    TemplateComponent.prototype.createFormGroup = function (model, dataPropertiesFormArray) {
+        return new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
+            'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](model.name, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+            'description': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](model.description),
+            'template': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](model.template, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+            'dataProperties': dataPropertiesFormArray
+        });
+    };
+    // initDataPropertyFormArray(dataProperties: {name: string, value: string }[]) {
+    //     let dataPropertiesFormArray = new FormArray([]);
+    //     for (let property of dataProperties) {
+    //         dataPropertiesFormArray.push(
+    //             new FormGroup({
+    //                 'name': new FormControl(property.name, Validators.required),
+    //                 'value': new FormControl(property.value)
+    //             })
+    //         );
+    //     }
+    //
+    //     return dataPropertiesFormArray;
+    // }
     TemplateComponent.prototype.save = function (form) {
         var _this = this;
         // validate form
@@ -2420,8 +2453,19 @@ var TemplateComponent = (function (_super) {
             return;
         }
         this.saving = true;
-        if (this.isCreate) {
-            this.templateService.create(form.value)
+        var templateObject = this.createTemplateObjectFromForm(this.template, form.value);
+        this.template = templateObject;
+        if (this.isEdit) {
+            this.templateService.update(this.templateId, templateObject)
+                .takeUntil(this.ngUnsubscribe)
+                .subscribe(function (result) {
+                _this.saving = false;
+                _this.original = Object.assign({}, _this.template);
+                form.form.markAsPristine();
+            });
+        }
+        else {
+            this.templateService.create(templateObject)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe(function (result) {
                 _this.saving = false;
@@ -2430,35 +2474,51 @@ var TemplateComponent = (function (_super) {
                 _this.saving = false;
             });
         }
-        else {
-            this.templateService.update(this.templateId, form.value)
-                .takeUntil(this.ngUnsubscribe)
-                .subscribe(function (result) {
-                _this.saving = false;
-                _this.original = Object.assign({}, _this.page);
-                form.form.markAsPristine();
-            });
-        }
     };
     TemplateComponent.prototype.cancel = function (form) {
-        if (this.isCreate) {
-            this.router.navigateByUrl('pages');
-        }
-        else {
-            this.page = Object.assign({}, new __WEBPACK_IMPORTED_MODULE_2__templates_template_model__["a" /* Template */](this.original));
+        if (this.isEdit) {
+            this.template = Object.assign({}, new __WEBPACK_IMPORTED_MODULE_3__templates_template_model__["a" /* Template */](this.original));
             form.form.markAsPristine();
         }
+        else {
+            this.router.navigateByUrl('pages');
+        }
+    };
+    TemplateComponent.prototype.saveDataProperty = function (dataProperty) {
+        var i = 0;
+    };
+    TemplateComponent.prototype.addDataProperty = function () {
+        var control = this.form.controls['dataProperties'];
+        control.push(new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
+            'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](null, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+            'value': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](null)
+        }));
+    };
+    TemplateComponent.prototype.deleteDataProperty = function (index) {
+        var control = this.form.controls['dataProperties'];
+        control.removeAt(index);
+    };
+    TemplateComponent.prototype.createTemplateObjectFromForm = function (templateObject, formValue) {
+        var template = Object.assign({}, formValue);
+        delete template.dataProperties;
+        // Add dataProperties as properties on the templateObject
+        if (formValue.dataProperties) {
+            formValue.dataProperties.forEach(function (property) {
+                template[property.name] = property.value;
+            });
+        }
+        return template;
     };
     TemplateComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({
             selector: 'kz-page',
             template: __webpack_require__("../../../../../src/app/templates/template.component.html")
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */]) === 'function' && _b) || Object, (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */]) === 'function' && _c) || Object])
+        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* ActivatedRoute */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__templates_template_service__["a" /* TemplateService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_4__templates_template_service__["a" /* TemplateService */]) === 'function' && _b) || Object, (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* Router */]) === 'function' && _c) || Object])
     ], TemplateComponent);
     return TemplateComponent;
     var _a, _b, _c;
-}(__WEBPACK_IMPORTED_MODULE_4__common_base_component__["a" /* BaseComponent */]));
+}(__WEBPACK_IMPORTED_MODULE_5__common_base_component__["a" /* BaseComponent */]));
 //# sourceMappingURL=D:/dev/kazuku/client/src/template.component.js.map
 
 /***/ }),

@@ -52,7 +52,7 @@
 //db.templates.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 
 //// sample document
-//var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', template: '#Test Page 1 - Existing',
+//var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', description: 'cool template   ', template: '#Test Page 1 - Existing',
 //                      dependencies: [], regenerate: 0,
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //

@@ -35,8 +35,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_core_js_es6_reflect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13_core_js_es6_reflect__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_core_js_es7_reflect__ = __webpack_require__("../../../../core-js/es7/reflect.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_core_js_es7_reflect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14_core_js_es7_reflect__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_zone_js_dist_zone__ = __webpack_require__("../../../../zone.js/dist/zone.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_zone_js_dist_zone___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15_zone_js_dist_zone__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_core_js_es7_array__ = __webpack_require__("../../../../core-js/es7/array.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_core_js_es7_array___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15_core_js_es7_array__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_zone_js_dist_zone__ = __webpack_require__("../../../../zone.js/dist/zone.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_zone_js_dist_zone___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16_zone_js_dist_zone__);
+
 
 
 
@@ -303,6 +306,14 @@ module.exports = __webpack_require__("../../../../core-js/modules/_core.js").Str
 __webpack_require__("../../../../core-js/modules/es6.symbol.js");
 __webpack_require__("../../../../core-js/modules/es6.object.to-string.js");
 module.exports = __webpack_require__("../../../../core-js/modules/_core.js").Symbol;
+
+/***/ }),
+
+/***/ "../../../../core-js/es7/array.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__("../../../../core-js/modules/es7.array.includes.js");
+module.exports = __webpack_require__("../../../../core-js/modules/_core.js").Array;
 
 /***/ }),
 
@@ -5271,6 +5282,25 @@ if(new $WeakMap().set((Object.freeze || Object)(tmp), 7).get(tmp) != 7){
     });
   });
 }
+
+/***/ }),
+
+/***/ "../../../../core-js/modules/es7.array.includes.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// https://github.com/tc39/Array.prototype.includes
+var $export   = __webpack_require__("../../../../core-js/modules/_export.js")
+  , $includes = __webpack_require__("../../../../core-js/modules/_array-includes.js")(true);
+
+$export($export.P, 'Array', {
+  includes: function includes(el /*, fromIndex = 0 */){
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+__webpack_require__("../../../../core-js/modules/_add-to-unscopables.js")('includes');
 
 /***/ }),
 

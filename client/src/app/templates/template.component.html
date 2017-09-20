@@ -1,33 +1,48 @@
-<form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
+<h2>Template</h2>
+<form [formGroup]="form" (ngSubmit)="save(form)" novalidate class="ui form content">
     <div>
         <div class="field">
             <label>Name</label>
             <input type="text"
-                   pattern="[\D]*"
-                   name="name"
-                   [(ngModel)]="page.name">
+                   id="name"
+                   formControlName="name">
         </div>
 
         <div class="field">
             <label>Description</label>
             <textarea type="text" rows="4" cols="50"
-                      name="description"
-                      [(ngModel)]="page.description">
+                      id="description"
+                      formControlName="description">
             </textarea>
         </div>
 
+        <h5>Data Properties</h5>
+        <div formArrayName="dataProperties">
+            <div *ngFor="let dataProperty of form.controls.dataProperties.controls; let i = index" [formGroupName]="i">
+                Name:
+                <input type="text"
+                       formControlName="name">
+                Value:
+                <input type="text"
+                       formControlName="value">
+                <!--<button type="button" class="ui positive button" (click)="saveDataProperty(dataProperty)">Save Data Property</button>-->
+                <button type="button" class="ui negative button" (click)="deleteDataProperty(i)">Delete</button><br/>
+            </div>
+        </div>
+        <button type="button" class="ui negative button" (click)="addDataProperty()">Add</button>
+
         <div class="field">
             <label>Template</label>
-            <textarea type="text" rows="14" cols="200"
-                      name="template"
-                      [(ngModel)]="page.template">
+            <textarea type="text" rows="15" cols="180"
+                      id="template"
+                      formControlName="template">
             </textarea>
         </div>
 
         <div class="extra content">
             <button type="submit" class="ui positive button" [disabled]="form.invalid"
-                    kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
-                <i class="checkmark icon"></i> Save
+                    kz-async-button [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                Save
             </button>
             <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>
         </div>
