@@ -2339,7 +2339,7 @@ var TemplateListComponent = (function () {
 /***/ "../../../../../src/app/templates/template.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h2>Template</h2>\r\n<form [formGroup]=\"form\" (ngSubmit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   id=\"name\"\r\n                   formControlName=\"name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      id=\"description\"\r\n                      formControlName=\"description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <h5>Data Properties</h5>\r\n        <div formArrayName=\"dataProperties\">\r\n            <div *ngFor=\"let dataProperty of form.controls.dataProperties.controls; let i = index\" [formGroupName]=\"i\">\r\n                Name:\r\n                <input type=\"text\"\r\n                       formControlName=\"name\">\r\n                Value:\r\n                <input type=\"text\"\r\n                       formControlName=\"value\">\r\n                <!--<button type=\"button\" class=\"ui positive button\" (click)=\"saveDataProperty(dataProperty)\">Save Data Property</button>-->\r\n                <button type=\"button\" class=\"ui negative button\" (click)=\"deleteDataProperty(i)\">Delete</button><br/>\r\n            </div>\r\n        </div>\r\n        <button type=\"button\" class=\"ui negative button\" (click)=\"addDataProperty()\">Add</button>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"15\" cols=\"180\"\r\n                      id=\"template\"\r\n                      formControlName=\"template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
+module.exports = "<h2>Template</h2>\r\n<form [formGroup]=\"form\" (ngSubmit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   id=\"name\"\r\n                   formControlName=\"name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      id=\"description\"\r\n                      formControlName=\"description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <h5>Data Properties</h5>\r\n        <div formArrayName=\"dataProperties\">\r\n            <div *ngFor=\"let dataProperty of form.controls.dataProperties.controls; let i = index\" [formGroupName]=\"i\">\r\n                Name:\r\n                <input type=\"text\"\r\n                       formControlName=\"name\">\r\n                Value:\r\n                <input type=\"text\"\r\n                       formControlName=\"value\">\r\n                <button type=\"button\" class=\"ui negative button\" (click)=\"deleteDataProperty(i)\">Delete</button><br/>\r\n            </div>\r\n        </div>\r\n        <button type=\"button\" class=\"ui negative button\" (click)=\"addDataProperty()\">Add</button>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"15\" cols=\"180\"\r\n                      id=\"template\"\r\n                      formControlName=\"template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -2389,9 +2389,8 @@ var TemplateComponent = (function (_super) {
         this.saving = false;
         this.original = {};
         this.isEdit = false;
-        this.dataProperties = [];
         this.form = new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({});
-        this.dataPropertiesFormArray = new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["d" /* FormArray */]([]);
+        this.dataPropertiesFormArray = new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["d" /* FormArray */]([]); // the dynamic part of our form - one for every templateObject property that is not a system property
     }
     TemplateComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -2399,53 +2398,46 @@ var TemplateComponent = (function (_super) {
             .subscribe(function (params) {
             _this.templateId = params['id'];
             _this.isEdit = params['id'] != null;
-            _this.initForm();
+            _this.initForm(null);
+        });
+        // MUST create formModel to back the template right at the beginning.  Can't wait for any async stuff to happen.
+        //  The async stuff can modify it, but we basically can't leave ngOnInit without the backing form model being built.
+        this.form = new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
+            'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](this.template.name, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+            'description': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](this.template.description),
+            'template': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](this.template.template, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+            'dataProperties': this.dataPropertiesFormArray
         });
     };
-    TemplateComponent.prototype.initForm = function () {
+    TemplateComponent.prototype.initForm = function (template) {
         var _this = this;
-        if (this.isEdit) {
+        if (template) {
+            this.form.patchValue(template);
+        }
+        else if (this.isEdit) {
             this.templateService.getById(this.templateId)
                 .subscribe(function (template) {
                 if (template) {
                     _this.template = template;
-                    var controlArray = _this.form.controls['dataProperties'];
-                    for (var property in template) {
-                        if (template.hasOwnProperty(property) && !systemProperties.includes(property)) {
-                            controlArray.push(new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
-                                'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](property, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
-                                'value': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](template[property])
-                            }));
-                        }
-                    }
-                    _this.original = Object.assign({}, _this.template);
-                    _this.form = _this.createFormGroup(_this.template, controlArray);
+                    _this.form.patchValue(template);
+                    _this.initDataPropertiesForm(template);
+                    _this.original = Object.assign({}, template);
                 }
             });
         }
-        this.form = this.createFormGroup(this.template, this.dataPropertiesFormArray);
     };
-    TemplateComponent.prototype.createFormGroup = function (model, dataPropertiesFormArray) {
-        return new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
-            'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](model.name, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
-            'description': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](model.description),
-            'template': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](model.template, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
-            'dataProperties': dataPropertiesFormArray
-        });
+    TemplateComponent.prototype.initDataPropertiesForm = function (template) {
+        this.clearFormArray(this.dataPropertiesFormArray);
+        for (var property in template) {
+            if (template.hasOwnProperty(property) && !systemProperties.includes(property)) {
+                // this is what adds the new dataProperty controls to the form
+                this.dataPropertiesFormArray.push(new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
+                    'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](property),
+                    'value': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](template[property])
+                }));
+            }
+        }
     };
-    // initDataPropertyFormArray(dataProperties: {name: string, value: string }[]) {
-    //     let dataPropertiesFormArray = new FormArray([]);
-    //     for (let property of dataProperties) {
-    //         dataPropertiesFormArray.push(
-    //             new FormGroup({
-    //                 'name': new FormControl(property.name, Validators.required),
-    //                 'value': new FormControl(property.value)
-    //             })
-    //         );
-    //     }
-    //
-    //     return dataPropertiesFormArray;
-    // }
     TemplateComponent.prototype.save = function (form) {
         var _this = this;
         // validate form
@@ -2479,35 +2471,37 @@ var TemplateComponent = (function (_super) {
         if (this.isEdit) {
             this.template = Object.assign({}, new __WEBPACK_IMPORTED_MODULE_3__templates_template_model__["a" /* Template */](this.original));
             form.form.markAsPristine();
+            // re-initialize form
+            this.initForm(this.template);
         }
         else {
             this.router.navigateByUrl('pages');
         }
     };
-    TemplateComponent.prototype.saveDataProperty = function (dataProperty) {
-        var i = 0;
-    };
     TemplateComponent.prototype.addDataProperty = function () {
-        var control = this.form.controls['dataProperties'];
-        control.push(new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
-            'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](null, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required),
+        this.dataPropertiesFormArray.push(new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["c" /* FormGroup */]({
+            'name': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](null),
             'value': new __WEBPACK_IMPORTED_MODULE_2__angular_forms__["e" /* FormControl */](null)
         }));
     };
     TemplateComponent.prototype.deleteDataProperty = function (index) {
-        var control = this.form.controls['dataProperties'];
-        control.removeAt(index);
+        this.dataPropertiesFormArray.removeAt(index);
     };
     TemplateComponent.prototype.createTemplateObjectFromForm = function (templateObject, formValue) {
         var template = Object.assign({}, formValue);
         delete template.dataProperties;
-        // Add dataProperties as properties on the templateObject
+        // Add dataProperties as properties on the templateObject itself
         if (formValue.dataProperties) {
             formValue.dataProperties.forEach(function (property) {
                 template[property.name] = property.value;
             });
         }
         return template;
+    };
+    TemplateComponent.prototype.clearFormArray = function (formArray) {
+        for (var i = formArray.controls.length - 1; i >= 0; i--) {
+            formArray.removeAt(i);
+        }
     };
     TemplateComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_5" /* Component */])({

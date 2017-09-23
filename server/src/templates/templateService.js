@@ -51,7 +51,7 @@ class TemplateService extends GenericService {
         if ("template" in objectWithTemplate) {
             template = objectWithTemplate.template;
         }
-        else if ("content" in objectWithTemplate) {
+        else if ("content" in objectWithTemplate) { // todo: consider removing 'content' and always using 'template'
             template = objectWithTemplate.content;
         }
         else {
@@ -59,7 +59,7 @@ class TemplateService extends GenericService {
             return Promise.resolve("");
         }
 
-        let model = _.omit(objectWithTemplate, 'template', 'content');
+        let model = _.omit(objectWithTemplate, 'template', 'content'); // todo: consider omitting all system properties (orgId, created, createdBy, etc)
 
         // At this point, the queries should be resolved, but we still need to replace our model properties with their results
         return this.queryService.resolveQueryPropertiesOnModel(orgId, model)

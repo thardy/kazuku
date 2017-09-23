@@ -20,9 +20,8 @@ export class TemplateComponent extends BaseComponent implements OnInit {
     original = {};
     templateId: string;
     isEdit = false;
-    dataProperties = [];
     form: FormGroup = new FormGroup({});
-    dataPropertiesFormArray = new FormArray([]);
+    dataPropertiesFormArray = new FormArray([]); // the dynamic part of our form - one for every templateObject property that is not a system property
 
     constructor(private route: ActivatedRoute, private templateService: TemplateService, private router: Router) {
         super();
@@ -33,61 +32,51 @@ export class TemplateComponent extends BaseComponent implements OnInit {
             .subscribe((params:Params) => {
                 this.templateId = params['id'];
                 this.isEdit = params['id'] != null;
-                this.initForm();
+                this.initForm(null);
             });
+
+        // MUST create formModel to back the template right at the beginning.  Can't wait for any async stuff to happen.
+        //  The async stuff can modify it, but we basically can't leave ngOnInit without the backing form model being built.
+        this.form = new FormGroup({
+            'name': new FormControl(this.template.name, Validators.required),
+            'description': new FormControl(this.template.description),
+            'template': new FormControl(this.template.template, Validators.required),
+            'dataProperties': this.dataPropertiesFormArray
+        });
     }
 
-    initForm() {
-        if (this.isEdit) {
+    initForm(template: any) {
+        if (template) {
+            this.form.patchValue(template);
+        }
+        else if (this.isEdit) {
             this.templateService.getById(this.templateId)
                 .subscribe((template) => {
                     if (template) {
                         this.template = template;
-                        const controlArray = <FormArray>this.form.controls['dataProperties'];
-
-                        for (let property in template) {
-                            if (template.hasOwnProperty(property) && !systemProperties.includes(property)) {
-                                controlArray.push(
-                                    new FormGroup({
-                                        'name': new FormControl(property, Validators.required),
-                                        'value': new FormControl(template[property])
-                                    })
-                                );
-                                // this.dataProperties.push({name: property, value: template[property]})
-                            }
-                        }
-
-                        this.original = Object.assign({}, this.template);
-                        this.form = this.createFormGroup(this.template, controlArray);
+                        this.form.patchValue(template);
+                        this.initDataPropertiesForm(template);
+                        this.original = Object.assign({}, template);
                     }
                 });
         }
-
-        this.form = this.createFormGroup(this.template, this.dataPropertiesFormArray);
     }
 
-    createFormGroup(model, dataPropertiesFormArray) {
-        return new FormGroup({
-            'name': new FormControl(model.name, Validators.required),
-            'description': new FormControl(model.description),
-            'template': new FormControl(model.template, Validators.required),
-            'dataProperties': dataPropertiesFormArray
-        });
-    }
+    initDataPropertiesForm(template: any) {
+        this.clearFormArray(this.dataPropertiesFormArray);
 
-    // initDataPropertyFormArray(dataProperties: {name: string, value: string }[]) {
-    //     let dataPropertiesFormArray = new FormArray([]);
-    //     for (let property of dataProperties) {
-    //         dataPropertiesFormArray.push(
-    //             new FormGroup({
-    //                 'name': new FormControl(property.name, Validators.required),
-    //                 'value': new FormControl(property.value)
-    //             })
-    //         );
-    //     }
-    //
-    //     return dataPropertiesFormArray;
-    // }
+        for (let property in template) {
+            if (template.hasOwnProperty(property) && !systemProperties.includes(property)) {
+                // this is what adds the new dataProperty controls to the form
+                this.dataPropertiesFormArray.push(
+                    new FormGroup({
+                        'name': new FormControl(property),
+                        'value': new FormControl(template[property])
+                    })
+                );
+            }
+        }
+    }
 
     save(form) {
         // validate form
@@ -127,36 +116,32 @@ export class TemplateComponent extends BaseComponent implements OnInit {
         if (this.isEdit) {
             this.template = Object.assign({}, new Template(this.original));
             form.form.markAsPristine();
+            // re-initialize form
+            this.initForm(this.template);
         }
         else {
             this.router.navigateByUrl('pages');
         }
     }
 
-    saveDataProperty(dataProperty) {
-        let i = 0;
-    }
-
     addDataProperty() {
-        const control = <FormArray>this.form.controls['dataProperties'];
-        control.push(
+        this.dataPropertiesFormArray.push(
             new FormGroup({
-                'name': new FormControl(null, Validators.required),
+                'name': new FormControl(null),
                 'value': new FormControl(null)
             })
         );
     }
 
     deleteDataProperty(index: number) {
-        const control = <FormArray>this.form.controls['dataProperties'];
-        control.removeAt(index);
+        this.dataPropertiesFormArray.removeAt(index);
     }
 
     createTemplateObjectFromForm(templateObject: any, formValue: any) {
         const template = Object.assign({}, formValue);
         delete template.dataProperties;
 
-        // Add dataProperties as properties on the templateObject
+        // Add dataProperties as properties on the templateObject itself
         if (formValue.dataProperties) {
             formValue.dataProperties.forEach((property) => {
                 template[property.name] = property.value;
@@ -164,6 +149,12 @@ export class TemplateComponent extends BaseComponent implements OnInit {
         }
 
         return template;
+    }
+
+    clearFormArray(formArray: FormArray) {
+        for (let i = formArray.controls.length - 1; i >= 0; i--) {
+            formArray.removeAt(i);
+        }
     }
 }
 
