@@ -1,6 +1,30 @@
-<kz-nav-bar></kz-nav-bar>
-<h1>
-  {{title}}
-</h1>
+<div class="pushable">
+    <!-- Left Sidebar -->
+    <div class="ui visible inverted left vertical sidebar menu">
+        <kz-nav-bar></kz-nav-bar>
+    </div>
 
-<router-outlet></router-outlet>
+    <!-- Top Fixed Menu -->
+    <div class="ui top fixed menu">
+        <div class="menu right">
+            <div class="ui dropdown item" suiDropdown>
+                Profile Things
+                <div class="menu" suiDropdownMenu>
+                    <a class="item" [routerLink]="['/dashboard']">My Dashboard</a>
+                    <div class="item">Profile</div>
+                    <div class="item">Account</div>
+                    <div class="divider"></div>
+                    <div class="item">Logout</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pusher">
+        <!-- Page Content Here-->
+        <div class="ui basic segment">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+</div>

@@ -1,8 +1,11 @@
 <h1>Organizations</h1>
-<ul>
-    <li *ngFor="let organization of organizations">
-        <a [routerLink]="['/organizations/' + organization.id]">{{organization.name}}</a>
-    </li>
-</ul>
 
-<button class="btn primary" (click)="create()">Add</button>
+<div class="ui middle aligned relaxed divided selection list">
+    <a class="item" *ngFor="let organization of organizations" [routerLink]="['/organizations/' + organization.id]">
+        <div class="content">
+            <div class="header">{{organization.name}}</div>
+        </div>
+    </a>
+</div>
+
+<button class="ui button" (click)="create()">Add</button>

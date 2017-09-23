@@ -33,6 +33,9 @@ import {SetupGuardService} from "./setup/setup-guard.service";
 import {AuthGuardService} from "./common/auth/auth-guard.service";
 import {AsyncButtonDirective} from "./common/ui/async-button.directive";
 import {PageComponent} from "./pages/page.component";
+import {SuiModule} from "ng2-semantic-ui";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { ModalComponent } from './common/modal/modal.component';
 
 @NgModule({
     declarations: [
@@ -54,7 +57,8 @@ import {PageComponent} from "./pages/page.component";
         LoginComponent,
         UserListComponent,
         SetupComponent,
-        AsyncButtonDirective
+        AsyncButtonDirective,
+        ModalComponent
     ],
     imports: [
         BrowserModule,
@@ -62,7 +66,9 @@ import {PageComponent} from "./pages/page.component";
         ReactiveFormsModule,
         HttpModule,
         AppRoutingModule,
-        InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true})
+        BrowserAnimationsModule,
+        InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true}),
+        SuiModule
     ],
     providers: [
         OrganizationService,
@@ -73,6 +79,9 @@ import {PageComponent} from "./pages/page.component";
         SetupService,
         SetupGuardService,
         AuthGuardService
+    ],
+    entryComponents: [
+        ModalComponent
     ],
     bootstrap: [AppComponent]
 })

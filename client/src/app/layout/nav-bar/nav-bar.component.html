@@ -1,19 +1,10 @@
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <ul class="nav nav-pills flex-column text-md-left">
-                <li *ngFor="let navItem of navItems" class="nav-item">
-                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/' + navItem.destination]">
-                        {{navItem.name | uppercase}}
-                    </a>
-                </li>
-                <li class="nav-item" style="cursor: pointer">
-                    <a class="nav-link" routerLinkActive="active" (click)="logout()">
-                        Logout
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
+<a class="item"
+   *ngFor="let navItem of navItems"
+   routerLinkActive="active"
+   [routerLink]="['/' + navItem.destination]">
+    {{navItem.name | uppercase}}
+</a>
+<a class="item" routerLinkActive="active" (click)="logout()">
+    Logout
+</a>
 
