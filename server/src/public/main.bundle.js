@@ -84,30 +84,30 @@ var APP_ROUTES = [
     { path: 'queries/:id', component: __WEBPACK_IMPORTED_MODULE_16__queries_query_component__["a" /* QueryComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
 ];
-var AppRoutingModule = /** @class */ (function () {
+var AppRoutingModule = (function () {
     function AppRoutingModule() {
     }
-    AppRoutingModule = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["M" /* NgModule */])({
-            imports: [
-                __WEBPACK_IMPORTED_MODULE_0__angular_router__["c" /* RouterModule */].forRoot(APP_ROUTES, { useHash: true })
-            ],
-            exports: [
-                __WEBPACK_IMPORTED_MODULE_0__angular_router__["c" /* RouterModule */]
-            ]
-        })
-    ], AppRoutingModule);
     return AppRoutingModule;
 }());
+AppRoutingModule = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["M" /* NgModule */])({
+        imports: [
+            __WEBPACK_IMPORTED_MODULE_0__angular_router__["c" /* RouterModule */].forRoot(APP_ROUTES, { useHash: true })
+        ],
+        exports: [
+            __WEBPACK_IMPORTED_MODULE_0__angular_router__["c" /* RouterModule */]
+        ]
+    })
+], AppRoutingModule);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/app-routing.module.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/app-routing.module.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"pushable\">\n    <!-- Left Sidebar -->\n    <div class=\"ui visible inverted left vertical sidebar menu\">\n        <kz-nav-bar></kz-nav-bar>\n    </div>\n\n    <!-- Top Fixed Menu -->\n    <div class=\"ui top fixed menu\">\n        <div class=\"menu right\">\n            <div class=\"ui dropdown item\" suiDropdown>\n                Profile Things\n                <div class=\"menu\" suiDropdownMenu>\n                    <a class=\"item\" [routerLink]=\"['/dashboard']\">My Dashboard</a>\n                    <div class=\"item\">Profile</div>\n                    <div class=\"item\">Account</div>\n                    <div class=\"divider\"></div>\n                    <div class=\"item\">Logout</div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"pusher\">\n        <!-- Page Content Here-->\n        <div class=\"ui basic segment\">\n            <router-outlet></router-outlet>\n        </div>\n    </div>\n\n</div>\n"
+module.exports = "<div class=\"pushable\">\r\n    <!-- Left Sidebar -->\r\n    <div class=\"ui visible inverted left vertical sidebar menu\">\r\n        <kz-nav-bar></kz-nav-bar>\r\n    </div>\r\n\r\n    <!-- Top Fixed Menu -->\r\n    <div class=\"ui top fixed menu\">\r\n        <div class=\"menu right\">\r\n            <div class=\"ui dropdown item\" suiDropdown>\r\n                Profile Things\r\n                <div class=\"menu\" suiDropdownMenu>\r\n                    <a class=\"item\" [routerLink]=\"['/dashboard']\">My Dashboard</a>\r\n                    <div class=\"item\">Profile</div>\r\n                    <div class=\"item\">Account</div>\r\n                    <div class=\"divider\"></div>\r\n                    <div class=\"item\">Logout</div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"pusher\">\r\n        <!-- Page Content Here-->\r\n        <div class=\"ui basic segment\">\r\n            <router-outlet></router-outlet>\r\n        </div>\r\n    </div>\r\n\r\n</div>\r\n"
 
 /***/ }),
 
@@ -119,7 +119,7 @@ exports = module.exports = __webpack_require__("../../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, ".ui.visible.sidebar ~ .pusher {\n  width: calc(100% - 260px);\n}\n.ui.visible.sidebar ~ .top.fixed.menu {\n  width: calc(100vw - 260px);\n}\n.pusher {\n  margin-top: 40px;\n}\n", "", {"version":3,"sources":["/Users/christopherharris/Desktop/Projects/kazuku/client/src/app/app.component.less","/Users/christopherharris/Desktop/Projects/kazuku/client/src/app/app.component.less"],"names":[],"mappings":"AAAA;EACI,0BAAA;CCCH;ADED;EACI,2BAAA;CCAH;ADGD;EACI,iBAAA;CCDH","file":"app.component.less","sourcesContent":[".ui.visible.sidebar ~ .pusher {\n    width: ~'calc(100% - 260px)';\n}\n\n.ui.visible.sidebar ~ .top.fixed.menu {\n    width: ~'calc(100vw - 260px)';\n}\n\n.pusher {\n    margin-top: 40px;\n}\n",".ui.visible.sidebar ~ .pusher {\n  width: calc(100% - 260px);\n}\n.ui.visible.sidebar ~ .top.fixed.menu {\n  width: calc(100vw - 260px);\n}\n.pusher {\n  margin-top: 40px;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, ".ui.visible.sidebar ~ .pusher {\n  width: calc(100% - 260px);\n}\n.ui.visible.sidebar ~ .top.fixed.menu {\n  width: calc(100vw - 260px);\n}\n.pusher {\n  margin-top: 40px;\n}\n", "", {"version":3,"sources":["D:/dev/kazuku/client/src/app/D:/dev/kazuku/client/src/app/app.component.less","D:/dev/kazuku/client/src/app/app.component.less"],"names":[],"mappings":"AAAA;EACI,0BAAA;CCCH;ADED;EACI,2BAAA;CCAH;ADGD;EACI,iBAAA;CCDH","file":"app.component.less","sourcesContent":[".ui.visible.sidebar ~ .pusher {\n    width: ~'calc(100% - 260px)';\n}\n\n.ui.visible.sidebar ~ .top.fixed.menu {\n    width: ~'calc(100vw - 260px)';\n}\n\n.pusher {\n    margin-top: 40px;\n}\n",".ui.visible.sidebar ~ .pusher {\n  width: calc(100% - 260px);\n}\n.ui.visible.sidebar ~ .top.fixed.menu {\n  width: calc(100vw - 260px);\n}\n.pusher {\n  margin-top: 40px;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -142,21 +142,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 
-var AppComponent = /** @class */ (function () {
+var AppComponent = (function () {
     function AppComponent() {
         this.title = 'kz works!';
     }
-    AppComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-root',
-            template: __webpack_require__("../../../../../src/app/app.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/app.component.less")]
-        })
-    ], AppComponent);
     return AppComponent;
 }());
+AppComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-root',
+        template: __webpack_require__("../../../../../src/app/app.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/app.component.less")]
+    })
+], AppComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/app.component.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/app.component.js.map
 
 /***/ }),
 
@@ -245,63 +245,63 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
-var AppModule = /** @class */ (function () {
+var AppModule = (function () {
     function AppModule() {
     }
-    AppModule = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["M" /* NgModule */])({
-            declarations: [
-                __WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */],
-                __WEBPACK_IMPORTED_MODULE_7__organizations_organization_list_component__["a" /* OrganizationListComponent */],
-                __WEBPACK_IMPORTED_MODULE_8__organizations_organization_component__["a" /* OrganizationComponent */],
-                __WEBPACK_IMPORTED_MODULE_9__sites_site_list_component__["a" /* SiteListComponent */],
-                __WEBPACK_IMPORTED_MODULE_10__sites_site_component__["a" /* SiteComponent */],
-                __WEBPACK_IMPORTED_MODULE_11__pages_page_list_component__["a" /* PageListComponent */],
-                __WEBPACK_IMPORTED_MODULE_33__pages_page_component__["a" /* PageComponent */],
-                __WEBPACK_IMPORTED_MODULE_12__dashboard_dashboard_component__["a" /* DashboardComponent */],
-                __WEBPACK_IMPORTED_MODULE_13__layout_nav_bar_nav_bar_component__["a" /* NavBarComponent */],
-                __WEBPACK_IMPORTED_MODULE_14__templates_template_list_component__["a" /* TemplateListComponent */],
-                __WEBPACK_IMPORTED_MODULE_15__templates_template_component__["a" /* TemplateComponent */],
-                __WEBPACK_IMPORTED_MODULE_16__custom_schemas_custom_schema_list_component__["a" /* CustomSchemaListComponent */],
-                __WEBPACK_IMPORTED_MODULE_17__custom_data_custom_data_list_component__["a" /* CustomDataListComponent */],
-                __WEBPACK_IMPORTED_MODULE_18__queries_query_list_component__["a" /* QueryListComponent */],
-                __WEBPACK_IMPORTED_MODULE_19__queries_query_component__["a" /* QueryComponent */],
-                __WEBPACK_IMPORTED_MODULE_24__login_login_component__["a" /* LoginComponent */],
-                __WEBPACK_IMPORTED_MODULE_25__users_user_list_component__["a" /* UserListComponent */],
-                __WEBPACK_IMPORTED_MODULE_28__setup_setup_component__["a" /* SetupComponent */],
-                __WEBPACK_IMPORTED_MODULE_32__common_ui_async_button_directive__["a" /* AsyncButtonDirective */],
-                __WEBPACK_IMPORTED_MODULE_36__common_modal_modal_component__["a" /* ModalComponent */]
-            ],
-            imports: [
-                __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
-                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["d" /* FormsModule */],
-                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["g" /* ReactiveFormsModule */],
-                __WEBPACK_IMPORTED_MODULE_3__angular_http__["e" /* HttpModule */],
-                __WEBPACK_IMPORTED_MODULE_5__app_routing_module__["a" /* AppRoutingModule */],
-                __WEBPACK_IMPORTED_MODULE_35__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
-                __WEBPACK_IMPORTED_MODULE_4_angular_in_memory_web_api__["a" /* InMemoryWebApiModule */].forRoot(__WEBPACK_IMPORTED_MODULE_20__in_memory_data_service__["a" /* InMemoryDataService */], { apiBase: 'api/', passThruUnknownUrl: true }),
-                __WEBPACK_IMPORTED_MODULE_34_ng2_semantic_ui__["b" /* SuiModule */]
-            ],
-            providers: [
-                __WEBPACK_IMPORTED_MODULE_22__organizations_organization_service__["a" /* OrganizationService */],
-                __WEBPACK_IMPORTED_MODULE_23__sites_site_service__["a" /* SiteService */],
-                __WEBPACK_IMPORTED_MODULE_21__templates_template_service__["a" /* TemplateService */],
-                __WEBPACK_IMPORTED_MODULE_26__queries_query_service__["a" /* QueryService */],
-                __WEBPACK_IMPORTED_MODULE_27__users_user_service__["a" /* UserService */],
-                __WEBPACK_IMPORTED_MODULE_29__setup_setup_service__["a" /* SetupService */],
-                __WEBPACK_IMPORTED_MODULE_30__setup_setup_guard_service__["a" /* SetupGuardService */],
-                __WEBPACK_IMPORTED_MODULE_31__common_auth_auth_guard_service__["a" /* AuthGuardService */]
-            ],
-            entryComponents: [
-                __WEBPACK_IMPORTED_MODULE_36__common_modal_modal_component__["a" /* ModalComponent */]
-            ],
-            bootstrap: [__WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */]]
-        })
-    ], AppModule);
     return AppModule;
 }());
+AppModule = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["M" /* NgModule */])({
+        declarations: [
+            __WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */],
+            __WEBPACK_IMPORTED_MODULE_7__organizations_organization_list_component__["a" /* OrganizationListComponent */],
+            __WEBPACK_IMPORTED_MODULE_8__organizations_organization_component__["a" /* OrganizationComponent */],
+            __WEBPACK_IMPORTED_MODULE_9__sites_site_list_component__["a" /* SiteListComponent */],
+            __WEBPACK_IMPORTED_MODULE_10__sites_site_component__["a" /* SiteComponent */],
+            __WEBPACK_IMPORTED_MODULE_11__pages_page_list_component__["a" /* PageListComponent */],
+            __WEBPACK_IMPORTED_MODULE_33__pages_page_component__["a" /* PageComponent */],
+            __WEBPACK_IMPORTED_MODULE_12__dashboard_dashboard_component__["a" /* DashboardComponent */],
+            __WEBPACK_IMPORTED_MODULE_13__layout_nav_bar_nav_bar_component__["a" /* NavBarComponent */],
+            __WEBPACK_IMPORTED_MODULE_14__templates_template_list_component__["a" /* TemplateListComponent */],
+            __WEBPACK_IMPORTED_MODULE_15__templates_template_component__["a" /* TemplateComponent */],
+            __WEBPACK_IMPORTED_MODULE_16__custom_schemas_custom_schema_list_component__["a" /* CustomSchemaListComponent */],
+            __WEBPACK_IMPORTED_MODULE_17__custom_data_custom_data_list_component__["a" /* CustomDataListComponent */],
+            __WEBPACK_IMPORTED_MODULE_18__queries_query_list_component__["a" /* QueryListComponent */],
+            __WEBPACK_IMPORTED_MODULE_19__queries_query_component__["a" /* QueryComponent */],
+            __WEBPACK_IMPORTED_MODULE_24__login_login_component__["a" /* LoginComponent */],
+            __WEBPACK_IMPORTED_MODULE_25__users_user_list_component__["a" /* UserListComponent */],
+            __WEBPACK_IMPORTED_MODULE_28__setup_setup_component__["a" /* SetupComponent */],
+            __WEBPACK_IMPORTED_MODULE_32__common_ui_async_button_directive__["a" /* AsyncButtonDirective */],
+            __WEBPACK_IMPORTED_MODULE_36__common_modal_modal_component__["a" /* ModalComponent */]
+        ],
+        imports: [
+            __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
+            __WEBPACK_IMPORTED_MODULE_2__angular_forms__["d" /* FormsModule */],
+            __WEBPACK_IMPORTED_MODULE_2__angular_forms__["g" /* ReactiveFormsModule */],
+            __WEBPACK_IMPORTED_MODULE_3__angular_http__["e" /* HttpModule */],
+            __WEBPACK_IMPORTED_MODULE_5__app_routing_module__["a" /* AppRoutingModule */],
+            __WEBPACK_IMPORTED_MODULE_35__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
+            __WEBPACK_IMPORTED_MODULE_4_angular_in_memory_web_api__["a" /* InMemoryWebApiModule */].forRoot(__WEBPACK_IMPORTED_MODULE_20__in_memory_data_service__["a" /* InMemoryDataService */], { apiBase: 'api/', passThruUnknownUrl: true }),
+            __WEBPACK_IMPORTED_MODULE_34_ng2_semantic_ui__["b" /* SuiModule */]
+        ],
+        providers: [
+            __WEBPACK_IMPORTED_MODULE_22__organizations_organization_service__["a" /* OrganizationService */],
+            __WEBPACK_IMPORTED_MODULE_23__sites_site_service__["a" /* SiteService */],
+            __WEBPACK_IMPORTED_MODULE_21__templates_template_service__["a" /* TemplateService */],
+            __WEBPACK_IMPORTED_MODULE_26__queries_query_service__["a" /* QueryService */],
+            __WEBPACK_IMPORTED_MODULE_27__users_user_service__["a" /* UserService */],
+            __WEBPACK_IMPORTED_MODULE_29__setup_setup_service__["a" /* SetupService */],
+            __WEBPACK_IMPORTED_MODULE_30__setup_setup_guard_service__["a" /* SetupGuardService */],
+            __WEBPACK_IMPORTED_MODULE_31__common_auth_auth_guard_service__["a" /* AuthGuardService */]
+        ],
+        entryComponents: [
+            __WEBPACK_IMPORTED_MODULE_36__common_modal_modal_component__["a" /* ModalComponent */]
+        ],
+        bootstrap: [__WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */]]
+    })
+], AppModule);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/app.module.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/app.module.js.map
 
 /***/ }),
 
@@ -328,7 +328,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var AuthGuardService = /** @class */ (function () {
+var AuthGuardService = (function () {
     function AuthGuardService(userService, router) {
         this.userService = userService;
         this.router = router;
@@ -358,15 +358,15 @@ var AuthGuardService = /** @class */ (function () {
         }
         return true;
     };
-    AuthGuardService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], AuthGuardService);
     return AuthGuardService;
-    var _a, _b;
 }());
+AuthGuardService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], AuthGuardService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/auth-guard.service.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/auth-guard.service.js.map
 
 /***/ }),
 
@@ -386,7 +386,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 
 
-var BaseComponent = /** @class */ (function () {
+var BaseComponent = (function () {
     function BaseComponent() {
         this.ngUnsubscribe = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__["Subject"]();
     }
@@ -394,16 +394,16 @@ var BaseComponent = /** @class */ (function () {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     };
-    BaseComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-base-component',
-            template: ''
-        })
-    ], BaseComponent);
     return BaseComponent;
 }());
+BaseComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-base-component',
+        template: ''
+    })
+], BaseComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/base-component.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/base-component.js.map
 
 /***/ }),
 
@@ -444,7 +444,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var GenericService = /** @class */ (function () {
+var GenericService = (function () {
     function GenericService(resourceName, http) {
         this.baseUrl = __WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].kazukuApiUrl + "/" + resourceName;
         this.http = http;
@@ -491,22 +491,22 @@ var GenericService = /** @class */ (function () {
             return __WEBPACK_IMPORTED_MODULE_3_rxjs_Observable__["Observable"].throw(error || 'Server error');
         }
     };
-    GenericService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __metadata("design:paramtypes", [String, typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */]) === "function" && _a || Object])
-    ], GenericService);
     return GenericService;
-    var _a;
 }());
+GenericService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __metadata("design:paramtypes", [String, typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */]) === "function" && _a || Object])
+], GenericService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/generic.service.js.map
+var _a;
+//# sourceMappingURL=D:/dev/kazuku/client/src/generic.service.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/common/modal/modal.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"header\">{{ modal.context.title }}</div>\n<div class=\"content\">\n    <p>{{ modal.context.question }}</p>\n</div>\n<div class=\"actions\">\n    <button class=\"ui red button\" (click)=\"modal.deny(undefined)\">Cancel</button>\n    <button class=\"ui green button\" (click)=\"modal.approve(undefined)\" autofocus>OK</button>\n</div>\n"
+module.exports = "<div class=\"header\">{{ modal.context.title }}</div>\r\n<div class=\"content\">\r\n    <p>{{ modal.context.question }}</p>\r\n</div>\r\n<div class=\"actions\">\r\n    <button class=\"ui red button\" (click)=\"modal.deny(undefined)\">Cancel</button>\r\n    <button class=\"ui green button\" (click)=\"modal.approve(undefined)\" autofocus>OK</button>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -528,22 +528,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-var ModalComponent = /** @class */ (function () {
+var ModalComponent = (function () {
     function ModalComponent(modal) {
         this.modal = modal;
     }
-    ModalComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["o" /* Component */])({
-            selector: 'modal-confirm',
-            template: __webpack_require__("../../../../../src/app/common/modal/modal.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0_ng2_semantic_ui__["a" /* SuiModal */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0_ng2_semantic_ui__["a" /* SuiModal */]) === "function" && _a || Object])
-    ], ModalComponent);
     return ModalComponent;
-    var _a;
 }());
+ModalComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["o" /* Component */])({
+        selector: 'modal-confirm',
+        template: __webpack_require__("../../../../../src/app/common/modal/modal.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0_ng2_semantic_ui__["a" /* SuiModal */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0_ng2_semantic_ui__["a" /* SuiModal */]) === "function" && _a || Object])
+], ModalComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/modal.component.js.map
+var _a;
+//# sourceMappingURL=D:/dev/kazuku/client/src/modal.component.js.map
 
 /***/ }),
 
@@ -565,7 +565,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 // Example usage:
 // <button class="ui button" pd-async-button [asyncInProgress]="loading" [asyncText]="'Saving...'" [asyncType]="'save'" (click)="testClick()"></button>
-var AsyncButtonDirective = /** @class */ (function () {
+var AsyncButtonDirective = (function () {
     function AsyncButtonDirective(el, renderer) {
         this.el = el;
         this.renderer = renderer;
@@ -618,29 +618,29 @@ var AsyncButtonDirective = /** @class */ (function () {
         this.renderer.setElementClass(this.el.nativeElement, 'loading', false);
         this.renderer.setElementProperty(this.el.nativeElement, 'disabled', false);
     };
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", Boolean)
-    ], AsyncButtonDirective.prototype, "asyncInProgress", void 0);
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", String)
-    ], AsyncButtonDirective.prototype, "asyncText", void 0);
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", String)
-    ], AsyncButtonDirective.prototype, "asyncType", void 0);
-    AsyncButtonDirective = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* Directive */])({
-            selector: '[kz-async-button]'
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* ElementRef */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_1" /* Renderer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_1" /* Renderer */]) === "function" && _b || Object])
-    ], AsyncButtonDirective);
     return AsyncButtonDirective;
-    var _a, _b;
 }());
+__decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+    __metadata("design:type", Boolean)
+], AsyncButtonDirective.prototype, "asyncInProgress", void 0);
+__decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+    __metadata("design:type", String)
+], AsyncButtonDirective.prototype, "asyncText", void 0);
+__decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+    __metadata("design:type", String)
+], AsyncButtonDirective.prototype, "asyncType", void 0);
+AsyncButtonDirective = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* Directive */])({
+        selector: '[kz-async-button]'
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* ElementRef */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_1" /* Renderer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_1" /* Renderer */]) === "function" && _b || Object])
+], AsyncButtonDirective);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/async-button.directive.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/async-button.directive.js.map
 
 /***/ }),
 
@@ -650,7 +650,7 @@ var AsyncButtonDirective = /** @class */ (function () {
 "use strict";
 // This class is kept simple for easier consumption.  You must not add any dependencies here.  If you need anything
 //  injected, you need to change this to a service and provide it in the app module, inject into constructors, etc, etc.
-var JsonUtils = /** @class */ (function () {
+var JsonUtils = (function () {
     function JsonUtils() {
     }
     // this method is a cheap, halfway-decent way to convert a string to json without blowing up if it's not json
@@ -673,14 +673,14 @@ var JsonUtils = /** @class */ (function () {
     return JsonUtils;
 }());
 /* harmony default export */ __webpack_exports__["a"] = (JsonUtils);
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/json-utils.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/json-utils.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/custom-data/custom-data-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Content</h1>\n<ul>\n    <li *ngFor=\"let content of contentItems\">\n        <a [routerLink]=\"['/content/' + content.id]\">{{content.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Content</h1>\r\n<ul>\r\n    <li *ngFor=\"let content of contentItems\">\r\n        <a [routerLink]=\"['/content/' + content.id]\">{{content.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -700,29 +700,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
-var CustomDataListComponent = /** @class */ (function () {
+var CustomDataListComponent = (function () {
     function CustomDataListComponent() {
     }
     CustomDataListComponent.prototype.ngOnInit = function () {
     };
-    CustomDataListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-custom-data',
-            template: __webpack_require__("../../../../../src/app/custom-data/custom-data-list.component.html")
-        }),
-        __metadata("design:paramtypes", [])
-    ], CustomDataListComponent);
     return CustomDataListComponent;
 }());
+CustomDataListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-custom-data',
+        template: __webpack_require__("../../../../../src/app/custom-data/custom-data-list.component.html")
+    }),
+    __metadata("design:paramtypes", [])
+], CustomDataListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/custom-data-list.component.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/custom-data-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/custom-schemas/custom-schema-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Custom Schemas</h1>\n<ul>\n    <li *ngFor=\"let schema of schemas\">\n        <a [routerLink]=\"['/custom-models/' + schema.id]\">{{schema.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Custom Schemas</h1>\r\n<ul>\r\n    <li *ngFor=\"let schema of schemas\">\r\n        <a [routerLink]=\"['/custom-models/' + schema.id]\">{{schema.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -742,29 +742,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
-var CustomSchemaListComponent = /** @class */ (function () {
+var CustomSchemaListComponent = (function () {
     function CustomSchemaListComponent() {
     }
     CustomSchemaListComponent.prototype.ngOnInit = function () {
     };
-    CustomSchemaListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-custom-schemas',
-            template: __webpack_require__("../../../../../src/app/custom-schemas/custom-schema-list.component.html")
-        }),
-        __metadata("design:paramtypes", [])
-    ], CustomSchemaListComponent);
     return CustomSchemaListComponent;
 }());
+CustomSchemaListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-custom-schemas',
+        template: __webpack_require__("../../../../../src/app/custom-schemas/custom-schema-list.component.html")
+    }),
+    __metadata("design:paramtypes", [])
+], CustomSchemaListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/custom-schema-list.component.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/custom-schema-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/dashboard/dashboard.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  dashboard works!\n</p>\n"
+module.exports = "<p>\r\n  dashboard works!\r\n</p>\r\n"
 
 /***/ }),
 
@@ -802,23 +802,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
-var DashboardComponent = /** @class */ (function () {
+var DashboardComponent = (function () {
     function DashboardComponent() {
     }
     DashboardComponent.prototype.ngOnInit = function () {
     };
-    DashboardComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-dashboard',
-            template: __webpack_require__("../../../../../src/app/dashboard/dashboard.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/dashboard/dashboard.component.less")]
-        }),
-        __metadata("design:paramtypes", [])
-    ], DashboardComponent);
     return DashboardComponent;
 }());
+DashboardComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-dashboard',
+        template: __webpack_require__("../../../../../src/app/dashboard/dashboard.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/dashboard/dashboard.component.less")]
+    }),
+    __metadata("design:paramtypes", [])
+], DashboardComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/dashboard.component.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/dashboard.component.js.map
 
 /***/ }),
 
@@ -834,7 +834,7 @@ var DashboardComponent = /** @class */ (function () {
 
 
 //import {Resource} from "./resources/resource.model";
-var InMemoryDataService = /** @class */ (function () {
+var InMemoryDataService = (function () {
     function InMemoryDataService() {
     }
     InMemoryDataService.prototype.createDb = function () {
@@ -887,14 +887,14 @@ var TEMPLATES = [
 //     ]
 //
 // });
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/in-memory-data.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/in-memory-data.service.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/layout/nav-bar/nav-bar.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<a class=\"item\"\n   *ngFor=\"let navItem of navItems\"\n   routerLinkActive=\"active\"\n   [routerLink]=\"['/' + navItem.destination]\">\n    {{navItem.name | uppercase}}\n</a>\n<a class=\"item\" routerLinkActive=\"active\" (click)=\"logout()\">\n    Logout\n</a>\n\n"
+module.exports = "<a class=\"item\"\r\n   *ngFor=\"let navItem of navItems\"\r\n   routerLinkActive=\"active\"\r\n   [routerLink]=\"['/' + navItem.destination]\">\r\n    {{navItem.name | uppercase}}\r\n</a>\r\n<a class=\"item\" routerLinkActive=\"active\" (click)=\"logout()\">\r\n    Logout\r\n</a>\r\n\r\n"
 
 /***/ }),
 
@@ -941,7 +941,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var NavBarComponent = /** @class */ (function () {
+var NavBarComponent = (function () {
     function NavBarComponent(userService, router) {
         this.userService = userService;
         this.router = router;
@@ -984,26 +984,26 @@ var NavBarComponent = /** @class */ (function () {
         navItems.push({ name: 'Queries', destination: 'queries' });
         return navItems;
     };
-    NavBarComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-nav-bar',
-            template: __webpack_require__("../../../../../src/app/layout/nav-bar/nav-bar.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/layout/nav-bar/nav-bar.component.less")]
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], NavBarComponent);
     return NavBarComponent;
-    var _a, _b;
 }());
+NavBarComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-nav-bar',
+        template: __webpack_require__("../../../../../src/app/layout/nav-bar/nav-bar.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/layout/nav-bar/nav-bar.component.less")]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__users_user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], NavBarComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/nav-bar.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/nav-bar.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/login/login.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Login</h1>\n\n<!--<div class=\"loginButton\">-->\n    <!--<a href=\"/api/users/google\">-->\n        <!--<img id=\"googleLoginBtnImg\" src=\"/assets/images/googleLoginBtn.png\" alt=\"Sign-In with Google\">-->\n    <!--</a>-->\n\n    <!--<a href=\"/api/users/facebook\">-->\n        <!--<img id=\"facebookLoginBtnImg\" src=\"/assets/images/fbLoginBtn.png\" alt=\"Sign-In with Facebook\">-->\n    <!--</a>-->\n\n    <!--<hr>-->\n    <!--<div id=\"or\">or</div>-->\n\n    <form #loginForm=\"ngForm\" (ngSubmit)=\"login(loginForm)\" novalidate>\n        <label for=\"email\">Email</label>\n        <input type=\"email\" id=\"email\" name=\"email\" [(ngModel)]=\"user.email\" size=\"30\" maxlength=\"100\" placeholder=\"your@email.com\">\n\n        <label for=\"email\">Password</label>\n        <input type=\"password\" id=\"password\" name=\"password\" [(ngModel)]=\"user.password\" placeholder=\"********\">\n        <a href=\"#\">forgot?</a>\n\n        <button type=\"submit\" kz-async-button [asyncInProgress]=\"loggingIn\" class=\"ui button\">Login</button>\n    </form>\n<!--</div>-->\n"
+module.exports = "<h1>Login</h1>\r\n\r\n<!--<div class=\"loginButton\">-->\r\n    <!--<a href=\"/api/users/google\">-->\r\n        <!--<img id=\"googleLoginBtnImg\" src=\"/assets/images/googleLoginBtn.png\" alt=\"Sign-In with Google\">-->\r\n    <!--</a>-->\r\n\r\n    <!--<a href=\"/api/users/facebook\">-->\r\n        <!--<img id=\"facebookLoginBtnImg\" src=\"/assets/images/fbLoginBtn.png\" alt=\"Sign-In with Facebook\">-->\r\n    <!--</a>-->\r\n\r\n    <!--<hr>-->\r\n    <!--<div id=\"or\">or</div>-->\r\n\r\n    <form #loginForm=\"ngForm\" (ngSubmit)=\"login(loginForm)\" novalidate>\r\n        <label for=\"email\">Email</label>\r\n        <input type=\"email\" id=\"email\" name=\"email\" [(ngModel)]=\"user.email\" size=\"30\" maxlength=\"100\" placeholder=\"your@email.com\">\r\n\r\n        <label for=\"email\">Password</label>\r\n        <input type=\"password\" id=\"password\" name=\"password\" [(ngModel)]=\"user.password\" placeholder=\"********\">\r\n        <a href=\"#\">forgot?</a>\r\n\r\n        <button type=\"submit\" kz-async-button [asyncInProgress]=\"loggingIn\" class=\"ui button\">Login</button>\r\n    </form>\r\n<!--</div>-->\r\n"
 
 /***/ }),
 
@@ -1015,7 +1015,7 @@ exports = module.exports = __webpack_require__("../../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "hr {\n  display: block;\n  position: relative;\n  margin-bottom: 0;\n  top: 19px;\n  height: 0;\n  border: 0;\n  border-top: 1px solid #e4e6e8;\n  color: #9fa6ad;\n  background-color: #9fa6ad;\n}\n#or {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  text-align: center;\n  padding: 10px;\n  color: #6a737c;\n  background-color: #fff;\n  vertical-align: baseline;\n}\n", "", {"version":3,"sources":["/Users/christopherharris/Desktop/Projects/kazuku/client/src/app/login/login.component.less","/Users/christopherharris/Desktop/Projects/kazuku/client/src/app/login/login.component.less"],"names":[],"mappings":"AAEA;EACI,eAAA;EACA,mBAAA;EACA,iBAAA;EACA,UAAA;EACA,UAAA;EACA,UAAA;EACA,8BAAA;EACA,eAAA;EACA,0BAAA;CCDH;ADID;EACI,sBAAA;EACA,mBAAA;EACA,UAAA;EACA,mBAAA;EACA,cAAA;EACA,eAAA;EACA,uBAAA;EACA,yBAAA;CCFH","file":"login.component.less","sourcesContent":["@import \"../../colors\";\n\nhr {\n    display: block;\n    position: relative;\n    margin-bottom: 0;\n    top: 19px;\n    height: 0;\n    border: 0;\n    border-top: 1px solid @lightGrey;\n    color: @mediumGrey;\n    background-color: @mediumGrey;\n}\n\n#or {\n    display: inline-block;\n    position: relative;\n    margin: 0;\n    text-align: center;\n    padding: 10px;\n    color: @darkGrey;\n    background-color: #fff;\n    vertical-align: baseline;\n}\n","hr {\n  display: block;\n  position: relative;\n  margin-bottom: 0;\n  top: 19px;\n  height: 0;\n  border: 0;\n  border-top: 1px solid #e4e6e8;\n  color: #9fa6ad;\n  background-color: #9fa6ad;\n}\n#or {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  text-align: center;\n  padding: 10px;\n  color: #6a737c;\n  background-color: #fff;\n  vertical-align: baseline;\n}\n"],"sourceRoot":""}]);
+exports.push([module.i, "hr {\n  display: block;\n  position: relative;\n  margin-bottom: 0;\n  top: 19px;\n  height: 0;\n  border: 0;\n  border-top: 1px solid #e4e6e8;\n  color: #9fa6ad;\n  background-color: #9fa6ad;\n}\n#or {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  text-align: center;\n  padding: 10px;\n  color: #6a737c;\n  background-color: #fff;\n  vertical-align: baseline;\n}\n", "", {"version":3,"sources":["D:/dev/kazuku/client/src/app/login/D:/dev/kazuku/client/src/app/login/login.component.less","D:/dev/kazuku/client/src/app/login/login.component.less"],"names":[],"mappings":"AAEA;EACI,eAAA;EACA,mBAAA;EACA,iBAAA;EACA,UAAA;EACA,UAAA;EACA,UAAA;EACA,8BAAA;EACA,eAAA;EACA,0BAAA;CCDH;ADID;EACI,sBAAA;EACA,mBAAA;EACA,UAAA;EACA,mBAAA;EACA,cAAA;EACA,eAAA;EACA,uBAAA;EACA,yBAAA;CCFH","file":"login.component.less","sourcesContent":["@import \"../../colors\";\n\nhr {\n    display: block;\n    position: relative;\n    margin-bottom: 0;\n    top: 19px;\n    height: 0;\n    border: 0;\n    border-top: 1px solid @lightGrey;\n    color: @mediumGrey;\n    background-color: @mediumGrey;\n}\n\n#or {\n    display: inline-block;\n    position: relative;\n    margin: 0;\n    text-align: center;\n    padding: 10px;\n    color: @darkGrey;\n    background-color: #fff;\n    vertical-align: baseline;\n}\n","hr {\n  display: block;\n  position: relative;\n  margin-bottom: 0;\n  top: 19px;\n  height: 0;\n  border: 0;\n  border-top: 1px solid #e4e6e8;\n  color: #9fa6ad;\n  background-color: #9fa6ad;\n}\n#or {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  text-align: center;\n  padding: 10px;\n  color: #6a737c;\n  background-color: #fff;\n  vertical-align: baseline;\n}\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -1053,7 +1053,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var LoginComponent = /** @class */ (function () {
+var LoginComponent = (function () {
     function LoginComponent(userService, router, route) {
         this.userService = userService;
         this.router = router;
@@ -1090,26 +1090,26 @@ var LoginComponent = /** @class */ (function () {
             });
         }
     };
-    LoginComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-login',
-            template: __webpack_require__("../../../../../src/app/login/login.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/login/login.component.less")]
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__users_user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__users_user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_5__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_5__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__angular_router__["a" /* ActivatedRoute */]) === "function" && _c || Object])
-    ], LoginComponent);
     return LoginComponent;
-    var _a, _b, _c;
 }());
+LoginComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-login',
+        template: __webpack_require__("../../../../../src/app/login/login.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/login/login.component.less")]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__users_user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__users_user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_5__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__angular_router__["b" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_5__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__angular_router__["a" /* ActivatedRoute */]) === "function" && _c || Object])
+], LoginComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/login.component.js.map
+var _a, _b, _c;
+//# sourceMappingURL=D:/dev/kazuku/client/src/login.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/organizations/organization-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Organizations</h1>\n\n<div class=\"ui middle aligned relaxed divided selection list\">\n    <a class=\"item\" *ngFor=\"let organization of organizations\" [routerLink]=\"['/organizations/' + organization.id]\">\n        <div class=\"content\">\n            <div class=\"header\">{{organization.name}}</div>\n        </div>\n    </a>\n</div>\n\n<button class=\"ui button\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Organizations</h1>\r\n\r\n<div class=\"ui middle aligned relaxed divided selection list\">\r\n    <a class=\"item\" *ngFor=\"let organization of organizations\" [routerLink]=\"['/organizations/' + organization.id]\">\r\n        <div class=\"content\">\r\n            <div class=\"header\">{{organization.name}}</div>\r\n        </div>\r\n    </a>\r\n</div>\r\n\r\n<button class=\"ui button\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -1133,7 +1133,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var OrganizationListComponent = /** @class */ (function () {
+var OrganizationListComponent = (function () {
     function OrganizationListComponent(organizationService, router) {
         this.organizationService = organizationService;
         this.router = router;
@@ -1149,25 +1149,25 @@ var OrganizationListComponent = /** @class */ (function () {
     OrganizationListComponent.prototype.create = function () {
         this.router.navigateByUrl('organizations/create');
     };
-    OrganizationListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-organization-list',
-            template: __webpack_require__("../../../../../src/app/organizations/organization-list.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], OrganizationListComponent);
     return OrganizationListComponent;
-    var _a, _b;
 }());
+OrganizationListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-organization-list',
+        template: __webpack_require__("../../../../../src/app/organizations/organization-list.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__organization_service__["a" /* OrganizationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], OrganizationListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/organization-list.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/organization-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/organizations/organization.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form\">\n    <div class=\"field\">\n        <label>Name</label>\n        <input type=\"text\"\n               pattern=\"[\\D]*\"\n               name=\"name\"\n               [(ngModel)]=\"organization.name\">\n    </div>\n\n    <div class=\"field\">\n        <label>Code</label>\n        <input type=\"text\"\n               name=\"code\"\n               [(ngModel)]=\"organization.code\">\n    </div>\n\n    <div class=\"field\">\n        <label>Description</label>\n        <textarea type=\"text\" rows=\"4\" cols=\"50\"\n                  name=\"description\"\n                  [(ngModel)]=\"organization.description\">\n            </textarea>\n    </div>\n\n    <div class=\"extra content\">\n        <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\n                kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\n            <i class=\"checkmark icon\"></i> Save\n        </button>\n        <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\n    </div>\n</form>\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form\">\r\n    <div class=\"field\">\r\n        <label>Name</label>\r\n        <input type=\"text\"\r\n               pattern=\"[\\D]*\"\r\n               name=\"name\"\r\n               [(ngModel)]=\"organization.name\">\r\n    </div>\r\n\r\n    <div class=\"field\">\r\n        <label>Code</label>\r\n        <input type=\"text\"\r\n               name=\"code\"\r\n               [(ngModel)]=\"organization.code\">\r\n    </div>\r\n\r\n    <div class=\"field\">\r\n        <label>Description</label>\r\n        <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                  name=\"description\"\r\n                  [(ngModel)]=\"organization.description\">\r\n            </textarea>\r\n    </div>\r\n\r\n    <div class=\"extra content\">\r\n        <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n            <i class=\"checkmark icon\"></i> Save\r\n        </button>\r\n        <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1211,7 +1211,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var OrganizationComponent = /** @class */ (function (_super) {
+var OrganizationComponent = (function (_super) {
     __extends(OrganizationComponent, _super);
     function OrganizationComponent(route, orgService, router) {
         var _this = _super.call(this) || this;
@@ -1282,18 +1282,18 @@ var OrganizationComponent = /** @class */ (function (_super) {
             form.form.markAsPristine();
         }
     };
-    OrganizationComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-organization',
-            template: __webpack_require__("../../../../../src/app/organizations/organization.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
-    ], OrganizationComponent);
     return OrganizationComponent;
-    var _a, _b, _c;
 }(__WEBPACK_IMPORTED_MODULE_2__common_base_component__["a" /* BaseComponent */]));
+OrganizationComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-organization',
+        template: __webpack_require__("../../../../../src/app/organizations/organization.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__organization_service__["a" /* OrganizationService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
+], OrganizationComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/organization.component.js.map
+var _a, _b, _c;
+//# sourceMappingURL=D:/dev/kazuku/client/src/organization.component.js.map
 
 /***/ }),
 
@@ -1302,7 +1302,7 @@ var OrganizationComponent = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Organization; });
-var Organization = /** @class */ (function () {
+var Organization = (function () {
     function Organization(options) {
         if (options === void 0) { options = {}; }
         this.id = options.id;
@@ -1315,7 +1315,7 @@ var Organization = /** @class */ (function () {
     return Organization;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/organization.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/organization.model.js.map
 
 /***/ }),
 
@@ -1364,7 +1364,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-var OrganizationService = /** @class */ (function (_super) {
+var OrganizationService = (function (_super) {
     __extends(OrganizationService, _super);
     function OrganizationService(http) {
         return _super.call(this, 'organizations', http) || this;
@@ -1375,22 +1375,22 @@ var OrganizationService = /** @class */ (function (_super) {
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
-    OrganizationService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
-        __metadata("design:paramtypes", [Object])
-    ], OrganizationService);
     return OrganizationService;
 }(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
+OrganizationService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], OrganizationService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/organization.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/organization.service.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/pages/page-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Pages</h1>\n<ul>\n    <li *ngFor=\"let page of pages\">\n        <a [routerLink]=\"['/pages/' + page.id]\">{{page.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Pages</h1>\r\n<ul>\r\n    <li *ngFor=\"let page of pages\">\r\n        <a [routerLink]=\"['/pages/' + page.id]\">{{page.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -1414,7 +1414,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var PageListComponent = /** @class */ (function () {
+var PageListComponent = (function () {
     function PageListComponent(templateService, router) {
         this.templateService = templateService;
         this.router = router;
@@ -1434,25 +1434,25 @@ var PageListComponent = /** @class */ (function () {
     PageListComponent.prototype.create = function () {
         this.router.navigateByUrl('pages/create');
     };
-    PageListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-page-list',
-            template: __webpack_require__("../../../../../src/app/pages/page-list.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__templates_template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__templates_template_service__["a" /* TemplateService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], PageListComponent);
     return PageListComponent;
-    var _a, _b;
 }());
+PageListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-page-list',
+        template: __webpack_require__("../../../../../src/app/pages/page-list.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__templates_template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__templates_template_service__["a" /* TemplateService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], PageListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/page-list.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/page-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/pages/page.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\n    <div>\n        <div class=\"field\">\n            <label>Site</label>\n            <select class=\"ui fluid dropdown\" [(ngModel)]=\"page.siteId\" name=\"siteId\" required>\n                <option value=\"undefined\" [selected]=\"page.siteId === undefined\">Select a site...</option>\n                <option *ngFor=\"let site of sites\" [(ngValue)]=\"site.id\"\n                        [selected]=\"page.siteId === site.id\">\n                    {{site.name}}\n                </option>\n            </select>\n        </div>\n        <div class=\"field\">\n            <label>Name</label>\n            <input type=\"text\"\n                   pattern=\"[\\D]*\"\n                   name=\"name\"\n                   [(ngModel)]=\"page.name\">\n        </div>\n        <div class=\"field\">\n            <label>Url</label>\n            <input type=\"text\"\n                   pattern=\"[\\D]*\"\n                   name=\"url\"\n                   [(ngModel)]=\"page.url\">\n        </div>\n        <div class=\"field\">\n            <label>Description</label>\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\n                      name=\"description\"\n                      [(ngModel)]=\"page.description\">\n            </textarea>\n        </div>\n\n        <div class=\"field\">\n            <label>Template</label>\n            <textarea type=\"text\" rows=\"14\" cols=\"200\"\n                      name=\"template\"\n                      [(ngModel)]=\"page.template\">\n            </textarea>\n        </div>\n\n        <div class=\"extra content\">\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\n                <i class=\"checkmark icon\"></i> Save\n            </button>\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\n        </div>\n\n    </div>\n</form>\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Site</label>\r\n            <select class=\"ui fluid dropdown\" [(ngModel)]=\"page.siteId\" name=\"siteId\" required>\r\n                <option value=\"undefined\" [selected]=\"page.siteId === undefined\">Select a site...</option>\r\n                <option *ngFor=\"let site of sites\" [(ngValue)]=\"site.id\"\r\n                        [selected]=\"page.siteId === site.id\">\r\n                    {{site.name}}\r\n                </option>\r\n            </select>\r\n        </div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"page.name\">\r\n        </div>\r\n        <div class=\"field\">\r\n            <label>Url</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"url\"\r\n                   [(ngModel)]=\"page.url\">\r\n        </div>\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"page.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"14\" cols=\"200\"\r\n                      name=\"template\"\r\n                      [(ngModel)]=\"page.template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1498,7 +1498,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var PageComponent = /** @class */ (function (_super) {
+var PageComponent = (function (_super) {
     __extends(PageComponent, _super);
     function PageComponent(route, templateService, router, siteService) {
         var _this = _super.call(this) || this;
@@ -1578,25 +1578,25 @@ var PageComponent = /** @class */ (function (_super) {
             form.form.markAsPristine();
         }
     };
-    PageComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-page',
-            template: __webpack_require__("../../../../../src/app/pages/page.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_7__sites_site_service__["a" /* SiteService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__sites_site_service__["a" /* SiteService */]) === "function" && _d || Object])
-    ], PageComponent);
     return PageComponent;
-    var _a, _b, _c, _d;
 }(__WEBPACK_IMPORTED_MODULE_4__common_base_component__["a" /* BaseComponent */]));
+PageComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-page',
+        template: __webpack_require__("../../../../../src/app/pages/page.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__templates_template_service__["a" /* TemplateService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_7__sites_site_service__["a" /* SiteService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__sites_site_service__["a" /* SiteService */]) === "function" && _d || Object])
+], PageComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/page.component.js.map
+var _a, _b, _c, _d;
+//# sourceMappingURL=D:/dev/kazuku/client/src/page.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/queries/query-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Queries</h1>\n<ul>\n    <li *ngFor=\"let query of queries\">\n        <a [routerLink]=\"['/queries/' + query.id]\">{{query.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Queries</h1>\r\n<ul>\r\n    <li *ngFor=\"let query of queries\">\r\n        <a [routerLink]=\"['/queries/' + query.id]\">{{query.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -1620,7 +1620,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var QueryListComponent = /** @class */ (function () {
+var QueryListComponent = (function () {
     function QueryListComponent(queryService, router) {
         this.queryService = queryService;
         this.router = router;
@@ -1636,25 +1636,25 @@ var QueryListComponent = /** @class */ (function () {
     QueryListComponent.prototype.create = function () {
         this.router.navigateByUrl('queries/create');
     };
-    QueryListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-query-list',
-            template: __webpack_require__("../../../../../src/app/queries/query-list.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__query_service__["a" /* QueryService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__query_service__["a" /* QueryService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], QueryListComponent);
     return QueryListComponent;
-    var _a, _b;
 }());
+QueryListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-query-list',
+        template: __webpack_require__("../../../../../src/app/queries/query-list.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__query_service__["a" /* QueryService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__query_service__["a" /* QueryService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], QueryListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/query-list.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/query-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/queries/query.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\n    <div>\n        <div class=\"field\">\n            <label>Name</label>\n            <input type=\"text\"\n                   pattern=\"[\\D]*\"\n                   name=\"name\"\n                   [(ngModel)]=\"query.name\">\n        </div>\n\n        <div class=\"field\">\n            <label>Query</label>\n            <input type=\"text\"\n                   name=\"query\"\n                   [(ngModel)]=\"query.query\">\n        </div>\n\n        <div class=\"field\">\n            <label>Description</label>\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\n                      name=\"description\"\n                      [(ngModel)]=\"query.description\">\n            </textarea>\n        </div>\n\n        <div class=\"extra content\">\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\n                <i class=\"checkmark icon\"></i> Save\n            </button>\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\n        </div>\n\n    </div>\n</form>\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"query.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Query</label>\r\n            <input type=\"text\"\r\n                   name=\"query\"\r\n                   [(ngModel)]=\"query.query\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      name=\"description\"\r\n                      [(ngModel)]=\"query.description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1698,7 +1698,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var QueryComponent = /** @class */ (function (_super) {
+var QueryComponent = (function (_super) {
     __extends(QueryComponent, _super);
     function QueryComponent(route, queryService, router) {
         var _this = _super.call(this) || this;
@@ -1769,18 +1769,18 @@ var QueryComponent = /** @class */ (function (_super) {
             form.form.markAsPristine();
         }
     };
-    QueryComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-query',
-            template: __webpack_require__("../../../../../src/app/queries/query.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__query_service__["a" /* QueryService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__query_service__["a" /* QueryService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
-    ], QueryComponent);
     return QueryComponent;
-    var _a, _b, _c;
 }(__WEBPACK_IMPORTED_MODULE_2__common_base_component__["a" /* BaseComponent */]));
+QueryComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-query',
+        template: __webpack_require__("../../../../../src/app/queries/query.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__query_service__["a" /* QueryService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__query_service__["a" /* QueryService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
+], QueryComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/query.component.js.map
+var _a, _b, _c;
+//# sourceMappingURL=D:/dev/kazuku/client/src/query.component.js.map
 
 /***/ }),
 
@@ -1789,7 +1789,7 @@ var QueryComponent = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Query; });
-var Query = /** @class */ (function () {
+var Query = (function () {
     function Query(options) {
         if (options === void 0) { options = {}; }
         this.id = options.id;
@@ -1802,7 +1802,7 @@ var Query = /** @class */ (function () {
     return Query;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/query.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/query.model.js.map
 
 /***/ }),
 
@@ -1851,7 +1851,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-var QueryService = /** @class */ (function (_super) {
+var QueryService = (function (_super) {
     __extends(QueryService, _super);
     function QueryService(http) {
         return _super.call(this, 'queries', http) || this;
@@ -1862,15 +1862,15 @@ var QueryService = /** @class */ (function (_super) {
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
-    QueryService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
-        __metadata("design:paramtypes", [Object])
-    ], QueryService);
     return QueryService;
 }(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
+QueryService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], QueryService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/query.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/query.service.js.map
 
 /***/ }),
 
@@ -1879,7 +1879,7 @@ var QueryService = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SetupConfig; });
-var SetupConfig = /** @class */ (function () {
+var SetupConfig = (function () {
     function SetupConfig(options) {
         if (options === void 0) { options = {}; }
         this.id = null;
@@ -1891,7 +1891,7 @@ var SetupConfig = /** @class */ (function () {
     return SetupConfig;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/setup-config.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/setup-config.model.js.map
 
 /***/ }),
 
@@ -1916,7 +1916,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 //import 'rxjs/add/operator/do';
-var SetupGuardService = /** @class */ (function () {
+var SetupGuardService = (function () {
     function SetupGuardService(setupService, router) {
         this.setupService = setupService;
         this.router = router;
@@ -1931,22 +1931,22 @@ var SetupGuardService = /** @class */ (function () {
             return canWeSetup;
         });
     };
-    SetupGuardService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], SetupGuardService);
     return SetupGuardService;
-    var _a, _b;
 }());
+SetupGuardService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], SetupGuardService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/setup-guard.service.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/setup-guard.service.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/setup/setup.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #theForm=\"ngForm\" (ngSubmit)=\"save(theForm)\" class=\"ui form\" >\n    <p>Admin username/email is simply \"admin\".  Let's go ahead and set the initial password for the admin user...</p>\n    <label for=\"adminPassword\">Admin Password:</label>\n    <input [(ngModel)]=\"setupConfig.adminPassword\" id=\"adminPassword\" name=\"adminPassword\" type=\"password\" required>\n    <label for=\"adminPasswordConfirm\">Confirm Admin Password:</label>\n    <input [(ngModel)]=\"setupConfig.adminPasswordConfirm\" id=\"adminPasswordConfirm\" name=\"adminPasswordConfirm\" type=\"password\" required><br/>\n    <label for=\"metaOrgName\">Meta Organization Name:</label>\n    <p>\n        All content in Kazuku belongs to organizations, and while Kazuku is capable of hosting many organizations, you don't have to use Kazuku\n        to host multiple organizations.  There does need to be one \"meta\" organization, however - this will be the name of the\n        host organization for this instance of Kazuku.  This can simply be the name of your organization or just your name.\n    </p>\n    <input [(ngModel)]=\"setupConfig.metaOrgName\" id=\"metaOrgName\"  name=\"metaOrgName\" type=\"text\" required><br/>\n    <label for=\"metaOrgCode\">Meta Organization Code:</label>\n    <p>Every organization has an organization code.  For simplicity, the meta org always has a hardwired code of \"admin\".</p>\n    <input [(ngModel)]=\"setupConfig.metaOrgCode\" id=\"metaOrgCode\"  name=\"metaOrgCode\" type=\"text\" disabled>\n    <button type=\"submit\">Save</button>\n</form>\n"
+module.exports = "<form #theForm=\"ngForm\" (ngSubmit)=\"save(theForm)\" class=\"ui form\" >\r\n    <p>Admin username/email is simply \"admin\".  Let's go ahead and set the initial password for the admin user...</p>\r\n    <label for=\"adminPassword\">Admin Password:</label>\r\n    <input [(ngModel)]=\"setupConfig.adminPassword\" id=\"adminPassword\" name=\"adminPassword\" type=\"password\" required>\r\n    <label for=\"adminPasswordConfirm\">Confirm Admin Password:</label>\r\n    <input [(ngModel)]=\"setupConfig.adminPasswordConfirm\" id=\"adminPasswordConfirm\" name=\"adminPasswordConfirm\" type=\"password\" required><br/>\r\n    <label for=\"metaOrgName\">Meta Organization Name:</label>\r\n    <p>\r\n        All content in Kazuku belongs to organizations, and while Kazuku is capable of hosting many organizations, you don't have to use Kazuku\r\n        to host multiple organizations.  There does need to be one \"meta\" organization, however - this will be the name of the\r\n        host organization for this instance of Kazuku.  This can simply be the name of your organization or just your name.\r\n    </p>\r\n    <input [(ngModel)]=\"setupConfig.metaOrgName\" id=\"metaOrgName\"  name=\"metaOrgName\" type=\"text\" required><br/>\r\n    <label for=\"metaOrgCode\">Meta Organization Code:</label>\r\n    <p>Every organization has an organization code.  For simplicity, the meta org always has a hardwired code of \"admin\".</p>\r\n    <input [(ngModel)]=\"setupConfig.metaOrgCode\" id=\"metaOrgCode\"  name=\"metaOrgCode\" type=\"text\" disabled>\r\n    <button type=\"submit\">Save</button>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1996,7 +1996,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var SetupComponent = /** @class */ (function () {
+var SetupComponent = (function () {
     function SetupComponent(setupService, router) {
         this.setupService = setupService;
         this.router = router;
@@ -2018,19 +2018,19 @@ var SetupComponent = /** @class */ (function () {
             _this.router.navigate(['dashboard']);
         });
     };
-    SetupComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-setup',
-            template: __webpack_require__("../../../../../src/app/setup/setup.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/setup/setup.component.less")]
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], SetupComponent);
     return SetupComponent;
-    var _a, _b;
 }());
+SetupComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-setup',
+        template: __webpack_require__("../../../../../src/app/setup/setup.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/setup/setup.component.less")]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__setup_service__["a" /* SetupService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], SetupComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/setup.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/setup.component.js.map
 
 /***/ }),
 
@@ -2079,7 +2079,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-var SetupService = /** @class */ (function (_super) {
+var SetupService = (function (_super) {
     __extends(SetupService, _super);
     function SetupService(http) {
         return _super.call(this, 'setup', http) || this;
@@ -2100,22 +2100,22 @@ var SetupService = /** @class */ (function (_super) {
         })
             .catch(function (error) { return _this.handleError(error); });
     };
-    SetupService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
-        __metadata("design:paramtypes", [Object])
-    ], SetupService);
     return SetupService;
 }(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
+SetupService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], SetupService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/setup.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/setup.service.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/sites/site-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Sites</h1>\n\n<div *ngIf=\"!loading && sites.length <= 0\">\n    You haven't added any sites yet.  Add a site!\n</div>\n\n<ul *ngIf=\"!loading && sites.length > 0\">\n    <li *ngFor=\"let site of sites\">\n        <a [routerLink]=\"['/sites/' + site.id]\">{{site.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Sites</h1>\r\n\r\n<div *ngIf=\"!loading && sites.length <= 0\">\r\n    You haven't added any sites yet.  Add a site!\r\n</div>\r\n\r\n<ul *ngIf=\"!loading && sites.length > 0\">\r\n    <li *ngFor=\"let site of sites\">\r\n        <a [routerLink]=\"['/sites/' + site.id]\">{{site.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -2139,7 +2139,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var SiteListComponent = /** @class */ (function () {
+var SiteListComponent = (function () {
     function SiteListComponent(siteService, router) {
         this.siteService = siteService;
         this.router = router;
@@ -2159,25 +2159,25 @@ var SiteListComponent = /** @class */ (function () {
     SiteListComponent.prototype.create = function () {
         this.router.navigateByUrl('sites/create');
     };
-    SiteListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-site-list',
-            template: __webpack_require__("../../../../../src/app/sites/site-list.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__site_service__["a" /* SiteService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__site_service__["a" /* SiteService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], SiteListComponent);
     return SiteListComponent;
-    var _a, _b;
 }());
+SiteListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-site-list',
+        template: __webpack_require__("../../../../../src/app/sites/site-list.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__site_service__["a" /* SiteService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__site_service__["a" /* SiteService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], SiteListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/site-list.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/site-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/sites/site.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\n    <div>\n        <div class=\"field\">\n            <label>Name</label>\n            <input type=\"text\"\n                   pattern=\"[\\D]*\"\n                   name=\"name\"\n                   [(ngModel)]=\"site.name\">\n        </div>\n\n        <div class=\"field\">\n            <label>Site Code</label>\n            <input type=\"text\"\n                   name=\"code\"\n                   [(ngModel)]=\"site.code\">\n        </div>\n\n        <div class=\"field\">\n            <label>Domain</label>\n            <input type=\"text\"\n                   name=\"domain\"\n                   [(ngModel)]=\"site.domain\">\n        </div>\n\n        <div class=\"extra content\">\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\n                <i class=\"checkmark icon\"></i> Save\n            </button>\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\n        </div>\n\n    </div>\n</form>\n"
+module.exports = "<form #form=\"ngForm\" (submit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   pattern=\"[\\D]*\"\r\n                   name=\"name\"\r\n                   [(ngModel)]=\"site.name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Site Code</label>\r\n            <input type=\"text\"\r\n                   name=\"code\"\r\n                   [(ngModel)]=\"site.code\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Domain</label>\r\n            <input type=\"text\"\r\n                   name=\"domain\"\r\n                   [(ngModel)]=\"site.domain\">\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [asyncType]=\"'save'\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                <i class=\"checkmark icon\"></i> Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -2221,7 +2221,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var SiteComponent = /** @class */ (function (_super) {
+var SiteComponent = (function (_super) {
     __extends(SiteComponent, _super);
     function SiteComponent(route, siteService, router) {
         var _this = _super.call(this) || this;
@@ -2294,18 +2294,18 @@ var SiteComponent = /** @class */ (function (_super) {
             form.form.markAsPristine();
         }
     };
-    SiteComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-site',
-            template: __webpack_require__("../../../../../src/app/sites/site.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__site_service__["a" /* SiteService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__site_service__["a" /* SiteService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
-    ], SiteComponent);
     return SiteComponent;
-    var _a, _b, _c;
 }(__WEBPACK_IMPORTED_MODULE_4__common_base_component__["a" /* BaseComponent */]));
+SiteComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-site',
+        template: __webpack_require__("../../../../../src/app/sites/site.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__site_service__["a" /* SiteService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__site_service__["a" /* SiteService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
+], SiteComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/site.component.js.map
+var _a, _b, _c;
+//# sourceMappingURL=D:/dev/kazuku/client/src/site.component.js.map
 
 /***/ }),
 
@@ -2314,7 +2314,7 @@ var SiteComponent = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Site; });
-var Site = /** @class */ (function () {
+var Site = (function () {
     function Site(options) {
         if (options === void 0) { options = {}; }
         this.id = options.id;
@@ -2326,7 +2326,7 @@ var Site = /** @class */ (function () {
     return Site;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/site.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/site.model.js.map
 
 /***/ }),
 
@@ -2375,7 +2375,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-var SiteService = /** @class */ (function (_super) {
+var SiteService = (function (_super) {
     __extends(SiteService, _super);
     function SiteService(http) {
         return _super.call(this, 'sites', http) || this;
@@ -2386,22 +2386,22 @@ var SiteService = /** @class */ (function (_super) {
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
-    SiteService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
-        __metadata("design:paramtypes", [Object])
-    ], SiteService);
     return SiteService;
 }(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
+SiteService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], SiteService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/site.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/site.service.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/templates/template-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Templates</h1>\n<ul>\n    <li *ngFor=\"let template of templates\">\n        <a [routerLink]=\"['/templates/' + template.id]\">{{template.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\n"
+module.exports = "<h1>Templates</h1>\r\n<ul>\r\n    <li *ngFor=\"let template of templates\">\r\n        <a [routerLink]=\"['/templates/' + template.id]\">{{template.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Add</button>\r\n"
 
 /***/ }),
 
@@ -2425,7 +2425,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var TemplateListComponent = /** @class */ (function () {
+var TemplateListComponent = (function () {
     function TemplateListComponent(templateService, router) {
         this.templateService = templateService;
         this.router = router;
@@ -2441,25 +2441,25 @@ var TemplateListComponent = /** @class */ (function () {
     TemplateListComponent.prototype.create = function () {
         this.router.navigateByUrl('templates/create');
     };
-    TemplateListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-template-list',
-            template: __webpack_require__("../../../../../src/app/templates/template-list.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__template_service__["a" /* TemplateService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], TemplateListComponent);
     return TemplateListComponent;
-    var _a, _b;
 }());
+TemplateListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-template-list',
+        template: __webpack_require__("../../../../../src/app/templates/template-list.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__template_service__["a" /* TemplateService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], TemplateListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/template-list.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/template-list.component.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/templates/template.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h2>Template</h2>\n<form [formGroup]=\"form\" (ngSubmit)=\"save(form)\" novalidate class=\"ui form content\">\n    <div>\n        <div class=\"field\">\n            <label>Name</label>\n            <input type=\"text\"\n                   id=\"name\"\n                   formControlName=\"name\">\n        </div>\n\n        <div class=\"field\">\n            <label>Description</label>\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\n                      id=\"description\"\n                      formControlName=\"description\">\n            </textarea>\n        </div>\n\n        <h5>Data Properties</h5>\n        <div formArrayName=\"dataProperties\">\n            <div *ngFor=\"let dataProperty of form.controls.dataProperties.controls; let i = index\" [formGroupName]=\"i\">\n                Name:\n                <input type=\"text\"\n                       formControlName=\"name\">\n                Value:\n                <input type=\"text\"\n                       formControlName=\"value\">\n                <button type=\"button\" class=\"ui negative button\" (click)=\"deleteDataProperty(i)\">Delete</button><br/>\n            </div>\n        </div>\n        <button type=\"button\" class=\"ui negative button\" (click)=\"addDataProperty()\">Add</button>\n\n        <div class=\"field\">\n            <label>Template</label>\n            <textarea type=\"text\" rows=\"15\" cols=\"180\"\n                      id=\"template\"\n                      formControlName=\"template\">\n            </textarea>\n        </div>\n\n        <div class=\"extra content\">\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\n                    kz-async-button [asyncInProgress]=\"saving\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\n                Save\n            </button>\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\n        </div>\n\n    </div>\n</form>\n"
+module.exports = "<h2>Template</h2>\r\n<form [formGroup]=\"form\" (ngSubmit)=\"save(form)\" novalidate class=\"ui form content\">\r\n    <div>\r\n        <div class=\"field\">\r\n            <label>Name</label>\r\n            <input type=\"text\"\r\n                   id=\"name\"\r\n                   formControlName=\"name\">\r\n        </div>\r\n\r\n        <div class=\"field\">\r\n            <label>Description</label>\r\n            <textarea type=\"text\" rows=\"4\" cols=\"50\"\r\n                      id=\"description\"\r\n                      formControlName=\"description\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <h5>Data Properties</h5>\r\n        <div formArrayName=\"dataProperties\">\r\n            <div *ngFor=\"let dataProperty of form.controls.dataProperties.controls; let i = index\" [formGroupName]=\"i\">\r\n                Name:\r\n                <input type=\"text\"\r\n                       formControlName=\"name\">\r\n                Value:\r\n                <input type=\"text\"\r\n                       formControlName=\"value\">\r\n                <button type=\"button\" class=\"ui negative button\" (click)=\"deleteDataProperty(i)\">Delete</button><br/>\r\n            </div>\r\n        </div>\r\n        <button type=\"button\" class=\"ui negative button\" (click)=\"addDataProperty()\">Add</button>\r\n\r\n        <div class=\"field\">\r\n            <label>Template</label>\r\n            <textarea type=\"text\" rows=\"15\" cols=\"180\"\r\n                      id=\"template\"\r\n                      formControlName=\"template\">\r\n            </textarea>\r\n        </div>\r\n\r\n        <div class=\"extra content\">\r\n            <button type=\"submit\" class=\"ui positive button\" [disabled]=\"form.invalid\"\r\n                    kz-async-button [asyncInProgress]=\"saving\" [ngClass]=\"{'labeled': !saving, 'icon': !saving}\">\r\n                Save\r\n            </button>\r\n            <button type=\"button\" class=\"ui negative button\" (click)=\"cancel(form)\">Cancel</button>\r\n        </div>\r\n\r\n    </div>\r\n</form>\r\n"
 
 /***/ }),
 
@@ -2503,7 +2503,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "description", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
-var TemplateComponent = /** @class */ (function (_super) {
+var TemplateComponent = (function (_super) {
     __extends(TemplateComponent, _super);
     function TemplateComponent(route, templateService, router) {
         var _this = _super.call(this) || this;
@@ -2629,18 +2629,18 @@ var TemplateComponent = /** @class */ (function (_super) {
             formArray.removeAt(i);
         }
     };
-    TemplateComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-page',
-            template: __webpack_require__("../../../../../src/app/templates/template.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__templates_template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__templates_template_service__["a" /* TemplateService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
-    ], TemplateComponent);
     return TemplateComponent;
-    var _a, _b, _c;
 }(__WEBPACK_IMPORTED_MODULE_5__common_base_component__["a" /* BaseComponent */]));
+TemplateComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-page',
+        template: __webpack_require__("../../../../../src/app/templates/template.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__templates_template_service__["a" /* TemplateService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__templates_template_service__["a" /* TemplateService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
+], TemplateComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/template.component.js.map
+var _a, _b, _c;
+//# sourceMappingURL=D:/dev/kazuku/client/src/template.component.js.map
 
 /***/ }),
 
@@ -2649,7 +2649,7 @@ var TemplateComponent = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Template; });
-var Template = /** @class */ (function () {
+var Template = (function () {
     function Template(options) {
         if (options === void 0) { options = {}; }
         this.id = options.id;
@@ -2664,7 +2664,7 @@ var Template = /** @class */ (function () {
     return Template;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/template.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/template.model.js.map
 
 /***/ }),
 
@@ -2713,7 +2713,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-var TemplateService = /** @class */ (function (_super) {
+var TemplateService = (function (_super) {
     __extends(TemplateService, _super);
     function TemplateService(http) {
         return _super.call(this, 'templates', http) || this;
@@ -2736,15 +2736,15 @@ var TemplateService = /** @class */ (function (_super) {
             .map(function (response) { return _this.extractData(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
-    TemplateService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
-        __metadata("design:paramtypes", [Object])
-    ], TemplateService);
     return TemplateService;
 }(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
+TemplateService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], TemplateService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/template.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/template.service.js.map
 
 /***/ }),
 
@@ -2757,7 +2757,7 @@ var TemplateService = /** @class */ (function (_super) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__organizations_organization_model__ = __webpack_require__("../../../../../src/app/organizations/organization.model.ts");
 
 
-var UserContext = /** @class */ (function () {
+var UserContext = (function () {
     function UserContext(options) {
         if (options === void 0) { options = {}; }
         this.user = options.user || new __WEBPACK_IMPORTED_MODULE_0__user_model__["a" /* User */]();
@@ -2766,14 +2766,14 @@ var UserContext = /** @class */ (function () {
     return UserContext;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/user-context.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/user-context.model.js.map
 
 /***/ }),
 
 /***/ "../../../../../src/app/users/user-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h1>Users</h1>\n<ul>\n    <li *ngFor=\"let user of users\">\n        <a [routerLink]=\"['/users/' + user.id]\">{{user.name}}</a>\n    </li>\n</ul>\n\n<button class=\"btn primary\" (click)=\"create()\">Invite new user</button>\n"
+module.exports = "<h1>Users</h1>\r\n<ul>\r\n    <li *ngFor=\"let user of users\">\r\n        <a [routerLink]=\"['/users/' + user.id]\">{{user.name}}</a>\r\n    </li>\r\n</ul>\r\n\r\n<button class=\"btn primary\" (click)=\"create()\">Invite new user</button>\r\n"
 
 /***/ }),
 
@@ -2797,7 +2797,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var UserListComponent = /** @class */ (function () {
+var UserListComponent = (function () {
     function UserListComponent(userService, router) {
         this.userService = userService;
         this.router = router;
@@ -2813,18 +2813,18 @@ var UserListComponent = /** @class */ (function () {
     UserListComponent.prototype.create = function () {
         this.router.navigateByUrl('users/create');
     };
-    UserListComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
-            selector: 'kz-user-list',
-            template: __webpack_require__("../../../../../src/app/users/user-list.component.html")
-        }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
-    ], UserListComponent);
     return UserListComponent;
-    var _a, _b;
 }());
+UserListComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-user-list',
+        template: __webpack_require__("../../../../../src/app/users/user-list.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__user_service__["a" /* UserService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__user_service__["a" /* UserService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
+], UserListComponent);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/user-list.component.js.map
+var _a, _b;
+//# sourceMappingURL=D:/dev/kazuku/client/src/user-list.component.js.map
 
 /***/ }),
 
@@ -2833,7 +2833,7 @@ var UserListComponent = /** @class */ (function () {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return User; });
-var User = /** @class */ (function () {
+var User = (function () {
     function User(options) {
         if (options === void 0) { options = {}; }
         this.id = options.id;
@@ -2844,7 +2844,7 @@ var User = /** @class */ (function () {
     return User;
 }());
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/user.model.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/user.model.js.map
 
 /***/ }),
 
@@ -2894,7 +2894,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-var UserService = /** @class */ (function (_super) {
+var UserService = (function (_super) {
     __extends(UserService, _super);
     function UserService(http) {
         var _this = _super.call(this, 'users', http) || this;
@@ -2944,15 +2944,15 @@ var UserService = /** @class */ (function (_super) {
         console.log(error);
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw(error || 'Server error');
     };
-    UserService = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
-        __metadata("design:paramtypes", [Object])
-    ], UserService);
     return UserService;
 }(__WEBPACK_IMPORTED_MODULE_7__common_generic_service__["a" /* GenericService */]));
+UserService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], UserService);
 
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/user.service.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/user.service.js.map
 
 /***/ }),
 
@@ -2965,11 +2965,12 @@ var UserService = /** @class */ (function (_super) {
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `angular-cli.json`.
+// The file contents for the current environment will overwrite these during build.
 var environment = {
     production: false,
     kazukuApiUrl: '/api'
 };
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/environment.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/environment.js.map
 
 /***/ }),
 
@@ -2990,7 +2991,7 @@ if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment *
     Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["_23" /* enableProdMode */])();
 }
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_3__app_app_module__["a" /* AppModule */]);
-//# sourceMappingURL=/Users/christopherharris/Desktop/Projects/kazuku/client/src/main.js.map
+//# sourceMappingURL=D:/dev/kazuku/client/src/main.js.map
 
 /***/ }),
 
