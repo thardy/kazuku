@@ -14,6 +14,7 @@ import 'rxjs/add/operator/mergemap';
 export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
     customSchema: CustomSchema = new CustomSchema();
+    fields = [];
     saving = false;
     original = {};
     contentType: string;

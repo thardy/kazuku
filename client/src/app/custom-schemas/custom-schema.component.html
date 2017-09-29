@@ -1,1 +1,42 @@
+<h1>Schema Builder</h1>
 
+<div>
+    <div class="left-panel">
+
+        <div id="schemaBuilder">
+            <div *ngIf="fields.length > 0">
+                <h4>Custom Fields:</h4>
+
+                <form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
+
+                    <ul formArrayName="fields">
+                        <li *ngFor="let field of form.controls.fields.controls; let i = index" [formGroupName]="i">
+                            {{field.name}} - {{field.type}}
+                            
+                            <button type="button" class="ui negative button" (click)="deleteField(i)">Delete</button><br/>
+                        </li>
+                    </ul>
+                </form>
+
+            </div>
+            <div *ngIf="fields.length === 0">
+                <h3>Add your first field</h3>
+            </div>
+
+            <button class="btn btn-primary" *ngIf="!showFieldBuilder" (click)="addField()">Add Field</button>
+
+            <!--<div field-builder="model.newField" field-builder-on-save="model.createField(model.newField)" field-builder-btn-text="Add" ng-show="model.newField.showFieldBuilder"></div>-->
+        </div>
+
+
+        <button class="btn btn-primary" (click)="generateSchema()">Generate Schema</button>
+
+        <button class="btn btn-primary" (click)="saveSchema()">Save</button>
+
+    </div>
+
+    <div class="right-panel">
+        <textarea id="schema" name="schema" rows="20" cols="60">{{jsonSchemaString}}</textarea>
+
+    </div>
+</div>

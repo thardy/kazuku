@@ -37,6 +37,7 @@ import {SuiModule} from "ng2-semantic-ui";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { ModalComponent } from './common/modal/modal.component';
 import {CustomSchemaComponent} from "./custom-schemas/custom-schema.component";
+import {CustomSchemaService} from "./custom-schemas/custom-schema.service";
 
 @NgModule({
     declarations: [
@@ -74,6 +75,7 @@ import {CustomSchemaComponent} from "./custom-schemas/custom-schema.component";
     ],
     providers: [
         OrganizationService,
+        CustomSchemaService,
         SiteService,
         TemplateService,
         QueryService,
