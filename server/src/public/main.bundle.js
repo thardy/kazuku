@@ -39,12 +39,16 @@ webpackEmptyAsyncContext.id = "../../../../../src/$$_gendir lazy recursive";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__pages_page_component__ = __webpack_require__("../../../../../src/app/pages/page.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__queries_query_list_component__ = __webpack_require__("../../../../../src/app/queries/query-list.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__queries_query_component__ = __webpack_require__("../../../../../src/app/queries/query.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__custom_schemas_custom_schema_list_component__ = __webpack_require__("../../../../../src/app/custom-schemas/custom-schema-list.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__custom_schemas_custom_schema_component__ = __webpack_require__("../../../../../src/app/custom-schemas/custom-schema.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -69,6 +73,9 @@ var APP_ROUTES = [
     { path: 'organizations', component: __WEBPACK_IMPORTED_MODULE_8__organizations_organization_list_component__["a" /* OrganizationListComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'organizations/create', component: __WEBPACK_IMPORTED_MODULE_9__organizations_organization_component__["a" /* OrganizationComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'organizations/:id', component: __WEBPACK_IMPORTED_MODULE_9__organizations_organization_component__["a" /* OrganizationComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
+    { path: 'content-models', component: __WEBPACK_IMPORTED_MODULE_17__custom_schemas_custom_schema_list_component__["a" /* CustomSchemaListComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
+    { path: 'content-models/create', component: __WEBPACK_IMPORTED_MODULE_18__custom_schemas_custom_schema_component__["a" /* CustomSchemaComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
+    { path: 'content-models/:id', component: __WEBPACK_IMPORTED_MODULE_18__custom_schemas_custom_schema_component__["a" /* CustomSchemaComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'sites', component: __WEBPACK_IMPORTED_MODULE_3__sites_site_list_component__["a" /* SiteListComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'sites/create', component: __WEBPACK_IMPORTED_MODULE_4__sites_site_component__["a" /* SiteComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
     { path: 'sites/:id', component: __WEBPACK_IMPORTED_MODULE_4__sites_site_component__["a" /* SiteComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_13__common_auth_auth_guard_service__["a" /* AuthGuardService */]] },
@@ -202,12 +209,14 @@ AppComponent = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_34_ng2_semantic_ui__ = __webpack_require__("../../../../ng2-semantic-ui/dist/public.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__angular_platform_browser_animations__ = __webpack_require__("../../../platform-browser/@angular/platform-browser/animations.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__common_modal_modal_component__ = __webpack_require__("../../../../../src/app/common/modal/modal.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__custom_schemas_custom_schema_component__ = __webpack_require__("../../../../../src/app/custom-schemas/custom-schema.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -265,6 +274,7 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_14__templates_template_list_component__["a" /* TemplateListComponent */],
             __WEBPACK_IMPORTED_MODULE_15__templates_template_component__["a" /* TemplateComponent */],
             __WEBPACK_IMPORTED_MODULE_16__custom_schemas_custom_schema_list_component__["a" /* CustomSchemaListComponent */],
+            __WEBPACK_IMPORTED_MODULE_37__custom_schemas_custom_schema_component__["a" /* CustomSchemaComponent */],
             __WEBPACK_IMPORTED_MODULE_17__custom_data_custom_data_list_component__["a" /* CustomDataListComponent */],
             __WEBPACK_IMPORTED_MODULE_18__queries_query_list_component__["a" /* QueryListComponent */],
             __WEBPACK_IMPORTED_MODULE_19__queries_query_component__["a" /* QueryComponent */],
@@ -449,9 +459,9 @@ var GenericService = (function () {
         this.baseUrl = __WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].kazukuApiUrl + "/" + resourceName;
         this.http = http;
     }
-    GenericService.prototype.getAll = function () {
+    GenericService.prototype.getAll = function (params) {
         var _this = this;
-        return this.http.get(this.baseUrl)
+        return this.http.get(this.baseUrl, params)
             .map(function (response) { return _this.extractDataList(response); })
             .catch(function (error) { return _this.handleError(error); });
     };
@@ -471,6 +481,12 @@ var GenericService = (function () {
         var _this = this;
         return this.http.put(this.baseUrl + "/" + id, item)
             .map(function (response) { return _this.extractData(response); })
+            .catch(function (error) { return _this.handleError(error); });
+    };
+    // todo: this might need some work (untested)
+    GenericService.prototype.delete = function (id) {
+        var _this = this;
+        return this.http.delete(this.baseUrl + "/" + id)
             .catch(function (error) { return _this.handleError(error); });
     };
     GenericService.prototype.extractDataList = function (response) {
@@ -732,6 +748,8 @@ module.exports = "<h1>Custom Schemas</h1>\r\n<ul>\r\n    <li *ngFor=\"let schema
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomSchemaListComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__custom_schema_service__ = __webpack_require__("../../../../../src/app/custom-schemas/custom-schema.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -742,10 +760,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
 var CustomSchemaListComponent = (function () {
-    function CustomSchemaListComponent() {
+    function CustomSchemaListComponent(customSchemaService, router) {
+        this.customSchemaService = customSchemaService;
+        this.router = router;
+        this.customSchemas = [];
     }
     CustomSchemaListComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.customSchemaService.getAll()
+            .subscribe(function (customSchemas) {
+            _this.customSchemas = customSchemas;
+        });
+    };
+    CustomSchemaListComponent.prototype.create = function () {
+        this.router.navigateByUrl('content-models/create');
     };
     return CustomSchemaListComponent;
 }());
@@ -754,10 +785,267 @@ CustomSchemaListComponent = __decorate([
         selector: 'kz-custom-schemas',
         template: __webpack_require__("../../../../../src/app/custom-schemas/custom-schema-list.component.html")
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__custom_schema_service__["a" /* CustomSchemaService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__custom_schema_service__["a" /* CustomSchemaService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _b || Object])
 ], CustomSchemaListComponent);
 
+var _a, _b;
 //# sourceMappingURL=D:/dev/kazuku/client/src/custom-schema-list.component.js.map
+
+/***/ }),
+
+/***/ "../../../../../src/app/custom-schemas/custom-schema.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "\r\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/custom-schemas/custom-schema.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomSchemaComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__common_base_component__ = __webpack_require__("../../../../../src/app/common/base-component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__custom_schema_model__ = __webpack_require__("../../../../../src/app/custom-schemas/custom-schema.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__custom_schema_service__ = __webpack_require__("../../../../../src/app/custom-schemas/custom-schema.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap__ = __webpack_require__("../../../../rxjs/add/operator/mergemap.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_mergemap__);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+
+
+var CustomSchemaComponent = (function (_super) {
+    __extends(CustomSchemaComponent, _super);
+    function CustomSchemaComponent(route, customSchemaService, router) {
+        var _this = _super.call(this) || this;
+        _this.route = route;
+        _this.customSchemaService = customSchemaService;
+        _this.router = router;
+        _this.customSchema = new __WEBPACK_IMPORTED_MODULE_3__custom_schema_model__["a" /* CustomSchema */]();
+        _this.saving = false;
+        _this.original = {};
+        _this.isCreate = false;
+        return _this;
+    }
+    CustomSchemaComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.route.params
+            .flatMap(function (params) {
+            var contentType = params['contentType'] || '';
+            if (contentType) {
+                _this.contentType = contentType;
+                return _this.customSchemaService.getByContentType(_this.contentType);
+            }
+            else {
+                return __WEBPACK_IMPORTED_MODULE_5_rxjs_Observable__["Observable"].of(null);
+            }
+        })
+            .subscribe(function (customSchema) {
+            if (customSchema) {
+                _this.customSchema = customSchema;
+                _this.original = Object.assign({}, _this.customSchema);
+            }
+            else {
+                _this.isCreate = true;
+                _this.customSchema = new __WEBPACK_IMPORTED_MODULE_3__custom_schema_model__["a" /* CustomSchema */]();
+            }
+        });
+    };
+    CustomSchemaComponent.prototype.save = function (form) {
+        var _this = this;
+        // validate form
+        if (!form.valid) {
+            return;
+        }
+        this.saving = true;
+        if (this.isCreate) {
+            this.customSchemaService.create(form.value)
+                .takeUntil(this.ngUnsubscribe)
+                .subscribe(function (result) {
+                _this.saving = false;
+                _this.router.navigateByUrl('content-models');
+            });
+        }
+        else {
+            this.customSchemaService.updateByContentType(this.contentType, form.value)
+                .takeUntil(this.ngUnsubscribe)
+                .subscribe(function (result) {
+                _this.saving = false;
+                _this.original = Object.assign({}, _this.customSchema);
+                form.form.markAsPristine();
+            });
+        }
+    };
+    CustomSchemaComponent.prototype.cancel = function (form) {
+        if (this.isCreate) {
+            this.router.navigateByUrl('content-models');
+        }
+        else {
+            this.customSchema = Object.assign({}, new __WEBPACK_IMPORTED_MODULE_3__custom_schema_model__["a" /* CustomSchema */](this.original));
+            form.form.markAsPristine();
+        }
+    };
+    return CustomSchemaComponent;
+}(__WEBPACK_IMPORTED_MODULE_2__common_base_component__["a" /* BaseComponent */]));
+CustomSchemaComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
+        selector: 'kz-custom-schema',
+        template: __webpack_require__("../../../../../src/app/custom-schemas/custom-schema.component.html")
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__custom_schema_service__["a" /* CustomSchemaService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__custom_schema_service__["a" /* CustomSchemaService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _c || Object])
+], CustomSchemaComponent);
+
+var _a, _b, _c;
+//# sourceMappingURL=D:/dev/kazuku/client/src/custom-schema.component.js.map
+
+/***/ }),
+
+/***/ "../../../../../src/app/custom-schemas/custom-schema.model.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomSchema; });
+var CustomSchema = (function () {
+    function CustomSchema(options) {
+        if (options === void 0) { options = {}; }
+        this.id = options.id;
+        this.orgId = options.orgId || '';
+        this.contentType = options.contentType || '';
+        this.jsonSchema = options.jsonSchema || '';
+    }
+    return CustomSchema;
+}());
+
+//{
+//    id: 1,
+//    orgId: 1,
+//    contentType: 'Applicant',
+//    jsonSchema: {
+//    "type": "object",
+//        "properties": {
+//        "affiliatedWith": {
+//            "type": "string",
+//                "name": "affiliatedWith",
+//                "title": "Affiliated With"
+//        },
+//        "favoriteNumber": {
+//            "type": "number",
+//                "name": "favoriteNumber",
+//                "title": "Favorite Number"
+//        },
+//        "likes": {
+//            "type": "string",
+//                "name": "likes",
+//                "title": "Likes"
+//        }
+//    }
+// };
+//# sourceMappingURL=D:/dev/kazuku/client/src/custom-schema.model.js.map
+
+/***/ }),
+
+/***/ "../../../../../src/app/custom-schemas/custom-schema.service.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomSchemaService; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_observable_of__ = __webpack_require__("../../../../rxjs/add/observable/of.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_observable_of___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_observable_of__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_observable_throw__ = __webpack_require__("../../../../rxjs/add/observable/throw.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_observable_throw___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_observable_throw__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__ = __webpack_require__("../../../../rxjs/add/operator/map.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__ = __webpack_require__("../../../../rxjs/add/operator/catch.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__common_generic_service__ = __webpack_require__("../../../../../src/app/common/generic.service.ts");
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+
+
+
+
+
+
+var CustomSchemaService = (function (_super) {
+    __extends(CustomSchemaService, _super);
+    function CustomSchemaService(http) {
+        return _super.call(this, 'customSchemas', http) || this;
+    }
+    CustomSchemaService.prototype.getByContentType = function (contentType) {
+        var _this = this;
+        return this.http.get(this.baseUrl + "/" + contentType)
+            .map(function (response) { return _this.extractData(response); })
+            .catch(function (error) { return _this.handleError(error); });
+    };
+    CustomSchemaService.prototype.updateByContentType = function (contentType, item) {
+        var _this = this;
+        return this.http.put(this.baseUrl + "/" + contentType, item)
+            .map(function (response) { return _this.extractData(response); })
+            .catch(function (error) { return _this.handleError(error); });
+    };
+    CustomSchemaService.prototype.deleteByContentType = function (contentType) {
+        var _this = this;
+        return this.http.delete(this.baseUrl + "/" + contentType)
+            .catch(function (error) { return _this.handleError(error); });
+    };
+    return CustomSchemaService;
+}(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
+CustomSchemaService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),
+    __metadata("design:paramtypes", [Object])
+], CustomSchemaService);
+
+//# sourceMappingURL=D:/dev/kazuku/client/src/custom-schema.service.js.map
 
 /***/ }),
 
@@ -956,8 +1244,13 @@ var NavBarComponent = (function () {
             .subscribe(function (userContext) {
             _this.userContext = userContext;
             // add extra navItems for metaOrg
-            if (userContext.org.isMetaOrg) {
+            var orgsIndex = _this.navItems.findIndex(function (item) { return item.name === 'Orgs'; });
+            if (userContext.org.isMetaOrg && orgsIndex === -1) {
+                // not found so add it
                 _this.navItems.push({ name: 'Orgs', destination: 'organizations' });
+            }
+            else if (orgsIndex !== -1) {
+                _this.navItems.splice(orgsIndex, 1);
             }
         });
     };
@@ -1762,7 +2055,7 @@ var QueryComponent = (function (_super) {
     };
     QueryComponent.prototype.cancel = function (form) {
         if (this.isCreate) {
-            this.router.navigateByUrl('queryies');
+            this.router.navigateByUrl('queries');
         }
         else {
             this.query = Object.assign({}, new __WEBPACK_IMPORTED_MODULE_3__query_model__["a" /* Query */](this.original));
@@ -2601,7 +2894,7 @@ var TemplateComponent = (function (_super) {
             this.initForm(this.template);
         }
         else {
-            this.router.navigateByUrl('pages');
+            this.router.navigateByUrl('templates');
         }
     };
     TemplateComponent.prototype.addDataProperty = function () {
@@ -2861,9 +3154,8 @@ var User = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_BehaviorSubject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_BehaviorSubject__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do__ = __webpack_require__("../../../../rxjs/add/operator/do.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_do__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__user_model__ = __webpack_require__("../../../../../src/app/users/user.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__user_context_model__ = __webpack_require__("../../../../../src/app/users/user-context.model.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__common_generic_service__ = __webpack_require__("../../../../../src/app/common/generic.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__user_context_model__ = __webpack_require__("../../../../../src/app/users/user-context.model.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__common_generic_service__ = __webpack_require__("../../../../../src/app/common/generic.service.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -2893,13 +3185,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
-
 var UserService = (function (_super) {
     __extends(UserService, _super);
     function UserService(http) {
         var _this = _super.call(this, 'users', http) || this;
-        _this.dataStore = { userContext: null };
-        _this._currentUserContext = new __WEBPACK_IMPORTED_MODULE_3_rxjs_BehaviorSubject__["BehaviorSubject"](new __WEBPACK_IMPORTED_MODULE_6__user_context_model__["a" /* UserContext */]());
+        _this.dataStore = { userContext: new __WEBPACK_IMPORTED_MODULE_5__user_context_model__["a" /* UserContext */]() };
+        _this._currentUserContext = new __WEBPACK_IMPORTED_MODULE_3_rxjs_BehaviorSubject__["BehaviorSubject"](new __WEBPACK_IMPORTED_MODULE_5__user_context_model__["a" /* UserContext */]());
         return _this;
     }
     Object.defineProperty(UserService.prototype, "currentUserContext", {
@@ -2918,7 +3209,11 @@ var UserService = (function (_super) {
     UserService.prototype.logout = function () {
         var _this = this;
         return this.http.get(this.baseUrl + "/logout")
-            .map(function (response) { return _this.extractData(response); })
+            .do(function (result) {
+            _this.dataStore.userContext = new __WEBPACK_IMPORTED_MODULE_5__user_context_model__["a" /* UserContext */]();
+            // Send out an empty UserContext to all subscribers
+            _this._currentUserContext.next(Object.assign({}, _this.dataStore.userContext));
+        })
             .catch(function (error) { return _this.handleError(error); });
     };
     UserService.prototype.getUserContext = function () {
@@ -2929,12 +3224,12 @@ var UserService = (function (_super) {
             .do(function (userContext) {
             _this.dataStore.userContext = userContext;
             // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
-            _this._currentUserContext.next(Object.assign(new __WEBPACK_IMPORTED_MODULE_5__user_model__["a" /* User */](), _this.dataStore.userContext));
+            _this._currentUserContext.next(Object.assign({}, _this.dataStore.userContext));
         })
             .catch(function (error) { return _this.handleError(error); });
     };
     UserService.prototype.isLoggedIn = function () {
-        return this.dataStore.userContext ? true : false;
+        return (this.dataStore.userContext && this.dataStore.userContext.user && this.dataStore.userContext.user.id) ? true : false;
     };
     UserService.prototype.extractData = function (response) {
         var data = response.json();
@@ -2945,7 +3240,7 @@ var UserService = (function (_super) {
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw(error || 'Server error');
     };
     return UserService;
-}(__WEBPACK_IMPORTED_MODULE_7__common_generic_service__["a" /* GenericService */]));
+}(__WEBPACK_IMPORTED_MODULE_6__common_generic_service__["a" /* GenericService */]));
 UserService = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
     __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Http */])),

@@ -20,8 +20,8 @@ export class GenericService<T extends BaseModel> {
         this.http = http;
     }
 
-    getAll(): Observable<T[]> {
-        return this.http.get(this.baseUrl)
+    getAll(params?: any): Observable<T[]> {
+        return this.http.get(this.baseUrl, params)
             .map(response => this.extractDataList(response))
             .catch(error => this.handleError(error));
     }
@@ -32,17 +32,24 @@ export class GenericService<T extends BaseModel> {
             .catch(error => this.handleError(error));
     }
 
-    create<T>(item): Observable<T> {
+    create(item: T): Observable<T> {
         return this.http.post(`${this.baseUrl}`, item)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }
 
-    update<T>(id: string, item): Observable<T> {
+    update(id: string, item: T): Observable<T> {
         return this.http.put(`${this.baseUrl}/${id}`, item)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }
+
+    // todo: this might need some work (untested)
+    delete(id: string) {
+        return this.http.delete(`${this.baseUrl}/${id}`)
+            .catch(error => this.handleError(error));
+    }
+
 
     extractDataList(response: Response) {
         let data = response.json();

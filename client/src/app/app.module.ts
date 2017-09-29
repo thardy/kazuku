@@ -36,6 +36,7 @@ import {PageComponent} from "./pages/page.component";
 import {SuiModule} from "ng2-semantic-ui";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { ModalComponent } from './common/modal/modal.component';
+import {CustomSchemaComponent} from "./custom-schemas/custom-schema.component";
 
 @NgModule({
     declarations: [
@@ -51,6 +52,7 @@ import { ModalComponent } from './common/modal/modal.component';
         TemplateListComponent,
         TemplateComponent,
         CustomSchemaListComponent,
+        CustomSchemaComponent,
         CustomDataListComponent,
         QueryListComponent,
         QueryComponent,

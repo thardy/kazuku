@@ -120,7 +120,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
             this.initForm(this.template);
         }
         else {
-            this.router.navigateByUrl('pages');
+            this.router.navigateByUrl('templates');
         }
     }
 

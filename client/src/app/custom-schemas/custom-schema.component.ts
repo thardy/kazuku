@@ -1,48 +1,48 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {BaseComponent} from "../common/base-component";
-import {Query} from "./query.model";
-import {QueryService} from "./query.service";
+import {CustomSchema} from "./custom-schema.model";
+import {CustomSchemaService} from "./custom-schema.service";
 import {NgForm} from "@angular/forms";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
 
 @Component({
-    selector: 'kz-query',
-    templateUrl: './query.component.html'
+    selector: 'kz-custom-schema',
+    templateUrl: './custom-schema.component.html'
 })
-export class QueryComponent extends BaseComponent implements OnInit {
+export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
-    query: Query = new Query();
+    customSchema: CustomSchema = new CustomSchema();
     saving = false;
     original = {};
-    queryId: string;
+    contentType: string;
     isCreate = false;
 
-    constructor(private route: ActivatedRoute, private queryService: QueryService, private router: Router) {
+    constructor(private route: ActivatedRoute, private customSchemaService: CustomSchemaService, private router: Router) {
         super();
     }
 
     ngOnInit() {
         this.route.params
             .flatMap((params:Params) => {
-                const id = params['id'] || '';
-                if (id) {
-                    this.queryId = id;
-                    return this.queryService.getById(this.queryId);
+                const contentType = params['contentType'] || '';
+                if (contentType) {
+                    this.contentType = contentType;
+                    return this.customSchemaService.getByContentType(this.contentType);
                 }
                 else {
                     return Observable.of(null);
                 }
             })
-            .subscribe((query) => {
-                if (query) {
-                    this.query = query;
-                    this.original = Object.assign({}, this.query);
+            .subscribe((customSchema) => {
+                if (customSchema) {
+                    this.customSchema = customSchema;
+                    this.original = Object.assign({}, this.customSchema);
                 }
                 else {
                     this.isCreate = true;
-                    this.query = new Query();
+                    this.customSchema = new CustomSchema();
                 }
             });
     }
@@ -56,19 +56,19 @@ export class QueryComponent extends BaseComponent implements OnInit {
         this.saving = true;
 
         if (this.isCreate) {
-            this.queryService.create(form.value)
+            this.customSchemaService.create(form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
-                    this.router.navigateByUrl('queries');
+                    this.router.navigateByUrl('content-models');
                 });
         }
         else {
-            this.queryService.update(this.queryId, form.value)
+            this.customSchemaService.updateByContentType(this.contentType, form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
-                    this.original = Object.assign({}, this.query);
+                    this.original = Object.assign({}, this.customSchema);
                     form.form.markAsPristine();
                 });
         }
@@ -76,13 +76,12 @@ export class QueryComponent extends BaseComponent implements OnInit {
 
     cancel(form: NgForm){
         if (this.isCreate) {
-            this.router.navigateByUrl('queries');
+            this.router.navigateByUrl('content-models');
         }
         else {
-            this.query = Object.assign({}, new Query(this.original));
+            this.customSchema = Object.assign({}, new CustomSchema(this.original));
             form.form.markAsPristine();
         }
     }
 
 }
-

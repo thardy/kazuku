@@ -17,7 +17,7 @@ export class UserService extends GenericService<User> {
 
     constructor(@Inject(Http) http) {
         super('users', http);
-        this.dataStore = { userContext: null };
+        this.dataStore = { userContext: new UserContext() };
         this._currentUserContext = <BehaviorSubject<UserContext>>new BehaviorSubject(new UserContext());
 
     }
@@ -34,7 +34,11 @@ export class UserService extends GenericService<User> {
 
     logout() {
         return this.http.get(`${this.baseUrl}/logout`)
-            .map(response => this.extractData(response))
+            .do((result) => {
+                this.dataStore.userContext = new UserContext();
+                // Send out an empty UserContext to all subscribers
+                this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
+            })
             .catch((error) => this.handleError(error));
     }
 
@@ -45,7 +49,7 @@ export class UserService extends GenericService<User> {
             .do(userContext => {
                     this.dataStore.userContext = userContext;
                     // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
-                    this._currentUserContext.next(Object.assign(new User(), this.dataStore.userContext));
+                    this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
                 }
             )
             .catch(error => this.handleError(error));
@@ -53,7 +57,7 @@ export class UserService extends GenericService<User> {
     }
 
     isLoggedIn() {
-        return this.dataStore.userContext ? true : false;
+        return (this.dataStore.userContext && this.dataStore.userContext.user && this.dataStore.userContext.user.id) ? true : false;
     }
 
     extractData(response: Response) {

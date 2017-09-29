@@ -15,6 +15,8 @@ import {AuthGuardService} from './common/auth/auth-guard.service';
 import {PageComponent} from "./pages/page.component";
 import {QueryListComponent} from "./queries/query-list.component";
 import {QueryComponent} from "./queries/query.component";
+import {CustomSchemaListComponent} from "./custom-schemas/custom-schema-list.component";
+import {CustomSchemaComponent} from "./custom-schemas/custom-schema.component";
 
 // This is where we setup our routes!
 const APP_ROUTES: Routes = [
@@ -23,6 +25,9 @@ const APP_ROUTES: Routes = [
     {path: 'organizations', component: OrganizationListComponent, canActivate: [AuthGuardService]},
     {path: 'organizations/create', component: OrganizationComponent, canActivate: [AuthGuardService]},
     {path: 'organizations/:id', component: OrganizationComponent, canActivate: [AuthGuardService]},
+    {path: 'content-models', component: CustomSchemaListComponent, canActivate: [AuthGuardService]},
+    {path: 'content-models/create', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
+    {path: 'content-models/:id', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
     {path: 'sites', component: SiteListComponent, canActivate: [AuthGuardService]},
     {path: 'sites/create', component: SiteComponent, canActivate: [AuthGuardService]},
     {path: 'sites/:id', component: SiteComponent, canActivate: [AuthGuardService]},
