@@ -23,8 +23,9 @@
 // id: 1,
 //    orgId: 1,
 //    contentType: 'Applicant',
+//    description: 'this is cool'
 //    jsonSchema: {
-//    "type": "object",
+//        "type": "object",
 //        "properties": {
 //        "affiliatedWith": {
 //            "type": "string",

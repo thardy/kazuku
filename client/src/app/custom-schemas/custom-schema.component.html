@@ -4,7 +4,22 @@
     <div class="left-panel">
 
         <div id="schemaBuilder">
-            <div *ngIf="fields.length > 0">
+            <div class="field">
+                <label>Content Type Name</label>
+                <input type="text"
+                       id="contentType"
+                       formControlName="contentType">
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <textarea type="text" rows="4" cols="50"
+                          id="description"
+                          formControlName="description">
+            </textarea>
+            </div>
+
+            <div *ngIf="customSchemafields.length > 0">
                 <h4>Custom Fields:</h4>
 
                 <form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
@@ -12,7 +27,11 @@
                     <ul formArrayName="fields">
                         <li *ngFor="let field of form.controls.fields.controls; let i = index" [formGroupName]="i">
                             {{field.name}} - {{field.type}}
-                            
+                            <a href="javascript:void(0);" (click)="editField(field)">Edit</a>
+                            <a href="javascript:void(0);" (click)="deleteField(field)">Delete</a>
+                            <h4>Let's build a field!!!</h4>
+                            Type:
+
                             <button type="button" class="ui negative button" (click)="deleteField(i)">Delete</button><br/>
                         </li>
                     </ul>
