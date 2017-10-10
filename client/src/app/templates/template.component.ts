@@ -91,21 +91,25 @@ export class TemplateComponent extends BaseComponent implements OnInit {
         if (this.isEdit) {
             this.templateService.update(this.templateId, templateObject)
                 .takeUntil(this.ngUnsubscribe)
-                .subscribe((result) => {
-                    this.saving = false;
-                    this.original = Object.assign({}, this.template);
-                    form.form.markAsPristine();
-                });
+                .subscribe(
+                    (result) => {
+                        this.original = Object.assign({}, this.template);
+                        form.form.markAsPristine();
+                    },
+                    (error) => {},
+                    () => {
+                        this.saving = false;
+                    });
         }
         else {
             this.templateService.create(templateObject)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe(
                     (result) => {
-                        this.saving = false;
                         this.router.navigateByUrl('templates');
                     },
-                    (error) => {
+                    (error) => {},
+                    () => {
                         this.saving = false;
                     }
                 );

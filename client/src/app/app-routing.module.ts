@@ -27,7 +27,7 @@ const APP_ROUTES: Routes = [
     {path: 'organizations/:id', component: OrganizationComponent, canActivate: [AuthGuardService]},
     {path: 'content-models', component: CustomSchemaListComponent, canActivate: [AuthGuardService]},
     {path: 'content-models/create', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
-    {path: 'content-models/:id', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
+    {path: 'content-models/:contentType', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
     {path: 'sites', component: SiteListComponent, canActivate: [AuthGuardService]},
     {path: 'sites/create', component: SiteComponent, canActivate: [AuthGuardService]},
     {path: 'sites/:id', component: SiteComponent, canActivate: [AuthGuardService]},

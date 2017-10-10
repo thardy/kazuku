@@ -7,7 +7,7 @@ import {NgForm, FormArray, FormGroup, FormControl, Validators} from "@angular/fo
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
 
-const systemProperties = ["_id", "id", "orgId", "contentType", "description", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
+const FIELD_TYPES = ["string", "number"];
 
 @Component({
     selector: 'kz-custom-schema',
@@ -18,16 +18,20 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     customSchema: CustomSchema = new CustomSchema();
     saving = false;
     original = {};
+    fieldTypes;
     contentType: string;
     isEdit = false;
     form: FormGroup = new FormGroup({});
-    fieldsFormArray = new FormArray([]); // the dynamic part of our form - one for every templateObject property that is not a system property
+    fieldsFormArray = new FormArray([]); // the dynamic part of our form - one for every field on the customSchema
+    jsonSchemaString: string;
 
     constructor(private route: ActivatedRoute, private customSchemaService: CustomSchemaService, private router: Router) {
         super();
     }
 
     ngOnInit() {
+        this.fieldTypes = FIELD_TYPES;
+
         this.route.params
             .subscribe((params:Params) => {
                 this.contentType = params['contentType'];
@@ -46,7 +50,8 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
     initForm(customSchema: CustomSchema) {
         if (customSchema) {
-            this.form.patchValue(customSchema);
+            const formValue = this.convertCustomSchemaToForm(customSchema);
+            this.form.patchValue(formValue);
         }
         else if (this.isEdit) {
             this.customSchemaService.getByContentType(this.contentType)
@@ -54,29 +59,28 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                     if (customSchema) {
                         this.customSchema = customSchema;
                         this.form.patchValue(customSchema);
-                        this.initFieldsForm(customSchema);
+                        const fields = this.convertJsonSchemaToFormFields(customSchema.jsonSchema);
+                        this.initFieldsForm(this.fieldsFormArray, fields);
                         this.original = Object.assign({}, customSchema);
                     }
                 });
         }
     }
 
-    initFieldsForm(customSchema: CustomSchema) {
-        this.clearFormArray(this.fieldsFormArray);
+    initFieldsForm(fieldsFormArray: FormArray, fields: any) {
+        this.clearFormArray(fieldsFormArray);
 
-        // todo: unpack customFields from the jsonSchema and create the backing FormArray for them
-        // for (let property in customSchema) {
-        //     if (customSchema.hasOwnProperty(property) && !systemProperties.includes(property)) {
-        //         // this is what adds the new dataProperty controls to the form
-        //         this.fieldsFormArray.push(
-        //             new FormGroup({
-        //                 'type': new FormControl(null),
-        //                 'name': new FormControl(null),
-        //                 'fieldId': new FormControl(null)
-        //             })
-        //         );
-        //     }
-        // }
+        // create the backing FormArray for the fields
+        for (let field of fields) {
+            // this is what adds the new field controls to the form
+            fieldsFormArray.push(
+                new FormGroup({
+                    'type': new FormControl(field.type),
+                    'name': new FormControl(field.name),
+                    'title': new FormControl(field.title)
+                })
+            );
+        }
     }
 
     save(form) {
@@ -86,16 +90,19 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         }
 
         this.saving = true;
-        const customSchema = this.createCustomSchemaFromForm(form.value);
+        const customSchema = this.convertFormToCustomSchema(form.value);
         this.customSchema = customSchema;
 
         if (this.isEdit) {
             this.customSchemaService.update(this.contentType, customSchema)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
-                    this.saving = false;
                     this.original = Object.assign({}, this.customSchema);
                     form.form.markAsPristine();
+                },
+                (error) => {},
+                () => {
+                    this.saving = false;
                 });
         }
         else {
@@ -130,7 +137,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
             new FormGroup({
                 'type': new FormControl(null),
                 'name': new FormControl(null),
-                'fieldId': new FormControl(null)
+                'title': new FormControl(null)
             })
         );
     }
@@ -139,17 +146,94 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         this.fieldsFormArray.removeAt(index);
     }
 
-    createCustomSchemaFromForm(formValue: any) {
-        const customSchema = Object.assign(new CustomSchema(), formValue);
-        customSchema.jsonSchema = this.createJsonSchemaFromForm(formValue);
-
-        return customSchema;
+    convertCustomSchemaToForm(customSchema) {
+        const fields = this.convertJsonSchemaToFormFields(customSchema.jsonSchema);
+        const formValue = {
+            contentType: customSchema.contentType,
+            description: customSchema.description,
+            fields: fields
+        };
+        return formValue;
     }
 
-    createJsonSchemaFromForm(formValue: any) {
-        // todo: make it work
-        const jsonSchema = {};
+    convertFormToCustomSchema(formValue: any) {
+        const jsonSchema = this.convertFormFieldsToJsonSchema(formValue.fields);
+        return new CustomSchema({
+            contentType: formValue.contentType,
+            description: formValue.description,
+            jsonSchema: jsonSchema
+        });
+    }
 
+    convertJsonSchemaToFormFields(jsonSchema: any) {
+        const fields = [];
+
+        if (jsonSchema.properties) {
+            for (let property in jsonSchema.properties) {
+                if (jsonSchema.properties.hasOwnProperty(property)) {
+                    let type = jsonSchema.properties[property].type;
+                    const format = jsonSchema.properties[property].format;
+
+                    if (format) {
+                        if (format === 'date-time') {
+                            type = 'date';
+                        }
+                    }
+                    const fieldProperty: any = {
+                        type: type,
+                        name: jsonSchema.properties[property].name,
+                        title: jsonSchema.properties[property].title
+                    };
+
+                    if (jsonSchema.properties[property].enum) {
+                        fieldProperty.type = 'enumeration';
+                        fieldProperty.enumerationType = jsonSchema.properties[property].enumerationType;
+                    }
+
+                    fields.push(fieldProperty)
+                }
+            }
+            //
+            // jsonSchema.properties.forEach((property) => {
+            //     let type = property.type;
+            //     const format = property.format;
+            //
+            //     if (format) {
+            //         if (format === 'date-time') {
+            //             type = 'date';
+            //         }
+            //     }
+            //     const fieldProperty: any = {
+            //         type: type,
+            //         name: property.name,
+            //         title: property.title
+            //     };
+            //
+            //     if (property.enum) {
+            //         fieldProperty.type = 'enumeration';
+            //         fieldProperty.enumerationType = property.enumerationType;
+            //     }
+            //
+            //     fields.push(fieldProperty)
+            // })
+        }
+
+        return fields;
+    }
+
+    convertFormFieldsToJsonSchema(fields: any[]) {
+        const jsonSchema = {
+            type: 'object',
+            properties: {}
+        };
+
+        fields.forEach((field) => {
+            jsonSchema.properties[field.name] = {
+                type: field.type,
+                name: field.name,
+                title: field.title
+            };
+        });
 
         return jsonSchema;
     }
@@ -158,6 +242,11 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         for (let i = formArray.controls.length - 1; i >= 0; i--) {
             formArray.removeAt(i);
         }
+    }
+
+    generateSchema() {
+        const jsonSchema = this.convertFormFieldsToJsonSchema(this.form.value.fields);
+        this.jsonSchemaString = JSON.stringify(jsonSchema);
     }
 
 }

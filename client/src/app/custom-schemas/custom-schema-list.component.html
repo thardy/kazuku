@@ -1,7 +1,7 @@
 <h1>Custom Schemas</h1>
 <ul>
-    <li *ngFor="let schema of schemas">
-        <a [routerLink]="['/custom-models/' + schema.id]">{{schema.name}}</a>
+    <li *ngFor="let customSchema of customSchemas">
+        <a [routerLink]="['/content-models/' + customSchema.contentType]">{{customSchema.contentType}}</a>
     </li>
 </ul>
 

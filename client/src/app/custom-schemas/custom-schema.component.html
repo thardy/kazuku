@@ -3,26 +3,25 @@
 <div>
     <div class="left-panel">
 
-        <div id="schemaBuilder">
-            <div class="field">
-                <label>Content Type Name</label>
-                <input type="text"
-                       id="contentType"
-                       formControlName="contentType">
-            </div>
+        <form [formGroup]="form" (submit)="save(form)" novalidate class="ui form content">
+            <div id="schemaBuilder">
+                <div class="field">
+                    <label>Content Type Name</label>
+                    <input type="text"
+                           id="contentType"
+                           formControlName="contentType">
+                </div>
 
-            <div class="field">
-                <label>Description</label>
-                <textarea type="text" rows="4" cols="50"
-                          id="description"
-                          formControlName="description">
-            </textarea>
-            </div>
+                <div class="field">
+                    <label>Description</label>
+                    <textarea type="text" rows="4" cols="50"
+                              id="description"
+                              formControlName="description">
+                </textarea>
+                </div>
 
-            <div *ngIf="customSchemafields.length > 0">
-                <h4>Custom Fields:</h4>
-
-                <form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
+                <div *ngIf="fieldsFormArray.length > 0">
+                    <h4>Custom Fields:</h4>
 
                     <ul formArrayName="fields">
                         <li *ngFor="let field of form.controls.fields.controls; let i = index" [formGroupName]="i">
@@ -30,28 +29,41 @@
                             <a href="javascript:void(0);" (click)="editField(field)">Edit</a>
                             <a href="javascript:void(0);" (click)="deleteField(field)">Delete</a>
                             <h4>Let's build a field!!!</h4>
+
                             Type:
+                            <select class="ui fluid dropdown" formControlName="type" required>
+                                <option value="">Select a field type...</option>
+                                <option *ngFor="let fieldType of fieldTypes" [ngValue]="fieldType">
+                                    {{fieldType}}
+                                </option>
+                            </select>
+
+                            Name: <input type="text" formControlName="name">
+                            Field ID: <input type="text" formControlName="title">
 
                             <button type="button" class="ui negative button" (click)="deleteField(i)">Delete</button><br/>
                         </li>
                     </ul>
-                </form>
 
+                </div>
+                <div *ngIf="fieldsFormArray.length === 0">
+                    <h3>Add your first field</h3>
+                </div>
+
+                <button type="button" class="btn btn-primary" *ngIf="!showFieldBuilder" (click)="addField()">Add Field</button>
+
+                <!--<div field-builder="model.newField" field-builder-on-save="model.createField(model.newField)" field-builder-btn-text="Add" ng-show="model.newField.showFieldBuilder"></div>-->
             </div>
-            <div *ngIf="fields.length === 0">
-                <h3>Add your first field</h3>
-            </div>
-
-            <button class="btn btn-primary" *ngIf="!showFieldBuilder" (click)="addField()">Add Field</button>
-
-            <!--<div field-builder="model.newField" field-builder-on-save="model.createField(model.newField)" field-builder-btn-text="Add" ng-show="model.newField.showFieldBuilder"></div>-->
-        </div>
 
 
-        <button class="btn btn-primary" (click)="generateSchema()">Generate Schema</button>
+            <button type="button" class="btn btn-primary" (click)="generateSchema()">Generate Schema</button>
 
-        <button class="btn btn-primary" (click)="saveSchema()">Save</button>
-
+            <button type="submit" class="ui positive button" [disabled]="form.invalid"
+                    kz-async-button [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                Save
+            </button>
+            <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>
+        </form>
     </div>
 
     <div class="right-panel">

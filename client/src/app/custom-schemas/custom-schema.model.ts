@@ -10,13 +10,13 @@ export class CustomSchema {
         orgId?: string,
         contentType?: string,
         description?: string,
-        jsonSchema?: string
+        jsonSchema?: any
     } = {}) {
         this.id = options.id;
-        this.orgId = options.orgId || '';
+        this.orgId = options.orgId;
         this.contentType = options.contentType || '';
         this.description = options.description || '';
-        this.jsonSchema = options.jsonSchema || '';
+        this.jsonSchema = options.jsonSchema || {};
     }
 }
 
