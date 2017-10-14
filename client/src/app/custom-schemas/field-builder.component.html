@@ -1,28 +1,16 @@
-<!-- Not used currently.  Trying to get this basic thing working inline before I separate it into its own component -->
-<div>
-    <form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
-        <button class="close" (click)="field.closeFieldBuilder()"><i class="fa fa-times"></i></button>
-        <h4>Let's build a field!!!</h4>
-        <label class="control-label" for="type">Type</label>
-        <select class="ui fluid dropdown" [(ngModel)]="field.type" id="type" name="type" required>
-            <option value="undefined" [selected]="field.type === undefined">Select a field type...</option>
-            <option *ngFor="let fieldType of fieldTypes" [(ngValue)]="fieldType"
-                    [selected]="field.type === fieldType">
-                {{fieldType}}
-            </option>
-        </select>
-        <label class="control-label" for="fieldTitle">Title</label>
-        <input id="fieldTitle" name="fieldTitle" class="form-control" type="text" ng-model="formModel.customField.title">
-        <label class="control-label" for="fieldName">Name</label>
-        <input id="fieldName" name="fieldName" class="form-control" type="text" ng-model="formModel.customField.name">
+<div [formGroup]="group">
+    <h4>Let's build a field!!!</h4>
 
-        <br/>
+    Type:
+    <select class="ui fluid dropdown" formControlName="type" required>
+        <option value="">Select a field type...</option>
+        <option *ngFor="let fieldType of fieldTypes" [ngValue]="fieldType">
+            {{fieldType}}
+        </option>
+    </select>
 
-        <button type="submit" class="ui positive button" [disabled]="form.invalid"
-                kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
-            <i class="checkmark icon"></i> Save
-        </button>
-        <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>
-    </form>
+    Name: <input type="text" formControlName="name">
+    Field ID: <input type="text" formControlName="title">
 
+    <button type="button" class="ui negative button" (click)="deleteField(i)">Delete</button><br/>
 </div>

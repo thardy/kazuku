@@ -25,23 +25,10 @@
 
                     <ul formArrayName="fields">
                         <li *ngFor="let field of form.controls.fields.controls; let i = index" [formGroupName]="i">
-                            {{field.name}} - {{field.type}}
+                            {{field.value.name}} - {{field.value.type}}
                             <a href="javascript:void(0);" (click)="editField(field)">Edit</a>
-                            <a href="javascript:void(0);" (click)="deleteField(field)">Delete</a>
-                            <h4>Let's build a field!!!</h4>
-
-                            Type:
-                            <select class="ui fluid dropdown" formControlName="type" required>
-                                <option value="">Select a field type...</option>
-                                <option *ngFor="let fieldType of fieldTypes" [ngValue]="fieldType">
-                                    {{fieldType}}
-                                </option>
-                            </select>
-
-                            Name: <input type="text" formControlName="name">
-                            Field ID: <input type="text" formControlName="title">
-
-                            <button type="button" class="ui negative button" (click)="deleteField(i)">Delete</button><br/>
+                            <a href="javascript:void(0);" (click)="deleteField(i)">Delete</a>
+                            <kz-field-builder [group]="form.controls.fields.controls[i]"></kz-field-builder>
                         </li>
                     </ul>
 

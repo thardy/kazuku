@@ -7,8 +7,6 @@ import {NgForm, FormArray, FormGroup, FormControl, Validators} from "@angular/fo
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
 
-const FIELD_TYPES = ["string", "number"];
-
 @Component({
     selector: 'kz-custom-schema',
     templateUrl: './custom-schema.component.html'
@@ -30,8 +28,6 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.fieldTypes = FIELD_TYPES;
-
         this.route.params
             .subscribe((params:Params) => {
                 this.contentType = params['contentType'];
@@ -96,27 +92,27 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         if (this.isEdit) {
             this.customSchemaService.update(this.contentType, customSchema)
                 .takeUntil(this.ngUnsubscribe)
-                .subscribe((result) => {
-                    this.original = Object.assign({}, this.customSchema);
-                    form.form.markAsPristine();
-                },
-                (error) => {},
-                () => {
-                    this.saving = false;
-                });
+                .subscribe(
+                    (result) => {
+                        this.original = Object.assign({}, this.customSchema);
+                        form.form.markAsPristine();
+                    },
+                    (error) => {},
+                    () => {
+                        this.saving = false;
+                    });
         }
         else {
             this.customSchemaService.create(customSchema)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe(
                     (result) => {
-                        this.saving = false;
                         this.router.navigateByUrl('content-models');
                     },
-                    (error) => {
+                    (error) => {},
+                    () => {
                         this.saving = false;
-                    }
-                );
+                    });
         }
     }
 
@@ -140,6 +136,10 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                 'title': new FormControl(null)
             })
         );
+    }
+
+    editField(field: any) {
+        field.showFieldBuilder = true;
     }
 
     deleteField(index: number) {
@@ -193,29 +193,6 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                     fields.push(fieldProperty)
                 }
             }
-            //
-            // jsonSchema.properties.forEach((property) => {
-            //     let type = property.type;
-            //     const format = property.format;
-            //
-            //     if (format) {
-            //         if (format === 'date-time') {
-            //             type = 'date';
-            //         }
-            //     }
-            //     const fieldProperty: any = {
-            //         type: type,
-            //         name: property.name,
-            //         title: property.title
-            //     };
-            //
-            //     if (property.enum) {
-            //         fieldProperty.type = 'enumeration';
-            //         fieldProperty.enumerationType = property.enumerationType;
-            //     }
-            //
-            //     fields.push(fieldProperty)
-            // })
         }
 
         return fields;
