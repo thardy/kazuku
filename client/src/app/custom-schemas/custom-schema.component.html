@@ -28,7 +28,12 @@
                             {{field.value.name}} - {{field.value.type}}
                             <a href="javascript:void(0);" (click)="editField(field)">Edit</a>
                             <a href="javascript:void(0);" (click)="deleteField(i)">Delete</a>
-                            <kz-field-builder [group]="form.controls.fields.controls[i]"></kz-field-builder>
+                            <kz-field-builder *ngIf="fieldUx.get(field).showFieldBuilder"
+                                              [group]="form.controls.fields.controls[i]"
+                                              (save)="saveField($event)"
+                                              (cancel)="cancelField($event)"
+                                              (delete)="deleteField($event)">
+                            </kz-field-builder>
                         </li>
                     </ul>
 
@@ -37,7 +42,7 @@
                     <h3>Add your first field</h3>
                 </div>
 
-                <button type="button" class="btn btn-primary" *ngIf="!showFieldBuilder" (click)="addField()">Add Field</button>
+                <button type="button" class="btn btn-primary" (click)="addField()">Add Field</button>
 
                 <!--<div field-builder="model.newField" field-builder-on-save="model.createField(model.newField)" field-builder-btn-text="Add" ng-show="model.newField.showFieldBuilder"></div>-->
             </div>

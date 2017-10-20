@@ -3,7 +3,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {BaseComponent} from "../common/base-component";
 import {CustomSchema} from "./custom-schema.model";
 import {CustomSchemaService} from "./custom-schema.service";
-import {NgForm, FormArray, FormGroup, FormControl, Validators} from "@angular/forms";
+import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from "@angular/forms";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergemap';
 
@@ -12,16 +12,15 @@ import 'rxjs/add/operator/mergemap';
     templateUrl: './custom-schema.component.html'
 })
 export class CustomSchemaComponent extends BaseComponent implements OnInit {
-
     customSchema: CustomSchema = new CustomSchema();
     saving = false;
     original = {};
-    fieldTypes;
     contentType: string;
     isEdit = false;
     form: FormGroup = new FormGroup({});
     fieldsFormArray = new FormArray([]); // the dynamic part of our form - one for every field on the customSchema
     jsonSchemaString: string;
+    fieldUx = new Map<FormGroup, any>();
 
     constructor(private route: ActivatedRoute, private customSchemaService: CustomSchemaService, private router: Router) {
         super();
@@ -69,13 +68,15 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         // create the backing FormArray for the fields
         for (let field of fields) {
             // this is what adds the new field controls to the form
-            fieldsFormArray.push(
-                new FormGroup({
-                    'type': new FormControl(field.type),
-                    'name': new FormControl(field.name),
-                    'title': new FormControl(field.title)
-                })
-            );
+            let formGroup = new FormGroup({
+                'type': new FormControl(field.type),
+                'name': new FormControl(field.name),
+                'title': new FormControl(field.title)
+            });
+
+            fieldsFormArray.push(formGroup);
+            const originalValues = this.getOriginalValuesFromFieldFormGroup(formGroup);
+            this.fieldUx.set(formGroup, {showFieldBuilder: false, saved: true, originalValues: originalValues});
         }
     }
 
@@ -95,7 +96,18 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                 .subscribe(
                     (result) => {
                         this.original = Object.assign({}, this.customSchema);
-                        form.form.markAsPristine();
+
+                        // save the new originalValues for each field as well
+                        for (let i = 0; i < this.fieldsFormArray.length; i++) {
+                            const fieldFormGroup = <FormGroup>this.fieldsFormArray.at(i);
+                            const fieldUx = this.fieldUx.get(fieldFormGroup);
+                            const originalValues = this.getOriginalValuesFromFieldFormGroup(fieldFormGroup);
+                            fieldUx.showFieldBuilder = false;
+                            fieldUx.saved = true;
+                            fieldUx.originalValues = originalValues;
+                        }
+
+                        form.markAsPristine();
                     },
                     (error) => {},
                     () => {
@@ -119,7 +131,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     cancel(form){
         if (this.isEdit) {
             this.customSchema = Object.assign({}, new CustomSchema(this.original));
-            form.form.markAsPristine();
+            form.markAsPristine();
             // re-initialize form
             this.initForm(this.customSchema);
         }
@@ -129,21 +141,54 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     addField() {
-        this.fieldsFormArray.push(
-            new FormGroup({
-                'type': new FormControl(null),
-                'name': new FormControl(null),
-                'title': new FormControl(null)
-            })
-        );
+        let formGroup = new FormGroup({
+            'type': new FormControl(null),
+            'name': new FormControl(null),
+            'title': new FormControl(null)
+        });
+        this.fieldsFormArray.push(formGroup);
+        this.fieldUx.set(formGroup, {showFieldBuilder: true, saved: false, originalValues: {}});
     }
 
-    editField(field: any) {
-        field.showFieldBuilder = true;
+    editField(field: FormGroup) {
+        //field.value.showFieldBuilder = true;
+        const fieldUx = this.fieldUx.get(field);
+        fieldUx.showFieldBuilder = true;
     }
 
-    deleteField(index: number) {
+    deleteField(field: FormGroup) {
+        let index = this.getIndexOfItemInFormArray(this.fieldsFormArray, field);
         this.fieldsFormArray.removeAt(index);
+    }
+
+    saveField(field: FormGroup) {
+        //field.value.showFieldBuilder = false;
+        const fieldUx = this.fieldUx.get(field);
+        fieldUx.showFieldBuilder = false;
+    }
+
+    cancelField(field: FormGroup) {
+        const fieldUx = this.fieldUx.get(field);
+        let index = this.getIndexOfItemInFormArray(this.fieldsFormArray, field);
+        let foundField = this.fieldsFormArray.at(index);
+        if (foundField && !fieldUx.saved) {
+            this.fieldsFormArray.removeAt(index);
+        }
+        else {
+            foundField.patchValue(fieldUx.originalValues);
+            fieldUx.showFieldBuilder = false;
+        }
+    }
+
+    getIndexOfItemInFormArray(formArray: FormArray, control: AbstractControl) {
+        let index = -1;
+        for (let i = 0; i < formArray.length; i++){
+            if (formArray.controls[i] == control) {
+                index = i;
+                break;
+            }
+        }
+        return index
     }
 
     convertCustomSchemaToForm(customSchema) {
@@ -224,6 +269,12 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     generateSchema() {
         const jsonSchema = this.convertFormFieldsToJsonSchema(this.form.value.fields);
         this.jsonSchemaString = JSON.stringify(jsonSchema);
+    }
+
+    getOriginalValuesFromFieldFormGroup(fieldFormGroup: FormGroup) {
+        let originalValues = Object.assign({}, fieldFormGroup.value);
+        delete originalValues.originalValues;
+        return originalValues;
     }
 
 }
