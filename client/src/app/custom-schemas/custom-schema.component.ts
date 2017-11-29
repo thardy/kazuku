@@ -108,6 +108,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                         }
 
                         form.markAsPristine();
+                        this.router.navigateByUrl('content-models');
                     },
                     (error) => {},
                     () => {
@@ -129,15 +130,17 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     cancel(form){
-        if (this.isEdit) {
-            this.customSchema = Object.assign({}, new CustomSchema(this.original));
-            form.markAsPristine();
-            // re-initialize form
-            this.initForm(this.customSchema);
-        }
-        else {
-            this.router.navigateByUrl('content-models');
-        }
+        this.router.navigateByUrl('content-models');
+
+        // if (this.isEdit) {
+        //     this.customSchema = Object.assign({}, new CustomSchema(this.original));
+        //     form.markAsPristine();
+        //     // re-initialize form
+        //     this.initForm(this.customSchema);
+        // }
+        // else {
+        //     this.router.navigateByUrl('content-models');
+        // }
     }
 
     addField() {
@@ -147,7 +150,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
             'title': new FormControl(null)
         });
         this.fieldsFormArray.push(formGroup);
-        this.fieldUx.set(formGroup, {showFieldBuilder: true, saved: false, originalValues: {}});
+        this.fieldUx.set(formGroup, this.initNewFieldUx());
     }
 
     editField(field: FormGroup) {
@@ -165,6 +168,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         //field.value.showFieldBuilder = false;
         const fieldUx = this.fieldUx.get(field);
         fieldUx.showFieldBuilder = false;
+        fieldUx.newField = false;
     }
 
     cancelField(field: FormGroup) {
@@ -275,6 +279,10 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         let originalValues = Object.assign({}, fieldFormGroup.value);
         delete originalValues.originalValues;
         return originalValues;
+    }
+
+    initNewFieldUx() {
+        return {showFieldBuilder: true, newField: true, saved: false, originalValues: {}};
     }
 
 }

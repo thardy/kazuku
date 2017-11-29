@@ -3,7 +3,7 @@ import {BaseComponent} from "../common/base-component";
 import {FormGroup} from '@angular/forms';
 import 'rxjs/add/operator/mergemap';
 
-const FIELD_TYPES = ["string", "number"];
+const FIELD_TYPES = ["string", "number", "date"];
 
 @Component({
     selector: 'kz-field-builder',
