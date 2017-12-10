@@ -5,7 +5,7 @@ import {CustomSchema} from "./custom-schema.model";
 import {CustomSchemaService} from "./custom-schema.service";
 import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from "@angular/forms";
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergemap';
+import 'rxjs/add/operator/mergeMap';
 
 @Component({
     selector: 'kz-custom-schema',

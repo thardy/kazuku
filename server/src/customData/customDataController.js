@@ -20,11 +20,25 @@ class CustomDataController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
+        app.get('/api/customData', authHelper.isAuthenticated, this.getAll.bind(this));
         app.get('/api/customData/:contentType', authHelper.isAuthenticated, this.getAllByContentType.bind(this));
-        app.get('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.getByContentType.bind(this));
+        app.get('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.getByTypeAndId.bind(this));
         app.post('/api/customData/:contentType', authHelper.isAuthenticated, this.createByContentType.bind(this));
         app.put('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.updateByTypeAndId.bind(this));
         app.delete('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.deleteByTypeAndId.bind(this));
+    }
+
+    getAll(req, res, next) {
+        res.set("Content-Type", "application/json");
+
+        return this.service.getAll(current.user.orgId)
+            .then(function (docs) {
+                return res.status(200).json(docs);
+            })
+            .catch(err => {
+                err.message = 'ERROR: customDataController -> customDataService.getAllByOrg({0}, {1}) - {2}'.format(current.user.orgId, err.message);
+                return next(err);
+            });
     }
 
     getAllByContentType(req, res, next) {
@@ -84,7 +98,7 @@ class CustomDataController {
         }
     }
 
-    getByContentType(req, res, next) {
+    getByTypeAndId(req, res, next) {
         var contentType = req.params.contentType;
         // todo: cache all the schemas for each org and validate contentType against available schemas.  Error if not found.
         var id = req.params.id;

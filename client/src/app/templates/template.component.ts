@@ -5,7 +5,7 @@ import {Template} from "../templates/template.model";
 import {TemplateService} from "../templates/template.service";
 import {BaseComponent} from "../common/base-component";
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergemap';
+import 'rxjs/add/operator/mergeMap';
 
 const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "description", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 

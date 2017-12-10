@@ -5,7 +5,7 @@ import {Organization} from "./organization.model";
 import {OrganizationService} from "./organization.service";
 import {NgForm} from "@angular/forms";
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergemap';
+import 'rxjs/add/operator/mergeMap';
 
 @Component({
   selector: 'kz-organization',

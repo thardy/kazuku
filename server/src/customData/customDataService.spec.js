@@ -8,6 +8,7 @@ var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 var Query = require("rql/query").Query;
+const testHelper = require("../common/testHelper");
 
 //temp
 var mongoRql = require('mongo-rql');
@@ -26,37 +27,62 @@ describe("CustomDataService", function () {
 
         before(function () {
             customDataService = new CustomDataService(database);
-            // Insert some docs to be present before all tests start
-            // All test data should belong to a specific orgId (a test org)
-            var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', template: 'Imagine a well written blog here.'};
-            var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', template: 'It was a dark and rainy night...'};
 
-            return deleteAllTestData()
-                .then(function(result) {
-                    return database.customData.insert(newCustomData1);
+            // Insert some docs to be present before all tests start
+            return testHelper.deleteAllCustomDataForTestOrg()
+                .then((result) => {
+                    return testHelper.setupTestProducts();
                 })
-                .then(function(doc) {
-                    existingCustomData1 = doc;
-                    existingCustomData1.id = existingCustomData1._id.toHexString();
-                    return doc;
-                })
-                .then(function(result) {
-                    return database.customData.insert(newCustomData2);
-                })
-                .then(function(doc) {
-                    existingCustomData2 = doc;
-                    existingCustomData2.id = existingCustomData2._id.toHexString();
-                    return doc;
-                })
-                .catch(error => {
-                    console.log(error);
-                    throw error;
+                .then((result) => {
+                    return testHelper.setupDifferentTestProducts();
                 });
         });
 
+        // before(function () {
+        //     customDataService = new CustomDataService(database);
+        //     // Insert some docs to be present before all tests start
+        //     // All test data should belong to a specific orgId (a test org)
+        //     var newCustomData1 = { orgId: testOrgId, contentType: testContentType, title: 'My First Blog Post', template: 'Imagine a well written blog here.'};
+        //     var newCustomData2 = { orgId: testOrgId, contentType: testContentType, title: 'A Dog Ate My Homework', template: 'It was a dark and rainy night...'};
+        //
+        //     return deleteAllTestData()
+        //         .then(function(result) {
+        //             return database.customData.insert(newCustomData1);
+        //         })
+        //         .then(function(doc) {
+        //             existingCustomData1 = doc;
+        //             existingCustomData1.id = existingCustomData1._id.toHexString();
+        //             return doc;
+        //         })
+        //         .then(function(result) {
+        //             return database.customData.insert(newCustomData2);
+        //         })
+        //         .then(function(doc) {
+        //             existingCustomData2 = doc;
+        //             existingCustomData2.id = existingCustomData2._id.toHexString();
+        //             return doc;
+        //         })
+        //         .catch(error => {
+        //             console.log(error);
+        //             throw error;
+        //         });
+        // });
+
         after(function () {
             // Remove all Test documents
-            return deleteAllTestData();
+            return deleteAllTestData()
+                .then((result) => {
+                    return testHelper.deleteAllDifferentTestProducts();
+                });
+        });
+
+        it("can get all data for an org", function () {
+            var getByContentTypePromise = customDataService.getAll(testOrgId);
+
+            return Promise.all([
+                getByContentTypePromise.should.eventually.be.instanceOf(Array),
+                getByContentTypePromise.should.eventually.have.length(5)
+            ]);
         });
 
         it("can create customData of a specified ContentType", function () {
@@ -81,33 +107,33 @@ describe("CustomDataService", function () {
         });
 
         it("can get all data of a specified ContentType", function () {
-            var getByContentTypePromise = customDataService.getByContentType(testOrgId, testContentType);
+            var getByContentTypePromise = customDataService.getByContentType(testOrgId, testHelper.testProductsContentType);
 
             return Promise.all([
                 getByContentTypePromise.should.eventually.be.instanceOf(Array),
-                getByContentTypePromise.should.eventually.have.length.greaterThan(1)
+                getByContentTypePromise.should.eventually.have.length(3)
             ]);
         });
 
         it("can get customData by contentType and Id", function () {
-            var getByTypeAndId = customDataService.getByTypeAndId(testOrgId, existingCustomData1.contentType, existingCustomData1.id);
+            var getByTypeAndId = customDataService.getByTypeAndId(testOrgId, testHelper.existingProducts[0].contentType, testHelper.existingProducts[0].id);
 
-            return getByTypeAndId.should.eventually.have.property("title", existingCustomData1.title);
+            return getByTypeAndId.should.eventually.have.property("name", testHelper.existingProducts[0].name);
         });
 
         it("can update customData by id", function () {
-            var newContent = '#New Test Content';
-            theUpdatedCustomData = { template: newContent };
+            var newDescription = '#New Test Description';
+            theUpdatedCustomData = { description: newDescription };
 
-            var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData1.id, theUpdatedCustomData);
+            var updateByIdPromise = customDataService.updateById(testOrgId, testHelper.existingProducts[1].id, theUpdatedCustomData);
 
             return updateByIdPromise.then(function(result) {
                 result.nModified.should.equal(1);
 
                 // verify customData was updated
-                var getByIdPromise = customDataService.getById(testOrgId, existingCustomData1.id);
+                var getByIdPromise = customDataService.getById(testOrgId, testHelper.existingProducts[1].id);
 
-                return getByIdPromise.should.eventually.have.property("template", newContent);
+                return getByIdPromise.should.eventually.have.property("description", newDescription);
             });
         });
 
@@ -147,13 +173,13 @@ describe("CustomDataService", function () {
                 var expectedDate = new Date('2016-01-27T08:43:00');
                 var theUpdatedCustomData = { favoriteDate: dateString };
 
-                var updateByIdPromise = customDataService.updateById(testOrgId, existingCustomData2.id, theUpdatedCustomData);
+                var updateByIdPromise = customDataService.updateById(testOrgId, testHelper.existingProducts[2].id, theUpdatedCustomData);
 
                 return updateByIdPromise.then(function(result) {
                     result.nModified.should.equal(1);
 
                     // verify customData was updated
-                    var getByIdPromise = customDataService.getById(testOrgId, existingCustomData2.id);
+                    var getByIdPromise = customDataService.getById(testOrgId, testHelper.existingProducts[2].id);
 
                     getByIdPromise.should.eventually.have.property("favoriteDate").deep.equal(expectedDate);
                 });
@@ -361,7 +387,7 @@ describe("CustomDataService", function () {
             ]);
         });
         it("can query custom date fields greater than value", function () {
-            var findDate = '2014-01-01';
+            var findDate = '2015-01-01';
             var findPromise = customDataService.find(testOrgId, "contentType={0}&created=gt=date:{1}&sort(-created)".format(testContentType, findDate));
 
             return Promise.all([
@@ -372,7 +398,7 @@ describe("CustomDataService", function () {
         });
         it("can query custom date fields within range", function () {
             var startDate = '2015-01-27';
-            var endDate = '2015-05-20';
+            var endDate = '2015-05-20'; // todo: this is currently failing - it succeeds if I add one day.  The le (less than or equal to) is not working.
             var findPromise = customDataService.find(testOrgId, "contentType={0}&created=ge=date:{1}&created=le=date:{2}&sort(-created)".format(testContentType, startDate, endDate));
 
             return Promise.all([

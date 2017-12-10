@@ -8,9 +8,13 @@ const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
 //var existingProducts = [];
 var testOrgId = 1;
 var testProductsContentType = 'testProducts';
+var differentTestProductsContentType = 'differentTestProducts';
 var newProduct1 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
 var newProduct2 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
 var newProduct3 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00') };
+
+var differentProduct1 = { orgId: testOrgId, contentType: differentTestProductsContentType, name: 'Thingamajig', description: 'We do not know what this is.', price: 14.99, quantity: 1000, created: new Date('2016-01-01T00:00:00') };
+var differentProduct2 = { orgId: testOrgId, contentType: differentTestProductsContentType, name: 'Rock', description: 'Natural fun, naturally.', price: 199.99, quantity: 20000, created: new Date('2016-05-20T00:00:00') };
 
 var testContentType1 = 'testType1';
 var testContentType2 = 'testType2';
@@ -65,6 +69,17 @@ function setupTestProducts() {
         });
 }
 
+function setupDifferentTestProducts() {
+    return deleteAllDifferentTestProducts()
+        .then(function(result) {
+            return createDifferentTestProducts();
+        })
+        .catch(error => {
+            console.log(error);
+            throw error;
+        });
+}
+
 function setupTestSchemas() {
     return deleteAllTestSchemas()
         .then(function(result) {
@@ -105,6 +120,25 @@ function createTestProducts() {
         console.log(error);
         throw error;
     });
+}
+
+function createDifferentTestProducts() {
+    //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
+    return Promise.all([
+        database.customData.insert(differentProduct1),
+        database.customData.insert(differentProduct2),
+    ])
+        .then(function(docs) {
+            testHelper.existingDifferentProducts = docs;
+            _.forEach(testHelper.existingDifferentProducts, function (item) {
+                item.id = item._id.toHexString();
+            });
+            return docs;
+        })
+        .catch(error => {
+            console.log(error);
+            throw error;
+        });
 }
 
 function createTestUsers() {
@@ -151,8 +185,16 @@ function createTestSchemas() {
     });
 }
 
+function deleteAllCustomDataForTestOrg() {
+    return database.customData.remove({orgId: testOrgId});
+}
+
 function deleteAllTestProducts() {
     return database.customData.remove({orgId: testOrgId, contentType: testProductsContentType});
+}
+
+function deleteAllDifferentTestProducts() {
+    return database.customData.remove({orgId: testOrgId, contentType: differentTestProductsContentType});
 }
 
 function deleteAllTestOrgCustomData() {
@@ -176,7 +218,10 @@ var testHelper = {
     newProduct1: newProduct1,
     newProduct2: newProduct2,
     newProduct3: newProduct3,
+    differentProduct1: differentProduct1,
+    differentProduct2: differentProduct2,
     existingProducts: [],
+    existingDifferentProducts: [],
     testContentType1: testContentType1,
     testContentType2: testContentType2,
     newSchema1: newSchema1,
@@ -185,8 +230,11 @@ var testHelper = {
     newUser1: newUser1,
     existingUsers: [],
     setupTestProducts: setupTestProducts,
+    setupDifferentTestProducts: setupDifferentTestProducts,
     createTestProducts: createTestProducts,
+    deleteAllCustomDataForTestOrg: deleteAllCustomDataForTestOrg,
     deleteAllTestProducts: deleteAllTestProducts,
+    deleteAllDifferentTestProducts: deleteAllDifferentTestProducts,
     deleteAllTestOrgCustomData: deleteAllTestOrgCustomData,
     setupTestSchemas: setupTestSchemas,
     createTestSchemas: createTestSchemas,

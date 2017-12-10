@@ -4,6 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {InMemoryWebApiModule} from 'angular-in-memory-web-api';
 import {AppRoutingModule} from './app-routing.module';
+import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from "angular2-schema-form";
 
 import {AppComponent} from './app.component';
 import {OrganizationListComponent} from './organizations/organization-list.component';
@@ -39,6 +40,8 @@ import {ModalComponent} from './common/modal/modal.component';
 import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
 import {CustomSchemaService} from './custom-schemas/custom-schema.service';
 import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
+import { CustomDataComponent } from './custom-data/custom-data.component';
+import {CustomDataService} from "./custom-data/custom-data.service";
 
 @NgModule({
     declarations: [
@@ -63,7 +66,8 @@ import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
         UserListComponent,
         SetupComponent,
         AsyncButtonDirective,
-        ModalComponent
+        ModalComponent,
+        CustomDataComponent
     ],
     imports: [
         BrowserModule,
@@ -73,7 +77,8 @@ import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
         AppRoutingModule,
         BrowserAnimationsModule,
         InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true}),
-        SuiModule
+        SuiModule,
+        SchemaFormModule
     ],
     providers: [
         OrganizationService,
@@ -84,7 +89,9 @@ import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
         UserService,
         SetupService,
         SetupGuardService,
-        AuthGuardService
+        AuthGuardService,
+        CustomDataService,
+        {provide: WidgetRegistry, useClass: DefaultWidgetRegistry}
     ],
     entryComponents: [
         ModalComponent

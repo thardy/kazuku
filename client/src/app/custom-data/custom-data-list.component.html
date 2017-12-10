@@ -1,8 +1,18 @@
 <h1>Content</h1>
 <ul>
-    <li *ngFor="let content of contentItems">
-        <a [routerLink]="['/content/' + content.id]">{{content.name}}</a>
+    <li *ngFor="let contentItem of contentItems">
+        <a [routerLink]="['/content/' + contentItem.id]">{{contentItem.name}}</a>
     </li>
 </ul>
 
 <button class="btn primary" (click)="create()">Add</button>
+
+<ng-container *ngIf="showSchemaList">
+    <select class="ui fluid dropdown" [(ngModel)]="selectedContentType" name="selectedContentType" (change)="contentTypeSelected()" required>
+        <option value="undefined" [selected]="selectedContentType === undefined">Select a content model...</option>
+        <option *ngFor="let schema of customSchemas" [(ngValue)]="schema.contentType"
+                [selected]="schema.contentType === selectedContentType">
+            {{schema.contentType}}
+        </option>
+    </select>
+</ng-container>

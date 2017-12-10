@@ -24,15 +24,36 @@ describe("ApiTests", function () {
             describe("CRUD", function () {
                 before(function () {
                     // Insert some docs to be present before all tests start
-                    return testHelper.setupTestProducts();
+                    return testHelper.setupTestProducts()
+                        .then((result) => {
+                            return testHelper.setupDifferentTestProducts();
+                        });
                 });
 
                 after(function () {
                     // Remove everything we created
-                    return testHelper.deleteAllTestProducts();
+                    return testHelper.deleteAllTestProducts()
+                        .then((result) => {
+                            return testHelper.deleteAllDifferentTestProducts();
+                        });
                 });
 
+                // todo: confirm this is working
                 describe("getAll", function () {
+                    it("should return all customData for a given org", function () {
+                        return request(app)
+                            .get('/api/customData')
+                            .expect(200)
+                            .then(function (result) {
+                                result.body.length.should.equal(5);
+                                var product = _.find(result.body, function(item) {
+                                    return item.name === testHelper.differentProduct1.name;
+                                });
+                                product.quantity.should.equal(testHelper.differentProduct1.quantity);
+                            });
+                    });
+                });
+                describe("getAllByContentType", function () {
                     it("should return all customData for a given org and contentType", function () {
                         return request(app)
                             .get('/api/customData/{0}'.format(testHelper.testProductsContentType))
@@ -46,7 +67,7 @@ describe("ApiTests", function () {
                             });
                     });
                 });
-                describe("getById", function () {
+                describe("getByTypeAndId", function () {
                     it("should return a customData for a given org, contentType, and id", function () {
                         return request(app)
                             .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[0].id))

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {CustomSchema} from "./custom-schema.model";
-import {CustomSchemaService} from "./custom-schema.service";
-import {Router} from "@angular/router";
+import {CustomSchema} from './custom-schema.model';
+import {CustomSchemaService} from './custom-schema.service';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'kz-custom-schemas',

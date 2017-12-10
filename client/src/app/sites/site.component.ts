@@ -5,7 +5,7 @@ import {Site} from "./site.model";
 import {SiteService} from "./site.service";
 import {BaseComponent} from "../common/base-component";
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergemap';
+import 'rxjs/add/operator/mergeMap';
 
 @Component({
   selector: 'kz-site',
