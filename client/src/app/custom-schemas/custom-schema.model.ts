@@ -16,7 +16,7 @@ export class CustomSchema {
         this.orgId = options.orgId;
         this.contentType = options.contentType || '';
         this.description = options.description || '';
-        this.jsonSchema = options.jsonSchema || {};
+        this.jsonSchema = options.jsonSchema || { properties: {} };
     }
 }
 

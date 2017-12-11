@@ -1,7 +1,7 @@
 <h1>Content</h1>
 <ul>
-    <li *ngFor="let contentItem of contentItems">
-        <a [routerLink]="['/content/' + contentItem.id]">{{contentItem.name}}</a>
+    <li *ngFor="let contentItem of customDataList">
+        <a [routerLink]="['/content/' + contentItem.contentType + '/' + contentItem.id]">{{contentItem.name}}</a>
     </li>
 </ul>
 

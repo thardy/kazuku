@@ -12,7 +12,7 @@ export class AsyncButtonDirective implements OnInit, OnChanges {
     @Input() asyncType: string;
     // original html content of the element
     private originalHtml: string;
-    private initialized: boolean = false;
+    private initialized = false;
     constructor(private el: ElementRef, private renderer: Renderer) { }
 
     ngOnInit() {
@@ -27,17 +27,17 @@ export class AsyncButtonDirective implements OnInit, OnChanges {
             this.renderer.setElementClass(this.el.nativeElement, 'ui', true);
             this.renderer.setElementClass(this.el.nativeElement, 'button', true);
 
-            if (this.asyncType === "save") {
+            if (this.asyncType === 'save') {
                 this.renderer.setElementClass(this.el.nativeElement, 'positive', true);
-                this.asyncText = "Saving...";
+                this.asyncText = 'Saving...';
             }
-            else if (this.asyncType === "cancel") {
+            else if (this.asyncType === 'cancel') {
                 this.renderer.setElementClass(this.el.nativeElement, 'negative', true);
-                this.asyncText = "Cancelling...";
+                this.asyncText = 'Cancelling...';
             }
-            else if (this.asyncType === "delete") {
+            else if (this.asyncType === 'delete') {
                 this.renderer.setElementClass(this.el.nativeElement, 'secondary', true);
-                this.asyncText = "Deleting...";
+                this.asyncText = 'Deleting...';
             }
 
             return;

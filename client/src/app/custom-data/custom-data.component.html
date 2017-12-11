@@ -1,1 +1,10 @@
-<sf-form [schema]="customSchema.jsonSchema" [model]="model"></sf-form>
+<sf-form [schema]="customSchema.jsonSchema" [model]="initialModel" (onChange)="formChanged($event.value)"></sf-form>
+
+<div class="extra content">
+    <button type="submit" class="ui positive button" (click)="save()"
+            [disabled]="this.validationMessages.length > 0"
+            kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+        <i class="checkmark icon"></i> Save
+    </button>
+    <button type="button" class="ui negative button" (click)="cancel()">Cancel</button>
+</div>

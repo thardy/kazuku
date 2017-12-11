@@ -68,10 +68,10 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         // create the backing FormArray for the fields
         for (let field of fields) {
             // this is what adds the new field controls to the form
-            let formGroup = new FormGroup({
+            const formGroup = new FormGroup({
                 'type': new FormControl(field.type),
-                'name': new FormControl(field.name),
-                'title': new FormControl(field.title)
+                'description': new FormControl(field.description),
+                'fieldId': new FormControl(field.fieldId)
             });
 
             fieldsFormArray.push(formGroup);
@@ -146,8 +146,8 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     addField() {
         let formGroup = new FormGroup({
             'type': new FormControl(null),
-            'name': new FormControl(null),
-            'title': new FormControl(null)
+            'description': new FormControl(null),
+            'fieldId': new FormControl(null)
         });
         this.fieldsFormArray.push(formGroup);
         this.fieldUx.set(formGroup, this.initNewFieldUx());
@@ -230,8 +230,8 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                     }
                     const fieldProperty: any = {
                         type: type,
-                        name: jsonSchema.properties[property].name,
-                        title: jsonSchema.properties[property].title
+                        description: jsonSchema.properties[property].description,
+                        fieldId: jsonSchema.properties[property].fieldId
                     };
 
                     if (jsonSchema.properties[property].enum) {
@@ -254,10 +254,9 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         };
 
         fields.forEach((field) => {
-            jsonSchema.properties[field.name] = {
+            jsonSchema.properties[field.fieldId] = {
                 type: field.type,
-                name: field.name,
-                title: field.title
+                description: field.description
             };
         });
 
