@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Http, Response} from "@angular/http";
-import {environment} from "../../environments/environment";
+import {Response} from '@angular/http';
+import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs/Observable';
 import {BaseModel} from './base.model';
 import 'rxjs/add/observable/of';
@@ -8,14 +8,15 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import JsonUtils from './utils/json-utils';
+import {HttpService} from './http.service';
 
 @Injectable()
 export class GenericService<T extends BaseModel> {
 
     protected baseUrl: string;
-    protected http: Http;
+    protected http: HttpService;
 
-    constructor(resourceName: string, http: Http) {
+    constructor(resourceName: string, http: HttpService) {
         this.baseUrl =  `${environment.kazukuApiUrl}/${resourceName}`;
         this.http = http;
     }
@@ -50,28 +51,34 @@ export class GenericService<T extends BaseModel> {
             .catch(error => this.handleError(error));
     }
 
-
-    extractDataList(response: Response) {
-        let data = response.json();
-        return <T[]>data || [];
+    extractDataList(response: any) {
+        return <T[]>response || [];
     }
 
-    extractData(response: Response) {
-        let data = response.json();
-        return <T>data || {};
+    extractData(response: any) {
+        return <T>response || {};
+    }
+
+    extractAnyData(response: any) {
+        return <any>response || {};
+    }
+
+    customExtractData<customType>(response: any) {
+        return <customType>response || {};
+    }
+
+    extractNumberData(response) {
+        if (response && typeof response === 'number') {
+            return <number>response;
+        }
+        else {
+            return 0;
+        }
     }
 
     handleError(error) {
         console.error(error);
-        const jsonBody = JsonUtils.tryParseJSON(error._body);
-
-        if (error.json && jsonBody) {
-            return Observable.throw(jsonBody || 'Server error');
-        }
-        else {
-            return Observable.throw(error || 'Server error');
-        }
-
+        return Observable.throw(error || 'Server error');
     }
 }
 

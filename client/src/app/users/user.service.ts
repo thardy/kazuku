@@ -1,12 +1,12 @@
 import {Injectable, Inject} from '@angular/core';
-import {Http, Response} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/do';
-import {environment} from "../../environments/environment";
-import {User} from "./user.model";
-import {UserContext} from "./user-context.model";
-import {GenericService} from "../common/generic.service";
+import {environment} from '../../environments/environment';
+import {User} from './user.model';
+import {UserContext} from './user-context.model';
+import {GenericService} from '../common/generic.service';
+import {HttpService} from '../common/http.service';
 
 @Injectable()
 export class UserService extends GenericService<User> {
@@ -15,9 +15,9 @@ export class UserService extends GenericService<User> {
         userContext: UserContext
     };
 
-    constructor(@Inject(Http) http) {
+    constructor(@Inject(HttpService) http) {
         super('users', http);
-        this.dataStore = { userContext: new UserContext() };
+        this.dataStore = {userContext: new UserContext()};
         this._currentUserContext = <BehaviorSubject<UserContext>>new BehaviorSubject(new UserContext());
 
     }
@@ -45,7 +45,7 @@ export class UserService extends GenericService<User> {
     getUserContext() {
         //return this.http.get(`${this.baseUrl}/getloggedinuser`)
         return this.http.get(`${this.baseUrl}/getusercontext`)
-            .map(response => <UserContext>this.extractData(response))
+            .map(response => <UserContext>this.extractAnyData(response))
             .do(userContext => {
                     this.dataStore.userContext = userContext;
                     // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
@@ -60,9 +60,10 @@ export class UserService extends GenericService<User> {
         return (this.dataStore.userContext && this.dataStore.userContext.user && this.dataStore.userContext.user.id) ? true : false;
     }
 
-    extractData(response: Response) {
-        const data = response.json();
-        return data || {};
+    clearClientsideAuth() {
+        this.dataStore.userContext = new UserContext();
+        // Send out an empty UserContext to all subscribers
+        this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
     }
 
     handleError(error) {

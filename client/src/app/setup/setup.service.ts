@@ -1,18 +1,17 @@
 import {Injectable, Inject} from '@angular/core';
-import {Http, Response} from "@angular/http";
-import {environment} from "../../environments/environment";
-import {Observable} from 'rxjs/Observable';
+import {environment} from '../../environments/environment';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {SetupConfig} from "./setup-config.model";
-import {GenericService} from "../common/generic.service";
+import {SetupConfig} from './setup-config.model';
+import {GenericService} from '../common/generic.service';
+import {HttpService} from '../common/http.service';
 
 @Injectable()
 export class SetupService extends GenericService<SetupConfig> {
 
-    constructor(@Inject(Http) http) {
+    constructor(@Inject(HttpService) http) {
         super('setup', http);
     }
 
@@ -24,9 +23,8 @@ export class SetupService extends GenericService<SetupConfig> {
 
     canWeSetup() {
         return this.http.get(`${this.baseUrl}/setupstate`)
-            .map((response) => {
-                let data = response.json()
-                let setupCompleted = (data && data.data && data.data.setupCompleted) ? data.data.setupCompleted : false;
+            .map((response: any) => {
+                const setupCompleted = (response && response.data && response.data.setupCompleted) ? response.data.setupCompleted : false;
                 return !setupCompleted;
             })
             .catch(error => this.handleError(error));

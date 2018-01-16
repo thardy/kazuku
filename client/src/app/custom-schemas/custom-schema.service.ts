@@ -1,17 +1,17 @@
 import {Injectable, Inject} from '@angular/core';
-import {Http} from "@angular/http";
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {GenericService} from "../common/generic.service";
-import {CustomSchema} from "app/custom-schemas/custom-schema.model";
+import {GenericService} from '../common/generic.service';
+import {CustomSchema} from 'app/custom-schemas/custom-schema.model';
+import {HttpService} from '../common/http.service';
 
 @Injectable()
 export class CustomSchemaService extends GenericService<CustomSchema> {
 
-    constructor(@Inject(Http) http) {
+    constructor(@Inject(HttpService) http) {
         super('customSchemas', http);
     }
 

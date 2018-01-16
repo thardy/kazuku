@@ -1,10 +1,11 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
+import {HttpClientModule} from '@angular/common/http';
 import {InMemoryWebApiModule} from 'angular-in-memory-web-api';
 import {AppRoutingModule} from './app-routing.module';
-import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from "angular2-schema-form";
+import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'angular2-schema-form';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
 
 import {AppComponent} from './app.component';
 import {OrganizationListComponent} from './organizations/organization-list.component';
@@ -40,8 +41,10 @@ import {ModalComponent} from './common/modal/modal.component';
 import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
 import {CustomSchemaService} from './custom-schemas/custom-schema.service';
 import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
-import { CustomDataComponent } from './custom-data/custom-data.component';
-import {CustomDataService} from "./custom-data/custom-data.service";
+import {CustomDataComponent} from './custom-data/custom-data.component';
+import {CustomDataService} from './custom-data/custom-data.service';
+import {UnAuthenticatedInterceptor} from './unauthenticated.interceptor';
+import {HttpService} from './common/http.service';
 
 @NgModule({
     declarations: [
@@ -71,9 +74,9 @@ import {CustomDataService} from "./custom-data/custom-data.service";
     ],
     imports: [
         BrowserModule,
+        HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true}),
@@ -81,6 +84,10 @@ import {CustomDataService} from "./custom-data/custom-data.service";
         SchemaFormModule
     ],
     providers: [
+        {
+            provide: HTTP_INTERCEPTORS, useClass: UnAuthenticatedInterceptor, multi: true,
+        },
+        HttpService,
         OrganizationService,
         CustomSchemaService,
         SiteService,

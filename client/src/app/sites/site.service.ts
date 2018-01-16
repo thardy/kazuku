@@ -1,18 +1,17 @@
 import {Injectable, Inject} from '@angular/core';
-import {Http, Response} from "@angular/http";
-import {environment} from "../../environments/environment";
-import {Observable} from 'rxjs/Observable';
+import {environment} from '../../environments/environment';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {Site} from "./site.model";
-import {GenericService} from "../common/generic.service";
+import {Site} from './site.model';
+import {GenericService} from '../common/generic.service';
+import {HttpService} from '../common/http.service';
 
 @Injectable()
 export class SiteService extends GenericService<Site> {
 
-    constructor(@Inject(Http) http) {
+    constructor(@Inject(HttpService) http) {
         super('sites', http);
     }
 
