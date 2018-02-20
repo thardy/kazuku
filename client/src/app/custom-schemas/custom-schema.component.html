@@ -27,8 +27,8 @@
                         <li *ngFor="let field of form.controls.fields.controls; let i = index" [formGroupName]="i">
                             <div *ngIf="!fieldUx.get(field).newField">
                                 {{field.value.description}} - {{field.value.type}}
-                                <a href="javascript:void(0);" (click)="editField(field)">Edit</a>
-                                <a href="javascript:void(0);" (click)="deleteField(i)">Delete</a>
+                                <a *ngIf="!fieldUx.get(field).isMandatory" href="javascript:void(0);" (click)="editField(field)">Edit</a>
+                                <a *ngIf="!fieldUx.get(field).isMandatory" href="javascript:void(0);" (click)="deleteField(i)">Delete</a>
                             </div>
                             <kz-field-builder *ngIf="fieldUx.get(field).showFieldBuilder"
                                               [group]="form.controls.fields.controls[i]"

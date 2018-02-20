@@ -29,18 +29,15 @@
 //        "properties": {
 //        "affiliatedWith": {
 //            "type": "string",
-//                "name": "affiliatedWith",
-//                "title": "Affiliated With"
+//            "description": "Affiliated With"
 //        },
 //        "favoriteNumber": {
 //            "type": "number",
-//                "name": "favoriteNumber",
-//                "title": "Favorite Number"
+//            "description": "Favorite Number"
 //        },
 //        "likes": {
 //            "type": "string",
-//                "name": "likes",
-//                "title": "Likes"
+//            "description": "Likes"
 //        }
 //    }
 // };

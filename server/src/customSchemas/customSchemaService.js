@@ -1,7 +1,7 @@
-"use strict";
-var _ = require("lodash");
-var util = require("util");
-var GenericService = require("../common/genericService");
+'use strict';
+var _ = require('lodash');
+var util = require('util');
+var GenericService = require('../common/genericService');
 
 class CustomSchemaService extends GenericService {
     constructor(database) {
@@ -10,29 +10,33 @@ class CustomSchemaService extends GenericService {
 
     getByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to CustomSchemaService.getByContentType'));
+            return Promise.reject(new Error(
+                'Incorrect number of arguments passed to CustomSchemaService.getByContentType'));
         }
 
-        return this.collection.findOne({orgId: orgId, contentType: contentType})
-            .then((doc) => {
-                this.useFriendlyId(doc);
-                return doc;
-            });
+        return this.collection.findOne(
+            {orgId: orgId, contentType: contentType}).then((doc) => {
+            this.useFriendlyId(doc);
+            return doc;
+        });
     }
 
     updateByContentType(orgId, contentType, updatedDoc) {
         if (arguments.length !== 3) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to CustomSchemaService.updateByContentType'));
+            return Promise.reject(new Error(
+                'Incorrect number of arguments passed to CustomSchemaService.updateByContentType'));
         }
         var clone = _.clone(updatedDoc);
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-        return this.collection.update({orgId: orgId, contentType: contentType}, {$set: clone});
+        return this.collection.update({orgId: orgId, contentType: contentType},
+            {$set: clone});
     }
 
     deleteByContentType(orgId, contentType) {
         if (arguments.length !== 2) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to CustomSchemaService.deleteByContentType'));
+            return Promise.reject(new Error(
+                'Incorrect number of arguments passed to CustomSchemaService.deleteByContentType'));
         }
         return this.collection.remove({orgId: orgId, contentType: contentType});
     }
@@ -43,7 +47,7 @@ class CustomSchemaService extends GenericService {
             return super.validate(doc);
         }
         else {
-            return "Need contentType and jsonSchema";
+            return 'Need contentType and jsonSchema';
         }
     }
 

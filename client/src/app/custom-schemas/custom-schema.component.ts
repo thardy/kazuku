@@ -7,6 +7,8 @@ import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} 
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
+const MANDATORY_FIELDS = ['name'];
+
 @Component({
     selector: 'kz-custom-schema',
     templateUrl: './custom-schema.component.html'
@@ -28,9 +30,15 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .subscribe((params:Params) => {
+            .subscribe((params: Params) => {
                 this.contentType = params['contentType'];
                 this.isEdit = params['contentType'] != null;
+                // let initialCustomSchema = null;
+                if (!this.isEdit) {
+                    const mandatoryFields = this.createMandatoryFields();
+                    this.initFieldsForm(this.fieldsFormArray, mandatoryFields);
+                }
+                // this.initForm(initialCustomSchema);
                 this.initForm(null);
             });
 
@@ -43,20 +51,19 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         });
     }
 
-    initForm(customSchema: CustomSchema) {
-        if (customSchema) {
-            const formValue = this.convertCustomSchemaToForm(customSchema);
-            this.form.patchValue(formValue);
+    initForm(fields) {
+        if (fields) {
+            this.initFieldsForm(this.fieldsFormArray, fields);
         }
         else if (this.isEdit) {
             this.customSchemaService.getByContentType(this.contentType)
-                .subscribe((customSchema) => {
-                    if (customSchema) {
-                        this.customSchema = customSchema;
-                        this.form.patchValue(customSchema);
-                        const fields = this.convertJsonSchemaToFormFields(customSchema.jsonSchema);
-                        this.initFieldsForm(this.fieldsFormArray, fields);
-                        this.original = Object.assign({}, customSchema);
+                .subscribe((fetchedCustomSchema) => {
+                    if (fetchedCustomSchema) {
+                        this.customSchema = fetchedCustomSchema;
+                        this.form.patchValue(fetchedCustomSchema);
+                        const formFields = this.convertJsonSchemaToFormFields(fetchedCustomSchema.jsonSchema);
+                        this.initFieldsForm(this.fieldsFormArray, formFields);
+                        this.original = Object.assign({}, fetchedCustomSchema);
                     }
                 });
         }
@@ -66,7 +73,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         this.clearFormArray(fieldsFormArray);
 
         // create the backing FormArray for the fields
-        for (let field of fields) {
+        for (const field of fields) {
             // this is what adds the new field controls to the form
             const formGroup = new FormGroup({
                 'type': new FormControl(field.type),
@@ -76,8 +83,20 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
             fieldsFormArray.push(formGroup);
             const originalValues = this.getOriginalValuesFromFieldFormGroup(formGroup);
-            this.fieldUx.set(formGroup, {showFieldBuilder: false, saved: true, originalValues: originalValues});
+            let isMandatory = false;
+            if (MANDATORY_FIELDS.find(f => f === field.fieldId)) {
+                isMandatory = true;
+            }
+            this.fieldUx.set(formGroup, {showFieldBuilder: false, saved: true, originalValues: originalValues, isMandatory: isMandatory});
         }
+    }
+
+    createMandatoryFields() {
+        const mandatoryFields = [
+            { type: 'string', description: 'Name', fieldId: 'name' }
+        ];
+
+        return mandatoryFields;
     }
 
     save(form) {
@@ -129,7 +148,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         }
     }
 
-    cancel(form){
+    cancel(form) {
         this.router.navigateByUrl('content-models');
 
         // if (this.isEdit) {
@@ -144,7 +163,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     addField() {
-        let formGroup = new FormGroup({
+        const formGroup = new FormGroup({
             'type': new FormControl(null),
             'description': new FormControl(null),
             'fieldId': new FormControl(null)
@@ -160,7 +179,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     deleteField(field: FormGroup) {
-        let index = this.getIndexOfItemInFormArray(this.fieldsFormArray, field);
+        const index = this.getIndexOfItemInFormArray(this.fieldsFormArray, field);
         this.fieldsFormArray.removeAt(index);
     }
 
@@ -218,7 +237,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         const fields = [];
 
         if (jsonSchema.properties) {
-            for (let property in jsonSchema.properties) {
+            for (const property in jsonSchema.properties) {
                 if (jsonSchema.properties.hasOwnProperty(property)) {
                     let type = jsonSchema.properties[property].type;
                     const format = jsonSchema.properties[property].format;
@@ -231,7 +250,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                     const fieldProperty: any = {
                         type: type,
                         description: jsonSchema.properties[property].description,
-                        fieldId: jsonSchema.properties[property].fieldId
+                        fieldId: property
                     };
 
                     if (jsonSchema.properties[property].enum) {
@@ -239,7 +258,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
                         fieldProperty.enumerationType = jsonSchema.properties[property].enumerationType;
                     }
 
-                    fields.push(fieldProperty)
+                    fields.push(fieldProperty);
                 }
             }
         }
@@ -275,7 +294,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     getOriginalValuesFromFieldFormGroup(fieldFormGroup: FormGroup) {
-        let originalValues = Object.assign({}, fieldFormGroup.value);
+        const originalValues = Object.assign({}, fieldFormGroup.value);
         delete originalValues.originalValues;
         return originalValues;
     }
