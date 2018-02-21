@@ -10,7 +10,7 @@
 // db.customData.createIndex( { "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true } ); // created because we will always provide an orgId on lookups, to enforce multi-tenant
 //
 // // sample document
-// var newCustomData = { orgId: 1, contentType: 'blogPost', title: 'My First Blog Post', content: 'Imagine a well written blog here.'};
+// var newCustomData = { orgId: 1, contentType: 'blogPost', name: 'My First Blog Post', content: 'Imagine a well written blog here.'};
 //
 //
 //

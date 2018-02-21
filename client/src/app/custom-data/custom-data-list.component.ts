@@ -13,7 +13,13 @@ export class CustomDataListComponent implements OnInit {
     customDataList: any[] = [];
     customSchemas: CustomSchema[] = [];
     selectedContentType: string;
-    showSchemaList: boolean = false;
+    showSchemaList = false;
+    columns = [
+        { prop: 'name' },
+        { prop: 'contentType'},
+        { prop: 'created' },
+        { prop: 'updated' },
+    ];
 
     constructor(private customDataService: CustomDataService, private customSchemaService: CustomSchemaService, private router: Router) {
     }

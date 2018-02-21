@@ -3,10 +3,11 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {InMemoryWebApiModule} from 'angular-in-memory-web-api';
-import {AppRoutingModule} from './app-routing.module';
 import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'angular2-schema-form';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
+import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {OrganizationListComponent} from './organizations/organization-list.component';
 import {OrganizationComponent} from './organizations/organization.component';
@@ -21,7 +22,6 @@ import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.com
 import {CustomDataListComponent} from './custom-data/custom-data-list.component';
 import {QueryListComponent} from './queries/query-list.component';
 import {QueryComponent} from './queries/query.component';
-import {InMemoryDataService} from './in-memory-data.service';
 import {TemplateService} from './templates/template.service';
 import {OrganizationService} from './organizations/organization.service';
 import {SiteService} from './sites/site.service';
@@ -36,7 +36,6 @@ import {AuthGuardService} from './common/auth/auth-guard.service';
 import {AsyncButtonDirective} from './common/ui/async-button.directive';
 import {PageComponent} from './pages/page.component';
 import {SuiModule} from 'ng2-semantic-ui';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ModalComponent} from './common/modal/modal.component';
 import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
 import {CustomSchemaService} from './custom-schemas/custom-schema.service';
@@ -45,6 +44,9 @@ import {CustomDataComponent} from './custom-data/custom-data.component';
 import {CustomDataService} from './custom-data/custom-data.service';
 import {UnAuthenticatedInterceptor} from './unauthenticated.interceptor';
 import {HttpService} from './common/http.service';
+
+import {InMemoryDataService} from './in-memory-data.service';
+import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 
 @NgModule({
     declarations: [
@@ -81,7 +83,8 @@ import {HttpService} from './common/http.service';
         BrowserAnimationsModule,
         InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true}),
         SuiModule,
-        SchemaFormModule
+        SchemaFormModule,
+        NgxDatatableModule
     ],
     providers: [
         {

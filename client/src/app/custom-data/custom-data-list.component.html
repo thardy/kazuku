@@ -1,4 +1,11 @@
 <h1>Content</h1>
+
+<div>
+    <ngx-datatable
+        [columns]="columns"
+        [rows]="customDataList">
+    </ngx-datatable>
+</div>
 <ul>
     <li *ngFor="let contentItem of customDataList">
         <a [routerLink]="['/content/' + contentItem.contentType + '/' + contentItem.id]">{{contentItem.name}}</a>
