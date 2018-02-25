@@ -2,15 +2,19 @@
 
 <div>
     <ngx-datatable
-        [columns]="columns"
         [rows]="customDataList">
+        <ngx-datatable-column name="Name">
+            <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+                <span (click)="sort()">{{column.name}}</span>
+            </ng-template>
+            <ng-template let-item="row" let-value="value" ngx-datatable-cell-template>
+                <a [routerLink]="['/content/' + item['contentType'] + '/' + item['id']]">{{value}}</a>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="ContentType">
+        </ngx-datatable-column>
     </ngx-datatable>
 </div>
-<ul>
-    <li *ngFor="let contentItem of customDataList">
-        <a [routerLink]="['/content/' + contentItem.contentType + '/' + contentItem.id]">{{contentItem.name}}</a>
-    </li>
-</ul>
 
 <button class="btn primary" (click)="create()">Add</button>
 
