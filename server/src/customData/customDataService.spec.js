@@ -201,31 +201,33 @@ describe("CustomDataService", function () {
             customDataService = new CustomDataService(database);
             // Insert some docs to be present before all tests start
 
-            return deleteAllTestData()
-                .then(function(result) {
-                    return Promise.all([
-                        database.customData.insert(newProduct1),
-                        database.customData.insert(newProduct2),
-                        database.customData.insert(newProduct3)
-                    ]);
-                })
-                .then(function(docs) {
-                    // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
-                    existingProducts = docs;
-                    _.forEach(existingProducts, function (item) {
-                        item.id = item._id.toHexString();
-                    });
-                    return docs;
-                })
-                .catch(error => {
-                    console.log(error);
-                    throw error;
-                });
+            return testHelper.setupTestProducts();
+            // return deleteAllTestData()
+            //     .then(function(result) {
+            //         return Promise.all([
+            //             database.customData.insert(newProduct1),
+            //             database.customData.insert(newProduct2),
+            //             database.customData.insert(newProduct3)
+            //         ]);
+            //     })
+            //     .then(function(docs) {
+            //         // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
+            //         existingProducts = docs;
+            //         _.forEach(existingProducts, function (item) {
+            //             item.id = item._id.toHexString();
+            //         });
+            //         return docs;
+            //     })
+            //     .catch(error => {
+            //         console.log(error);
+            //         throw error;
+            //     });
         });
 
         after(function () {
             // Remove all Test documents
-            return deleteAllTestData();
+            // return deleteAllTestData();
+            return testHelper.deleteAllTestProducts();
         });
 
         function deleteAllTestData() {
@@ -236,7 +238,7 @@ describe("CustomDataService", function () {
             var name = 'Widget';
             var query = new Query().eq('name', name);
             var expected = [];
-            expected.push(newProduct1);
+            expected.push(testHelper.newProduct1);
             var findPromise = customDataService.find(testOrgId, query);
 
             return findPromise.should.eventually.deep.equal(expected);
@@ -301,7 +303,7 @@ describe("CustomDataService", function () {
         });
 
         it("can query using an RQL string in method format", function () {
-            let expectedResults = [newProduct1, newProduct3];
+            let expectedResults = [testHelper.newProduct1, testHelper.newProduct3];
             let query = `eq(contentType,${testContentType})&sort(created)&limit(2,0)`; // limit must come last or it won't work
 
             let findPromise = customDataService.find(testOrgId, query);
@@ -399,7 +401,7 @@ describe("CustomDataService", function () {
         it("can query custom date fields within range", function () {
             var startDate = '2015-01-27';
             var endDate = '2015-05-20'; // todo: this is currently failing - it succeeds if I add one day.  The le (less than or equal to) is not working.
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&created=ge=date:{1}&created=le=date:{2}&sort(-created)".format(testContentType, startDate, endDate));
+            var findPromise = customDataService.find(testOrgId, 'contentType={0}&created=ge=date:{1}&created=le=date:{2}&sort(-created)'.format(testContentType, startDate, endDate));
 
             return Promise.all([
                 findPromise.should.eventually.have.length(2),

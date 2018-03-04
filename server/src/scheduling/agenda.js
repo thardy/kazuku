@@ -1,5 +1,6 @@
 const Agenda = require('agenda');
 const config = require('../server/config');
+const moment = require('moment');
 
 
 const agenda = new Agenda({db: {address: config.mongoDbUrl}});
@@ -12,7 +13,7 @@ jobTypes.forEach(function(type) {
 });
 
 agenda.on('ready', function() {
-    if(jobTypes.length) {
+    if (jobTypes.length) {
         agenda.start();
     }
 });
@@ -22,7 +23,7 @@ agenda.on('start', function(job) {
 });
 
 agenda.on('complete', function(job) {
-    console.log("Job %s finished", job.attrs.name);
+    console.log(`Job %s finished at ${moment().format('MM-DD-YYYY hh:mm:ss')}`, job.attrs.name);
 });
 
 agenda.on('success:regenerateJob', function(job) {
