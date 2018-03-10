@@ -15,6 +15,7 @@ class Database {
         this.users = this.db.get('users');
         this.organizations = this.db.get('organizations');
         this.sites = this.db.get('sites');
+        this.agendaJobs = this.db.get('agendaJobs');
     }
 
     close() {

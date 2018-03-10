@@ -29,6 +29,7 @@ class SetupService {
             .then((org) => {
                 return this.userService.create(org.id, adminUser);
             });
+        // todo: create initial publish schedule
     }
 
     extractMetaOrg(setupConfig) {

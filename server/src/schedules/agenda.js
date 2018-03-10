@@ -3,7 +3,7 @@ const config = require('../server/config');
 const moment = require('moment');
 
 
-const agenda = new Agenda({db: {address: config.mongoDbUrl}});
+const agenda = new Agenda({db: {address: config.mongoDbUrl, collection: 'agendaJobs'}});
 
 //var jobTypes = process.env.JOB_TYPES ? process.env.JOB_TYPES.split(',') : [];
 const jobTypes = config.jobTypes ? config.jobTypes.split(',') : [];
