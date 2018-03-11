@@ -47,6 +47,8 @@ import {HttpService} from './common/http.service';
 
 import {InMemoryDataService} from './in-memory-data.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
+import { SchedulesComponent } from './schedules/schedule.component';
+import {ScheduleService} from './schedules/schedule.service';
 
 @NgModule({
     declarations: [
@@ -72,7 +74,8 @@ import {NgxDatatableModule} from '@swimlane/ngx-datatable';
         SetupComponent,
         AsyncButtonDirective,
         ModalComponent,
-        CustomDataComponent
+        CustomDataComponent,
+        SchedulesComponent
     ],
     imports: [
         BrowserModule,
@@ -101,6 +104,7 @@ import {NgxDatatableModule} from '@swimlane/ngx-datatable';
         SetupGuardService,
         AuthGuardService,
         CustomDataService,
+        ScheduleService,
         {provide: WidgetRegistry, useClass: DefaultWidgetRegistry}
     ],
     entryComponents: [

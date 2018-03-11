@@ -31,11 +31,11 @@ class SetupController {
             })
             .catch(err => {
                 if (err.constructor === TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 if (err.code === 11000) {
-                    return res.status(409).json({'Errors': ['Duplicate Key Error']});
+                    return res.status(409).json({'errors': ['Duplicate Key Error']});
                 }
 
                 err.message = 'ERROR: SetupController -> create({0}) - {1}'.format(body, err.message);

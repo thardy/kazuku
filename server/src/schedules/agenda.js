@@ -2,7 +2,7 @@ const Agenda = require('agenda');
 const config = require('../server/config');
 const moment = require('moment');
 
-
+// todo: split this export out from the actual scheduling stuff below it
 const agenda = new Agenda({db: {address: config.mongoDbUrl, collection: 'agendaJobs'}});
 
 //var jobTypes = process.env.JOB_TYPES ? process.env.JOB_TYPES.split(',') : [];

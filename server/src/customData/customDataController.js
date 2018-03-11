@@ -107,14 +107,14 @@ class CustomDataController {
         return this.service.getByTypeAndId(current.user.orgId, contentType, id)
             .then(function (doc) {
                 if (doc === null) {
-                    return res.status(404).json({'Errors': ['id not found']});
+                    return res.status(404).json({'errors': ['id not found']});
                 }
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 err.message = 'ERROR: customDataController -> customDataService.getByTypeAndId({0}, {1}, {2}) - {3}'.format(current.user.orgId, contentType, id, err.message);
@@ -152,14 +152,14 @@ class CustomDataController {
         return this.service.updateById(current.user.orgId, id, body)
             .then(function (result) {
                 if (result.nModified <= 0) {
-                    return res.status(404).json({'Errors': ['Document not found']});
+                    return res.status(404).json({'errors': ['Document not found']});
                 }
 
                 return res.status(200).json({});
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
                 err.message = 'ERROR: customDataController -> customDataService.updateById({0}, {1}, {2}) - {3}'.format(current.user.orgId, id, body, err.message);
                 return next(err);
@@ -173,7 +173,7 @@ class CustomDataController {
         return this.service.deleteByTypeAndId(current.user.orgId, contentType, id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
-                    return res.status(404).json({'Errors': ['id not found']});
+                    return res.status(404).json({'errors': ['id not found']});
                 }
 
                 return res.status(204).json({});
@@ -181,7 +181,7 @@ class CustomDataController {
             .catch(err => {
                 // This is not happening!!!
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
                 err.message = 'customDataController -> customDataService.deleteByTypeAndId({0}, {1}, {2}) - {3}'.format(current.user.orgId, contentType, id, err.message);
                 return next(err);

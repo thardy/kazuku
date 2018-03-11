@@ -49,7 +49,7 @@ class CrudController {
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 err.message = `ERROR: ${this.resourceName}Controller -> getById(${current.user.orgId}, ${id}) - ${err.message}`;
@@ -66,11 +66,11 @@ class CrudController {
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 if (err.code === 11000) {
-                    return res.status(409).json({'Errors': ['Duplicate Key Error']});
+                    return res.status(409).json({'errors': ['Duplicate Key Error']});
                 }
 
                 err.message = `ERROR: ${this.resourceName}Controller -> create(${current.user.orgId}, ${body}) - ${err.message}`;
@@ -90,7 +90,7 @@ class CrudController {
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 err.message = `ERROR: ${this.resourceName}Controller -> updateById(${current.user.orgId}, ${id}, ${body}}) - ${err.message}`;
@@ -103,14 +103,14 @@ class CrudController {
         this.service.delete(current.user.orgId, id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
-                    return res.status(404).json({'Errors': ['id not found']});
+                    return res.status(404).json({'errors': ['id not found']});
                 }
 
                 return res.status(204).json({});
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 err.message = `ERROR: ${this.resourceName}Controller -> delete(${current.user.orgId}, ${id}) - ${err.message}`;

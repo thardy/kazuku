@@ -19,7 +19,7 @@
             <label>Domain</label>
             <input type="text"
                    name="domain"
-                   [(ngModel)]="site.domain">
+                   [(ngModel)]="site.domainName">
         </div>
 
         <div class="extra content">
@@ -32,3 +32,5 @@
 
     </div>
 </form>
+
+<kz-schedule [siteId]="siteId"></kz-schedule>

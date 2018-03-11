@@ -1,9 +1,9 @@
 'use strict';
 const ScheduleService = require("./scheduleService");
 const authHelper = require('../common/authHelper');
+const current = require('../common/current');
 
 class SchedulesController {
-    // todo: this whole thing is a wip
     constructor(app) {
         this.app = app;
         this.service = new ScheduleService();
@@ -15,48 +15,53 @@ class SchedulesController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.get(`/api/${this.resourceName}`, authHelper.isAuthenticated,
-            this.getByOrgId.bind(this));
-        app.put(`/api/${this.resourceName}`, authHelper.isAuthenticated,
-            this.updateByOrgId.bind(this));
+        app.get(`/api/${this.resourceName}/:siteId`, authHelper.isAuthenticated, this.getbyOrgAndSite.bind(this));
+        app.put(`/api/${this.resourceName}/:siteId`, authHelper.isAuthenticated, this.scheduleRegenerateJobForOrgSite.bind(this));
     }
 
-    getByOrgId(req, res, next) {
-        let id = req.params.id;
+    getbyOrgAndSite(req, res, next) {
+        let siteId = req.params.siteId;
         res.set('Content-Type', 'application/json');
 
-        this.service.getbyOrgAndSite(id).then((doc) => {
-            if (doc === null) return next();
+        this.service.getbyOrgAndSite(current.user.orgId, siteId)
+            .then((doc) => {
+                if (doc === null) {
+                    return res.status(404).json({'errors': ['id not found']});
+                }
 
-            return res.status(200).send(doc);
-        }).catch(err => {
-            if (err.constructor == TypeError) {
-                return res.status(400).json({'Errors': [err.message]});
-            }
+                return res.status(200).send(doc);
+            })
+            .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'errors': [err.message]});
+                }
 
-            err.message = 'ERROR: {0}Controller -> getById({1}) - {2}'.format(
-                this.resourceName, id, err.message);
-            return next(err);
-        });
+                err.message = 'ERROR: {0}Controller -> getById({1}) - {2}'.format(
+                    this.resourceName, id, err.message);
+                return next(err);
+            });
     }
 
-    updateByOrgId(req, res, next) {
-        let id = req.params.id;
+    scheduleRegenerateJobForOrgSite(req, res, next) {
+        let siteId = req.params.siteId;
         let body = req.body;
+        const minutes = body.minutes;
 
-        this.service.updateById(id, body).then((result) => {
-            if (result.nModified <= 0) return next();
+        this.service.scheduleRegenerateJobForOrgSite(current.user.orgId, siteId, minutes)
+            .then((result) => {
+                if (!result) return next();
 
-            return res.status(200).json({});
-        }).catch(err => {
-            if (err.constructor == TypeError) {
-                return res.status(400).json({'Errors': [err.message]});
-            }
+                return res.status(200).json(result);
+            })
+            .catch(err => {
+                if (err.constructor == TypeError) {
+                    return res.status(400).json({'errors': [err.message]});
+                }
 
-            err.message = 'ERROR: {0}Controller -> updateById({1}, {2}) - {3}'.format(
-                this.resourceName, id, body, err.message);
-            return next(err);
-        });
+                err.message = 'ERROR: {0}Controller -> updateById({1}, {2}) - {3}'.format(
+                    this.resourceName, id, body, err.message);
+                return next(err);
+            });
     }
 
     // create(req, res, next) {
@@ -68,11 +73,11 @@ class SchedulesController {
     //   })
     //   .catch(err => {
     //     if (err.constructor == TypeError) {
-    //       return res.status(400).json({'Errors': [err.message]});
+    //       return res.status(400).json({'errors': [err.message]});
     //     }
     //
     //     if (err.code === 11000) {
-    //       return res.status(409).json({'Errors': ['Duplicate Key Error']});
+    //       return res.status(409).json({'errors': ['Duplicate Key Error']});
     //     }
     //
     //     err.message = 'ERROR: {0}Controller -> create({1}) - {2}'.format(this.resourceName, body, err.message);

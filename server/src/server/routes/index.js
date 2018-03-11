@@ -6,8 +6,10 @@ const OrganizationsController = require('../../organizations/organizationsContro
 const SetupController = require('../../setup/setupController');
 const SitesController = require('../../sites/sitesController');
 const QueriesController = require('../../queries/queriesController');
+const SchedulesController = require('../../schedules/schedulesController');
 
 // todo: convert this to be more modular (one file in each folder that aggregates all the controllers inside it)
+// Currently, routing requires any new controller to be present here in order for its routes to get mapped.
 exports.map = function(app) {
     let customDataController = new CustomDataController(app);
     let customSchemasController = new CustomSchemasController(app);
@@ -17,4 +19,5 @@ exports.map = function(app) {
     let setupController = new SetupController(app);
     let sitesController = new SitesController(app);
     let queriesController = new QueriesController(app);
+    let schedulesController = new SchedulesController(app);
 };

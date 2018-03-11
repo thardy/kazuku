@@ -53,7 +53,7 @@ class CustomSchemasController extends CrudController {
             then((result) => {
                 if (result.nModified <= 0) {
                     return res.status(404).
-                        json({'Errors': ['Document not found']});
+                        json({'errors': ['Document not found']});
                 }
 
                 return res.status(200).json({});

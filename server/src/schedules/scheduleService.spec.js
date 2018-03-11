@@ -36,13 +36,20 @@ describe("ScheduleService", () => {
             statusId: 1,
             isMetaOrg: false,
         };
+        let newOrg3 = {
+            name: `${testOrgPrefix}Org without an intial schedule`,
+            code: `${testOrgPrefix}needsSchedule`,
+            description: 'A good org to create a schedule for.',
+            statusId: 1,
+            isMetaOrg: false,
+        };
 
         return deleteAllTestOrganizations()
             .then((result) => {
                 return deleteAllTestSchedules();
             })
             .then(function(result) {
-                return database.organizations.insert([newOrg1, newOrg2]);
+                return database.organizations.insert([newOrg1, newOrg2, newOrg3]);
             })
             .then(function(docs) {
                 existingOrgs = docs;
@@ -58,7 +65,10 @@ describe("ScheduleService", () => {
                 docs.forEach((doc) => {
                     let minutes = 3;
                     let siteId = 1;
-                    promises.push(scheduleService.scheduleRegenerateJobForOrgSite(doc.id, siteId, minutes, true));
+                    // don't create a schedule for org3
+                    if (doc.id !== existingOrgs[2].id) {
+                        promises.push(scheduleService.scheduleRegenerateJobForOrgSite(doc.id, siteId, minutes, true));
+                    }
                 });
                 return Promise.all(promises);
             })
@@ -76,22 +86,36 @@ describe("ScheduleService", () => {
     });
 
     it("can get schedules by org", () => {
-        return scheduleService.getbyOrgAndSite(existingOrgs[0].id, testSiteId)
+        const orgId = existingOrgs[0].id;
+        return scheduleService.getbyOrgAndSite(orgId, testSiteId)
             .then((job) => {
-                job.attrs.data.should.deep.equal({orgId: existingOrgs[0].id, siteId: testSiteId, test: true});
+                job.attrs.data.should.deep.equal({orgId: orgId, siteId: testSiteId, test: true});
                 return job.attrs.repeatInterval.should.deep.equal('3 minutes');
             });
     });
 
+    it('should create a new schedule for an org', () => {
+        const numMinutes = 10;
+        const orgId = existingOrgs[2].id;
+        return scheduleService.scheduleRegenerateJobForOrgSite(orgId, testSiteId, numMinutes, true)
+        .then((result) => {
+            return scheduleService.getbyOrgAndSite(orgId, testSiteId)
+        })
+        .then((job) => {
+            job.attrs.data.should.deep.equal({orgId: orgId, siteId: testSiteId, test: true});
+            return job.attrs.repeatInterval.should.deep.equal(`${numMinutes} minutes`);
+        });
+    });
+
     it('should update an existing schedule for an org', () => {
         const numMinutes = 29;
-        // todo: this isn't updating, it's inserting a new schedule for this orgId
-        return scheduleService.scheduleRegenerateJobForOrgSite(existingOrgs[1].id, testSiteId, numMinutes, true)
+        const orgId = existingOrgs[1].id;
+        return scheduleService.scheduleRegenerateJobForOrgSite(orgId, testSiteId, numMinutes, true)
             .then((result) => {
-                return scheduleService.getbyOrgAndSite(existingOrgs[1].id, testSiteId)
+                return scheduleService.getbyOrgAndSite(orgId, testSiteId)
             })
             .then((job) => {
-                job.attrs.data.should.deep.equal({orgId: existingOrgs[1].id, siteId: testSiteId, test: true});
+                job.attrs.data.should.deep.equal({orgId: orgId, siteId: testSiteId, test: true});
                 return job.attrs.repeatInterval.should.deep.equal(`${numMinutes} minutes`);
             });
     });

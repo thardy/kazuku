@@ -25,7 +25,7 @@ export class SiteComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .flatMap((params:Params) => {
+            .flatMap((params: Params) => {
                 const id = params['id'] || '';
                 if (id) {
                     this.siteId = id;

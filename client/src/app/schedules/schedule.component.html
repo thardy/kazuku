@@ -1,0 +1,24 @@
+<div>Static site regeneration interval (in minutes):</div>
+<ng-container *ngIf="!editing">
+    {{regenerationInterval}} <button type="button" class="ui negative button" (click)="editSchedule()">Edit</button>
+</ng-container>
+
+<form *ngIf="editing" #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
+    <div>
+        <div class="field">
+            <input type="text"
+                   name="regenerationInterval"
+                   [ngModel]="regenerationInterval">
+        </div>
+
+        <div class="extra content">
+            <button type="submit" class="ui positive button" [disabled]="form.invalid"
+                    kz-async-button [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                <i class="checkmark icon"></i> Save
+            </button>
+            <button type="button" class="ui negative button" (click)="cancel()">Cancel</button>
+        </div>
+
+    </div>
+</form>
+<div>this is how often the server will check for changes to data/queries/templates to regenerate any pages that need to be regenerated</div>

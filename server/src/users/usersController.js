@@ -85,11 +85,11 @@ class UsersController extends CrudController {
             })
             .catch(err => {
                 if (err.constructor == TypeError) {
-                    return res.status(400).json({'Errors': [err.message]});
+                    return res.status(400).json({'errors': [err.message]});
                 }
 
                 if (err.code === 11000) {
-                    return res.status(409).json({'Errors': ['Duplicate Key Error']});
+                    return res.status(409).json({'errors': ['Duplicate Key Error']});
                 }
 
                 err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, current.user.orgId, body, err.message);
