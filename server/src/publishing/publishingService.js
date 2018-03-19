@@ -1,25 +1,25 @@
-"use strict";
-let _ = require("lodash");
-let Promise = require("bluebird");
-let database = require("../database/database").database;
-let QueryService = require("../queries/queryService");
+'use strict';
+let _ = require('lodash');
+let Promise = require('bluebird');
+let database = require('../database/database').database;
+let QueryService = require('../queries/queryService');
+let OrganizationService = require('../organizations/organizationService');
+let SiteService = require('../sites/siteService');
 let TemplateService = require('../templates/templateService');
-let cache = require("memory-cache");
-let fs = require("fs-extra");
-let path = require("path");
+let cache = require('memory-cache');
+let fs = require('fs-extra');
+let path = require('path');
 Promise.promisifyAll(fs);
 
 class PublishingService {
 
     constructor(database) {
-        this._db = database;
-        this._queryService = new QueryService(database);
-        this._templateService = new TemplateService(database, this._queryService);
+        this.db = database;
+        this.queryService = new QueryService(database);
+        this.templateService = new TemplateService(database, this.queryService);
+        this.orgService = new OrganizationService(database);
+        this.siteService = new SiteService(database);
     }
-
-    get db() { return this._db; }
-    get queryService() { return this._queryService; }
-    get templateService() { return this._templateService; }
 
     regenerateItems(orgId, siteId) {
         let queriesToRegenerate = [];
@@ -36,7 +36,7 @@ class PublishingService {
                             queryObject.regenerate = 0;         // reset the regenerate flag
 
                             // cache all the query results for this regeneration cycle
-                            cache.put(queryObject.name, queryResults);
+                            cache.put(`query_${queryObject.name}`, queryResults);
 
                             // save the queries back to the database
                             // todo: switch to batch update for all queries (queriesToRegenerate) once I get a batch update working
@@ -118,13 +118,28 @@ class PublishingService {
             console.log(`templateObject with name ${templateObject.name} does not have url property in publishingService.publishPage()`);
         }
 
-        let masterBasePath = '/organizations';
-        let orgBasePath = 'test-org';
-        let fileFolder =  path.join(masterBasePath, orgBasePath, templateObject.siteId.toString());
-        let filePath = path.join(fileFolder, `${templateObject.url}.html`);
+        // get site from cache
+        let site = cache.get(`site_${templateObject.siteId}`);
+        let promise = site ? Promise.resolve(site) : this.siteService.getById(orgId, templateObject.siteId);
 
-        // Overwrites file if it exists, creates it otherwise.  Creates directories if they don't exist.
-        return fs.outputFileAsync(filePath, templateObject.renderedPage, { flag: 'w' });
+        return promise
+            .then((results) => {
+                site = results;
+                cache.put(`site_${templateObject.siteId}`, site);
+                return Promise.resolve(site);
+            })
+            .then((site) => {
+                let masterBasePath = path.join(global.appRoot, 'siteContent');
+                let fileFolder =  path.join(masterBasePath, site.code);
+                let filePath = path.join(fileFolder, `${templateObject.url}.html`);
+
+                // Overwrites file if it exists, creates it otherwise.  Creates directories if they don't exist.
+                return fs.outputFileAsync(filePath, templateObject.renderedPage, { flag: 'w' });
+            })
+            .catch(e => {
+                throw e;
+            });
+
     }
 
 }

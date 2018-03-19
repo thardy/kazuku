@@ -1,15 +1,16 @@
-"use strict";
-var database = require("../database/database").database;
-var _ = require("lodash");
-var CustomDataService = require("../customData/customDataService");
-var TemplateService = require("../templates/templateService");
-var QueryService = require("../queries/queryService");
-var CustomSchemaService = require("../customSchemas/customSchemaService");
-var sinon = require("sinon");
-var Promise = require("bluebird");
+'use strict';
+var database = require('../database/database').database;
+var _ = require('lodash');
+var CustomDataService = require('../customData/customDataService');
+var TemplateService = require('../templates/templateService');
+var QueryService = require('../queries/queryService');
+var CustomSchemaService = require('../customSchemas/customSchemaService');
+var sinon = require('sinon');
+var Promise = require('bluebird');
+const testHelper = require('../common/testHelper');
 
-let testOrgId = 1;
-let testSiteId = 1;
+let testOrgId = testHelper.testOrgId;
+let testSiteId = testHelper.testSiteId;
 
 let existingNavItems = [
     { orgId: testOrgId, contentType: "navItems", name: 'Nav1', url: '/nav1', sortOrder: 1, created: new Date('2014-01-01T00:00:00') },

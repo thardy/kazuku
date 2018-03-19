@@ -12,9 +12,9 @@ var sinon = require("sinon");
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
+
 describe("DependencyService", function () {
     let dependencyService = {};
-    let testOrgId = 1;
     let testContentType = 'testType';
 
     // These are unit tests, using fakes for customDataService, templateService, and queryService

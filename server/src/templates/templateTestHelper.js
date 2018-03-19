@@ -1,9 +1,10 @@
 "use strict";
 let database = require("../database/database").database;
 let _ = require("lodash");
+const testHelper = require('../common/testHelper');
 
-let testOrgId = 1;
-let testSiteId = 1;
+const testOrgId = testHelper.testOrgId;
+const testSiteId = testHelper.testSiteId;
 let existingTemplate1 = {};
 let existingTemplate2= {};
 

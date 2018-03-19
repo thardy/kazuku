@@ -16,13 +16,14 @@ var mongoRql = require('mongo-rql');
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
+let testOrgId = testHelper.testOrgId;
+
 describe("CustomDataService", function () {
     describe("CRUD", function () {
         var customDataService = {};
         var existingCustomData1 = {};
         var existingCustomData2 = {};
         var theUpdatedCustomData = {};
-        var testOrgId = 1;
         var testContentType = 'testType';
 
         before(function () {
@@ -190,7 +191,6 @@ describe("CustomDataService", function () {
     describe("Resource Query Language", function () {
         var customDataService = {};
         var existingProducts = [];
-        var testOrgId = 1;
         var testContentType = 'testProducts';
         var now = moment().format('MMMM Do YYYY, h:mm:ss a');
         var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };

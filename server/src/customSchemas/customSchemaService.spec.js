@@ -7,15 +7,17 @@ var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
 var moment = require("moment");
+const testHelper = require('../common/testHelper');
 
 chai.use(chaiAsPromised);
+
+const testOrgId = testHelper.testOrgId;
 
 describe("CustomSchemaService CRUD", function () {
     var customSchemaService = {};
     var existingCustomSchema1 = {};
     var existingCustomSchema2= {};
     var theUpdatedCustomSchema = {};
-    var testOrgId = 1;
     var testContentType1 = 'testType1';
     var testContentType2 = 'testType2';
 

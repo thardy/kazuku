@@ -3,14 +3,16 @@ const chaiAsPromised = require("chai-as-promised");
 const expect = chai.expect;
 const should = chai.Should();
 chai.use(chaiAsPromised);
+const testHelper = require('../common/testHelper');
 
 const UserService = require("./userService");
 const database = require("../database/database").database;
 
+const testOrgId = testHelper.testOrgId;
+
 describe("UserService CRUD", function () {
     let userService = {};
     let existingUser = {};
-    let testOrgId = 1;
 
     before(function () {
         userService = new UserService(database);

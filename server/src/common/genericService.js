@@ -206,7 +206,11 @@ class GenericService {
     }
 
     isValidObjectId(id) {
-        return id.match(/^[0-9a-fA-F]{24}$/);
+        let result = false;
+        if (typeof id === 'string' || id instanceof String) {
+            result = id.match(/^[0-9a-fA-F]{24}$/);
+        }
+        return result;
     }
 
 

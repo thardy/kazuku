@@ -32,5 +32,4 @@ env-config.js
 development.json
 !server/bin/www
 server/src/public
-
-
+server/src/siteContent

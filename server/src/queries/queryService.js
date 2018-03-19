@@ -53,7 +53,7 @@ class QueryService extends GenericService {
         const promises = [];
         // some local helper functions to make this more clear
         const resolveQueryByName = (queryName) => {
-            let cachedResults = cache.get(queryName);
+            let cachedResults = cache.get(`query_${queryName}`);
             if (cachedResults) {
                 return Promise.resolve(cachedResults);
             }

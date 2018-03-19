@@ -4,8 +4,9 @@ var TemplateService = require("../templates/templateService");
 var QueryService = require("../queries/queryService");
 let Database = require("../database/database").Database;
 var sinon = require("sinon");
+const testHelper = require('../common/testHelper');
 
-let testOrgId = 1;
+const testOrgId = testHelper.testOrgId;
 let testSiteId = 1;
 let fakeNavItemsDataDependents = [
     { orgId: testOrgId, siteId: testSiteId, name: "headerNavigation", query: 'blah'}

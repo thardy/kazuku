@@ -1,5 +1,5 @@
 'use strict';
-const GenericService = require("../common/genericService");
+const GenericService = require('../common/genericService');
 
 class SiteService extends GenericService {
     constructor(database) {
@@ -12,7 +12,7 @@ class SiteService extends GenericService {
             return super.validate(doc);
         }
         else {
-            return "Need code and name";
+            return 'Need code and name';
         }
     }
 

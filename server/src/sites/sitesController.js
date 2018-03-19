@@ -1,7 +1,7 @@
 'use strict';
 const database = require("../database/database").database;
 const CrudController = require("../common/crudController");
-const SiteService = require("./sitesService");
+const SiteService = require("./siteService");
 const authHelper = require('../common/authHelper');
 const current = require('../common/current');
 

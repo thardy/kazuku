@@ -1,24 +1,27 @@
-"use strict";
+'use strict';
 
-let database = require("../database/database").database;
-let PublishingService = require("./publishingService");
-let CustomDataService = require("../customData/customDataService");
-let QueryService = require("../queries/queryService");
-let TemplateService = require("../templates/templateService");
-let pubTestHelper = require("./publishingTestHelper");
-let templateTestHelper = require("../templates/templateTestHelper");
-let queryTestHelper = require("../queries/queryTestHelper");
-let fs = require("fs-extra");
-let path = require("path");
-let Promise = require("bluebird");
-let _ = require("lodash");
-let chai = require("chai");
+let database = require('../database/database').database;
+let PublishingService = require('./publishingService');
+let CustomDataService = require('../customData/customDataService');
+let QueryService = require('../queries/queryService');
+let TemplateService = require('../templates/templateService');
+let pubTestHelper = require('./publishingTestHelper');
+let templateTestHelper = require('../templates/templateTestHelper');
+let queryTestHelper = require('../queries/queryTestHelper');
+const testHelper = require('../common/testHelper');
+let fs = require('fs-extra');
+const path = require('path');
+let Promise = require('bluebird');
+let _ = require('lodash');
+let chai = require('chai');
 let should = chai.Should();
 let expect = chai.expect;
 
 Promise.promisifyAll(fs);
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
+
+global.appRoot = path.resolve('/');
 
 describe("PublishingService", function () {
     let publishingService = {};
@@ -41,7 +44,13 @@ describe("PublishingService", function () {
 
         it("regenerates all items that need to be regenerated", function () {
             // Create all our test data
-            return pubTestHelper.createCustomData()
+            return testHelper.setupTestOrgs()
+                .then((result) => {
+                    return testHelper.setupTestSites();
+                })
+                .then((result) => {
+                    return pubTestHelper.createCustomData();
+                })
                 .then((result) => {
                     return pubTestHelper.createQueryRegenerateList();
                 })
@@ -108,7 +117,13 @@ describe("PublishingService", function () {
 
         it("saves pages to the file system at their configured location when they are regenerated", () => {
             // Create all our test data
-            return pubTestHelper.createCustomData()
+            return testHelper.setupTestOrgs()
+                .then((result) => {
+                    return testHelper.setupTestSites();
+                })
+                .then((result) => {
+                    return pubTestHelper.createCustomData();
+                })
                 .then((result) => {
                     return pubTestHelper.createQueryRegenerateList();
                 })
@@ -133,7 +148,7 @@ describe("PublishingService", function () {
 
                     for (let template of pubTestHelper.existingPageRegenerateList) {
                         let expectedPageOutput = pubTestHelper.expectedRenderedPages.get(template.name);
-                        let folder = `/sites/test-org/${pubTestHelper.testSiteId}`;
+                        let folder = `/siteContent/${testHelper.existingSites[0].code}`;
                         let filePath = path.join(folder, `${template.url}.html`);
 
                         promises.push(fs.readFileAsync(filePath, 'utf8')

@@ -6,11 +6,12 @@ const database = require("../database/database").database;
 const chai = require("chai");
 const should = chai.Should();
 const expect = chai.expect;
+const testHelper = require('../common/testHelper');
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
-const testOrgId = 1;
+const testOrgId = testHelper.testOrgId;
 
 describe("ScheduleService", () => {
     let scheduleService = {};

@@ -1,14 +1,20 @@
 var config = require('../server/config');
 var Promise = require("bluebird");
 var database = require("../database/database").database;
+const ObjectId = require('mongodb').ObjectID;
 var _ = require("lodash");
 var moment = require("moment");
 const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
 
 //var existingProducts = [];
-var testOrgId = 1;
+var testOrgId = '5aad6ee15069c6aa32dea338';
+var testSiteId = '5aad6ee15069c6aa32dea339';
 var testProductsContentType = 'testProducts';
 var differentTestProductsContentType = 'differentTestProducts';
+
+let testOrg1 = { _id: new ObjectId(testOrgId), name: 'The Test Org One', code: 'test-org1', isMetaOrg: false, description: 'used in a lot of tests', statusId: 1 };
+let testSite1 = { _id: new ObjectId(testSiteId), orgId: testOrgId, name: 'Test Site One', code: 'test-site1' };
+
 var newProduct1 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
 var newProduct2 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
 var newProduct3 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00') };
@@ -57,6 +63,28 @@ var newSchema2 = {
         }
     }
 };
+
+function setupTestOrgs() {
+    return deleteAllTestOrgs()
+    .then(result => {
+        return createTestOrgs();
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
+
+function setupTestSites() {
+    return deleteAllTestSites()
+    .then(result => {
+        return createTestSites();
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
 
 function setupTestProducts() {
     return deleteAllTestProducts()
@@ -112,6 +140,40 @@ function createTestProducts() {
     .then(function(docs) {
         testHelper.existingProducts = docs;
         _.forEach(testHelper.existingProducts, function (item) {
+            item.id = item._id.toHexString();
+        });
+        return docs;
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
+
+function createTestOrgs() {
+    return Promise.all([
+        database.organizations.insert(testOrg1)
+    ])
+    .then((docs) => {
+        testHelper.existingOrgs = docs;
+        _.forEach(testHelper.existingOrgs, (item) => {
+            item.id = item._id.toHexString();
+        });
+        return docs;
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
+
+function createTestSites() {
+    return Promise.all([
+        database.sites.insert(testSite1)
+    ])
+    .then((docs) => {
+        testHelper.existingSites = docs;
+        _.forEach(testHelper.existingSites, (item) => {
             item.id = item._id.toHexString();
         });
         return docs;
@@ -185,6 +247,14 @@ function createTestSchemas() {
     });
 }
 
+function deleteAllTestOrgs() {
+    return database.organizations.remove({_id: new ObjectId(testOrgId)});
+}
+
+function deleteAllTestSites() {
+    return database.sites.remove({orgId: testOrgId});
+}
+
 function deleteAllCustomDataForTestOrg() {
     return database.customData.remove({orgId: testOrgId});
 }
@@ -214,6 +284,7 @@ function stripFriendlyIdsFromModel(model) { }
 var testHelper = {
     apiUrl: 'http://localhost:3001',
     testOrgId: testOrgId,
+    testSiteId: testSiteId,
     testProductsContentType: testProductsContentType,
     newProduct1: newProduct1,
     newProduct2: newProduct2,
@@ -229,6 +300,10 @@ var testHelper = {
     existingSchemas: [],
     newUser1: newUser1,
     existingUsers: [],
+    existingOrgs: [],
+    existingSites: [],
+    setupTestOrgs: setupTestOrgs,
+    setupTestSites: setupTestSites,
     setupTestProducts: setupTestProducts,
     setupDifferentTestProducts: setupDifferentTestProducts,
     createTestProducts: createTestProducts,

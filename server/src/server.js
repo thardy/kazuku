@@ -1,13 +1,16 @@
 'use strict';
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./server/config');
 const session = require('./server/session');
 const logger = require('./server/logger');
 const routes = require('./server/routes');
+const vhost = require('vhost');
 require('zone.js/dist/zone-node.js');
+const path = require('path');
+
+global.appRoot = path.resolve(__dirname);
 
 // Setup passport auth strategies
 const passportAuthStrategies = require('./server/passport')(passport); // pass passport for configuration
@@ -23,22 +26,24 @@ function setupAuthZone(req, res, next) {
     })
 }
 
-app.set('port', config.port || 3001);
+// Main server app
+const main = express();
+main.set('port', config.port || 3001);
 
 // serve static files out of this folder - referenced as /css, /img, /js
 console.log('about to load static middleware');
-app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.json());
+main.use(express.static(global.appRoot + '/public'));
+main.use(bodyParser.json());
 
 // sessions has to be used before router is mounted
-app.use(setupAuthZone);
-app.use(session);
-app.use(passport.initialize());
-app.use(passport.session());
+main.use(setupAuthZone);
+main.use(session);
+main.use(passport.initialize());
+main.use(passport.session());
 
 if (!module.parent) {
     // Only use morgan if we aren't running tests.  It clutters up the test output.
-    app.use(require('morgan')('combined', {
+    main.use(require('morgan')('combined', {
         stream: {
             write: (message) => {
                 // Write to logs
@@ -49,15 +54,15 @@ if (!module.parent) {
 }
 
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
-routes.map(app);
+routes.map(main);
 
 // custom 404 handler.  This will prevent html being returned for 404s.
-app.use((req, res, next) => {
+main.use((req, res, next) => {
     res.status(404).json({error: "Not Found"});
 });
 
 // custom error handler.  This will prevent html being returned for errors.
-app.use((err, req, res, next) => {
+main.use((err, req, res, next) => {
     if (req.app.get('env') !== 'development') {
         delete err.stack;
     }
@@ -75,6 +80,21 @@ app.use((err, req, res, next) => {
     res.status(err.statusCode || 500).json(err);
 });
 
+// site app - maps subdomains to site folders
+var siteApp = express();
+siteApp.use((req, res, next) => {
+    var siteCode = req.vhost[0];
+    req.originalUrl = req.ul;
+    req.url = '/' + siteCode + req.url;
+    next();
+});
+
+// Vhost app
+var app = module.exports = express();
+
+app.use(vhost('kazuku.com', main)); // Serves top level domain via Main server app
+app.use(vhost('*.kazuku.com', siteApp)); // Serves all subdomains via siteApp
+
 // the following is now handled in www/bin
 // // module.parent check is required to support mocha watch
 // // src: https://github.com/mochajs/mocha/issues/1912
@@ -85,4 +105,5 @@ app.use((err, req, res, next) => {
 //     });
 // }
 //
+//module.exports = app;
 module.exports = app;

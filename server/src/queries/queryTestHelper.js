@@ -1,8 +1,9 @@
 "use strict";
 var database = require("../database/database").database;
 var _ = require("lodash");
+const testHelper = require('../common/testHelper');
 
-let testOrgId = 1;
+let testOrgId = testHelper.testOrgId;
 let testSiteId = 1;
 let existingQuery1 = {};
 let existingQuery2= {};
