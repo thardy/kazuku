@@ -156,7 +156,7 @@ describe("CustomDataService", function () {
         });
 
         function deleteAllTestData() {
-            return database.customData.remove({orgId: 1, contentType: testContentType});
+            return database.customData.remove({orgId: testHelper.testOrgId, contentType: testContentType});
         }
 
         describe("CRUD with dates", function () {
