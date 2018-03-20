@@ -1,15 +1,18 @@
-"use strict";
+'use strict';
 
-var Promise = require("bluebird");
+var Promise = require('bluebird');
 var TemplateEngine = require('./templateEngine');
-var QueryService = require("../queries/queryService");
-var sinon = require("sinon");
-var _ = require("lodash");
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+var QueryService = require('../queries/queryService');
+var sinon = require('sinon');
+var _ = require('lodash');
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
 var expect = chai.expect;
+const testHelper = require('../common/testHelper');
 
 chai.use(chaiAsPromised);
+
+const testOrgId = testHelper.testOrgId;
 
 let partialWithModelQuery = {
     name: 'partialWithModelQuery',
@@ -22,34 +25,34 @@ var FakeTemplateRepo = function() {
 
     var templateObjects = [];
     templateObjects.push({
-        orgId: 1,
+        orgId: testOrgId,
         name: 'master',
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: testOrgId,
         name: 'masterWithModel',
         title: 'Master Title',
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: testOrgId,
         name: 'dog',
         template: "dogs are nice"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: testOrgId,
         name: 'cat',
         template: "cats are ok"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: testOrgId,
         name: 'chicken',
         template: "chickens are {{disposition}}"
     });
     templateObjects.push({
-        orgId: 1,
+        orgId: testOrgId,
         name: 'partialWithModel',
         title: 'Default Title',
         template: "title is {{title}}"
@@ -89,7 +92,7 @@ describe('TemplateEngine basics', function() {
             engineType: engineType,
             getTemplate: fakeTemplateRepo.getTemplate.bind(fakeTemplateRepo),
             queryService: fakeQueryService, // templateEngine needs this to resolve queries on models
-            orgId: 1
+            orgId: testOrgId
         });
     });
 
