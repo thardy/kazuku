@@ -1,6 +1,7 @@
 'use strict';
 const _ = require("lodash");
 const Promise = require("bluebird");
+const config = require('../server/config');
 const database = require("../database/database").database;
 const OrganizationService = require('../organizations/organizationService');
 const UserService = require('../users/userService');
@@ -29,7 +30,6 @@ class SetupService {
             .then((org) => {
                 return this.userService.create(org.id, adminUser);
             });
-        // todo: create initial publish schedule
     }
 
     extractMetaOrg(setupConfig) {

@@ -11,6 +11,9 @@ if (process.env.NODE_ENV === 'production') {
         port: process.env.port,
         mongoDbUrl: process.env.mongoDbUrl,
         sessionSecret: process.env.sessionSecret,
+        siteDefaults: {
+            defaultRegenerationInterval: process.env.defaultRegenerationInterval
+        },
         fb: {
             clientID: process.env.fbClientID,
             clientSecret: process.env.fbClientSecret,

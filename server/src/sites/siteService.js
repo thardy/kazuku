@@ -1,9 +1,12 @@
 'use strict';
 const GenericService = require('../common/genericService');
+const ScheduleService = require('../schedules/scheduleService');
+const current = require('../common/current');
 
 class SiteService extends GenericService {
     constructor(database) {
         super(database, 'sites');
+        this.scheduleService = new ScheduleService();
     }
 
     validate(doc) {
@@ -14,6 +17,11 @@ class SiteService extends GenericService {
         else {
             return 'Need code and name';
         }
+    }
+
+    onAfterCreate(orgId, site) {
+        // create initial publish schedule for this site
+        return this.scheduleService.scheduleRegenerateJobForOrgSite(current.user.orgId, site.id, config.siteDefaults.defaultRegenerationInterval);
     }
 
 }
