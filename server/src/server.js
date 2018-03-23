@@ -82,11 +82,10 @@ main.use((err, req, res, next) => {
 
 // site app - maps subdomains to site folders
 var siteApp = express();
-siteApp.use((req, res, next) => {
-    var siteCode = req.vhost[0];
-    req.originalUrl = req.ul;
-    req.url = '/' + siteCode + req.url;
-    next();
+siteApp.use((req, res) => {
+    const siteCode = req.vhost[0];
+    req.originalUrl = req.url;
+    res.sendFile(__dirname + '/siteContent/' + siteCode + req.url);
 });
 
 // Vhost app
