@@ -49,6 +49,7 @@ import {InMemoryDataService} from './in-memory-data.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import { SchedulesComponent } from './schedules/schedule.component';
 import {ScheduleService} from './schedules/schedule.service';
+import { ContextComponent } from './layout/context/context.component';
 
 @NgModule({
     declarations: [
@@ -75,7 +76,8 @@ import {ScheduleService} from './schedules/schedule.service';
         AsyncButtonDirective,
         ModalComponent,
         CustomDataComponent,
-        SchedulesComponent
+        SchedulesComponent,
+        ContextComponent
     ],
     imports: [
         BrowserModule,
