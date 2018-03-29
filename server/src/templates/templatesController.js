@@ -24,14 +24,14 @@ class TemplatesController extends CrudController {
         let templateName = req.params.name;
         res.set("Content-Type", "application/json");
 
-        this.service.getTemplate(current.user.orgId, templateName)
+        this.service.getTemplate(current.context.orgId, templateName)
             .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
-                err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(current.user.orgId, templateName, err.message);
+                err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(current.context.orgId, templateName, err.message);
                 return next(err);
             });
     }
@@ -40,14 +40,14 @@ class TemplatesController extends CrudController {
         res.set("Content-Type", "application/json");
 
         // Query mongo for templates that have a url property that is non-null
-        this.service.find(current.user.orgId, { "url" : { $ne : null, $exists : true } })
+        this.service.find(current.context.orgId, { "url" : { $ne : null, $exists : true } })
             .then((templates) => {
                 if (templates === null) return next();
 
                 return res.status(200).send(templates);
             })
             .catch(err => {
-                err.message = 'ERROR: templatesController -> templateService.find({0}, { "url" : { $ne : null, $exists : true } }) - {1}'.format(current.user.orgId, err.message);
+                err.message = 'ERROR: templatesController -> templateService.find({0}, { "url" : { $ne : null, $exists : true } }) - {1}'.format(current.context.orgId, err.message);
                 return next(err);
             });
     }
@@ -56,14 +56,14 @@ class TemplatesController extends CrudController {
         res.set("Content-Type", "application/json");
 
         // Query mongo for templates that do NOT have a url property
-        this.service.find(current.user.orgId, { "url" : { $exists: false } })
+        this.service.find(current.context.orgId, { "url" : { $exists: false } })
             .then((templates) => {
                 if (templates === null) return next();
 
                 return res.status(200).send(templates);
             })
             .catch(err => {
-                err.message = 'ERROR: templatesController -> templateService.find({0},  { "url" : { $exists: false } }) - {1}'.format(current.user.orgId, err.message);
+                err.message = 'ERROR: templatesController -> templateService.find({0},  { "url" : { $exists: false } }) - {1}'.format(current.context.orgId, err.message);
                 return next(err);
             });
     }

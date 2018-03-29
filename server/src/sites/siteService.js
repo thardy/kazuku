@@ -21,7 +21,7 @@ class SiteService extends GenericService {
 
     onAfterCreate(orgId, site) {
         // create initial publish schedule for this site
-        return this.scheduleService.scheduleRegenerateJobForOrgSite(current.user.orgId, site.id, config.siteDefaults.defaultRegenerationInterval);
+        return this.scheduleService.scheduleRegenerateJobForOrgSite(current.context.orgId, site.id, config.siteDefaults.defaultRegenerationInterval);
     }
 
 }

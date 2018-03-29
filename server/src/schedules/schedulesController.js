@@ -23,7 +23,7 @@ class SchedulesController {
         let siteId = req.params.siteId;
         res.set('Content-Type', 'application/json');
 
-        this.service.getbyOrgAndSite(current.user.orgId, siteId)
+        this.service.getbyOrgAndSite(current.context.orgId, siteId)
             .then((doc) => {
                 if (doc === null) {
                     return res.status(404).json({'errors': ['id not found']});
@@ -47,7 +47,7 @@ class SchedulesController {
         let body = req.body;
         const minutes = body.minutes;
 
-        this.service.scheduleRegenerateJobForOrgSite(current.user.orgId, siteId, minutes)
+        this.service.scheduleRegenerateJobForOrgSite(current.context.orgId, siteId, minutes)
             .then((result) => {
                 if (!result) return next();
 

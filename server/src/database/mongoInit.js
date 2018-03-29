@@ -106,6 +106,7 @@
 //
 // //sample document
 // var newUser = { orgId: 1, email: "joe@test.com", password: "lkj234oiulkj", firstName: "Joe", lastName: "Smith", lastLoggedIn: "1/1/2017",
+//                 isMetaAdmin: false,
 //                 facebook: {
 //                     id: String,
 //                     token: String,

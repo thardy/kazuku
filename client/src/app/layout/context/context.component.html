@@ -1,3 +1,5 @@
 <div>
-    {{userContext.org.name}}
+
+    <a *ngIf="userContext?.user?.isMetaAdmin" [routerLink]="['/organizations']">{{userContext.org.name}}</a>
+    <span *ngIf="!userContext?.user?.isMetaAdmin">{{userContext.org.name}}</span>
 </div>

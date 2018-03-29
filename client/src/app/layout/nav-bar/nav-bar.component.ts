@@ -25,13 +25,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
             .subscribe((userContext) => {
                 this.userContext = userContext;
 
-                // add extra navItems for metaOrg
-                let orgsIndex = this.navItems.findIndex((item) => { return item.name === 'Orgs' });
-                if (userContext.org.isMetaOrg && orgsIndex === -1) {
+                // add extra navItems for metaAdmin
+                const orgsIndex = this.navItems.findIndex((item) => item.name === 'Orgs');
+                if (userContext.user.isMetaAdmin && orgsIndex === -1) {
                     // not found so add it
                     this.navItems.push({name: 'Orgs', destination: 'organizations'});
                 }
                 else if (orgsIndex !== -1) {
+                    // found but doesn't belong, so remove it
                     this.navItems.splice(orgsIndex, 1);
                 }
             });

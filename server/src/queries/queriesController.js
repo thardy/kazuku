@@ -22,14 +22,14 @@ class QueriesController extends CrudController {
         let queryName = req.params.name;
         res.set("Content-Type", "application/json");
 
-        this.service.getByName(current.user.orgId, queryName)
+        this.service.getByName(current.context.orgId, queryName)
             .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
-                err.message = 'ERROR: queriesController -> queryService.getByName({0}, {1}) - {2}'.format(current.user.orgId, queryName, err.message);
+                err.message = 'ERROR: queriesController -> queryService.getByName({0}, {1}) - {2}'.format(current.context.orgId, queryName, err.message);
                 return next(err);
             });
     }

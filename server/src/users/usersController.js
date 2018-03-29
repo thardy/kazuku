@@ -61,11 +61,11 @@ class UsersController extends CrudController {
     }
 
     afterAuth(req, res) {
-        const user = req.user;
+        const context = req.user;
         // don't return password
-        this.service.cleanUser(user);
+        this.service.cleanUser(context.user);
         res.status(200).json({
-            user: req.user
+            user: context.user
         });
     }
 
@@ -79,7 +79,7 @@ class UsersController extends CrudController {
     registerUser(req, res, next) {
         let body = req.body;
 
-        this.service.create(current.user.orgId, body)
+        this.service.create(current.context.orgId, body)
             .then((doc) => {
                 return res.status(201).json(doc);
             })
@@ -92,27 +92,35 @@ class UsersController extends CrudController {
                     return res.status(409).json({'errors': ['Duplicate Key Error']});
                 }
 
-                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, current.user.orgId, body, err.message);
+                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, current.context.orgId, body, err.message);
                 return next(err);
             });
     }
 
     getUserContext(req, res, next) {
-        let loggedInUser = req.user;
+        let context = req.user;
         // todo: test this!!!
         // get the org for the loggedInUser
-        this.organizationService.getById(loggedInUser.orgId)
+        return this.organizationService.getById(context.user.orgId)
             .then((org) => {
-                const userContext = {user: loggedInUser, org: org};
+                const userContext = {user: context.user, org: org};
                 return res.status(200).json(userContext);
             });
+    }
+
+    selectOrgContext(req, res, next) {
+        // change the orgContext - orgId of logged-in user changes to selection, but only if user is a member of the meta org
+        // need to save orgId on session context
+        // something like
+        //req.session.passport.user.orgId= 'updatedvalue'
+        //req.session.save(function(err) {console.log(err);};
     }
 
     getRandomNumber(req, res, next) {
         // req.user is assigned by jwt middleware if valid token is provided
         //console.log(`Zone id is: ${Zone.current.id}`);
-        console.log(`Zone current.user.email = ${current.user.email}`);
-        console.log(`Zone current.user.orgId = ${current.user.orgId}`);
+        console.log(`Zone current.context.user.email = ${current.context.user.email}`);
+        console.log(`Zone current.context.orgId = ${current.context.orgId}`);
         return res.json({
             user: req.user,
             num: Math.random() * 100

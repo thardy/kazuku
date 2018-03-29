@@ -29,7 +29,7 @@ class CustomSchemasController extends CrudController {
         let contentType = req.params.contentType;
         res.set('Content-Type', 'application/json');
 
-        this.service.getByContentType(current.user.orgId, contentType).
+        this.service.getByContentType(current.context.orgId, contentType).
             then((doc) => {
                 if (doc === null) return next();
 
@@ -37,7 +37,7 @@ class CustomSchemasController extends CrudController {
             }).
             catch(err => {
                 err.message = 'ERROR: customSchemasController -> customSchemaService.getByContentType({0}, {1}) - {2}'.format(
-                    current.user.orgId, contentType, err.message);
+                    current.context.orgId, contentType, err.message);
                 return next(err);
             });
     }
@@ -49,7 +49,7 @@ class CustomSchemasController extends CrudController {
         // force body.contentType to equal :contentType
         body.contentType = contentType;
 
-        this.service.updateByContentType(current.user.orgId, contentType, body).
+        this.service.updateByContentType(current.context.orgId, contentType, body).
             then((result) => {
                 if (result.nModified <= 0) {
                     return res.status(404).
@@ -60,7 +60,7 @@ class CustomSchemasController extends CrudController {
             }).
             catch(err => {
                 err.message = 'ERROR: customSchemasController -> customSchemaService.updateByContentType({0}, {1}, {2}) - {3}'.format(
-                    current.user.orgId, contentType, body, err.message);
+                    current.context.orgId, contentType, body, err.message);
                 return next(err);
             });
     }
@@ -69,7 +69,7 @@ class CustomSchemasController extends CrudController {
         let contentType = req.params.contentType;
 
         // todo: Add some serious checking here.  Can't delete a schema unless all data for that schema is deleted first.
-        this.service.deleteByContentType(current.user.orgId, contentType).
+        this.service.deleteByContentType(current.context.orgId, contentType).
             then((numAffected) => {
                 if (numAffected <= 0) return next();
 
@@ -77,7 +77,7 @@ class CustomSchemasController extends CrudController {
             }).
             catch(err => {
                 err.message = 'ERROR: customSchemasController -> customSchemaService.deleteByContentType({0}, {1}) - {2}'.format(
-                    current.user.orgId, contentType, err.message);
+                    current.context.orgId, contentType, err.message);
                 return next(err);
             });
     }

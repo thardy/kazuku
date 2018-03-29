@@ -14,13 +14,15 @@ const SALT_WORK_FACTOR = 10;
 module.exports = (passport) => {
     let userService = new UserService(database);
 
-    passport.serializeUser((user, done) => {
-        done(null, user.id);
+    // the "context" parm here comes from the done(null, context) call in our LocalStrategy below
+    passport.serializeUser((context, done) => {
+        //done(null, user.id);
+        done(null, context);
     });
 
-    passport.deserializeUser((id, done) => {
+    passport.deserializeUser((context, done) => {
         // Find the user using id
-        userService.getById(id)
+        userService.getById(context.user.id)
             .then(user => {
                 if (user) {
                     userService.cleanUser(user);
@@ -29,8 +31,9 @@ module.exports = (passport) => {
                     logger.log('error', 'Error when deserializing the user: User not found');
                 }
 
-                Zone.current.currentUser = user;
-                done(null, user); // user attaches to the request as req.user
+                const fullContext = { user: user, orgId: context.orgId }; // orgId here is the "activeOrgId", and can be changed by metaAdmins when impersonating different orgs
+                Zone.current.context = fullContext;
+                done(null, fullContext); // fullContext attaches to the request as req.user - we are going to put fullContext into req.user
             })
             .catch(error => logger.log('error', 'Error when deserializing the user: ' + error));
     });
@@ -107,7 +110,7 @@ module.exports = (passport) => {
 
                     return userService.create(orgId, newUser)
                         .then(createdUser => {
-                            Zone.current.currentUser = newUser;
+                            Zone.current.context = {user: newUser, orgId: newUser.orgId };
                             return done(null, createdUser);
                         })
                         .catch(error => {
@@ -155,14 +158,26 @@ module.exports = (passport) => {
                         userService.verifyPassword(password, user.password)
                             .then((isMatch) => {
                                 if (isMatch) {
+                                    const context = {
+                                        user: {
+                                            id: user.id,
+                                            email: user.email,
+                                            firstName: user.firstName,
+                                            lastName: user.lastName,
+                                            lastLoggedIn: user.lastLoggedIn
+                                        },
+                                        orgId: user.orgId  // this will be stored in session and can be changed by metaAdmins
+                                    };
                                     // todo: save new lastLoggedIn date
-                                    return done(null, {
-                                        id: user.id,
-                                        email: user.email,
-                                        firstName: user.firstName,
-                                        lastName: user.lastName,
-                                        lastLoggedIn: user.lastLoggedIn
-                                    });
+                                    // return done(null, {
+                                    //     id: user.id,
+                                    //     email: user.email,
+                                    //     firstName: user.firstName,
+                                    //     lastName: user.lastName,
+                                    //     lastLoggedIn: user.lastLoggedIn
+                                    // });
+                                    // the second parm here is the "context" or first parm in the serializeUser call, it should be whatever we want to store in session
+                                    return done(null, context);
                                 }
                                 else {
                                     return done(null, false, {message: `Invalid email or password`});

@@ -45,6 +45,7 @@ class SetupService {
         let adminUser = {};
         adminUser.email = 'admin';
         adminUser.password = setupConfig.adminPassword;
+        adminUser.isMetaAdmin = true;
 
         return adminUser;
     }

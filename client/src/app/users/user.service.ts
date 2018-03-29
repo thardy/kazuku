@@ -56,6 +56,14 @@ export class UserService extends GenericService<User> {
 
     }
 
+    selectOrgContext(orgId: string) {
+        if (this.dataStore.userContext.user.isMetaAdmin) {
+            return this.http.put(`${this.baseUrl}/selectorgcontext`, {orgId: orgId})
+                .map(response => this.extractData(response)) // we want to let the subscribers check the response.status
+                .catch((error) => this.handleError(error));
+        }
+    }
+
     isLoggedIn() {
         return (this.dataStore.userContext && this.dataStore.userContext.user && this.dataStore.userContext.user.id) ? true : false;
     }
