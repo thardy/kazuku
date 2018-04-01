@@ -27,9 +27,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
                 // add extra navItems for metaAdmin
                 const orgsIndex = this.navItems.findIndex((item) => item.name === 'Orgs');
-                if (userContext.user.isMetaAdmin && orgsIndex === -1) {
-                    // not found so add it
-                    this.navItems.push({name: 'Orgs', destination: 'organizations'});
+                if (userContext.user.isMetaAdmin) {
+                    // authorized to see organization admin
+                    if (orgsIndex === -1) {
+                        // not found so add it
+                        this.navItems.push({name: 'Orgs', destination: 'organizations'});
+                    }
                 }
                 else if (orgsIndex !== -1) {
                     // found but doesn't belong, so remove it

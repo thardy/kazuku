@@ -101,7 +101,7 @@ class UsersController extends CrudController {
     getUserContext(req, res, next) {
         const context = req.user;
         // get the org for the loggedInUser
-        return this.organizationService.getById(context.user.orgId)
+        return this.organizationService.getById(context.orgId)
             .then((org) => {
                 const userContext = {user: context.user, org: org};
                 return res.status(200).json(userContext);
