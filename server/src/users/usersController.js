@@ -47,6 +47,7 @@ class UsersController extends CrudController {
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
         app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));
         app.get(`/api/${this.resourceName}/getusercontext`, authHelper.isAuthenticated, this.getUserContext.bind(this));
+        app.put(`/api/${this.resourceName}/selectorgcontext`, authHelper.isAuthenticated, this.selectOrgContext.bind(this));
 
         // Map routes
         super.mapRoutes(app); // map the base CrudController routes
@@ -98,8 +99,7 @@ class UsersController extends CrudController {
     }
 
     getUserContext(req, res, next) {
-        let context = req.user;
-        // todo: test this!!!
+        const context = req.user;
         // get the org for the loggedInUser
         return this.organizationService.getById(context.user.orgId)
             .then((org) => {
@@ -109,11 +109,29 @@ class UsersController extends CrudController {
     }
 
     selectOrgContext(req, res, next) {
-        // change the orgContext - orgId of logged-in user changes to selection, but only if user is a member of the meta org
-        // need to save orgId on session context
-        // something like
-        //req.session.passport.user.orgId= 'updatedvalue'
-        //req.session.save(function(err) {console.log(err);};
+        const body = req.body;
+
+        // verify currently logged-in user is metaAdmin
+        const context = req.user;
+        if (context.user.isMetaAdmin) {
+            const newOrgId = body.orgId;
+
+            // save orgId on session context
+            req.session.passport.user.orgId = newOrgId;
+            req.session.save((err) => {
+                console.log(err);
+            });
+
+            // grab the new org, just like getUserContext above
+            return this.organizationService.getById(req.session.passport.user.orgId)
+                .then((org) => {
+                    const userContext = {user: context.user, org: org};
+                    return res.status(200).json(userContext);
+                });
+        }
+        else {
+            return res.status(401).json({'errors': ['not meta admin']});
+        }
     }
 
     getRandomNumber(req, res, next) {

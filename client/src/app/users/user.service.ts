@@ -59,7 +59,13 @@ export class UserService extends GenericService<User> {
     selectOrgContext(orgId: string) {
         if (this.dataStore.userContext.user.isMetaAdmin) {
             return this.http.put(`${this.baseUrl}/selectorgcontext`, {orgId: orgId})
-                .map(response => this.extractData(response)) // we want to let the subscribers check the response.status
+                .map(response => <UserContext>this.extractAnyData(response))
+                .do(userContext => {
+                        this.dataStore.userContext = userContext;
+                        // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
+                        this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
+                    }
+                )
                 .catch((error) => this.handleError(error));
         }
     }

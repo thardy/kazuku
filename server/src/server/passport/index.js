@@ -20,6 +20,7 @@ module.exports = (passport) => {
         done(null, context);
     });
 
+    // the "context" parm here comes from the persisted record in mongo session collection (verify)
     passport.deserializeUser((context, done) => {
         // Find the user using id
         userService.getById(context.user.id)
