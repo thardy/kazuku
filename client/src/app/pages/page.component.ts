@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {NgForm} from "@angular/forms";
-import {Template} from "../templates/template.model";
-import {TemplateService} from "../templates/template.service";
-import {BaseComponent} from "../common/base-component";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {NgForm} from '@angular/forms';
+import {Template} from '../templates/template.model';
+import {TemplateService} from '../templates/template.service';
+import {BaseComponent} from '../common/base-component';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
-import {Site} from "../sites/site.model";
-import {SiteService} from "../sites/site.service";
+import {Site} from '../sites/site.model';
+import {SiteService} from '../sites/site.service';
 
 @Component({
     selector: 'kz-page',

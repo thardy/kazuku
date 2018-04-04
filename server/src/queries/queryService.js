@@ -27,6 +27,7 @@ class QueryService extends GenericService {
     }
 
     // item should be of format - { type: "data", name: "someQuery" }
+    // todo: I don't think this is used anymore.  Convert anything using this to use dependencyService.getAllDependentsOfItem instead
     getAllDependentsOfItem(orgId, item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
         // look like this - { dependencies: [{type: 'query', name: 'someQuery' }] }
@@ -160,12 +161,12 @@ class QueryService extends GenericService {
         // check to see if this value is actually a valid query
         let queryName = this.getNameOfNamedQuery(query);
         if (queryName) {
-            item = { type: "query", name: queryName };
+            item = { type: "query", name: queryName.toLowerCase() };
         }
         else {
             let contentType = this.getContentType(query);
             if (contentType) {
-                item = { type: "data", name: contentType };
+                item = { type: "data", name: contentType.toLowerCase() };
             }
         }
 
@@ -188,14 +189,16 @@ class QueryService extends GenericService {
     }
 
     onBeforeCreate(orgId, queryObject) {
+        queryObject['regenerate'] = 1;
         // add/overwrite dependencies property
-        queryObject["dependencies"] = this.getDependenciesOfQuery(queryObject.query);
+        queryObject['dependencies'] = this.getDependenciesOfQuery(queryObject.query);
         return Promise.resolve(queryObject);
     }
 
     onBeforeUpdate(orgId, queryObject) {
+        queryObject['regenerate'] = 1;
         // add/overwrite dependencies property
-        queryObject["dependencies"] = this.getDependenciesOfQuery(queryObject.query);
+        queryObject['dependencies'] = this.getDependenciesOfQuery(queryObject.query);
         return Promise.resolve(queryObject);
     }
 
@@ -204,7 +207,7 @@ class QueryService extends GenericService {
     }
     onAfterUpdate(orgId, queryObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', name: queryObject.name })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', name: queryObject.name.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });

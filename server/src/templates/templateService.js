@@ -177,6 +177,7 @@ class TemplateService extends GenericService {
 
 
     // item should be of format - { type: "template", name: "master" }
+    // todo: I don't think this is used anymore.  Convert anything using this to use dependencyService.getAllDependentsOfItem instead
     getAllDependentsOfItem(orgId, item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
         // look like this - { dependencies: [{type: 'template', name: 'master' }] }
@@ -228,7 +229,7 @@ class TemplateService extends GenericService {
 
         // We are looking for the following strings - {% include 'header' %}, to pull out the name inside the include
         templateString.replace(/{%\s?include '([a-zA-Z0-9-_]*)'[ %]/g, (match, group1) => {
-            includedTemplateDependencies.push({ type: "template", name: group1 });
+            includedTemplateDependencies.push({ type: "template", name: group1.toLowerCase() });
         });
 
         return includedTemplateDependencies;
@@ -240,21 +241,23 @@ class TemplateService extends GenericService {
             return super.validate(doc);
         }
         else {
-            return "Need name and template";
+            return 'Need name and template';
         }
     }
 
     onBeforeCreate(orgId, templateObject) {
+        templateObject['regenerate'] = 1;
         // add/overwrite dependencies property
-        templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
+        templateObject['dependencies'] = this.getDependenciesOfTemplate(templateObject);
         return Promise.resolve();
     }
 
     onBeforeUpdate(orgId, templateObject) {
+        templateObject['regenerate'] = 1;
         // !!! We need to always update the entire templateObject.  Partial updates can cause this dependencies check
         //  and subsequent overwrite to be inaccurate, saving a faulty dependencies array
         // add/overwrite dependencies property
-        templateObject["dependencies"] = this.getDependenciesOfTemplate(templateObject);
+        templateObject['dependencies'] = this.getDependenciesOfTemplate(templateObject);
         return Promise.resolve();
     }
 
@@ -263,7 +266,7 @@ class TemplateService extends GenericService {
     }
     onAfterUpdate(orgId, templateObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', name: templateObject.name })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', name: templateObject.name.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });

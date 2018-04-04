@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {FormGroup, FormControl, FormArray, Validators} from '@angular/forms';
-import {Template} from "../templates/template.model";
-import {TemplateService} from "../templates/template.service";
-import {BaseComponent} from "../common/base-component";
+import {Template} from '../templates/template.model';
+import {TemplateService} from '../templates/template.service';
+import {BaseComponent} from '../common/base-component';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
-const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "description", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
+const systemProperties = ['_id', 'id', 'orgId', 'siteId', 'name', 'url', 'layout', 'description', 'template', 'created', 'createdBy', 'updated', 'updatedBy', 'dependencies', 'regenerate'];
 
 @Component({
     selector: 'kz-page',
@@ -29,7 +29,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .subscribe((params:Params) => {
+            .subscribe((params: Params) => {
                 this.templateId = params['id'];
                 this.isEdit = params['id'] != null;
                 this.initForm(null);
@@ -51,12 +51,12 @@ export class TemplateComponent extends BaseComponent implements OnInit {
         }
         else if (this.isEdit) {
             this.templateService.getById(this.templateId)
-                .subscribe((template) => {
-                    if (template) {
-                        this.template = template;
-                        this.form.patchValue(template);
-                        this.initDataPropertiesForm(template);
-                        this.original = Object.assign({}, template);
+                .subscribe((retrievedTemplate) => {
+                    if (retrievedTemplate) {
+                        this.template = retrievedTemplate;
+                        this.form.patchValue(retrievedTemplate);
+                        this.initDataPropertiesForm(retrievedTemplate);
+                        this.original = Object.assign({}, retrievedTemplate);
                     }
                 });
         }
