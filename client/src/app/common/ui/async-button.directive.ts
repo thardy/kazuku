@@ -4,7 +4,7 @@ import {Directive, OnInit, Input, OnChanges, ElementRef, Renderer} from '@angula
 // <button class="ui button" pd-async-button [asyncInProgress]="loading" [asyncText]="'Saving...'" [asyncType]="'save'" (click)="testClick()"></button>
 
 @Directive({
-    selector: '[kz-async-button]'
+    selector: '[kzAsyncButton]'
 })
 export class AsyncButtonDirective implements OnInit, OnChanges {
     @Input() asyncInProgress: boolean;

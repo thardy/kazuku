@@ -9,6 +9,25 @@
         </div>
 
         <div class="field">
+            <label>Site</label>
+            <select class="ui fluid dropdown" formControlName="siteId">
+                <option value="undefined" [selected]="template.siteId === undefined">Select a site...</option>
+                <option *ngFor="let site of sites" [value]="site.id" [selected]="template.siteId === site.id">
+                    {{site.name}}
+                </option>
+            </select>
+        </div>
+
+        <div *ngIf="isInPageMode" class="field">
+            <label>Url</label>
+            <input type="text"
+                   pattern="[\D]*"
+                   id="url"
+                   name="url"
+                   formControlName="url">
+        </div>
+
+        <div class="field">
             <label>Description</label>
             <textarea type="text" rows="4" cols="50"
                       id="description"
@@ -40,7 +59,7 @@
 
         <div class="extra content">
             <button type="submit" class="ui positive button" [disabled]="form.invalid"
-                    kz-async-button [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                    kzAsyncButton [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">
                 Save
             </button>
             <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>

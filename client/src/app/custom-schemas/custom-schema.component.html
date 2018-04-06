@@ -53,7 +53,7 @@
             <button type="button" class="btn btn-primary" (click)="generateSchema()">Generate Schema</button>
 
             <button type="submit" class="ui positive button" [disabled]="form.invalid"
-                    kz-async-button [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">
+                    kzAsyncButton [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">
                 Save
             </button>
             <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>

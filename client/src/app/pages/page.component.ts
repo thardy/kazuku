@@ -27,80 +27,80 @@ export class PageComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.siteService.getAll()
-            .subscribe(
-                (sites) => {
-                    this.sites = sites;
-                },
-                (error) => {
-
-                }
-            );
-
-        this.route.params
-            .flatMap((params:Params) => {
-                const id = params['id'] || '';
-                if (id) {
-                    this.pageId = id;
-                    return this.templateService.getById(this.pageId);
-                }
-                else {
-                    return Observable.of(null);
-                }
-            })
-            .subscribe((page) => {
-                if (page) {
-                    this.page = page;
-                    this.original = Object.assign({}, this.page);
-                }
-                else {
-                    this.isCreate = true;
-                    this.page = new Template();
-                }
-            });
+        // this.siteService.getAll()
+        //     .subscribe(
+        //         (sites) => {
+        //             this.sites = sites;
+        //         },
+        //         (error) => {
+        //
+        //         }
+        //     );
+        //
+        // this.route.params
+        //     .flatMap((params: Params) => {
+        //         const id = params['id'] || '';
+        //         if (id) {
+        //             this.pageId = id;
+        //             return this.templateService.getById(this.pageId);
+        //         }
+        //         else {
+        //             return Observable.of(null);
+        //         }
+        //     })
+        //     .subscribe((page) => {
+        //         if (page) {
+        //             this.page = page;
+        //             this.original = Object.assign({}, this.page);
+        //         }
+        //         else {
+        //             this.isCreate = true;
+        //             this.page = new Template();
+        //         }
+        //     });
 
     }
 
-    save(form: NgForm) {
-        // validate form
-        if (!form.valid) {
-            return;
-        }
-
-        this.saving = true;
-
-        if (this.isCreate) {
-            this.templateService.create(form.value)
-                .takeUntil(this.ngUnsubscribe)
-                .subscribe(
-                    (result) => {
-                        this.saving = false;
-                        this.router.navigateByUrl('pages');
-                    },
-                    (error) => {
-                        this.saving = false;
-                    }
-                );
-        }
-        else {
-            this.templateService.update(this.pageId, form.value)
-                .takeUntil(this.ngUnsubscribe)
-                .subscribe((result) => {
-                    this.saving = false;
-                    this.original = Object.assign({}, this.page);
-                    form.form.markAsPristine();
-                });
-        }
-    }
-
-    cancel(form: NgForm){
-        if (this.isCreate) {
-            this.router.navigateByUrl('pages');
-        }
-        else {
-            this.page = Object.assign({}, new Template(this.original));
-            form.form.markAsPristine();
-        }
-    }
+    // save(form: NgForm) {
+    //     // validate form
+    //     if (!form.valid) {
+    //         return;
+    //     }
+    //
+    //     this.saving = true;
+    //
+    //     if (this.isCreate) {
+    //         this.templateService.create(form.value)
+    //             .takeUntil(this.ngUnsubscribe)
+    //             .subscribe(
+    //                 (result) => {
+    //                     this.saving = false;
+    //                     this.router.navigateByUrl('pages');
+    //                 },
+    //                 (error) => {
+    //                     this.saving = false;
+    //                 }
+    //             );
+    //     }
+    //     else {
+    //         this.templateService.update(this.pageId, form.value)
+    //             .takeUntil(this.ngUnsubscribe)
+    //             .subscribe((result) => {
+    //                 this.saving = false;
+    //                 this.original = Object.assign({}, this.page);
+    //                 form.form.markAsPristine();
+    //             });
+    //     }
+    // }
+    //
+    // cancel(form: NgForm) {
+    //     if (this.isCreate) {
+    //         this.router.navigateByUrl('pages');
+    //     }
+    //     else {
+    //         this.page = Object.assign({}, new Template(this.original));
+    //         form.form.markAsPristine();
+    //     }
+    // }
 }
 

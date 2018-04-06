@@ -1,9 +1,9 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {BaseComponent} from "../common/base-component";
+import {BaseComponent} from '../common/base-component';
 import {FormGroup} from '@angular/forms';
 import 'rxjs/add/operator/mergeMap';
 
-const FIELD_TYPES = ["string", "number", "date"];
+const FIELD_TYPES = ['string', 'number', 'date'];
 
 @Component({
     selector: 'kz-field-builder',

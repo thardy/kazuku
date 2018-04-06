@@ -1,24 +1,24 @@
-import {Routes, RouterModule} from "@angular/router";
-import {NgModule} from "@angular/core";
-import {DashboardComponent} from "./dashboard/dashboard.component";
-import {SiteListComponent} from "./sites/site-list.component";
-import {SiteComponent} from "./sites/site.component";
-import {PageListComponent} from "./pages/page-list.component";
-import {TemplateListComponent} from "./templates/template-list.component";
-import {TemplateComponent} from "./templates/template.component";
-import {OrganizationListComponent} from "./organizations/organization-list.component";
-import {OrganizationComponent} from "./organizations/organization.component";
-import {LoginComponent} from "./login/login.component";
-import {SetupComponent} from "./setup/setup.component";
-import {SetupGuardService} from "./setup/setup-guard.service";
+import {Routes, RouterModule} from '@angular/router';
+import {NgModule} from '@angular/core';
+import {DashboardComponent} from './dashboard/dashboard.component';
+import {SiteListComponent} from './sites/site-list.component';
+import {SiteComponent} from './sites/site.component';
+import {PageListComponent} from './pages/page-list.component';
+import {TemplateListComponent} from './templates/template-list.component';
+import {TemplateComponent} from './templates/template.component';
+import {OrganizationListComponent} from './organizations/organization-list.component';
+import {OrganizationComponent} from './organizations/organization.component';
+import {LoginComponent} from './login/login.component';
+import {SetupComponent} from './setup/setup.component';
+import {SetupGuardService} from './setup/setup-guard.service';
 import {AuthGuardService} from './common/auth/auth-guard.service';
-import {PageComponent} from "./pages/page.component";
-import {QueryListComponent} from "./queries/query-list.component";
-import {QueryComponent} from "./queries/query.component";
-import {CustomSchemaListComponent} from "./custom-schemas/custom-schema-list.component";
-import {CustomSchemaComponent} from "./custom-schemas/custom-schema.component";
-import {CustomDataListComponent} from "app/custom-data/custom-data-list.component";
-import {CustomDataComponent} from "./custom-data/custom-data.component";
+import {PageComponent} from './pages/page.component';
+import {QueryListComponent} from './queries/query-list.component';
+import {QueryComponent} from './queries/query.component';
+import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.component';
+import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
+import {CustomDataListComponent} from 'app/custom-data/custom-data-list.component';
+import {CustomDataComponent} from './custom-data/custom-data.component';
 
 // This is where we setup our routes!
 const APP_ROUTES: Routes = [
