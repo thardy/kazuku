@@ -1,6 +1,7 @@
 export class CustomSchema {
     id: string;
     orgId: string;
+    name: string;
     contentType: string;
     description: string;
     jsonSchema: any;
@@ -8,14 +9,16 @@ export class CustomSchema {
     constructor(options: {
         id?: string,
         orgId?: string,
+        name?: string,
         contentType?: string,
         description?: string,
         jsonSchema?: any
     } = {}) {
         this.id = options.id;
         this.orgId = options.orgId;
-        this.contentType = options.contentType || '';
-        this.description = options.description || '';
+        this.name = options.name;
+        this.contentType = options.contentType;
+        this.description = options.description;
         this.jsonSchema = options.jsonSchema || { properties: {} };
     }
 }

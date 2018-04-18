@@ -1,9 +1,9 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {BaseComponent} from "../common/base-component";
-import {CustomSchema} from "./custom-schema.model";
-import {CustomSchemaService} from "./custom-schema.service";
-import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from "@angular/forms";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {BaseComponent} from '../common/base-component';
+import {CustomSchema} from './custom-schema.model';
+import {CustomSchemaService} from './custom-schema.service';
+import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
@@ -45,6 +45,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         // MUST create formModel to back the template html right at the beginning.  Can't wait for any async stuff to happen.
         //  The async stuff can modify it, but we basically can't leave ngOnInit without the backing form model being built.
         this.form = new FormGroup({
+            'name': new FormControl(this.customSchema.name, Validators.required),
             'contentType': new FormControl(this.customSchema.contentType, Validators.required),
             'description': new FormControl(this.customSchema.description),
             'fields': this.fieldsFormArray
@@ -217,6 +218,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     convertCustomSchemaToForm(customSchema) {
         const fields = this.convertJsonSchemaToFormFields(customSchema.jsonSchema);
         const formValue = {
+            name: customSchema.name,
             contentType: customSchema.contentType,
             description: customSchema.description,
             fields: fields
@@ -227,6 +229,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     convertFormToCustomSchema(formValue: any) {
         const jsonSchema = this.convertFormFieldsToJsonSchema(formValue.fields);
         return new CustomSchema({
+            name: formValue.name,
             contentType: formValue.contentType,
             description: formValue.description,
             jsonSchema: jsonSchema

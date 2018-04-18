@@ -6,6 +6,13 @@
         <form [formGroup]="form" (submit)="save(form)" novalidate class="ui form content">
             <div id="schemaBuilder">
                 <div class="field">
+                    <label>Display Name</label>
+                    <input type="text"
+                           id="name"
+                           formControlName="name">
+                </div>
+
+                <div class="field">
                     <label>Content Type Name</label>
                     <input type="text"
                            id="contentType"
