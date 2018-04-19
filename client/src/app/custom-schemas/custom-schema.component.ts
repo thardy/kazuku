@@ -6,6 +6,7 @@ import {CustomSchemaService} from './custom-schema.service';
 import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
+import * as _ from 'lodash';
 
 const MANDATORY_FIELDS = ['name'];
 
@@ -306,4 +307,9 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         return {showFieldBuilder: true, newField: true, saved: false, originalValues: {}};
     }
 
+    onDisplayNameChange(newDisplayName: string) {
+        const kebabCasedDisplayName = _.kebabCase(newDisplayName);
+        const newValue = {contentType: kebabCasedDisplayName};
+        this.form.patchValue(newValue);
+    }
 }

@@ -9,13 +9,15 @@
                     <label>Display Name</label>
                     <input type="text"
                            id="name"
-                           formControlName="name">
+                           formControlName="name"
+                           (input)="onDisplayNameChange($event.target.value)">
                 </div>
 
                 <div class="field">
                     <label>Content Type Name</label>
                     <input type="text"
                            id="contentType"
+                           readonly
                            formControlName="contentType">
                 </div>
 

@@ -1,4 +1,5 @@
 // Import the core angular services.
+//https://www.bennadel.com/blog/3376-creating-an-input-driven-autofocus-directive-in-angular-5-0-2.htm
 import {AfterContentInit, Input} from '@angular/core';
 import {Directive} from '@angular/core';
 import {ElementRef} from '@angular/core';
@@ -21,7 +22,7 @@ const BASE_TIMER_DELAY = 10;
 })
 export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestroy {
 
-    @Input('appAutofocus') shouldFocusElement: any;
+    @Input('appAutofocus') shouldFocusElement: any; // ignore tslint. I want the directive name itself to be usable for specifying the autofocus condition = less wordy.
     @Input() timerDelay: number | string;
 
     private elementRef: ElementRef;
