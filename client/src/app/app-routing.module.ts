@@ -38,14 +38,14 @@ const APP_ROUTES: Routes = [
     {path: 'sites/:id', component: SiteComponent, canActivate: [AuthGuardService]},
     {path: 'pages', component: PageListComponent, canActivate: [AuthGuardService]},
     {path: 'pages/create', component: PageComponent, canActivate: [AuthGuardService]},
-    {path: 'pages/:id', component: PageComponent, canActivate: [AuthGuardService]},
+    {path: 'pages/:nameId', component: PageComponent, canActivate: [AuthGuardService]},
     {path: 'setup', component: SetupComponent, canActivate: [SetupGuardService]},
     {path: 'templates', component: TemplateListComponent, canActivate: [AuthGuardService]},
     {path: 'templates/create', component: TemplateComponent, canActivate: [AuthGuardService]},
-    {path: 'templates/:id', component: TemplateComponent, canActivate: [AuthGuardService]},
+    {path: 'templates/:nameId', component: TemplateComponent, canActivate: [AuthGuardService]},
     {path: 'queries', component: QueryListComponent, canActivate: [AuthGuardService]},
     {path: 'queries/create', component: QueryComponent, canActivate: [AuthGuardService]},
-    {path: 'queries/:id', component: QueryComponent, canActivate: [AuthGuardService]},
+    {path: 'queries/:nameId', component: QueryComponent, canActivate: [AuthGuardService]},
     {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
 ];
 

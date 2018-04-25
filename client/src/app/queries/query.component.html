@@ -1,11 +1,21 @@
 <form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
     <div>
         <div class="field">
-            <label>Name</label>
+            <label>Display Name</label>
             <input type="text"
                    pattern="[\D]*"
                    name="name"
-                   [(ngModel)]="query.name">
+                   [(ngModel)]="query.name"
+                   (input)="onDisplayNameChange($event.target.value)">
+        </div>
+
+        <div class="field">
+            <label>Name Id</label>
+            <input type="text"
+                   id="nameId"
+                   name="nameId"
+                   readonly
+                   [ngModel]="query.nameId">
         </div>
 
         <div class="field">

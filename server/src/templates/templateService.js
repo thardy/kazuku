@@ -94,8 +94,8 @@ class TemplateService extends GenericService {
     }
 
     // getTemplate returns a templateObject
-    getTemplate(orgId, templateName) {
-        return this.collection.findOne({orgId: orgId, name: templateName})
+    getTemplate(orgId, templateNameId) {
+        return this.collection.findOne({orgId: orgId, nameId: templateNameId})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;

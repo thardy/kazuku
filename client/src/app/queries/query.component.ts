@@ -1,11 +1,12 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {BaseComponent} from "../common/base-component";
-import {Query} from "./query.model";
-import {QueryService} from "./query.service";
-import {NgForm} from "@angular/forms";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {BaseComponent} from '../common/base-component';
+import {Query} from './query.model';
+import {QueryService} from './query.service';
+import {NgForm} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'kz-query',
@@ -16,7 +17,7 @@ export class QueryComponent extends BaseComponent implements OnInit {
     query: Query = new Query();
     saving = false;
     original = {};
-    queryId: string;
+    queryNameId: string;
     isCreate = false;
 
     constructor(private route: ActivatedRoute, private queryService: QueryService, private router: Router) {
@@ -25,11 +26,11 @@ export class QueryComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .flatMap((params:Params) => {
-                const id = params['id'] || '';
-                if (id) {
-                    this.queryId = id;
-                    return this.queryService.getById(this.queryId);
+            .flatMap((params: Params) => {
+                const nameId = params['nameId'] || '';
+                if (nameId) {
+                    this.queryNameId = nameId;
+                    return this.queryService.getByNameId(this.queryNameId);
                 }
                 else {
                     return Observable.of(null);
@@ -64,7 +65,7 @@ export class QueryComponent extends BaseComponent implements OnInit {
                 });
         }
         else {
-            this.queryService.update(this.queryId, form.value)
+            this.queryService.update(this.queryNameId, form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
@@ -74,7 +75,7 @@ export class QueryComponent extends BaseComponent implements OnInit {
         }
     }
 
-    cancel(form: NgForm){
+    cancel(form: NgForm) {
         if (this.isCreate) {
             this.router.navigateByUrl('queries');
         }
@@ -82,6 +83,11 @@ export class QueryComponent extends BaseComponent implements OnInit {
             this.query = Object.assign({}, new Query(this.original));
             form.form.markAsPristine();
         }
+    }
+
+    onDisplayNameChange(newDisplayName: string) {
+        const kebabCasedDisplayName = _.kebabCase(newDisplayName);
+        this.query.nameId = kebabCasedDisplayName;
     }
 
 }

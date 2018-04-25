@@ -8,8 +8,9 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import {SiteService} from '../sites/site.service';
 import {Site} from '../sites/site.model';
+import * as _ from 'lodash';
 
-const systemProperties = ['_id', 'id', 'orgId', 'siteId', 'name', 'url', 'layout', 'description', 'template', 'created', 'createdBy', 'updated', 'updatedBy', 'dependencies', 'regenerate'];
+const systemProperties = ['_id', 'id', 'orgId', 'siteId', 'name', 'nameId', 'url', 'layout', 'description', 'template', 'created', 'createdBy', 'updated', 'updatedBy', 'dependencies', 'regenerate'];
 
 @Component({
     selector: 'kz-template',
@@ -21,7 +22,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
     saving = false;
     sites: Site[] = [];
     original = {};
-    templateId: string;
+    templateNameId: string;
     isEdit = false;
     form: FormGroup = new FormGroup({});
     dataPropertiesFormArray = new FormArray([]); // the dynamic part of our form - one for every templateObject property that is not a system property
@@ -43,8 +44,8 @@ export class TemplateComponent extends BaseComponent implements OnInit {
 
         this.route.params
             .subscribe((params: Params) => {
-                this.templateId = params['id'];
-                this.isEdit = params['id'] != null;
+                this.templateNameId = params['nameId'];
+                this.isEdit = params['nameId'] != null;
                 this.initForm(null);
             });
 
@@ -53,6 +54,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
         this.form = new FormGroup({
             'siteId': new FormControl(this.template.siteId, Validators.required),
             'name': new FormControl(this.template.name, Validators.required),
+            'nameId': new FormControl(this.template.nameId, Validators.required),
             'description': new FormControl(this.template.description),
             'template': new FormControl(this.template.template, Validators.required),
             'dataProperties': this.dataPropertiesFormArray
@@ -67,7 +69,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
             this.form.patchValue(template);
         }
         else if (this.isEdit) {
-            this.templateService.getById(this.templateId)
+            this.templateService.getByNameId(this.templateNameId)
                 .subscribe((retrievedTemplate) => {
                     if (retrievedTemplate) {
                         this.template = retrievedTemplate;
@@ -103,10 +105,11 @@ export class TemplateComponent extends BaseComponent implements OnInit {
 
         this.saving = true;
         const templateObject = this.createTemplateObjectFromForm(this.template, form.value);
+        const templateId = this.template.id;
         this.template = templateObject;
 
         if (this.isEdit) {
-            this.templateService.update(this.templateId, templateObject)
+            this.templateService.update(templateId, templateObject)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe(
                     (result) => {
@@ -182,6 +185,12 @@ export class TemplateComponent extends BaseComponent implements OnInit {
         for (let i = formArray.controls.length - 1; i >= 0; i--) {
             formArray.removeAt(i);
         }
+    }
+
+    onNameChange(newName: string) {
+        const kebabCasedName = _.kebabCase(newName);
+        const newValue = {nameId: kebabCasedName};
+        this.form.patchValue(newValue);
     }
 }
 

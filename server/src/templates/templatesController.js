@@ -14,24 +14,24 @@ class TemplatesController extends CrudController {
         // map routes
         app.get(`/api/${this.resourceName}/getallpages`, authHelper.isAuthenticated, this.getAllPages.bind(this));
         app.get(`/api/${this.resourceName}/getallnonpagetemplates`, authHelper.isAuthenticated, this.getAllNonPageTemplates.bind(this));
-        app.get(`/api/${this.resourceName}/getbyname/:name`, authHelper.isAuthenticated, this.getByName.bind(this));
+        app.get(`/api/${this.resourceName}/getbynameId/:nameId`, authHelper.isAuthenticated, this.getByNameId.bind(this));
 
         // map the base CrudController routes
         super.mapRoutes(app);
     }
 
-    getByName(req, res, next) {
-        let templateName = req.params.name;
+    getByNameId(req, res, next) {
+        let templateNameId = req.params.nameId;
         res.set("Content-Type", "application/json");
 
-        this.service.getTemplate(current.context.orgId, templateName)
+        this.service.getTemplate(current.context.orgId, templateNameId)
             .then((doc) => {
                 if (doc === null) return next();
 
                 return res.status(200).send(doc);
             })
             .catch(err => {
-                err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(current.context.orgId, templateName, err.message);
+                err.message = 'ERROR: templatesController -> templateService.getTemplate({0}, {1}) - {2}'.format(current.context.orgId, templateNameId, err.message);
                 return next(err);
             });
     }

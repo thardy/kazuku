@@ -15,8 +15,8 @@ export class TemplateService extends GenericService<Template> {
         super('templates', http);
     }
 
-    getByName(name: string) {
-        return this.http.get(`${this.baseUrl}/getbyname/${name}`)
+    getByNameId(nameId: string) {
+        return this.http.get(`${this.baseUrl}/getbynameid/${nameId}`)
             .map(response => this.extractData(response))
             .catch(error => this.handleError(error));
     }

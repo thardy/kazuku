@@ -23,7 +23,7 @@
         <option value="undefined" [selected]="selectedContentType === undefined">Select a content model...</option>
         <option *ngFor="let schema of customSchemas" [(ngValue)]="schema.contentType"
                 [selected]="schema.contentType === selectedContentType">
-            {{schema.contentType}}
+            {{schema.name}}
         </option>
     </select>
 </ng-container>

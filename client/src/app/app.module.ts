@@ -88,7 +88,7 @@ import { ContextComponent } from './layout/context/context.component';
         BrowserAnimationsModule,
         InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true}),
         SuiModule,
-        SchemaFormModule,
+        SchemaFormModule.forRoot(),
         NgxDatatableModule
     ],
     providers: [

@@ -111,11 +111,11 @@ class QueryService extends GenericService {
             });
     }
 
-    getByName(orgId, name) {
+    getByNameId(orgId, nameId) {
         if (arguments.length !== 2) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to QueryService.getByName'));
+            return Promise.reject(new Error('Incorrect number of arguments passed to QueryService.getByNameId'));
         }
-        return this.collection.findOne({orgId: orgId, name: name})
+        return this.collection.findOne({orgId: orgId, nameId: nameId})
             .then((doc) => {
                 this.useFriendlyId(doc);
                 return doc;
