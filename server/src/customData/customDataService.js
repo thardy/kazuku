@@ -111,7 +111,7 @@ class CustomDataService extends GenericService {
 
     onAfterCreate(orgId, customDataObject) {
         // An item is created - recursively get everything dependent on the contentType that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'data', name: customDataObject.contentType.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'data', nameId: customDataObject.contentType.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
@@ -119,7 +119,7 @@ class CustomDataService extends GenericService {
 
     onAfterUpdate(orgId, customDataObject) {
         // An item changes - recursively get everything dependent on the contentType that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'data', name: customDataObject.contentType.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'data', nameId: customDataObject.contentType.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
@@ -127,7 +127,7 @@ class CustomDataService extends GenericService {
 
     onAfterDelete(orgId, customDataObject) {
         // An item changes - recursively get everything dependent on the contentType that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'data', name: customDataObject.contentType.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'data', nameId: customDataObject.contentType.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });

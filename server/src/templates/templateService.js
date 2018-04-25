@@ -180,13 +180,13 @@ class TemplateService extends GenericService {
     // todo: I don't think this is used anymore.  Convert anything using this to use dependencyService.getAllDependentsOfItem instead
     getAllDependentsOfItem(orgId, item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
-        // look like this - { dependencies: [{type: 'template', name: 'master' }] }
+        // look like this - { dependencies: [{type: 'template', nameId: 'master' }] }
         return this.collection.find({orgId: orgId, dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {
                     let itemType = "url" in doc ? "page" : "template";
-                    dependentItems.push({type: itemType, name: doc.name});
+                    dependentItems.push({type: itemType, nameId: doc.nameId});
                 });
 
                 return dependentItems;
@@ -199,9 +199,9 @@ class TemplateService extends GenericService {
     getDependenciesOfTemplate(templateObject) {
         let dependencies = [];
 
-        // a layout is a dependency
+        // a layout is a dependency.  layout property must be kebab-cased nameId of the template that is the layout
         if ("layout" in templateObject) {
-            dependencies.push({type: "template", name: templateObject.layout});
+            dependencies.push({type: "template", nameId: templateObject.layout});
         }
 
         // any queries defined in the model are dependencies
@@ -227,21 +227,22 @@ class TemplateService extends GenericService {
     getIncludedTemplateDependencies(templateString) {
         let includedTemplateDependencies = [];
 
-        // We are looking for the following strings - {% include 'header' %}, to pull out the name inside the include
+        // We are looking for the following strings - {% include 'header' %}, to pull out the name inside the include.
+        //  The names should be kebab-cased nameIds.
         templateString.replace(/{%\s?include '([a-zA-Z0-9-_]*)'[ %]/g, (match, group1) => {
-            includedTemplateDependencies.push({ type: "template", name: group1.toLowerCase() });
+            includedTemplateDependencies.push({ type: "template", nameId: group1.toLowerCase() });
         });
 
         return includedTemplateDependencies;
     }
 
     validate(doc) {
-        if (doc.name && doc.template) {
+        if (doc.name && doc.nameId && doc.template) {
             // call base validation, which should return nothing if valid
             return super.validate(doc);
         }
         else {
-            return 'Need name and template';
+            return 'Need name, nameId, and template';
         }
     }
 
@@ -266,7 +267,7 @@ class TemplateService extends GenericService {
     }
     onAfterUpdate(orgId, templateObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', name: templateObject.name.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', nameId: templateObject.nameId.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });

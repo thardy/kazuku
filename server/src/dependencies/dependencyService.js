@@ -49,7 +49,7 @@ class DependencyService {
                 if (currentAllDependents.length > 0) {
                     for (let dependent of currentAllDependents) {
                         let itemType = this.getTypeOfItem(dependent);
-                        let dependentItem = { type: itemType, name: dependent.name };
+                        let dependentItem = { type: itemType, nameId: dependent.nameId };
 
                         promises.push(this.getAllDependentsOfItem(orgId, dependentItem, recurseLevel));
                     }
@@ -80,7 +80,7 @@ class DependencyService {
 
         for (let dependentObject of dependentObjects) {
             let type = this.getTypeOfItem(dependentObject);
-            let queryObject = {orgId: orgId, name: dependentObject.name};
+            let queryObject = {orgId: orgId, nameId: dependentObject.nameId};
             let changes = {regenerate: 1};
 
             switch (type) {

@@ -76,7 +76,7 @@ class QueryService extends GenericService {
             }
         };
         const resolveModelProperty = (modelProperty) => {
-            const queryName = this.getNameOfNamedQuery(modelProperty);
+            const queryName = this.getNameIdOfNamedQuery(modelProperty);
             if (queryName) {
                 // property is a named query, e.g. query(top5Products)
                 return resolveQueryByName(queryName);
@@ -123,12 +123,12 @@ class QueryService extends GenericService {
     }
 
 
-    getNameOfNamedQuery(query) {
+    getNameIdOfNamedQuery(query) {
         let queryName;
 
         // check to see if this value is actually a string and a valid query
         if (query && (typeof query === 'string' || query instanceof String) && query.startsWith("query(")) {
-            // get the name of the query
+            // get the nameId of the query.  Named queries should be referenced using a nameId in a property like - query(all-blogs)
             let matchArray = query.match(/query\(([a-zA-Z0-9-_]*)\)/);
             queryName = matchArray[1];
         }
@@ -146,7 +146,7 @@ class QueryService extends GenericService {
         if (query && (typeof query === 'string' || query instanceof String) && query.startsWith("eq(")) {
             // currently, this is only smart enough to understand one contentType dependency from a query,
             //  and the query must start with "eq(contentType, "
-            // get the contentType
+            // get the contentType.  It should be a kebab-cased nameId as well.
             let matchArray = query.match(/eq\(contentType,([a-zA-Z0-9-_]*)\)/);
             contentType = matchArray[1];
         }
@@ -159,9 +159,9 @@ class QueryService extends GenericService {
         let item;
 
         // check to see if this value is actually a valid query
-        let queryName = this.getNameOfNamedQuery(query);
-        if (queryName) {
-            item = { type: "query", name: queryName.toLowerCase() };
+        let queryNameId = this.getNameIdOfNamedQuery(query);
+        if (queryNameId) {
+            item = { type: "query", name: queryNameId.toLowerCase() };
         }
         else {
             let contentType = this.getContentType(query);
@@ -179,12 +179,12 @@ class QueryService extends GenericService {
     }
 
     validate(doc) {
-        if (doc.name && doc.query) {
+        if (doc.name && doc.nameId && doc.query) {
             // call base validation, which should return nothing if valid
             return super.validate(doc);
         }
         else {
-            return "Need name and query";
+            return "Need name, nameId, and query";
         }
     }
 
@@ -207,7 +207,7 @@ class QueryService extends GenericService {
     }
     onAfterUpdate(orgId, queryObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', name: queryObject.name.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', nameId: queryObject.nameId.toLowerCase() })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });
