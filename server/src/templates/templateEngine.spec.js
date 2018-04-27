@@ -16,7 +16,7 @@ const testOrgId = testHelper.testOrgId;
 
 let partialWithModelQuery = {
     name: 'partialWithModelQuery',
-    products: 'query(top5Products)',
+    products: 'query(top-5-products)',
     template: "<ul>{% for product in products %}<li>{{product.name}}</li>{% endfor %}</ul>"
 };
 
@@ -27,11 +27,13 @@ var FakeTemplateRepo = function() {
     templateObjects.push({
         orgId: testOrgId,
         name: 'master',
+        nameId: 'master',
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: 'masterWithModel',
+        nameId: 'master-with-model',
         title: 'Master Title',
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
@@ -39,30 +41,34 @@ var FakeTemplateRepo = function() {
     templateObjects.push({
         orgId: testOrgId,
         name: 'dog',
+        nameId: 'dog',
         template: "dogs are nice"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: 'cat',
+        nameId: 'cat',
         template: "cats are ok"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: 'chicken',
+        nameId: 'chicken',
         template: "chickens are {{disposition}}"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: 'partialWithModel',
+        nameId: 'partial-with-model',
         title: 'Default Title',
         template: "title is {{title}}"
     });
     templateObjects.push(partialWithModelQuery);
 
     // getTemplate returns a templateObject
-    templateRepo.getTemplate = function(orgId, templateName) {
+    templateRepo.getTemplate = function(orgId, templateNameId) {
         var resolver = Promise.defer();
-        var foundTemplateObject = _.clone(_.find(templateObjects, {orgId: orgId, name: templateName}));
+        var foundTemplateObject = _.clone(_.find(templateObjects, {orgId: orgId, nameId: templateNameId}));
         setTimeout(function () {
             resolver.resolve(foundTemplateObject);
         }, 100);
@@ -129,28 +135,28 @@ describe('TemplateEngine basics', function() {
     });
 
     it("can render includes with their own model", function () {
-        var templateString = "<p>{% include 'partialWithModel' %}</p>";
+        var templateString = "<p>{% include 'partial-with-model' %}</p>";
         var model = {};
 
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('<p>title is Default Title</p>');
     });
 
     it("can render includes with declared parameters", function () {
-        var templateString = "<p>{% include 'partialWithModel', title: 'Hashed Title' %}</p>";
+        var templateString = "<p>{% include 'partial-with-model', title: 'Hashed Title' %}</p>";
         var model = {};
 
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('<p>title is Hashed Title</p>');
     });
 
     it("can have outer template model override included template's model", function () {
-        var templateString = "<p>{% include 'partialWithModel' %}</p>";
+        var templateString = "<p>{% include 'partial-with-model' %}</p>";
         var model = { title: 'Parent Title' };
 
         return expect(templateEngine.Render(templateString, model)).to.eventually.equal('<p>title is Parent Title</p>');
     });
 
     // it("resolves queries on include with templateObject model", function () {
-    //     var templateString = "<p>{% include 'partialWithModelQuery' %}</p>";
+    //     var templateString = "<p>{% include 'partial-with-model-query' %}</p>";
     //     var model = {};
     //
     //     // How can I change a passed-in argument with sinon???  I need to change the model they pass in to replace

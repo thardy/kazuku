@@ -26,16 +26,16 @@ class QueryService extends GenericService {
             });
     }
 
-    // item should be of format - { type: "data", name: "someQuery" }
+    // item should be of format - { type: "data", nameId: "some-query" }
     // todo: I don't think this is used anymore.  Convert anything using this to use dependencyService.getAllDependentsOfItem instead
     getAllDependentsOfItem(orgId, item) {
         // Get all queries that have the given item in their dependencies array.  dependency properties on queries
-        // look like this - { dependencies: [{type: 'query', name: 'someQuery' }] }
+        // look like this (nameId is kebab-cased) - { dependencies: [{type: 'query', nameId: 'some-query' }] }
         return this.collection.find({orgId: orgId, dependencies: item })
             .then((docs) => {
                 var dependentItems = [];
                 _.forEach(docs, (doc) => {
-                    dependentItems.push({type: "query", name: doc.name});
+                    dependentItems.push({type: "query", nameId: doc.nameId});
                 });
 
                 return dependentItems;
@@ -78,7 +78,7 @@ class QueryService extends GenericService {
         const resolveModelProperty = (modelProperty) => {
             const queryName = this.getNameIdOfNamedQuery(modelProperty);
             if (queryName) {
-                // property is a named query, e.g. query(top5Products)
+                // property is a named query, e.g. query(top-5-products)
                 return resolveQueryByName(queryName);
             }
             else if (this.propertyIsQuery(modelProperty)) {
@@ -207,7 +207,7 @@ class QueryService extends GenericService {
     }
     onAfterUpdate(orgId, queryObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', nameId: queryObject.nameId.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', nameId: queryObject.nameId })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });

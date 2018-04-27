@@ -29,41 +29,42 @@ let existingTemplatesForRegenerationTests = [
         orgId: testOrgId,
         siteId: testSiteId,
         name: "RegenerateTemplate-Navigation",
-        navItems: "query(RegenerateQuery-NavItems)",
+        nameId: 'regenerate-template-navigation',
+        navItems: "query(regenerate-query-navitems)",
         template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>",
-        dependencies: [{type: "query", name: "RegenerateQuery-NavItems"}]
+        dependencies: [{type: "query", nameId: "regenerate-query-navitems"}]
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", template: "<header>This is a Header<br/>{% include 'RegenerateTemplate-Navigation' %}</header>",
-        dependencies: [{type: "template", name: "RegenerateTemplate-Navigation"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", template: "<footer>This is a Footer</footer>" },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", template: "{% include 'RegenerateTemplate-Header' %} <div>{{ content }}</div> {% include 'RegenerateTemplate-Footer' %}",
-        dependencies: [{type: "template", name: "RegenerateTemplate-Header"}, {type: "template", name: "RegenerateTemplate-Footer"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", nameId: 'regenerate-template-header', template: "<header>This is a Header<br/>{% include 'regenerate-template-navigation' %}</header>",
+        dependencies: [{type: "template", nameId: "regenerate-template-navigation"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", nameId: 'regenerate-template-footer', template: "<footer>This is a Footer</footer>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", nameId: 'regenerate-template-master', template: "{% include 'regenerate-template-header' %} <div>{{ content }}</div> {% include 'regenerate-template-footer' %}",
+        dependencies: [{type: "template", nameId: "regenerate-template-header"}, {type: "template", nameId: "regenerate-template-footer"}]}
 ];
 
 let existingPageRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-HomePage", url: "home", layout: "RegenerateTemplate-Master", template: "<h1>Home Page</h1>", regenerate: 1,
-        dependencies: [{type: "template", name: "RegenerateTemplate-Master"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-About", url: "about", layout: "RegenerateTemplate-Master", template: "<h1>About</h1>", regenerate: 1,
-        dependencies: [{type: "template", name: "RegenerateTemplate-Master"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-HomePage", nameId: 'regenerate-page-homepage', url: "home", layout: "regenerate-template-master", template: "<h1>Home Page</h1>", regenerate: 1,
+        dependencies: [{type: "template", nameId: "regenerate-template-master"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-About", nameId: 'regenerate-page-about', url: "about", layout: "regenerate-template-master", template: "<h1>About</h1>", regenerate: 1,
+        dependencies: [{type: "template", nameId: "regenerate-template-master"}]}
 ];
 
 let existingQueryRegenerateList = [
     // queries are VERY space sensitive currently.  need to fix.
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", query: "eq(contentType,navItems)&sort(sortOrder)", regenerate: 1,
-        dependencies: [{type: "data", name: "navItems"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", nameId: 'regenerate-query-navitems', query: "eq(contentType,navitems)&sort(sortOrder)", regenerate: 1,
+        dependencies: [{type: "data", nameId: "nav-items"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", nameId: 'regenerate-query-alltestimonials', query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
 ];
 
 // ********** Data for end to end tests *********************
 let existingBlogPosts = [
-    { orgId: testOrgId, contentType: 'blogPosts', title: 'End to End Blog Post One', body: 'This is the really cool blog post one.', created: new Date('2014-01-01T00:00:00') },
-    { orgId: testOrgId, contentType: 'blogPosts', title: 'End to End Blog Post Two', body: 'Two is the best blog post ever.', created: new Date('2015-07-17T00:00:00') },
-    { orgId: testOrgId, contentType: 'blogPosts', title: 'End to End Blog Post Three', body: 'The third post is always the best.', created: new Date('2016-12-01T00:00:00') }
+    { orgId: testOrgId, contentType: 'blog-posts', name: 'End to End Blog Post One', body: 'This is the really cool blog post one.', created: new Date('2014-01-01T00:00:00') },
+    { orgId: testOrgId, contentType: 'blog-posts', name: 'End to End Blog Post Two', body: 'Two is the best blog post ever.', created: new Date('2015-07-17T00:00:00') },
+    { orgId: testOrgId, contentType: 'blog-posts', name: 'End to End Blog Post Three', body: 'The third post is always the best.', created: new Date('2016-12-01T00:00:00') }
 ];
 let existingQueriesForEndToEndTests = [
     // queries are VERY space sensitive currently.  need to fix.
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndQuery-AllBlogs", query: "eq(contentType,blogPosts)&sort(-created)", regenerate: 0,
-        dependencies: [{type: "data", name: "blogPosts"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndQuery-AllBlogs", nameId: 'end-to-end-query-allblogs', query: "eq(contentType,blog-posts)&sort(-created)", regenerate: 0,
+        dependencies: [{type: "data", nameId: "blog-posts"}]}
 ];
 
 let existingTemplatesForEndToEndTests = [
@@ -71,22 +72,23 @@ let existingTemplatesForEndToEndTests = [
         orgId: testOrgId,
         siteId: testSiteId,
         name: "EndToEndTemplate-BlogNav",
-        blogs: "query(EndToEndQuery-AllBlogs)",
+        nameId: 'end-to-end-template-blognav',
+        blogs: "query(end-to-end-query-allblogs)",
         template: "<ul class='cool-blog-list'>{% for blog in blogs %}<li><h3>{{blog.name}}</h3></li>{% endfor %}</ul>",
-        dependencies: [{type: "query", name: "EndToEndQuery-AllBlogs"}]
+        dependencies: [{type: "query", nameId: "end-to-end-query-allblogs"}]
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Header", template: "<header>This is the end-to-end Header<br/>{% include 'EndToEndTemplate-BlogNav' %}</header>",
-        dependencies: [{type: "template", name: "EndToEndTemplate-BlogNav"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Footer", template: "<footer>This is the end-to-end Footer</footer>" },
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Master", template: "{% include 'EndToEndTemplate-Header' %} <div>{{ content }}</div> {% include 'EndToEndTemplate-Footer' %}",
-        dependencies: [{type: "template", name: "EndToEndTemplate-Header"}, {type: "template", name: "EndToEndTemplate-Footer"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Header", nameId: 'end-to-end-template-header', template: "<header>This is the end-to-end Header<br/>{% include 'end-to-end-template-blognav' %}</header>",
+        dependencies: [{type: "template", nameId: "end-to-end-template-blognav"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Footer", nameId: 'end-to-end-template-footer', template: "<footer>This is the end-to-end Footer</footer>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Master", nameId: 'end-to-end-template-master', template: "{% include 'end-to-end-template-header' %} <div>{{ content }}</div> {% include 'end-to-end-template-footer' %}",
+        dependencies: [{type: "template", nameId: "end-to-end-template-header"}, {type: "template", nameId: "end-to-end-template-footer"}]}
 ];
 
 let existingPagesForEndToEndTests = [
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Home", url: "home", layout: "EndToEndTemplate-Master", template: "<h1>End-to-End Home Page</h1>", regenerate: 0,
-        dependencies: [{type: "template", name: "EndToEndTemplate-Master"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-About", url: "about", layout: "EndToEndTemplate-Master", template: "<h1>End-to-End About</h1>", regenerate: 0,
-        dependencies: [{type: "template", name: "EndToEndTemplate-Master"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Home", nameId: 'end-to-end-template-home', url: "home", layout: "end-to-end-template-master", template: "<h1>End-to-End Home Page</h1>", regenerate: 0,
+        dependencies: [{type: "template", nameId: "end-to-end-template-master"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-About", nameId: 'end-to-end-template-about', url: "about", layout: "end-to-end-template-master", template: "<h1>End-to-End About</h1>", regenerate: 0,
+        dependencies: [{type: "template", nameId: "end-to-end-template-master"}]}
 ];
 
 // We don't render templates on their own anymore, only within the context of a page because each page can potentially alter the rendered output of an included template
@@ -97,12 +99,12 @@ let existingPagesForEndToEndTests = [
 // expectedRenderedTemplates.set("RegenerateTemplate-Master", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div>{{ content }}</div> <header>This is a Footer</header>");
 
 let expectedRenderedPages = new Map();
-expectedRenderedPages.set("RegeneratePage-HomePage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <footer>This is a Footer</footer>");
-expectedRenderedPages.set("RegeneratePage-About", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <footer>This is a Footer</footer>");
+expectedRenderedPages.set("regenerate-page-homepage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <footer>This is a Footer</footer>");
+expectedRenderedPages.set("regenerate-page-about", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <footer>This is a Footer</footer>");
 
 let expectedRenderedQueries = new Map();
-expectedRenderedQueries.set("RegenerateQuery-NavItems", existingNavItems);
-expectedRenderedQueries.set("RegenerateQuery-AllTestimonials", existingTestimonials);
+expectedRenderedQueries.set("regenerate-query-navitems", existingNavItems);
+expectedRenderedQueries.set("regenerate-query-alltestimonials", existingTestimonials);
 
 var pubTestHelper = {
     testOrgId: testOrgId,

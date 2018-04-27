@@ -11,14 +11,14 @@ class DependencyService {
     get db() { return this._db; }
 
     // getRegenerationListForItem(orgId, item) {
-    //     // Expect simple type objects - e.g. { type: "data", name: "products" }
+    //     // Expect simple type objects - e.g. { type: "data", nameId: "products" }
     //     let regenerationList = this.getAllDependentsOfItem(orgId, item);
     //
     //     return regenerationList;
     // }
 
-    // returns array of dependents in "item" format,
-    //  e.g. [{type:"query", name:"top5Products"}, {type:"template", name:"master"}]
+    // returns array of dependents in "item" format (nameId is kebab-cased,
+    //  e.g. [{type:"query", nameId:"top-5-products"}, {type:"template", nameId:"master"}]
     getAllDependentsOfItem(orgId, item, recurseLevel) {
         // Look for any queries or templates that are dependent on this item (their dependencies array contains item)
         if (!recurseLevel) {

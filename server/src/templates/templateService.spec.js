@@ -23,11 +23,13 @@ var FakeTemplateRepo = function() {
     templateObjects.push({
         orgId: testOrgId,
         name: "master",
+        nameId: 'master',
         template: "<header>I'm the header</header>{{ content }}<footer>I'm the footer</footer>"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: "masterWithModel",
+        nameId: 'master-with-model',
         title: "Master Title",
         favoriteNumber: 11,
         template: "<header>I'm the header. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</header>{{ content }}<footer>I'm the footer</footer>"
@@ -35,23 +37,26 @@ var FakeTemplateRepo = function() {
     templateObjects.push({
         orgId: testOrgId,
         name: "dog",
+        nameId: 'dog',
         template: "dogs are nice"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: "cat",
+        nameId: 'cat',
         template: "cats are ok"
     });
     templateObjects.push({
         orgId: testOrgId,
         name: "chicken",
+        nameId: 'chicken',
         template: "chickens are {{disposition}}"
     });
 
     // getTemplate returns a templateObject
-    templateRepo.getTemplate = function(orgId, templateName) {
+    templateRepo.getTemplate = function(orgId, templateNameId) {
         var resolver = Promise.defer();
-        var foundTemplateObject = _.find(templateObjects, {orgId: orgId, name: templateName});
+        var foundTemplateObject = _.find(templateObjects, {orgId: orgId, nameId: templateNameId});
         setTimeout(function () {
             resolver.resolve(foundTemplateObject);
         }, 100);
@@ -111,6 +116,7 @@ describe("TemplateService", function () {
             let myTemplate = {
                 orgId: templateTestHelper.testOrgId,
                 name: testName,
+                nameId: _.kebabCase(testName),
                 siteId: templateTestHelper.testSiteId,
                 template: "<h1>newly created template</h1>"
             };
@@ -132,13 +138,14 @@ describe("TemplateService", function () {
             let invalidTemplate = { // just needs to be missing some required properties
                 orgId: templateTestHelper.testOrgId,
                 siteId: templateTestHelper.testSiteId,
-                name: "testTemplateName"
+                name: "testTemplateName",
+                nameId: 'test-template-name',
                 // template property is missing
             };
 
             let createPromise = templateService.create(templateTestHelper.testOrgId, invalidTemplate);
 
-            return createPromise.should.be.rejectedWith(TypeError, "Need name and template");
+            return createPromise.should.be.rejectedWith(TypeError, "Need name, nameId, and template");
         });
 
         it("can update templates by id", function () {
@@ -146,6 +153,7 @@ describe("TemplateService", function () {
             let theUpdatedTemplate = {
                 orgId: templateTestHelper.testOrgId,
                 name: "testName",
+                nameId: 'test-name',
                 siteId: templateTestHelper.testSiteId,
                 template: updatedTemplate
             };
@@ -167,6 +175,7 @@ describe("TemplateService", function () {
                 orgId: templateTestHelper.testOrgId,
                 siteId: templateTestHelper.testSiteId,
                 name: "testTemplate",
+                nameId: 'test-template',
                 template: "<h1>Delete Me</h1>"
             };
 
@@ -182,11 +191,11 @@ describe("TemplateService", function () {
         });
 
         it("getAllDependentsOfItem with template item returns item array of dependent templates", function () {
-            let item = {type: "template", name: "NewTemplateHeader"};
+            let item = {type: "template", nameId: "new-template-header"};
             let expectedDependents = [
-                {type: "template", name: "NewTemplateWithIncludes"},
-                {type: "template", name: "NewAnotherTemplateWithInclude"},
-                {type: "page", name: "NewTemplateThatIsPage"},
+                {type: "template", nameId: "new-template-with-includes"},
+                {type: "template", nameId: "new-another-template-with-include"},
+                {type: "page", nameId: "new-template-that-is-page"},
             ];
             let promise = templateService.getAllDependentsOfItem(templateTestHelper.testOrgId, item);
 
@@ -194,9 +203,9 @@ describe("TemplateService", function () {
         });
 
         it("getAllDependentsOfItem with query item returns item array of dependent templates", function () {
-            let item = {type: "query", name: "someQuery"};
+            let item = {type: "query", nameId: "some-query"};
             let expectedDependents = [
-                {type: "page", name: "NewTemplateThatIsPage"}
+                {type: "page", nameId: "new-template-that-is-page"}
             ];
             let promise = templateService.getAllDependentsOfItem(templateTestHelper.testOrgId, item);
 
@@ -209,16 +218,17 @@ describe("TemplateService", function () {
                 orgId: templateTestHelper.testOrgId,
                 url: "somePage",
                 name: testName,
+                nameId: _.kebabCase(testName),
                 siteId: templateTestHelper.testSiteId,
-                products: "query(top5Products)",
+                products: "query(top-5-products)",
                 testimonials: `eq(contentType,testimonials)&sort(created)`,
                 template: "{% include 'header' %}<h1>newly created template</h1>{% include 'footer' %}"
             };
             let expectedDependencies = [
-                {type: "query", name: "top5Products"},
-                {type: "data", name: "testimonials"},
-                {type: "template", name: "header"},
-                {type: "template", name: "footer"}
+                {type: "query", nameId: "top-5-products"},
+                {type: "data", nameId: "testimonials"},
+                {type: "template", nameId: "header"},
+                {type: "template", nameId: "footer"}
             ];
 
             let createPromise = templateService.create(templateTestHelper.testOrgId, myTemplate);
@@ -239,13 +249,14 @@ describe("TemplateService", function () {
                 orgId: templateTestHelper.testOrgId,
                 url: "somePage",
                 name: "updatedTemplateWithDependencies",
+                nameId: 'updated-template-with-dependencies',
                 site: templateTestHelper.testSiteId,
                 widgets: `eq(contentType,widgets)&sort(created)`,
                 template: "<h1>newly created template</h1>{% include 'footer' %}"
             };
             let expectedDependencies = [
-                {type: "data", name: "widgets"},
-                {type: "template", name: "footer"}
+                {type: "data", nameId: "widgets"},
+                {type: "template", nameId: "footer"}
             ];
 
             var updateByIdPromise = templateService.updateById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id, theUpdatedTemplate);
@@ -273,13 +284,15 @@ describe("TemplateService", function () {
 
         describe("getDependenciesOfTemplate", function () {
             it("should return all dependencies of a template", function () {
-                let expectedDependencies =  [ { type: 'template', name: 'master' }, { type: 'query', name: 'top5Products' } ];
+                let expectedDependencies =  [ { type: 'template', nameId: 'master' }, { type: 'query', nameId: 'top-5-products' } ];
                 let template = {
                     orgId: templateTestHelper.testOrgId,
                     siteId: templateTestHelper.testSiteId,
+                    name: 'A Test',
+                    nameId: 'a-test',
                     url: "home",
                     layout: "master",
-                    products: "query(top5Products)",
+                    products: "query(top-5-products)",
                     template: "template body is here"
                 };
 
@@ -292,17 +305,19 @@ describe("TemplateService", function () {
 
             it("should return all dependencies of a template with includes", function () {
                 let expectedDependencies =  [
-                    { type: "template", name: "master" },
-                    { type: "query", name: "top10Events" },
-                    { type: "template", name: "header" },
-                    { type: "template", name: "footer" }
+                    { type: "template", nameId: "master" },
+                    { type: "query", nameId: "top-10-events" },
+                    { type: "template", nameId: "header" },
+                    { type: "template", nameId: "footer" }
                 ];
                 let template = {
                     orgId: templateTestHelper.testOrgId,
                     siteId: templateTestHelper.testSiteId,
+                    name: 'A Test',
+                    nameId: 'a-test',
                     url: "home",
                     layout: "master",
-                    products: "query(top10Events)",
+                    products: "query(top-10-events)",
                     template: "{% include 'header' %}<div>template body is here</div>{% include 'footer' %}"
                 };
 
@@ -348,7 +363,7 @@ describe("TemplateService", function () {
         it("can use both content and layout template model properties in a layout template", function () {
             var objectWithTemplate = {
                 favoriteColor: "blue",
-                layout: "masterWithModel",
+                layout: "master-with-model",
                 template: "<h2>Some Content</h2>"
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content</h2><footer>I'm the footer</footer>";
@@ -358,7 +373,7 @@ describe("TemplateService", function () {
         it("can use both layout and content template model properties in a content template", function () {
             var objectWithTemplate = {
                 favoriteColor: "blue",
-                layout: "masterWithModel",
+                layout: "master-with-model",
                 template: "<h2>Some Content. {{title}}-{{favoriteNumber}}-{{favoriteColor}}</h2>"
             };
             var expectedResult = "<header>I'm the header. Master Title-11-blue</header><h2>Some Content. Master Title-11-blue</h2><footer>I'm the footer</footer>";
@@ -370,7 +385,7 @@ describe("TemplateService", function () {
                 title: "Content Title",
                 favoriteNumber: "7",
                 favoriteColor: "yellow",
-                layout: "masterWithModel",
+                layout: "master-with-model",
                 template: "<h2>Some Content</h2>"
             };
             var expectedResult = "<header>I'm the header. Content Title-7-yellow</header><h2>Some Content</h2><footer>I'm the footer</footer>";
@@ -392,18 +407,18 @@ describe("TemplateService", function () {
         });
 
         it("can render using a layout", function () {
-            let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithLayout");
+            let expected = templateTestHelper.expectedRenderedTemplates.get("new-template-with-layout");
 
-            return templateService.getTemplate(templateTestHelper.testOrgId, "NewTemplateWithLayout")
+            return templateService.getTemplate(templateTestHelper.testOrgId, "new-template-with-layout")
                 .then((templateObject) => {
                     return expect(templateService.renderObject(templateTestHelper.testOrgId, templateObject)).to.eventually.equal(expected);
                 });
         });
 
         it("can render includes when include has a model", function () {
-            let expected = templateTestHelper.expectedRenderedTemplates.get("NewTemplateWithIncludes");
+            let expected = templateTestHelper.expectedRenderedTemplates.get("new-template-with-includes");
 
-            return templateService.getTemplate(templateTestHelper.testOrgId, "NewTemplateWithIncludes")
+            return templateService.getTemplate(templateTestHelper.testOrgId, "new-template-with-includes")
                 .then((templateObject) => {
                     return expect(templateService.renderObject(templateTestHelper.testOrgId, templateObject)).to.eventually.equal(expected);
                 });

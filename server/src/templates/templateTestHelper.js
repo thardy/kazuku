@@ -9,31 +9,31 @@ let existingTemplate1 = {};
 let existingTemplate2= {};
 
 let existingTemplateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate1", template: "I'm a new template", created: new Date('2014-01-01T00:00:00') },
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate2", template: "I'm another new template", created: new Date('2015-01-01T00:00:00') },
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate3", template: "I'm a cool new template", created: new Date('2016-01-01T00:00:00') },
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateLayout", template: "<header>Some header</header>{{ content }}<footer>Some footer</footer>"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", layout: "NewTemplateLayout", template: "<div>cool content is here</div>"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", template: "{% include 'NewTemplateHeader' %}<div>nice content</div>{% include 'NewTemplateFooter' %}",
-        dependencies: [{type: "template", name: "NewTemplateHeader"}, {type: "template", name: "NewTemplateFooter"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewAnotherTemplateWithInclude", template: "<div id='someContainer'>{% include 'NewTemplateHeader' %}</div>",
-        dependencies: [{type: "template", name: "NewTemplateHeader"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateThatIsPage", url: "newpage", template: "<html><body>{% include 'NewTemplateHeader' %}</body></html>",
-        dependencies: [{type: "query", name: "someQuery"}, {type: "template", name: "NewTemplateHeader"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateHeader", title: "Master Title", favoriteNumber: 11, template: "<header>The real header {{title}}-{{favoriteNumber}}</header>"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateFooter", template: "<footer>The real footer</footer>"}
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate1", nameId: 'new-template-1', template: "I'm a new template", created: new Date('2014-01-01T00:00:00') },
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate2", nameId: 'new-template-2', template: "I'm another new template", created: new Date('2015-01-01T00:00:00') },
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate3", nameId: 'new-template-3', template: "I'm a cool new template", created: new Date('2016-01-01T00:00:00') },
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateLayout", nameId: 'new-template-layout', template: "<header>Some header</header>{{ content }}<footer>Some footer</footer>"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", nameId: 'new-template-layout', layout: "new-template-layout", template: "<div>cool content is here</div>"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", nameId: 'new-template-with-includes', template: "{% include 'new-template-header' %}<div>nice content</div>{% include 'new-template-footer' %}",
+        dependencies: [{type: "template", nameId: "new-template-header"}, {type: "template", nameId: "new-template-footer"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewAnotherTemplateWithInclude", nameId: 'new-another-template-with-include', template: "<div id='someContainer'>{% include 'new-template-header' %}</div>",
+        dependencies: [{type: "template", nameId: "new-template-header"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateThatIsPage", nameId: 'new-template-that-is-page', url: "newpage", template: "<html><body>{% include 'new-template-header' %}</body></html>",
+        dependencies: [{type: "query", nameId: "some-query"}, {type: "template", nameId: "new-template-header"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateHeader", nameId: 'new-template-header', title: "Master Title", favoriteNumber: 11, template: "<header>The real header {{title}}-{{favoriteNumber}}</header>"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateFooter", nameId: 'new-template-footer', template: "<footer>The real footer</footer>"}
 ];
 
 let existingRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate1", template: "regenerate me", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate2", template: "regenerate me too", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate3", template: "plz regen", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate4", template: "regen ftw", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate1", nameId: 'regenerate-template-1', template: "regenerate me", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate2", nameId: 'regenerate-template-2', template: "regenerate me too", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate3", nameId: 'regenerate-template-3', template: "plz regen", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate4", nameId: 'regenerate-template-4', template: "regen ftw", regenerate: 1 }
 ];
 
 let expectedRenderedTemplates = new Map();
-expectedRenderedTemplates.set("NewTemplateWithLayout", "<header>Some header</header><div>cool content is here</div><footer>Some footer</footer>");
-expectedRenderedTemplates.set("NewTemplateWithIncludes", "<header>The real header Master Title-11</header><div>nice content</div><footer>The real footer</footer>");
+expectedRenderedTemplates.set("new-template-with-layout", "<header>Some header</header><div>cool content is here</div><footer>Some footer</footer>");
+expectedRenderedTemplates.set("new-template-with-includes", "<header>The real header Master Title-11</header><div>nice content</div><footer>The real footer</footer>");
 
 
 let templateTestHelper = {

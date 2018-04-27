@@ -1,30 +1,30 @@
-"use strict";
-var CustomDataService = require("../customData/customDataService");
-var TemplateService = require("../templates/templateService");
-var QueryService = require("../queries/queryService");
-let Database = require("../database/database").Database;
-var sinon = require("sinon");
+'use strict';
+var CustomDataService = require('../customData/customDataService');
+var TemplateService = require('../templates/templateService');
+var QueryService = require('../queries/queryService');
+let Database = require('../database/database').Database;
+var sinon = require('sinon');
 const testHelper = require('../common/testHelper');
 
 const testOrgId = testHelper.testOrgId;
 let testSiteId = 1;
 let fakeNavItemsDataDependents = [
-    { orgId: testOrgId, siteId: testSiteId, name: "headerNavigation", query: 'blah'}
+    { orgId: testOrgId, siteId: testSiteId, name: 'headerNavigation', nameId: 'header-navigation', query: 'blah'}
 ];
 let fakeHeaderNavigationQueryDependents = [
-    { orgId: testOrgId, siteId: testSiteId, name: "header", template: "blah", regenerate: 0 }
+    { orgId: testOrgId, siteId: testSiteId, name: 'header', nameId: 'header', template: 'blah', regenerate: 0 }
 ];
 let fakeHeaderTemplateDependents = [
-    { orgId: testOrgId, siteId: testSiteId, name: "master", template: "blah", regenerate: 0 },
-    { orgId: testOrgId, siteId: testSiteId, name: "christmasMaster", template: "blah", regenerate: 0 }
+    { orgId: testOrgId, siteId: testSiteId, name: 'master', nameId: 'master', template: 'blah', regenerate: 0 },
+    { orgId: testOrgId, siteId: testSiteId, name: 'christmasMaster', nameId: 'christmas-master', template: 'blah', regenerate: 0 }
 ];
 let fakeMasterTemplateDependents = [
-    { orgId: testOrgId, siteId: testSiteId, url: '/home', name: "home", template: "blah", regenerate: 0 },
-    { orgId: testOrgId, siteId: testSiteId, url: '/about', name: "about", template: "blah", regenerate: 0 }
+    { orgId: testOrgId, siteId: testSiteId, url: '/home', name: 'home', nameId: 'home', template: 'blah', regenerate: 0 },
+    { orgId: testOrgId, siteId: testSiteId, url: '/about', name: 'about', nameId: 'about', template: 'blah', regenerate: 0 }
 ];
 let fakeChristmasMasterTemplateDependents = [
-    { orgId: testOrgId, siteId: testSiteId, url: '/home', name: "christmasHome", template: "blah", regenerate: 0 },
-    { orgId: testOrgId, siteId: testSiteId, url: '/about', name: "christmasAbout", template: "blah", regenerate: 0 }
+    { orgId: testOrgId, siteId: testSiteId, url: '/home', name: 'christmasHome', nameId: 'christmas-home', template: 'blah', regenerate: 0 },
+    { orgId: testOrgId, siteId: testSiteId, url: '/about', name: 'christmasAbout', nameId: 'christmas-about', template: 'blah', regenerate: 0 }
 ];
 
 var dependencyTestHelper = {
@@ -41,11 +41,11 @@ var dependencyTestHelper = {
 
 function initMockDependencyChain() {
     // Create a dependency chain, starting with data, then moving to all the other items that depend upon it
-    let itemNavItemsData = {type:'data', name:'navItems'};
-    let itemHeaderNavigationQuery = {type: "query", name: "headerNavigation"};
-    let itemHeaderTemplate = {type:"template", name:"header"};
-    let itemMasterTemplate = {type:"template", name:"master"};
-    let itemChristmasMasterTemplate = {type:"template", name:"christmasMaster"};
+    let itemNavItemsData = {type:'data', nameId:'nav-items'};
+    let itemHeaderNavigationQuery = {type: 'query', nameId: 'header-navigation'};
+    let itemHeaderTemplate = {type:'template', nameId:'header'};
+    let itemMasterTemplate = {type:'template', nameId:'master'};
+    let itemChristmasMasterTemplate = {type:'template', nameId:'christmas-master'};
 
 
     let DatabaseStub = sinon.spy(function() {

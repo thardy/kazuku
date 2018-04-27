@@ -32,12 +32,12 @@ const SITES = [
 ];
 
 const TEMPLATES = [
-    new Template({id: '1', name: 'master', orgId: '1', siteId: '1', template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),
-    new Template({id: '2', name: 'header', orgId: '1', siteId: '1', template: '<header>This is the header</header>'}),
-    new Template({id: '3', name: 'footer', orgId: '1', siteId: '1', template: '<footer>This is the footer</footer>'}),
-    new Template({id: '4', name: 'home', orgId: '1', siteId: '1', layout: 'master', template: '<h1>Home Page</h1>'}),
-    new Template({id: '5', name: 'blog-list', orgId: '1', siteId: '1', template: '<h1>Blog List</h1>'}),
-    new Template({id: '6', name: 'blog-detail', orgId: '1', siteId: '1', template: '<h1>Blog Detail</h1>'}),
+    new Template({id: '1', name: 'master', nameId: 'master', orgId: '1', siteId: '1', template: '{% include "header" %}<div>{{ content }}</div>% include "footer" %}'}),
+    new Template({id: '2', name: 'header', nameId: 'header', orgId: '1', siteId: '1', template: '<header>This is the header</header>'}),
+    new Template({id: '3', name: 'footer', nameId: 'footer', orgId: '1', siteId: '1', template: '<footer>This is the footer</footer>'}),
+    new Template({id: '4', name: 'home', nameId: 'home', orgId: '1', siteId: '1', layout: 'master', template: '<h1>Home Page</h1>'}),
+    new Template({id: '5', name: 'Blog List', nameId: 'blog-list', orgId: '1', siteId: '1', template: '<h1>Blog List</h1>'}),
+    new Template({id: '6', name: 'Blog Detail', nameId: 'blog-detail', orgId: '1', siteId: '1', template: '<h1>Blog Detail</h1>'}),
 ];
 
 //const RESOURCES = [

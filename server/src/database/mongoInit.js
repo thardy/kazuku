@@ -18,11 +18,12 @@
 // db.createCollection('customSchemas', {});
 // db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
 //
-// // sample document - https://github.com/dschnelldavis/angular2-json-schema-form
+// // sample document - https://github.com/dschnelldavis/angular2-json-schema-form (contentType must be kebab-cased)
 // var newCustomSchema = {
 // id: 1,
 //    orgId: 1,
-//    contentType: 'Applicant',
+//    name: 'Applicant',
+//    contentType: 'applicant',
 //    description: 'this is cool'
 //    jsonSchema: {
 //        "type": "object",
@@ -49,8 +50,8 @@
 // Case-insensitive index
 // db.templates.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 //
-// // sample document
-// var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', layout: 'master', description: 'cool template   ', template: '#Test Page 1 - Existing',
+// // sample document (nameId must be kebab-cased)
+// var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', nameId: 'test-template1', layout: 'master', description: 'cool template   ', template: '#Test Page 1 - Existing',
 //                      dependencies: [], regenerate: 0,
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};
 //
@@ -62,8 +63,8 @@
 // Case-insensitive index (requires MongoDb 3.4)
 // db.queries.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 //
-// // sample document
-// var newQuery = { orgId: 1, siteId: 1, name: '$Test Template1', query: 'blah blah', results: [],
+// // sample document (nameId must be kebab-cased)
+// var newQuery = { orgId: 1, siteId: 1, name: '$Test Template1', nameId: 'test-template1', query: 'blah blah', results: [],
 //                      description: 'this is a cool query',
 //                      dependencies: [], regenerate: 0,
 //                      created: new Date(), createdBy: 1, updated: null, updatedBy: null};

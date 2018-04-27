@@ -63,6 +63,7 @@ describe("QueryService", function () {
             let myQuery = {
                 orgId: queryTestHelper.testOrgId,
                 name: testName,
+                nameId: 'test-query',
                 query: `eq(contentType,fakeContentType)&sort(created)&limit(2,0)`
             };
 
@@ -83,13 +84,14 @@ describe("QueryService", function () {
             let invalidQuery = { // just needs to be missing some required properties
                 orgId: queryTestHelper.testOrgId,
                 siteId: queryTestHelper.testSiteId,
-                name: "testQueryName"
+                name: "testQueryName",
+                nameId: 'test-query-name'
                 // query property is missing
             };
 
             let createPromise = queryService.create(queryTestHelper.testOrgId, invalidQuery);
 
-            return createPromise.should.be.rejectedWith(TypeError, "Need name and query");
+            return createPromise.should.be.rejectedWith(TypeError, "Need name, nameId, and query");
         });
 
         it("can update queries by id", function () {
@@ -300,6 +302,7 @@ describe("QueryService", function () {
                     orgId: queryTestHelper.testOrgId,
                     siteId: 1,
                     name: "top5Products",
+                    nameId: 'top-5-products',
                     query: "eq(contentType,products)&sort(created)&limit(5,0)"
                 };
 

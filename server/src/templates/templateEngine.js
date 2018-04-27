@@ -21,7 +21,7 @@ var TemplateEngine = function(args) {
     templateEngine.getTemplate = args.getTemplate;
     let queryService = args.queryService;
 
-    // Override shopify-liquid's getTemplate lookup to use our own mechanism for getting templates by name
+    // Override shopify-liquid's getTemplate lookup to use our own mechanism for getting templates by nameId
     templateEngine.engine.getTemplate = function(path) {
         return templateEngine.getTemplate(current.context.orgId, path)
            .then((templateObject) => {

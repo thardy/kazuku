@@ -67,6 +67,7 @@ class TemplateService extends GenericService {
                 let renderPromise = null;
 
                 if (objectWithTemplate.layout) {
+                    // layout must be kebab-cased
                     renderPromise = this.getTemplateFunction(orgId, objectWithTemplate.layout)
                         .then((layoutObject) => {
                             return this.renderInsideLayout(orgId, objectWithTemplate.template, model, layoutObject)
@@ -176,7 +177,7 @@ class TemplateService extends GenericService {
     }
 
 
-    // item should be of format - { type: "template", name: "master" }
+    // item should be of format - { type: "template", nameId: "master" }
     // todo: I don't think this is used anymore.  Convert anything using this to use dependencyService.getAllDependentsOfItem instead
     getAllDependentsOfItem(orgId, item) {
         // Get all templates that have the given item in their dependencies array.  dependency properties on templates
@@ -267,7 +268,7 @@ class TemplateService extends GenericService {
     }
     onAfterUpdate(orgId, templateObject) {
         // An item changes - recursively get everything dependent on the item that changed
-        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', nameId: templateObject.nameId.toLowerCase() })
+        return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', nameId: templateObject.nameId })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
             });

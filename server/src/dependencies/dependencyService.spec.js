@@ -30,7 +30,7 @@ describe("DependencyService", function () {
 
             dependencyService = new DependencyService(dependencyTestHelper.fakeDatabase);
 
-            let changedItem = { type: "template", name: "header" };
+            let changedItem = { type: "template", nameId: "header" };
             let expectedRegenerationList = dependencyTestHelper.fakeHeaderTemplateDependents
                 .concat(dependencyTestHelper.fakeMasterTemplateDependents)
                 .concat(dependencyTestHelper.fakeChristmasMasterTemplateDependents);
@@ -49,7 +49,7 @@ describe("DependencyService", function () {
 
             dependencyService = new DependencyService(dependencyTestHelper.fakeDatabase);
 
-            let changedItem = { type: "query", name: "headerNavigation" };
+            let changedItem = { type: "query", nameId: "header-navigation" };
             let expectedRegenerationList = dependencyTestHelper.fakeHeaderNavigationQueryDependents
                 .concat(dependencyTestHelper.fakeHeaderTemplateDependents)
                 .concat(dependencyTestHelper.fakeMasterTemplateDependents)
@@ -66,7 +66,7 @@ describe("DependencyService", function () {
 
             dependencyService = new DependencyService(dependencyTestHelper.fakeDatabase);
 
-            let changedItem = { type: "data", name: "navItems" };
+            let changedItem = { type: "data", nameId: "nav-items" };
             let expectedRegenerationList = dependencyTestHelper.fakeNavItemsDataDependents
                 .concat(dependencyTestHelper.fakeHeaderNavigationQueryDependents)
                 .concat(dependencyTestHelper.fakeHeaderTemplateDependents)

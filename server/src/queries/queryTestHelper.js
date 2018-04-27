@@ -128,7 +128,7 @@ function createRegenerateList() {
         })
         .then(function (result) {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.queries.insert({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "RegenerateQueryNOT", query: "do not regenerate me", regenerate: 0 });
+            return database.queries.insert({ orgId: queryTestHelper.testOrgId, siteId: queryTestHelper.testSiteId, name: "RegenerateQueryNOT", nameId: 'regenerate-query-not', query: "do not regenerate me", regenerate: 0 });
         });
 }
 
