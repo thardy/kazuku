@@ -13,9 +13,9 @@ let testOrgId = testHelper.testOrgId;
 let testSiteId = testHelper.testSiteId;
 
 let existingNavItems = [
-    { orgId: testOrgId, contentType: "navItems", name: 'Nav1', url: '/nav1', sortOrder: 1, created: new Date('2014-01-01T00:00:00') },
-    { orgId: testOrgId, contentType: "navItems", name: 'Nav2', url: '/nav2', sortOrder: 2, created: new Date('2015-05-20T00:00:00') },
-    { orgId: testOrgId, contentType: "navItems", name: 'Nav3', url: '/nav3', sortOrder: 3, created: new Date('2015-01-27T00:00:00') },
+    { orgId: testOrgId, contentType: "nav-items", name: 'Nav1', url: '/nav1', sortOrder: 1, created: new Date('2014-01-01T00:00:00') },
+    { orgId: testOrgId, contentType: "nav-items", name: 'Nav2', url: '/nav2', sortOrder: 2, created: new Date('2015-05-20T00:00:00') },
+    { orgId: testOrgId, contentType: "nav-items", name: 'Nav3', url: '/nav3', sortOrder: 3, created: new Date('2015-01-27T00:00:00') },
 ];
 
 let existingTestimonials = [
@@ -30,9 +30,9 @@ let existingTemplatesForRegenerationTests = [
         siteId: testSiteId,
         name: "RegenerateTemplate-Navigation",
         nameId: 'regenerate-template-navigation',
-        navItems: "query(regenerate-query-navitems)",
+        navItems: "query(regenerate-query-nav-items)",
         template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>",
-        dependencies: [{type: "query", nameId: "regenerate-query-navitems"}]
+        dependencies: [{type: "query", nameId: "regenerate-query-nav-items"}]
     },
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", nameId: 'regenerate-template-header', template: "<header>This is a Header<br/>{% include 'regenerate-template-navigation' %}</header>",
         dependencies: [{type: "template", nameId: "regenerate-template-navigation"}]},
@@ -50,7 +50,7 @@ let existingPageRegenerateList = [
 
 let existingQueryRegenerateList = [
     // queries are VERY space sensitive currently.  need to fix.
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", nameId: 'regenerate-query-navitems', query: "eq(contentType,navitems)&sort(sortOrder)", regenerate: 1,
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", nameId: 'regenerate-query-nav-items', query: "eq(contentType,nav-items)&sort(sortOrder)", regenerate: 1,
         dependencies: [{type: "data", nameId: "nav-items"}]},
     { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", nameId: 'regenerate-query-alltestimonials', query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
 ];
@@ -103,7 +103,7 @@ expectedRenderedPages.set("regenerate-page-homepage", "<header>This is a Header<
 expectedRenderedPages.set("regenerate-page-about", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <footer>This is a Footer</footer>");
 
 let expectedRenderedQueries = new Map();
-expectedRenderedQueries.set("regenerate-query-navitems", existingNavItems);
+expectedRenderedQueries.set("regenerate-query-nav-items", existingNavItems);
 expectedRenderedQueries.set("regenerate-query-alltestimonials", existingTestimonials);
 
 var pubTestHelper = {
@@ -197,7 +197,8 @@ function createTemplatesForEndToEndTests() {
 }
 
 function createPagesForEndToEndTests() {
-    return deleteAllEndToEndPages()
+    //return deleteAllEndToEndPages()
+    return deleteAllTestPages()
         .then((result) => {
             return database.templates.insert(existingPagesForEndToEndTests)
                 .then(function(docs) {
@@ -247,7 +248,7 @@ function createQueryRegenerateList() {
 }
 
 function createQueriesForEndToEndTests() {
-    return deleteAllEndToEndQueries()
+    return deleteAllTestQueries()
         .then((result) => {
             return database.queries.insert(existingQueriesForEndToEndTests)
                 .then(function(docs) {
@@ -274,7 +275,7 @@ function deleteAllTestCustomData() {
 }
 
 function deleteCustomDataForEndToEndTests() {
-    return database.customData.remove({orgId: testOrgId, contentType: 'blogPosts'});
+    return database.customData.remove({orgId: testOrgId, contentType: 'blog-posts'});
 }
 
 function deleteAllTemplateRegenTemplates() {
@@ -293,12 +294,20 @@ function deleteAllEndToEndQueries() {
     return database.queries.remove({orgId: testOrgId, name: { $regex: /^EndToEndQuery/ }});
 }
 
+function deleteAllTestQueries() {
+    return database.queries.remove({orgId: testOrgId});
+}
+
 function deleteAllEndToEndTemplates() {
     return database.templates.remove({orgId: testOrgId, name: { $regex: /^EndToEndTemplate/ }});
 }
 
 function deleteAllEndToEndPages() {
     return database.templates.remove({orgId: testOrgId, name: { $regex: /^EndToEndPage/ }});
+}
+
+function deleteAllTestPages() {
+    return database.templates.remove({orgId: testOrgId, url: { $exists: true }});
 }
 
 module.exports = pubTestHelper;

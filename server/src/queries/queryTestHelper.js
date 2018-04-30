@@ -7,40 +7,42 @@ let testOrgId = testHelper.testOrgId;
 let testSiteId = 1;
 let existingQuery1 = {};
 let existingQuery2= {};
-let testQueryDataContentType = "testQueryDataContentType";
+let testQueryDataContentType = "test-query-data-content-type";
 
 let newQuery1 = {
     orgId: testOrgId,
     siteId: testSiteId,
     name: "TestQuery1",
+    nameId: 'test-query1',
     query: "test query one"
 };
 let newQuery2 = {
     orgId: testOrgId,
     siteId: testSiteId,
     name: "TestQuery2",
+    nameId: 'test-query2',
     query: "test query two"
 };
 let existingDataQueries = [
-    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-one", query: `eq(contentType,${testQueryDataContentType})&sort(created)&limit(2,0)`,
-        dependencies: [{type: "data", name: `${testQueryDataContentType}`}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-two", query: `eq(contentType,${testQueryDataContentType})&sort(-created)&limit(3,0)`,
-        dependencies: [{type: "data", name: `${testQueryDataContentType}`}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-three", query: `eq(contentType,${testQueryDataContentType})&ge(created,date:2016-02-20)&sort(created)&limit(2,0)`,
-        dependencies: [{type: "data", name: `${testQueryDataContentType}`}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-one", nameId: 'dataquery-one', query: `eq(contentType,${testQueryDataContentType})&sort(created)&limit(2,0)`,
+        dependencies: [{type: "data", nameId: `${testQueryDataContentType}`}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-two", nameId: 'dataquery-two', query: `eq(contentType,${testQueryDataContentType})&sort(-created)&limit(3,0)`,
+        dependencies: [{type: "data", nameId: `${testQueryDataContentType}`}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "DataQuery-three", nameId: 'dataquery-three', query: `eq(contentType,${testQueryDataContentType})&ge(created,date:2016-02-20)&sort(created)&limit(2,0)`,
+        dependencies: [{type: "data", nameId: `${testQueryDataContentType}`}]}
 ];
 
 let existingQueryData = [
-    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-One', description: 'This is One.', someNumber: 10, created: new Date('2016-01-20T00:00:00') },
-    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Two', description: 'This is Two.', someNumber: 20, created: new Date('2016-02-20T00:00:00') },
-    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Three', description: 'This is Three.', someNumber: 30, created: new Date('2016-03-20T00:00:00') },
-    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Four', description: 'This is Four.', someNumber: 40, created: new Date('2016-04-20T00:00:00') }
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-One', nameId: 'querydata-one', description: 'This is One.', someNumber: 10, created: new Date('2016-01-20T00:00:00') },
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Two', nameId: 'querydata-two', description: 'This is Two.', someNumber: 20, created: new Date('2016-02-20T00:00:00') },
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Three', nameId: 'querydata-three', description: 'This is Three.', someNumber: 30, created: new Date('2016-03-20T00:00:00') },
+    { orgId: testOrgId, contentType: testQueryDataContentType, name: 'QueryData-Four', nameId: 'querydata-four', description: 'This is Four.', someNumber: 40, created: new Date('2016-04-20T00:00:00') }
 ];
 
 let existingRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-HeaderNavigation", query: "something", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", query: "query needz regenerating", regenerate: 1 },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-TopProducts", query: "query regen ftw", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-HeaderNavigation", nameId: 'regeneratequery-headernavigation', query: "something", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", nameId: 'regeneratequery-alltestimonials', query: "query needz regenerating", regenerate: 1 },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-TopProducts", nameId: 'regeneratequery-topproducts', query: "query regen ftw", regenerate: 1 }
 ];
 
 

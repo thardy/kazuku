@@ -53,13 +53,13 @@ class QueryService extends GenericService {
     resolveQueryPropertiesOnModel(orgId, model) {
         const promises = [];
         // some local helper functions to make this more clear
-        const resolveQueryByName = (queryName) => {
-            let cachedResults = cache.get(`query_${queryName}`);
+        const resolveQueryByNameId = (queryNameId) => {
+            let cachedResults = cache.get(`query_${queryNameId}`);
             if (cachedResults) {
                 return Promise.resolve(cachedResults);
             }
             else {
-                return this.getByName(orgId, queryName)
+                return this.getByNameId(orgId, queryNameId)
                     .then((queryObject) => {
                         if (queryObject && queryObject.results) {
                             // queryObject has cached results.  Use them
@@ -76,10 +76,10 @@ class QueryService extends GenericService {
             }
         };
         const resolveModelProperty = (modelProperty) => {
-            const queryName = this.getNameIdOfNamedQuery(modelProperty);
-            if (queryName) {
+            const queryNameId = this.getNameIdOfNamedQuery(modelProperty);
+            if (queryNameId) {
                 // property is a named query, e.g. query(top-5-products)
-                return resolveQueryByName(queryName);
+                return resolveQueryByNameId(queryNameId);
             }
             else if (this.propertyIsQuery(modelProperty)) {
                 // property is an actual query e.g. eq(contentType,products)&gt(price,9.99)&limit(10,0)
@@ -124,16 +124,16 @@ class QueryService extends GenericService {
 
 
     getNameIdOfNamedQuery(query) {
-        let queryName;
+        let queryNameId;
 
         // check to see if this value is actually a string and a valid query
         if (query && (typeof query === 'string' || query instanceof String) && query.startsWith("query(")) {
             // get the nameId of the query.  Named queries should be referenced using a nameId in a property like - query(all-blogs)
             let matchArray = query.match(/query\(([a-zA-Z0-9-_]*)\)/);
-            queryName = matchArray[1];
+            queryNameId = matchArray[1];
         }
 
-        return queryName;
+        return queryNameId;
     }
 
     propertyIsQuery(modelProperty) {
@@ -161,12 +161,12 @@ class QueryService extends GenericService {
         // check to see if this value is actually a valid query
         let queryNameId = this.getNameIdOfNamedQuery(query);
         if (queryNameId) {
-            item = { type: "query", name: queryNameId.toLowerCase() };
+            item = { type: "query", nameId: queryNameId.toLowerCase() };
         }
         else {
             let contentType = this.getContentType(query);
             if (contentType) {
-                item = { type: "data", name: contentType.toLowerCase() };
+                item = { type: "data", nameId: contentType.toLowerCase() };
             }
         }
 

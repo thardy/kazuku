@@ -13,7 +13,7 @@ let existingTemplateList = [
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate2", nameId: 'new-template-2', template: "I'm another new template", created: new Date('2015-01-01T00:00:00') },
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplate3", nameId: 'new-template-3', template: "I'm a cool new template", created: new Date('2016-01-01T00:00:00') },
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateLayout", nameId: 'new-template-layout', template: "<header>Some header</header>{{ content }}<footer>Some footer</footer>"},
-    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", nameId: 'new-template-layout', layout: "new-template-layout", template: "<div>cool content is here</div>"},
+    { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithLayout", nameId: 'new-template-with-layout', layout: "new-template-layout", template: "<div>cool content is here</div>"},
     { orgId: testOrgId, siteId: testSiteId, name: "NewTemplateWithIncludes", nameId: 'new-template-with-includes', template: "{% include 'new-template-header' %}<div>nice content</div>{% include 'new-template-footer' %}",
         dependencies: [{type: "template", nameId: "new-template-header"}, {type: "template", nameId: "new-template-footer"}]},
     { orgId: testOrgId, siteId: testSiteId, name: "NewAnotherTemplateWithInclude", nameId: 'new-another-template-with-include', template: "<div id='someContainer'>{% include 'new-template-header' %}</div>",

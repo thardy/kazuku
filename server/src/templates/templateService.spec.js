@@ -268,7 +268,7 @@ describe("TemplateService", function () {
                     // verify dependencies value
                     var getByIdPromise = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);
 
-                    return getByIdPromise.should.eventually.have.property("dependencies").deep.include.members(expectedDependencies);
+                    return getByIdPromise.should.eventually.have.property("dependencies").deep.equal(expectedDependencies);
                 });
         });
     });

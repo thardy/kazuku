@@ -147,7 +147,7 @@ describe("PublishingService", function () {
 
 
                     for (let template of pubTestHelper.existingPageRegenerateList) {
-                        let expectedPageOutput = pubTestHelper.expectedRenderedPages.get(template.name);
+                        let expectedPageOutput = pubTestHelper.expectedRenderedPages.get(template.nameId);
                         let folder = `/siteContent/${testHelper.existingSites[0].code}`;
                         let filePath = path.join(folder, `${template.url}.html`);
 
@@ -185,7 +185,7 @@ describe("PublishingService", function () {
                     //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
                     //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved/updated.
                     // contentType must be 'blogPosts' in order to get cleaned up by testing helpers
-                    var customData = { orgId: pubTestHelper.testOrgId, contentType: 'blogPosts', title: 'New Test Blog Post', template: 'New blog post. It is new.' };
+                    var customData = { orgId: pubTestHelper.testOrgId, contentType: 'blog-posts', title: 'New Test Blog Post', template: 'New blog post. It is new.' };
 
                     return customDataService.create(pubTestHelper.testOrgId, customData);
                 })
@@ -193,12 +193,12 @@ describe("PublishingService", function () {
                     // verify outcome
                     // Here is the chain of dependencies that should get
                     let expectedQueriesFlaggedForRegeneration = [
-                        { type: "query", name: "EndToEndQuery-AllBlogs" }
+                        { type: "query", nameId: "end-to-end-query-allblogs" }
                     ];
                     //  only be pages should get flagged, no plain templates
                     let expectedPagesFlaggedForRegeneration = [
-                        { type: "page", name: "EndToEndTemplate-Home" },
-                        { type: "page", name: "EndToEndTemplate-About" }
+                        { type: "page", nameId: "end-to-end-template-home" },
+                        { type: "page", nameId: "end-to-end-template-about" }
                     ];
 
                     let promises = [];
@@ -210,7 +210,7 @@ describe("PublishingService", function () {
 
                             // verify that the expectedQueriesFlaggedForRegeneration are present and no others
                             for (let query of queriesFlaggedForRegeneration) {
-                                let foundInExpected = _.find(expectedQueriesFlaggedForRegeneration, (item) => { return item.name === query.name});
+                                let foundInExpected = _.find(expectedQueriesFlaggedForRegeneration, (item) => { return item.nameId === query.nameId});
                                 expect(foundInExpected).to.exist; // make sure each query found is in our expected list
                             }
                         }));
@@ -223,7 +223,7 @@ describe("PublishingService", function () {
 
                             // verify that each template found is in the expectedTemplatesFlaggedForRegeneration list
                             for (let template of templatesFlaggedForRegeneration) {
-                                let foundInExpected = _.find(expectedPagesFlaggedForRegeneration, (item) => { return item.name === template.name});
+                                let foundInExpected = _.find(expectedPagesFlaggedForRegeneration, (item) => { return item.nameId === template.nameId});
                                 expect(foundInExpected).to.exist; // make sure each template found is in our expected list
                             }
                         }));
@@ -253,10 +253,10 @@ describe("PublishingService", function () {
                 .then((result) => {
                     // verify outcome
                     // Here is the chain of dependencies that should get flagged for regeneration
-                    //  only be pages should get flagged, no plain templates
+                    //  only pages should get flagged, no plain templates
                     let expectedPagesFlaggedForRegeneration = [
-                        { type: "page", name: "EndToEndTemplate-Home" },
-                        { type: "page", name: "EndToEndTemplate-About" }
+                        { type: "page", nameId: "end-to-end-template-home" },
+                        { type: "page", nameId: "end-to-end-template-about" }
                     ];
 
                     let promises = [];
@@ -268,7 +268,7 @@ describe("PublishingService", function () {
 
                             // verify that each template found is in the expectedTemplatesFlaggedForRegeneration list
                             for (let template of templatesFlaggedForRegeneration) {
-                                let foundInExpected = _.find(expectedPagesFlaggedForRegeneration, (item) => { return item.name === template.name});
+                                let foundInExpected = _.find(expectedPagesFlaggedForRegeneration, (item) => { return item.nameId === template.nameId});
                                 expect(foundInExpected).to.exist; // make sure each template found is in our expected list
                             }
                         }));

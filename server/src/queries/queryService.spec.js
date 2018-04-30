@@ -64,7 +64,7 @@ describe("QueryService", function () {
                 orgId: queryTestHelper.testOrgId,
                 name: testName,
                 nameId: 'test-query',
-                query: `eq(contentType,fakeContentType)&sort(created)&limit(2,0)`
+                query: `eq(contentType,fake-content-type)&sort(created)&limit(2,0)`
             };
 
             let createPromise = queryService.create(queryTestHelper.testOrgId, myQuery);
@@ -99,6 +99,7 @@ describe("QueryService", function () {
             let theUpdatedQuery = {
                 orgId: queryTestHelper.testOrgId,
                 name: "testName",
+                nameId: 'test-name',
                 siteId: queryTestHelper.testSiteId,
                 query: updatedQuery
             };
@@ -120,6 +121,7 @@ describe("QueryService", function () {
                 orgId: queryTestHelper.testOrgId,
                 siteId: queryTestHelper.testSiteId,
                 name: "testQuery",
+                nameId: 'test-query',
                 query: "<h1>Delete Me</h1>"
             };
 
@@ -135,11 +137,11 @@ describe("QueryService", function () {
         });
 
         it("getAllDependentsOfItem with data item returns item array of dependent queries", function () {
-            let item = {type: "data", name: queryTestHelper.testQueryDataContentType};
+            let item = {type: "data", nameId: queryTestHelper.testQueryDataContentType};
             let expectedDependents = [
-                {type: "query", name: "DataQuery-one"},
-                {type: "query", name: "DataQuery-two"},
-                {type: "query", name: "DataQuery-three"},
+                {type: "query", nameId: "dataquery-one"},
+                {type: "query", nameId: "dataquery-two"},
+                {type: "query", nameId: "dataquery-three"},
             ];
 
             return queryTestHelper.createExistingDataQueries()
@@ -154,10 +156,11 @@ describe("QueryService", function () {
             let myQuery = {
                 orgId: queryTestHelper.testOrgId,
                 name: "TestQueryWithDependencies",
+                nameId: 'test-query-with-dependencies',
                 query: `eq(contentType,${queryTestHelper.testQueryDataContentType})&sort(created)&limit(2,0)`
             };
             let expectedDependencies = [
-                {type: "data", name: queryTestHelper.testQueryDataContentType},
+                {type: "data", nameId: queryTestHelper.testQueryDataContentType},
             ];
 
             let createPromise = queryService.create(queryTestHelper.testOrgId, myQuery);
@@ -177,11 +180,12 @@ describe("QueryService", function () {
             let theUpdatedQuery = {
                 orgId: queryTestHelper.testOrgId,
                 name: "testName",
+                nameId: 'test-name',
                 siteId: queryTestHelper.testSiteId,
-                query: `eq(contentType,someContentType)&sort(created)&limit(2,0)`
+                query: `eq(contentType,some-content-type)&sort(created)&limit(2,0)`
             };
             let expectedDependencies = [
-                {type: "data", name: "someContentType"},
+                {type: "data", nameId: "some-content-type"},
             ];
 
             var updateByIdPromise = queryService.updateById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id, theUpdatedQuery);
@@ -193,7 +197,7 @@ describe("QueryService", function () {
                     // verify dependencies value
                     var getByIdPromise = queryService.getById(queryTestHelper.testOrgId, queryTestHelper.existingQuery1.id);
 
-                    return getByIdPromise.should.eventually.have.property("dependencies").deep.include.members(expectedDependencies);
+                    return getByIdPromise.should.eventually.have.property("dependencies").deep.equal(expectedDependencies);
                 });
         });
 
@@ -240,10 +244,10 @@ describe("QueryService", function () {
 
         it("can resolve all query properties on model object", function () {
             let model = {
-                propertyOne: "query(DataQuery-one)",
-                propertyTwo: "query(DataQuery-two)",
+                propertyOne: "query(dataquery-one)",
+                propertyTwo: "query(dataquery-two)",
                 propertyThree: "someString",
-                propertyFour: "query(DataQuery-three)"
+                propertyFour: "query(dataquery-three)"
             };
             let expected = {
                 propertyOne: [
@@ -273,7 +277,7 @@ describe("QueryService", function () {
 
         it("random customData query test using date", function () {
             let customDataService = new CustomDataService(database);
-            let findPromise = customDataService.find(queryTestHelper.testOrgId, "eq(contentType,testQueryDataContentType)&ge(created,date:2016-02-20)&sort(created)&limit(2,0)");
+            let findPromise = customDataService.find(queryTestHelper.testOrgId, "eq(contentType,test-query-data-content-type)&ge(created,date:2016-02-20)&sort(created)&limit(2,0)");
             let expected = [
                 queryTestHelper.existingQueryData[1],
                 queryTestHelper.existingQueryData[2]
@@ -297,7 +301,7 @@ describe("QueryService", function () {
 
         describe("getDependenciesOfQuery", function () {
             it("should return all dependencies of a query", function () {
-                let expectedDependencies = [{type: "data", name: "products"}];
+                let expectedDependencies = [{type: "data", nameId: "products"}];
                 let query = {
                     orgId: queryTestHelper.testOrgId,
                     siteId: 1,
@@ -309,7 +313,7 @@ describe("QueryService", function () {
                 let dependencies = queryService.getDependenciesOfQuery(query.query);
 
                 dependencies.should.have.length(1);
-                dependencies.should.deep.include.members(expectedDependencies);
+                dependencies.should.deep.equal(expectedDependencies);
             });
         });
     });

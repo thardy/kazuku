@@ -36,7 +36,7 @@ class PublishingService {
                             queryObject.regenerate = 0;         // reset the regenerate flag
 
                             // cache all the query results for this regeneration cycle
-                            cache.put(`query_${queryObject.name}`, queryResults);
+                            cache.put(`query_${queryObject.nameId}`, queryResults);
 
                             // save the queries back to the database
                             // todo: switch to batch update for all queries (queriesToRegenerate) once I get a batch update working

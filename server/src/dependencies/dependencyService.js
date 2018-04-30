@@ -88,6 +88,7 @@ class DependencyService {
                     promises.push(this.db.queries.update(queryObject, {$set: changes}));
                     break;
                 case 'page':
+                    // todo: restrict to only flag pages???
                     promises.push(this.db.templates.update(queryObject, {$set: changes}));
                     break;
             }
