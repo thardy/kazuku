@@ -122,7 +122,8 @@ var pubTestHelper = {
     expectedRenderedQueries: expectedRenderedQueries,
     existingTemplatesForEndToEndTests: existingTemplatesForEndToEndTests,
     existingPageRegenerateList: existingPageRegenerateList,
-    deleteAllEndToEndData: deleteAllEndToEndData
+    deleteAllEndToEndData: deleteAllEndToEndData,
+    deleteAllTestTemplates: deleteAllTestTemplates
 };
 
 // todo: refactor all the common code out of these...
@@ -183,31 +184,24 @@ function createTemplatesForRegenerationTests() {
 }
 
 function createTemplatesForEndToEndTests() {
-    return deleteAllEndToEndTemplates()
-        .then((result) => {
-            return database.templates.insert(existingTemplatesForEndToEndTests)
-                .then(function(docs) {
-                    existingTemplatesForEndToEndTests = docs;
-                    _.forEach(existingTemplatesForEndToEndTests, function (item) {
-                        item.id = item._id.toHexString();
-                    });
-                    return docs;
-                });
+    return database.templates.insert(existingTemplatesForEndToEndTests)
+        .then(function(docs) {
+            existingTemplatesForEndToEndTests = docs;
+            _.forEach(existingTemplatesForEndToEndTests, function (item) {
+                item.id = item._id.toHexString();
+            });
+            return docs;
         });
 }
 
 function createPagesForEndToEndTests() {
-    //return deleteAllEndToEndPages()
-    return deleteAllTestPages()
-        .then((result) => {
-            return database.templates.insert(existingPagesForEndToEndTests)
-                .then(function(docs) {
-                    existingPagesForEndToEndTests = docs;
-                    _.forEach(existingPagesForEndToEndTests, function (item) {
-                        item.id = item._id.toHexString();
-                    });
-                    return docs;
-                });
+    return database.templates.insert(existingPagesForEndToEndTests)
+        .then(function(docs) {
+            existingPagesForEndToEndTests = docs;
+            _.forEach(existingPagesForEndToEndTests, function (item) {
+                item.id = item._id.toHexString();
+            });
+            return docs;
         });
 }
 
@@ -308,6 +302,10 @@ function deleteAllEndToEndPages() {
 
 function deleteAllTestPages() {
     return database.templates.remove({orgId: testOrgId, url: { $exists: true }});
+}
+
+function deleteAllTestTemplates() {
+    return database.templates.remove({orgId: testOrgId});
 }
 
 module.exports = pubTestHelper;

@@ -255,7 +255,10 @@ class TemplateService extends GenericService {
     }
 
     onBeforeUpdate(orgId, templateObject) {
-        templateObject['regenerate'] = 1;
+        if ("url" in templateObject) {
+            // set regenerate flag only if template is a page
+            templateObject['regenerate'] = 1;
+        }
         // !!! We need to always update the entire templateObject.  Partial updates can cause this dependencies check
         //  and subsequent overwrite to be inaccurate, saving a faulty dependencies array
         // add/overwrite dependencies property

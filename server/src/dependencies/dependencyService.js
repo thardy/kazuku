@@ -87,8 +87,9 @@ class DependencyService {
                 case 'query':
                     promises.push(this.db.queries.update(queryObject, {$set: changes}));
                     break;
+                // we only flag pages.  While we need the entire dependency tree to flag all the pages, templates don't
+                //  get flagged because a template should only get regenerated within the context of a page.
                 case 'page':
-                    // todo: restrict to only flag pages???
                     promises.push(this.db.templates.update(queryObject, {$set: changes}));
                     break;
             }

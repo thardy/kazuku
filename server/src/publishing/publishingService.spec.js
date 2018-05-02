@@ -174,12 +174,15 @@ describe("PublishingService", function () {
 
         it("upon customData change, all dependent queries and pages get flagged for regeneration", function () {
             let promises = [];
-            // setup our data
-            promises.push(pubTestHelper.createCustomDataForEndToEndTests());
-            promises.push(pubTestHelper.createQueriesForEndToEndTests());
-            promises.push(pubTestHelper.createTemplatesForEndToEndTests());
-            promises.push(pubTestHelper.createPagesForEndToEndTests());
-            return Promise.all(promises)
+            return pubTestHelper.deleteAllTestTemplates()
+                .then((results) => {
+                    // setup our data
+                    promises.push(pubTestHelper.createCustomDataForEndToEndTests());
+                    promises.push(pubTestHelper.createQueriesForEndToEndTests());
+                    promises.push(pubTestHelper.createTemplatesForEndToEndTests());
+                    promises.push(pubTestHelper.createPagesForEndToEndTests());
+                    return Promise.all(promises);
+                })
                 .then((resultsArray) => {
                     // update some custom data, which should cause queries to get flagged for regeneration, which should
                     //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
@@ -235,10 +238,13 @@ describe("PublishingService", function () {
 
         it("upon template change, all dependent pages get flagged for regeneration", function () {
             let promises = [];
-            // setup our data
-            promises.push(pubTestHelper.createTemplatesForEndToEndTests());
-            promises.push(pubTestHelper.createPagesForEndToEndTests());
-            return Promise.all(promises)
+            return pubTestHelper.deleteAllTestTemplates()
+                .then((results) => {
+                    // setup our data
+                    promises.push(pubTestHelper.createTemplatesForEndToEndTests());
+                    promises.push(pubTestHelper.createPagesForEndToEndTests());
+                    return Promise.all(promises);
+                })
                 .then((resultsArray) => {
                     // update a template, which should cause other templates to get flagged for regeneration, which should
                     //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
