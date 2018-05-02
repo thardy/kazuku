@@ -5,14 +5,16 @@
             <input type="text"
                    pattern="[\D]*"
                    name="name"
-                   [(ngModel)]="site.name">
+                   [(ngModel)]="site.name"
+                   (input)="onNameChange($event.target.value)">
         </div>
 
         <div class="field">
             <label>Site Code</label>
             <input type="text"
                    name="code"
-                   [(ngModel)]="site.code">
+                   readonly
+                   [ngModel]="site.code">
         </div>
 
         <div class="field">

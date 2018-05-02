@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {NgForm} from "@angular/forms";
-import {Site} from "./site.model";
-import {SiteService} from "./site.service";
-import {BaseComponent} from "../common/base-component";
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {NgForm} from '@angular/forms';
+import {Site} from './site.model';
+import {SiteService} from './site.service';
+import {BaseComponent} from '../common/base-component';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'kz-site',
@@ -80,7 +81,7 @@ export class SiteComponent extends BaseComponent implements OnInit {
         }
     }
 
-    cancel(form: NgForm){
+    cancel(form: NgForm) {
         if (this.isCreate) {
             this.router.navigateByUrl('sites');
         }
@@ -88,5 +89,10 @@ export class SiteComponent extends BaseComponent implements OnInit {
             this.site = Object.assign({}, new Site(this.original));
             form.form.markAsPristine();
         }
+    }
+
+    onNameChange(newName: string) {
+        const kebabCasedName = _.kebabCase(newName);
+        this.site.code = kebabCasedName;
     }
 }

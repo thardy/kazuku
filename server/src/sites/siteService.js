@@ -1,4 +1,5 @@
 'use strict';
+const config = require('../server/config');
 const GenericService = require('../common/genericService');
 const ScheduleService = require('../schedules/scheduleService');
 const current = require('../common/current');
