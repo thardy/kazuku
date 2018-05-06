@@ -163,7 +163,7 @@ describe("TemplateService", function () {
             return updateByIdPromise.then(function(result) {
                 result.nModified.should.equal(1);
 
-                // verify customSchema was updated
+                // verify template was updated
                 var getByIdPromise = templateService.getById(templateTestHelper.testOrgId, templateTestHelper.existingTemplate1.id);
 
                 return getByIdPromise.should.eventually.have.property("template").equal(updatedTemplate);

@@ -71,14 +71,18 @@ class PublishingService {
                                     if ("url" in templateObject) {
                                         // templateObject is a page, so store the rendered output in a renderedPage property
                                         templateObject.renderedPage = renderedTemplate;
-                                        templateObject.regenerate = 0;         // reset the regenerate flag
+
+                                        let updatedProperties = {
+                                            renderedPage: renderedTemplate,
+                                            regenerate: 0
+                                        };
 
                                         // todo: output the page to the file system
                                         return this.publishPage(orgId, templateObject)
                                             .then((renderedPage) => {
                                                 // save the templates back to the database
                                                 // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
-                                                return this.templateService.updateById(orgId, templateObject.id, templateObject);
+                                                return this.templateService.updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, templateObject.id, updatedProperties);
                                             });
                                     }
                                     return;

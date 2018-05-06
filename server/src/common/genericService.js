@@ -1,7 +1,8 @@
-"use strict";
-const _ = require("lodash");
-const Promise = require("bluebird");
-const conversionService = require("./conversionService");
+'use strict';
+const _ = require('lodash');
+const Promise = require('bluebird');
+const conversionService = require('./conversionService');
+const ObjectId = require('mongodb').ObjectID;
 
 class GenericService {
 
@@ -123,7 +124,7 @@ class GenericService {
         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
         conversionService.convertISOStringDateTimesToMongoDates(clone);
 
-        let queryObject = { _id: id, orgId: orgId };
+        let queryObject = { _id: new ObjectId(id), orgId: orgId };
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
         return this.onBeforeUpdate(orgId, clone)
             .then((result) => {
@@ -133,6 +134,23 @@ class GenericService {
                 return this.onAfterUpdate(orgId, clone)
                     .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
             });
+    }
+
+    // this is necessary for updating regenerate property to 0 without having BeforeUpdate set it to 1
+    updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, id, updatedDoc) {
+        if (arguments.length !== 3) {
+            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateById'));
+        }
+        if (!this.isValidObjectId(id)) {
+            return Promise.reject(new TypeError('id is not a valid ObjectId'));
+        }
+        let clone = _.clone(updatedDoc);
+        delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
+        conversionService.convertISOStringDateTimesToMongoDates(clone);
+
+        let queryObject = { _id: new ObjectId(id), orgId: orgId };
+        // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+        return this.collection.update(queryObject, {$set: clone})
     }
 
     update(orgId, mongoQueryObject, updatedDoc) {
@@ -178,7 +196,7 @@ class GenericService {
             return Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
 
-        let queryObject = { _id: id, orgId: orgId };
+        let queryObject = { _id: new ObjectId(id), orgId: orgId };
         return this.onBeforeDelete(orgId, queryObject)
             .then((result) => {
                 return this.collection.remove(queryObject)
