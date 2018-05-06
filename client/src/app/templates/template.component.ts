@@ -60,7 +60,8 @@ export class TemplateComponent extends BaseComponent implements OnInit {
             'dataProperties': this.dataPropertiesFormArray
         });
         if (this.isInPageMode) {
-            this.form.controls['url'] = new FormControl(this.template.url, Validators.required);
+            this.form.addControl('url', new FormControl(this.template.url, Validators.required));
+            this.form.addControl('layout', new FormControl(this.template.layout));
         }
     }
 

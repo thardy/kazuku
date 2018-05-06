@@ -36,6 +36,25 @@
                    formControlName="url">
         </div>
 
+        <!--todo: convert to dropdown and choose from all possible layouts (need to wire up isLayout property on non page templates)-->
+        <div *ngIf="isInPageMode" class="field">
+            <label>Layout</label>
+            <input type="text"
+                   pattern="[\D]*"
+                   id="layout"
+                   name="layout"
+                   formControlName="layout">
+        </div>
+
+        <!--todo: wire this up-->
+        <div *ngIf="!isInPageMode" class="field">
+            <label>Is Layout</label>
+            <input type="checkbox"
+                   id="isLayout"
+                   name="isLayout"
+                   formControlName="isLayout">
+        </div>
+
         <div class="field">
             <label>Description</label>
             <textarea type="text" rows="4" cols="50"

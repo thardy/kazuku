@@ -32,7 +32,7 @@ main.set('port', config.port || 3001);
 
 // serve static files out of this folder - referenced as /css, /img, /js
 console.log('about to load static middleware');
-main.use(express.static(global.appRoot + '/public'));
+main.use(express.static(global.appRoot + '/public', {extensions:['html']}));
 main.use(bodyParser.json());
 
 // sessions has to be used before router is mounted
@@ -85,7 +85,11 @@ var siteApp = express();
 siteApp.use((req, res) => {
     const siteCode = req.vhost[0];
     req.originalUrl = req.url;
-    res.sendFile(__dirname + '/siteContent/' + siteCode + req.url);
+    let extension = '';
+    if (!req.url.endsWith('.html')) {
+        extension = '.html';
+    }
+    res.sendFile(__dirname + '/siteContent/' + siteCode + req.url + extension);
 });
 
 // Vhost app
