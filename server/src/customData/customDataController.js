@@ -57,7 +57,7 @@ class CustomDataController {
                     first = false;
                     // hardcode contentType into the query according to the contentType in the route
                     // todo: remove any contentType provided in the querystring (don't add it again)
-                    query = 'contentType={0}&'.format(contentType);
+                    query = `contentType=${contentType}&`;
                 }
                 else {
                     query += '&';

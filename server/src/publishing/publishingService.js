@@ -32,15 +32,17 @@ class PublishingService {
                 return Promise.map(queriesToRegenerate, (queryObject) => {
                     return this.queryService.resolve(orgId, queryObject.query)
                         .then((queryResults) => {
-                            queryObject.results = queryResults; // persist the results on the queryObject
-                            queryObject.regenerate = 0;         // reset the regenerate flag
+                            let updatedQueryProperties = {
+                                results: queryResults,  // persist the results on the queryObject
+                                regenerate: 0   // reset the regenerate flag
+                            };
 
                             // cache all the query results for this regeneration cycle
                             cache.put(`query_${queryObject.nameId}`, queryResults);
 
                             // save the queries back to the database
                             // todo: switch to batch update for all queries (queriesToRegenerate) once I get a batch update working
-                            return this.queryService.updateById(orgId, queryObject.id, queryObject);
+                            return this.queryService.updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, queryObject.id, updatedQueryProperties);
                         });
                 })
                // // todo: save the queryObjects back to the database as a batch instead of looping through them one at a time
@@ -65,6 +67,8 @@ class PublishingService {
                 return this.templateService.getRegenerateList(orgId)
                     .then((templatesToRegenerate) => {
                         // Regenerate/render all of the templates
+                        // Promise.map gives us a little more control over concurrency than Promise.all, but we probably want to move
+                        //  to Promise.all once we get batch update working.
                         return Promise.map(templatesToRegenerate, (templateObject) => {
                             return this.templateService.renderObject(orgId, templateObject)
                                 .then((renderedTemplate) => {
@@ -77,15 +81,29 @@ class PublishingService {
                                             regenerate: 0
                                         };
 
-                                        // todo: output the page to the file system
-                                        return this.publishPage(orgId, templateObject)
-                                            .then((renderedPage) => {
-                                                // save the templates back to the database
-                                                // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
-                                                return this.templateService.updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, templateObject.id, updatedProperties);
+                                        // output the page to the file system
+                                        let publishPagePromise = this.publishPage(orgId, templateObject);
+                                        let templateUpdatePromise = publishPagePromise.then(() => {
+                                            return this.templateService.updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, templateObject.id, updatedProperties);
+                                        });
+                                        return Promise.all([publishPagePromise, templateUpdatePromise])
+                                            .then(([publishResult, templateUpdateResult]) => {
+                                                return {
+                                                    pageName: templateObject.nameId,
+                                                    templateUpdateResult: templateUpdateResult
+                                                };
                                             });
+
+                                        // return this.publishPage(orgId, templateObject)
+                                        //     .then((renderedPage) => {
+                                        //         // save the templates back to the database
+                                        //         // todo: switch to batch update for all templates (templatesToRegenerate) once I get a batch update working
+                                        //         return this.templateService.updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, templateObject.id, updatedProperties);
+                                        //     });
                                     }
-                                    return;
+                                    else {
+                                        return Promise.resolve(null);
+                                    }
                                 })
 
                         })

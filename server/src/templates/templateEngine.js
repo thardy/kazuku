@@ -33,7 +33,7 @@ var TemplateEngine = function(args) {
                        });
                }
                else {
-                   throw new Error(`template '${path}' not found`);
+                   throw new Error(`template '${path}' not found for orgId '${current.context.orgId}'`);
                }
            });
     };

@@ -10,7 +10,17 @@ module.exports = function(agenda) {
         const fullContext = { user: {firstName: 'System', lastName: 'User'}, orgId: job.attrs.data.orgId };
         Zone.current.context = fullContext;
         return publishingService.regenerateItems(job.attrs.data.orgId, job.attrs.data.siteId)
-            .then((result) => {
+            .then((regenerateResults) => {
+                if (regenerateResults.length > 0) {
+                    let consoleOutput = 'Regenerated the following pages: ';
+                    for (let result of regenerateResults) {
+                        if (result.templateUpdateResult && result.templateUpdateResult.ok) {
+                            consoleOutput += result.pageName + ', ';
+                        }
+                    }
+
+                    console.log(consoleOutput);
+                }
                 done();
             })
             .catch((error) => {
