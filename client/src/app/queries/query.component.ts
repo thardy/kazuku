@@ -65,12 +65,15 @@ export class QueryComponent extends BaseComponent implements OnInit {
                 });
         }
         else {
-            this.queryService.update(this.queryNameId, form.value)
+            this.queryService.update(this.query.id, form.value)
                 .takeUntil(this.ngUnsubscribe)
                 .subscribe((result) => {
                     this.saving = false;
                     this.original = Object.assign({}, this.query);
-                    form.form.markAsPristine();
+                    if (form && form.form) {
+                        form.form.markAsPristine();
+                    }
+                    this.router.navigateByUrl('queries');
                 });
         }
     }
