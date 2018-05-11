@@ -155,6 +155,28 @@ describe("CustomDataService", function () {
                 });
         });
 
+        it("can audit for create", function () {
+            const customData = { orgId: testOrgId, contentType: testContentType, title: 'Testing audit for create', template: 'some content' };
+            const PARSE_FORMAT = 'MM-DD-YYYY hh:mm:ss';
+            const now = moment().utc();
+            const thirtySecondsFromNow = moment().utc().add(30, 'seconds');
+            const createPromise = customDataService.create(testOrgId, customData);
+
+            return createPromise
+                .then((doc) => {
+                    const created = moment.utc(doc.created, PARSE_FORMAT);
+                    const withinExpectedTimeframe = created.isBefore(thirtySecondsFromNow) && created.isSameOrAfter(now, 'second'); // had to specify the precision to get isSameOrAfter to work
+                    expect(withinExpectedTimeframe).to.equal(true);
+                    return expect(doc.createdBy).to.equal(testHelper.testUserId);
+                });
+
+            // Promise.all([
+            //     createPromise.should.eventually.be.an("object"),
+            //     createPromise.should.eventually.have.property("created", testBlogContent),
+            //     createPromise.should.eventually.have.property("createdBy", testBlogContent)
+            // ]);
+        });
+
         function deleteAllTestData() {
             return database.customData.remove({orgId: testHelper.testOrgId, contentType: testContentType});
         }

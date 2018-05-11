@@ -13,7 +13,7 @@ let current = {
             // we are in a testing scenario. return a test user
             return {
                 user: {
-                    id: 1,
+                    id: testHelper.testUserId,
                     orgId: testHelper.testOrgId,
                     email: 'imatest@test.com',
                 },

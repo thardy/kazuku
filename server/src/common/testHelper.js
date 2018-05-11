@@ -8,6 +8,7 @@ const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
 
 //var existingProducts = [];
 var testOrgId = '5aad6ee15069c6aa32dea338';
+var testUserId = '5af51f4cf6dd9aae8deaeffa';
 var testSiteId = '5aad6ee15069c6aa32dea339';
 var testProductsContentType = 'testProducts';
 var differentTestProductsContentType = 'differentTestProducts';
@@ -284,6 +285,7 @@ function stripFriendlyIdsFromModel(model) { }
 var testHelper = {
     apiUrl: 'http://localhost:3001',
     testOrgId: testOrgId,
+    testUserId: testUserId,
     testSiteId: testSiteId,
     testProductsContentType: testProductsContentType,
     newProduct1: newProduct1,

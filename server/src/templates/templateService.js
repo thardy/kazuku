@@ -251,7 +251,7 @@ class TemplateService extends GenericService {
         templateObject['regenerate'] = 1;
         // add/overwrite dependencies property
         templateObject['dependencies'] = this.getDependenciesOfTemplate(templateObject);
-        return Promise.resolve();
+        return super.onBeforeCreate(orgId, templateObject);
     }
 
     onBeforeUpdate(orgId, templateObject) {
@@ -263,17 +263,20 @@ class TemplateService extends GenericService {
         //  and subsequent overwrite to be inaccurate, saving a faulty dependencies array
         // add/overwrite dependencies property
         templateObject['dependencies'] = this.getDependenciesOfTemplate(templateObject);
-        return Promise.resolve();
+        return super.onBeforeUpdate(orgId, templateObject);
     }
 
     onAfterCreate(orgId, templateObject) {
-        return Promise.resolve(templateObject);
+        return super.onAfterCreate(orgId, templateObject);
     }
     onAfterUpdate(orgId, templateObject) {
         // An item changes - recursively get everything dependent on the item that changed
         return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'template', nameId: templateObject.nameId })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
+            })
+            .then((result) => {
+                return super.onAfterUpdate(orgId, result);
             });
     }
 }

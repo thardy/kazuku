@@ -3,6 +3,8 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const conversionService = require('./conversionService');
 const ObjectId = require('mongodb').ObjectID;
+const moment = require('moment');
+const current = require('../common/current');
 
 class GenericService {
 
@@ -231,13 +233,33 @@ class GenericService {
         return result;
     }
 
+    auditForCreate(doc) {
+        const now = moment().utc().format('MM-DD-YYYY hh:mm:ss');
+        const userId = current.context.user.id;
+        doc.created = now;
+        doc.createdBy = userId;
+        doc.updated = now;
+        doc.updatedBy = userId;
+    }
 
-    onBeforeCreate(orgId, result) { return Promise.resolve(result); }
-    onBeforeUpdate(orgId, result) { return Promise.resolve(result); }
-    onBeforeDelete(orgId, result) { return Promise.resolve(result); }
-    onAfterCreate(orgId, result) { return Promise.resolve(result); }
-    onAfterUpdate(orgId, result) { return Promise.resolve(result); }
-    onAfterDelete(orgId, result) { return Promise.resolve(result); }
+    auditForUpdate(doc) {
+        const userId = current.context.user.id;
+        doc.updated = moment().utc().format('MM-DD-YYYY hh:mm:ss');
+        doc.updatedBy = userId;
+    }
+
+    onBeforeCreate(orgId, doc) {
+        this.auditForCreate(doc);
+        return Promise.resolve(doc);
+    }
+    onBeforeUpdate(orgId, doc) {
+        this.auditForUpdate(doc);
+        return Promise.resolve(doc);
+    }
+    onBeforeDelete(orgId, doc) { return Promise.resolve(doc); }
+    onAfterCreate(orgId, doc) { return Promise.resolve(doc); }
+    onAfterUpdate(orgId, doc) { return Promise.resolve(doc); }
+    onAfterDelete(orgId, queryObject) { return Promise.resolve(queryObject); }
 
     transformList(list) { return list; }
     transformSingle(single) { return single; }

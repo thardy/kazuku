@@ -192,24 +192,27 @@ class QueryService extends GenericService {
         queryObject['regenerate'] = 1;
         // add/overwrite dependencies property
         queryObject['dependencies'] = this.getDependenciesOfQuery(queryObject.query);
-        return Promise.resolve(queryObject);
+        return super.onBeforeCreate(orgId, queryObject);
     }
 
     onBeforeUpdate(orgId, queryObject) {
         queryObject['regenerate'] = 1;
         // add/overwrite dependencies property
         queryObject['dependencies'] = this.getDependenciesOfQuery(queryObject.query);
-        return Promise.resolve(queryObject);
+        return super.onBeforeUpdate(orgId, queryObject);
     }
 
     onAfterCreate(orgId, queryObject) {
-        return Promise.resolve(queryObject);
+        return super.onAfterCreate(orgId, queryObject);
     }
     onAfterUpdate(orgId, queryObject) {
         // An item changes - recursively get everything dependent on the item that changed
         return this.dependencyService.getAllDependentsOfItem(orgId, {type: 'query', nameId: queryObject.nameId })
             .then((dependentObjects) => {
                 return this.dependencyService.flagDependentItemsForRegeneration(orgId, dependentObjects);
+            })
+            .then((result) => {
+                return super.onAfterUpdate(orgId, result);
             });
     }
 
