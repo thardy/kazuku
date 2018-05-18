@@ -234,7 +234,7 @@ class GenericService {
     }
 
     auditForCreate(doc) {
-        const now = moment().utc().format('MM-DD-YYYY hh:mm:ss');
+        const now = moment().utc().toDate();
         const userId = current.context.user.id;
         doc.created = now;
         doc.createdBy = userId;
@@ -244,7 +244,7 @@ class GenericService {
 
     auditForUpdate(doc) {
         const userId = current.context.user.id;
-        doc.updated = moment().utc().format('MM-DD-YYYY hh:mm:ss');
+        doc.updated = moment().utc().toDate(); //doc.updated = moment().utc().format('MM-DD-YYYY hh:mm:ss');
         doc.updatedBy = userId;
     }
 
