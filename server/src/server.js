@@ -95,8 +95,8 @@ siteApp.use((req, res) => {
 // Vhost app
 var app = module.exports = express();
 
-app.use(vhost('kazuku.com', main)); // Serves top level domain via Main server app
-app.use(vhost('*.kazuku.com', siteApp)); // Serves all subdomains via siteApp
+app.use(vhost(config.hostname, main)); // Serves top level domain via Main server app
+app.use(vhost(`*.${config.hostname}`, siteApp)); // Serves all subdomains via siteApp
 
 // the following is now handled in www/bin
 // // module.parent check is required to support mocha watch

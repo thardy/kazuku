@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const express = require("express");
 const app = require('../server');
-const request = require("supertest-as-promised");
+const request = require("supertest");
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
@@ -79,7 +79,7 @@ describe("ApiTests", function () {
 
         xit("should return a user object and a random number I there is a logged in user", () => {
             // todo: Doesn't currently work.  Alter to use something like https://github.com/shaunc/supertest-session-as-promised
-            //  in order to use supertest-as-promised successfully with passport sessions.
+            //  in order to use supertest successfully with passport sessions.
             var user = {
                 orgId: testHelper.testOrgId,
                 email: "one@test.com",

@@ -52,7 +52,6 @@
     "mocha": "^3.5.3",
     "should": "^4.6.5",
     "sinon": "^1.17.3",
-    "supertest": "^2.0.0",
-    "supertest-as-promised": "^4.0.0"
+    "supertest": "^3.1.0"
   }
 }

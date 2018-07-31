@@ -1,7 +1,8 @@
 const _ = require("lodash");
+const config = require('../server/config');
 const express = require("express");
 const app = require('../server');
-const request = require("supertest-as-promised");
+const request = require('supertest')(`http://${config.hostname}:${config.port}`);
 const chai = require("chai");
 const should = chai.Should();
 const expect = chai.expect;
@@ -13,6 +14,10 @@ chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 
 describe("ApiTests", function () {
+
+    app.listen(config.port, () => {
+        console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+    });
 
     before(function () {
         // Insert some docs to be present before all tests start
@@ -27,10 +32,31 @@ describe("ApiTests", function () {
     describe("customSchemasController", function () {
 
         describe("when authorized", function () {
+            let authCookie = {};
+
+            before(function () {
+                return request
+                    .post('/api/users/login')
+                    .send({
+                        email: 'admin',
+                        password: 'test'
+                    })
+                    .expect(200)
+                    .then(response => {
+                        // todo: look for the auth cookie
+                        const cookies = response.header['set-cookie'];
+                        if (cookies && cookies.length > 0) {
+                            authCookie = cookies[0]
+                        }
+                        return response;
+                    });
+            });
+
             describe("getAll", function () {
                 it("should return all customSchemas for a given org", function () {
-                    return request(app)
+                    return request
                         .get('/api/customschemas')
+                        .set('Cookie', [authCookie])
                         .expect(200)
                         .then(function (result) {
                             result.body.length.should.equal(2);
@@ -43,8 +69,9 @@ describe("ApiTests", function () {
             });
             describe("getByContentType", function () {
                 it("should return a customSchema for a given org and contentType", function () {
-                    return request(app)
+                    return request
                         .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[0].contentType))
+                        .set('Cookie', [authCookie])
                         .expect(200)
                         .then(function (result) {
                             var schema = result.body;
@@ -53,8 +80,9 @@ describe("ApiTests", function () {
                 });
                 it("should return a 404 for a contentType that is not found", function () {
                     var badContentType = "123456789012";
-                    return request(app)
+                    return request
                         .get('/api/customschemas/{0}'.format(badContentType))
+                        .set('Cookie', [authCookie])
                         .expect(404);
                 });
             });
@@ -78,8 +106,9 @@ describe("ApiTests", function () {
                     };
 
                     var relativeUrl = '/api/customschemas';
-                    return request(app)
+                    return request
                         .post(relativeUrl)
+                        .set('Cookie', [authCookie])
                         .send(newSchema)
                         .expect(201)
                         .then(function(result) {
@@ -93,8 +122,9 @@ describe("ApiTests", function () {
                     var invalidCustomSchema = {
                         contentType: testHelper.testContentType2
                     };
-                    return request(app)
+                    return request
                         .post('/api/customschemas')
+                        .set('Cookie', [authCookie])
                         .send(invalidCustomSchema)
                         .expect(400);
                 });
@@ -104,8 +134,9 @@ describe("ApiTests", function () {
                         contentType: testHelper.existingSchemas[0].contentType,
                         jsonSchema: {}
                     };
-                    return request(app)
+                    return request
                         .post('/api/customschemas')
+                        .set('Cookie', [authCookie])
                         .send(body)
                         .expect(409);
                 });
@@ -127,14 +158,16 @@ describe("ApiTests", function () {
                     };
 
                     var relativeUrl = '/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType);
-                    return request(app)
+                    return request
                         .put(relativeUrl)
+                        .set('Cookie', [authCookie])
                         .send(updatedSchema)
                         .expect(200)
                         .then(function(result) {
                             // verify customSchema was updated
-                            return request(app)
+                            return request
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
+                                .set('Cookie', [authCookie])
                                 .expect(200)
                                 .then(function (result) {
                                     var schema = result.body;
@@ -149,8 +182,9 @@ describe("ApiTests", function () {
 
                     // 557f30402598f1243c14403c
                     var relativeUrl = '/api/customschemas/{0}'.format('nonExistentContentType');
-                    return request(app)
+                    return request
                         .put(relativeUrl)
+                        .set('Cookie', [authCookie])
                         .send(body)
                         .expect(404);
                 });
@@ -158,20 +192,23 @@ describe("ApiTests", function () {
             describe("delete", function () {
                 it("should delete an existing customSchema", function () {
                     var id = testHelper.existingSchemas[1].id;
-                    return request(app)
+                    return request
                         .delete('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
+                        .set('Cookie', [authCookie])
                         .expect(204)
                         .then(function(result) {
                             // verify customData was deleted
-                            return request(app)
+                            return request
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1]))
+                                .set('Cookie', [authCookie])
                                 .expect(404);
                         });
                 });
                 it("should return 404 for a non-existent contentType", function () {
                     var relativeUrl = '/api/customData/{0}'.format('nonExistentContentType');
-                    return request(app)
+                    return request
                         .delete(relativeUrl)
+                        .set('Cookie', [authCookie])
                         .expect(404);
                 });
             });

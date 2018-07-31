@@ -8,6 +8,7 @@ if (process.env.NODE_ENV === 'production') {
     module.exports = {
         env: process.env.NODE_ENV,
         host: process.env.host || '',
+        hostname: process.env.hostName || '',
         port: process.env.port,
         mongoDbUrl: process.env.mongoDbUrl,
         sessionSecret: process.env.sessionSecret,
