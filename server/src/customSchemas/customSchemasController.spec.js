@@ -15,16 +15,22 @@ chai.use(require('chai-things'));
 
 describe("ApiTests", function () {
 
-    app.listen(config.port, () => {
-        console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
-    });
+    let server = {};
 
-    before(function () {
+    before(() => {
+        // start express server
+        server = app.listen(config.port, () => {
+            console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+        });
+
         // Insert some docs to be present before all tests start
         return testHelper.setupTestSchemas();
     });
 
-    after(function () {
+    after(() => {
+        // shutdown express server
+        server.close();
+
         // Remove everything we created
         return testHelper.deleteAllTestSchemas();
     });

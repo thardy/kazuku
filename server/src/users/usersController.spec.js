@@ -1,7 +1,7 @@
 const _ = require("lodash");
-const express = require("express");
+const config = require('../server/config');
 const app = require('../server');
-const request = require("supertest");
+const request = require('supertest')(`http://${config.hostname}:${config.port}`);
 const chai = require("chai");
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
@@ -14,7 +14,40 @@ const testHelper = require("../common/testHelper");
 const utils = require('../utils/index');
 
 describe("ApiTests", function () {
+    let server = {};
+
+    before(() => {
+        // start express server
+        server = app.listen(config.port, () => {
+            console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+        });
+    });
+
+    after(() => {
+        // shutdown express server
+        server.close();
+    });
+
     describe("UsersControllerTest", () => {
+        let authCookie = {};
+
+        before(function () {
+            return request
+                .post('/api/users/login')
+                .send({
+                    email: 'admin',
+                    password: 'test'
+                })
+                .expect(200)
+                .then(response => {
+                    // todo: look for the auth cookie
+                    const cookies = response.header['set-cookie'];
+                    if (cookies && cookies.length > 0) {
+                        authCookie = cookies[0]
+                    }
+                    return response;
+                });
+        });
 
         before(() => {
             return testHelper.setupTestUsers();
@@ -30,8 +63,9 @@ describe("ApiTests", function () {
                 email: "test@test.com",
                 password: "test"
             };
-            return request(app)
+            return request
                 .post('/api/users')
+                .set('Cookie', [authCookie])
                 .send(newUser)
                 .expect(201)
                 .then(result => {
@@ -43,12 +77,13 @@ describe("ApiTests", function () {
         });
 
         it("should not create a new user if user with same email already exists", () => {
-            return request(app)
+            return request
                 .post('/api/users')
+                .set('Cookie', [authCookie])
                 .send(testHelper.newUser1)
                 .expect(409)
                 .then(result => {
-                    result.body.should.have.property('Errors').deep.equal(['Duplicate Key Error']);
+                    result.body.should.have.property('errors').deep.equal(['Duplicate Key Error']);
                 });
         });
 
@@ -58,8 +93,9 @@ describe("ApiTests", function () {
                 email: "one@test.com",
                 password: "one"
             };
-            return request(app)
+            return request
                 .post('/api/users/login')
+                .set('Cookie', [authCookie])
                 .send(user)
                 .expect(200)
                 .then(result => {
@@ -69,7 +105,7 @@ describe("ApiTests", function () {
         });
 
         it("should return unauthenticated if there is no logged in user", () => {
-            return request(app)
+            return request
                 .get('/api/users/random-number')
                 .expect(401)
                 .then(result => {
@@ -85,8 +121,9 @@ describe("ApiTests", function () {
                 email: "one@test.com",
                 password: "one"
             };
-            return request(app)
+            return request
                 .post('/api/users/login')
+                .set('Cookie', [authCookie])
                 .send(user)
                 .expect(200)
                 .then(result => {
@@ -94,8 +131,9 @@ describe("ApiTests", function () {
                 })
                 .then(user => {
                     console.log("hitting the random-number endpoint...");
-                    return request(app)
+                    return request
                         .get('/api/users/random-number')
+                        .set('Cookie', [authCookie])
                         .expect(200)
                         .then(result => {
                             console.log("yay got the random number =", result);

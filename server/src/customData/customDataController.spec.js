@@ -18,8 +18,18 @@ describe("ApiTests", function () {
     //  Perhaps just leave in each spec until Mocha tagging api is completed, and use that to split up api and non-api test runs.
     // Update: I'm currently using grep to run api tests and it's working, but it doesn't address loading this in every spec.
     // var app = require('../../bin/www'); // This starts up the api server (I'm assuming it shuts down when mocha is done)
-    app.listen(config.port, () => {
-        console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+    let server = {};
+
+    before(() => {
+        // start express server
+        server = app.listen(config.port, () => {
+            console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
+        });
+    });
+
+    after(() => {
+        // shutdown express server
+        server.close();
     });
 
     describe("customDataController", function () {
