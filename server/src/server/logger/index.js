@@ -2,7 +2,7 @@
 
 const winston = require('winston');
 // equivalent to - require('./winston/logger').Logger
-const logger = new (winston.Logger)({
+const logger = winston.createLogger({
     transports: [
         new (winston.transports.File)({
             level: 'debug',
