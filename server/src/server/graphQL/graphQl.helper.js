@@ -85,7 +85,7 @@ const simpleQuery = (contentType, inputType) => {
 
                 options.projection = projection;
                 convertStringIdToObjectId(filter);
-                const results = await context.db.collection('customData').find(filter, options).toArray();
+                const results = (await context.db.collection('customData').find(filter, options).toArray()).map(convertObjectIdToStringId);
                 return results;
                 //this.customDataService.getByContentType(current.context.orgId, contentType)
             }
@@ -102,6 +102,14 @@ convertStringIdToObjectId = (filter) => {
         }
     }
 };
+
+convertObjectIdToStringId = (doc) => {
+    if (doc && doc._id) {
+        doc._id = doc._id.toHexString();
+    }
+    return doc;
+};
+
 
 module.exports = {
     typeToArgs,
