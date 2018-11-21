@@ -11,7 +11,8 @@ require('zone.js/dist/zone-node.js');
 const path = require('path');
 const CustomApolloServer = require('./server/graphQL/customApolloServer');
 const {makeExecutableSchema} = require('apollo-server-express');
-const database = require("./database/database").database;
+//const database = require("./database/database").database;
+const mongoDb = require('mongodb');
 
 global.appRoot = path.resolve(__dirname);
 
@@ -29,6 +30,9 @@ function setupAuthZone(req, res, next) {
 }
 
 async function init(config) {
+    let client = await mongoDb.MongoClient.connect('mongodb://localhost:27017');
+    const db = client.db('kazuku');
+
     // main server app
     const main = express();
     main.set('port', config.port || 3001);
@@ -86,7 +90,7 @@ async function init(config) {
 // site app - maps subdomains to site folders
     let siteApp = express();
     // Setup GraphQL for all subdomains
-    setupGraphQL(siteApp);
+    setupGraphQL(siteApp, db);
 
     siteApp.use((req, res) => {
         const siteCode = req.vhost[0];
@@ -111,7 +115,7 @@ async function init(config) {
     });
 }
 
-function setupGraphQL(app) {
+function setupGraphQL(app, db) {
     const typeDefs = `
       type Query {
         "A simple type for getting started!"
@@ -133,7 +137,8 @@ function setupGraphQL(app) {
     server.applyMiddleware({
         app: app,
         path: '/graphql', //`http://kazuku.com:3001/graphql`,
-        db: database.db
+        //db: database.db
+        db: db
     });
 }
 

@@ -4,6 +4,9 @@ const { json } = require('body-parser');
 const { ApolloServer, makeExecutableSchema } = require('apollo-server-express');
 //const schema = require('./schema/schema');
 const accepts = require('accepts');
+const SchemaService = require('./schemaService');
+const database = require("../../database/database").database;
+const authHelper = require('../../common/authHelper');
 
 /* Don't think it's exported normally, get directly */
 const { graphqlExpress } = require('apollo-server-express/dist/expressApollo');
@@ -12,6 +15,7 @@ class CustomApolloServer extends ApolloServer {
     constructor(options) {
         super(options);
 
+        this.schemaService = new SchemaService(database);
         this.alphaSchema = {
             typeDefs: `
           type Query {
@@ -45,6 +49,7 @@ class CustomApolloServer extends ApolloServer {
         /* Adds project specific middleware inside, just to keep in one place */
         //let auth = undefined; // todo: figure out where this should come from
         //app.use(path, json(), auth, (req, res, next) => {
+        //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
         app.use(path, json(), async (req, res, next) => {
             if (this.playgroundOptions && req.method === 'GET') {
                 // perform more expensive content-type check only if necessary
@@ -85,7 +90,7 @@ class CustomApolloServer extends ApolloServer {
                     ...serverObj,
                     graphqlPath: path,
                     /* Retrieves a custom graphql schema based on request */
-                    schema: makeExecutableSchema(this.getCustomSchema(req)),
+                    schema: this.getCustomSchema(req), //makeExecutableSchema(this.getCustomSchema(req))
                     context: {
                         db: db,
                         request: req
