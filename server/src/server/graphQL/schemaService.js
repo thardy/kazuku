@@ -119,6 +119,75 @@ class SchemaService {
         // createdBy: GraphQLString
         // updated: GraphQLDateTime
         // updatedBy: GraphQLString
+
+
+        const jsonSchema = {
+            "type" : "object",
+            "properties" : {
+                "name": {
+                    "type": "string",
+                    "description": "Name"
+                },
+                "shortDescription": {
+                    "type": "string",
+                    "description": "Short Description"
+                },
+                "body": {
+                    "type": "string",
+                    "description": "Body"
+                },
+                "sortOrder": {
+                    "type": "number",
+                    "description": "Sort Order"
+                }
+            }
+        };
+        const customSchema = {
+            name: 'Blog Posts',
+            contentType: 'blog-posts',
+            description: 'hello!',
+            jsonSchema: jsonSchema,
+            orgId: '5ab7fe90da90fa0fa857a557'
+        };
+
+        for (const property in jsonSchema.properties) {
+            const graphQLType = this.getGraphQLTypeForSchemaProperty(jsonSchema.properties[property].type);
+
+
+            const customDataTypeFields = {
+                _id: {
+                    type: GraphQLID
+                },
+                orgId: {
+                    type: GraphQLString
+                },
+                contentType: {
+                    type: GraphQLString
+                },
+                created: {
+                    type: GraphQLDateTime
+                },
+                createdBy: {
+                    type: GraphQLString
+                },
+                updated: {
+                    type: GraphQLDateTime
+                },
+                updatedBy: {
+                    type: GraphQLString
+                }
+            };
+            customDataTypeFields[property] = {
+                type: graphQLType
+            };
+
+            const customDataType = new GraphQLObjectType({
+                name: customSchema.name.replace(' ', ''),
+                fields: customDataTypeFields
+            });
+        }
+
+
         const BlogPostType = new GraphQLObjectType({
             name: 'BlogPostType',
             fields: {
@@ -208,6 +277,27 @@ class SchemaService {
         return schema;
     }
 
+    getGraphQLTypeForSchemaProperty(propertyType) {
+        let graphQLType = GraphQLString;
+
+        switch(propertyType) {
+            case 'string':
+                graphQLType = GraphQLString;
+                break;
+            case 'number':
+                graphQLType = GraphQLInt;
+                break;
+            case 'string':
+                graphQLType = GraphQLDateTime;
+                break;
+            default:
+                graphQLType = GraphQLString;
+                break;
+        }
+        // todo: types to be implemented: GraphQLID, GraphQLFloat
+
+        return graphQLType;
+    }
 
 }
 

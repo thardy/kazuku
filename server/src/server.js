@@ -30,8 +30,11 @@ function setupAuthZone(req, res, next) {
 }
 
 async function init(config) {
-    let client = await mongoDb.MongoClient.connect('mongodb://localhost:27017');
-    const db = client.db('kazuku');
+    let client = await mongoDb.MongoClient.connect(config.mongoDbUrl);
+    const db = client.db();
+
+    // let client = await mongoDb.MongoClient.connect('mongodb://localhost:27017');
+    // const db = client.db('kazuku');
 
     // main server app
     const main = express();
