@@ -189,8 +189,8 @@ export class TemplateComponent extends BaseComponent implements OnInit {
     }
 
     onNameChange(newName: string) {
-        const kebabCasedName = _.kebabCase(newName);
-        const newValue = {nameId: kebabCasedName};
+        const snakeCasedName = _.snakeCase(newName);
+        const newValue = {nameId: snakeCasedName};
         this.form.patchValue(newValue);
     }
 }

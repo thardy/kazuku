@@ -27,26 +27,39 @@ const typeToArgs = (type, defaults = {}) => {
         );
 };
 
-const simpleCreateMutation = (collection, inputType) => {
+const simpleCreateMutation = (contentType, inputType) => {
     return {
         type: AcknowledgeType,
         args: typeToArgs(inputType),
-        resolve: async (object, args, context, info) => {
-            return (await context.db.collection(collection).insertOne(args)).result;
+        resolve: async (object, objectToCreate, context, info) => {
+            objectToCreate['orgId'] = getCurrentOrgId();
+            objectToCreate['contentType'] = contentType;
+
+            const result = await context.db.collection('customData').insertOne(objectToCreate);
+            return result.result;
+
+            // return (await context.db.collection(collection).insertOne(args)).result;
         }
     }
 };
 
-const simpleUpdateMutation = (collection, inputType) => {
+const simpleUpdateMutation = (contentType, inputType) => {
     return {
         type: AcknowledgeType,
         args: getGraphQLUpdateArgs(inputType),
         resolve: getMongoDbUpdateResolver(
             inputType,
             async (filter, update, options, projection, source, args, context, info) => {
+                filter['orgId'] = { $eq: getCurrentOrgId() };
+                filter['contentType'] = { $eq: contentType };
+
                 convertStringIdToObjectId(filter);
-                const result = await context.db.collection(collection).updateMany(filter, update, options);
+                const result = await context.db.collection('customData').updateMany(filter, update, options);
                 return result.result;
+
+                // convertStringIdToObjectId(filter);
+                // const result = await context.db.collection(collection).updateMany(filter, update, options);
+                // return result.result;
             },
             {
                 differentOutputType: true,
@@ -55,15 +68,24 @@ const simpleUpdateMutation = (collection, inputType) => {
     }
 };
 
-const simpleDeleteMutation = (collection, inputType) => {
+const simpleDeleteMutation = (contentType, inputType) => {
     return {
         type: AcknowledgeType,
         args: getGraphQLQueryArgs(inputType),
         resolve: getMongoDbQueryResolver(
             inputType,
             async (filter, projection, options, obj, args, context) => {
+                // alter filter to have orgId and contentType
+                filter['orgId'] = { $eq: getCurrentOrgId() };
+                filter['contentType'] = { $eq: contentType };
+
+                options.projection = projection;
                 convertStringIdToObjectId(filter);
-                return (await context.db.collection(collection).deleteMany(filter, options)).result;
+                const result = await context.db.collection('customData').deleteMany(filter, options);
+                return result.result;
+
+                // convertStringIdToObjectId(filter);
+                // return (await context.db.collection(collection).deleteMany(filter, options)).result;
             },
             {
                 differentOutputType: true,
@@ -80,7 +102,7 @@ const simpleQuery = (contentType, inputType) => {
             inputType,
             async (filter, projection, options, obj, args, context) => {
                 // alter filter to have orgId and contentType
-                filter['orgId'] = { $eq: '5ab7fe90da90fa0fa857a557' };
+                filter['orgId'] = { $eq: getCurrentOrgId() };
                 filter['contentType'] = { $eq: contentType };
 
                 options.projection = projection;
@@ -101,6 +123,10 @@ convertStringIdToObjectId = (filter) => {
             }
         }
     }
+};
+
+getCurrentOrgId = () => {
+    return '5ab7fe90da90fa0fa857a557';
 };
 
 convertObjectIdToStringId = (doc) => {

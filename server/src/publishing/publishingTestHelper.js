@@ -13,9 +13,9 @@ let testOrgId = testHelper.testOrgId;
 let testSiteId = testHelper.testSiteId;
 
 let existingNavItems = [
-    { orgId: testOrgId, contentType: "nav-items", name: 'Nav1', url: '/nav1', sortOrder: 1, created: new Date('2014-01-01T00:00:00') },
-    { orgId: testOrgId, contentType: "nav-items", name: 'Nav2', url: '/nav2', sortOrder: 2, created: new Date('2015-05-20T00:00:00') },
-    { orgId: testOrgId, contentType: "nav-items", name: 'Nav3', url: '/nav3', sortOrder: 3, created: new Date('2015-01-27T00:00:00') },
+    { orgId: testOrgId, contentType: "nav_items", name: 'Nav1', url: '/nav1', sortOrder: 1, created: new Date('2014-01-01T00:00:00') },
+    { orgId: testOrgId, contentType: "nav_items", name: 'Nav2', url: '/nav2', sortOrder: 2, created: new Date('2015-05-20T00:00:00') },
+    { orgId: testOrgId, contentType: "nav_items", name: 'Nav3', url: '/nav3', sortOrder: 3, created: new Date('2015-01-27T00:00:00') },
 ];
 
 let existingTestimonials = [
@@ -28,83 +28,83 @@ let existingTemplatesForRegenerationTests = [
     {
         orgId: testOrgId,
         siteId: testSiteId,
-        name: "RegenerateTemplate-Navigation",
-        nameId: 'regenerate-template-navigation',
-        navItems: "query(regenerate-query-nav-items)",
+        name: "RegenerateTemplate_Navigation",
+        nameId: 'regenerate_template_navigation',
+        navItems: "query(regenerate_query_nav_items)",
         template: "<nav><ul>{% for navItem in navItems %}<li><a href='{{navItem.url}}'>{{navItem.name}}</a></li>{% endfor %}</ul></nav>",
-        dependencies: [{type: "query", nameId: "regenerate-query-nav-items"}]
+        dependencies: [{type: "query", nameId: "regenerate_query_nav_items"}]
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Header", nameId: 'regenerate-template-header', template: "<header>This is a Header<br/>{% include 'regenerate-template-navigation' %}</header>",
-        dependencies: [{type: "template", nameId: "regenerate-template-navigation"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Footer", nameId: 'regenerate-template-footer', template: "<footer>This is a Footer</footer>" },
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate-Master", nameId: 'regenerate-template-master', template: "{% include 'regenerate-template-header' %} <div>{{ content }}</div> {% include 'regenerate-template-footer' %}",
-        dependencies: [{type: "template", nameId: "regenerate-template-header"}, {type: "template", nameId: "regenerate-template-footer"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate_Header", nameId: 'regenerate_template_header', template: "<header>This is a Header<br/>{% include 'regenerate_template_navigation' %}</header>",
+        dependencies: [{type: "template", nameId: "regenerate_template_navigation"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate_Footer", nameId: 'regenerate_template_footer', template: "<footer>This is a Footer</footer>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateTemplate_Master", nameId: 'regenerate_template_master', template: "{% include 'regenerate_template_header' %} <div>{{ content }}</div> {% include 'regenerate_template_footer' %}",
+        dependencies: [{type: "template", nameId: "regenerate_template_header"}, {type: "template", nameId: "regenerate_template_footer"}]}
 ];
 
 let existingPageRegenerateList = [
-    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-HomePage", nameId: 'regenerate-page-homepage', url: "home", layout: "regenerate-template-master", template: "<h1>Home Page</h1>", regenerate: 1,
-        dependencies: [{type: "template", nameId: "regenerate-template-master"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage-About", nameId: 'regenerate-page-about', url: "about", layout: "regenerate-template-master", template: "<h1>About</h1>", regenerate: 1,
-        dependencies: [{type: "template", nameId: "regenerate-template-master"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage_HomePage", nameId: 'regenerate_page_homepage', url: "home", layout: "regenerate_template_master", template: "<h1>Home Page</h1>", regenerate: 1,
+        dependencies: [{type: "template", nameId: "regenerate_template_master"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "RegeneratePage_About", nameId: 'regenerate_page_about', url: "about", layout: "regenerate_template_master", template: "<h1>About</h1>", regenerate: 1,
+        dependencies: [{type: "template", nameId: "regenerate_template_master"}]}
 ];
 
 let existingQueryRegenerateList = [
     // queries are VERY space sensitive currently.  need to fix.
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-NavItems", nameId: 'regenerate-query-nav-items', query: "eq(contentType,nav-items)&sort(sortOrder)", regenerate: 1,
-        dependencies: [{type: "data", nameId: "nav-items"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery-AllTestimonials", nameId: 'regenerate-query-alltestimonials', query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery_NavItems", nameId: 'regenerate_query_nav_items', query: "eq(contentType,nav_items)&sort(sortOrder)", regenerate: 1,
+        dependencies: [{type: "data", nameId: "nav_items"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "RegenerateQuery_AllTestimonials", nameId: 'regenerate_query_alltestimonials', query: "eq(contentType,testimonials)&sort(-created)", regenerate: 1 }
 ];
 
 // ********** Data for end to end tests *********************
 let existingBlogPosts = [
-    { orgId: testOrgId, contentType: 'blog-posts', name: 'End to End Blog Post One', body: 'This is the really cool blog post one.', created: new Date('2014-01-01T00:00:00') },
-    { orgId: testOrgId, contentType: 'blog-posts', name: 'End to End Blog Post Two', body: 'Two is the best blog post ever.', created: new Date('2015-07-17T00:00:00') },
-    { orgId: testOrgId, contentType: 'blog-posts', name: 'End to End Blog Post Three', body: 'The third post is always the best.', created: new Date('2016-12-01T00:00:00') }
+    { orgId: testOrgId, contentType: 'blog_posts', name: 'End to End Blog Post One', body: 'This is the really cool blog post one.', created: new Date('2014-01-01T00:00:00') },
+    { orgId: testOrgId, contentType: 'blog_posts', name: 'End to End Blog Post Two', body: 'Two is the best blog post ever.', created: new Date('2015-07-17T00:00:00') },
+    { orgId: testOrgId, contentType: 'blog_posts', name: 'End to End Blog Post Three', body: 'The third post is always the best.', created: new Date('2016-12-01T00:00:00') }
 ];
 let existingQueriesForEndToEndTests = [
     // queries are VERY space sensitive currently.  need to fix.
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndQuery-AllBlogs", nameId: 'end-to-end-query-allblogs', query: "eq(contentType,blog-posts)&sort(-created)", regenerate: 0,
-        dependencies: [{type: "data", nameId: "blog-posts"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndQuery_AllBlogs", nameId: 'end_to_end_query_allblogs', query: "eq(contentType,blog_posts)&sort(-created)", regenerate: 0,
+        dependencies: [{type: "data", nameId: "blog_posts"}]}
 ];
 
 let existingTemplatesForEndToEndTests = [
     {
         orgId: testOrgId,
         siteId: testSiteId,
-        name: "EndToEndTemplate-BlogNav",
-        nameId: 'end-to-end-template-blognav',
-        blogs: "query(end-to-end-query-allblogs)",
+        name: "EndToEndTemplate_BlogNav",
+        nameId: 'end_to_end_template_blognav',
+        blogs: "query(end_to_end_query_allblogs)",
         template: "<ul class='cool-blog-list'>{% for blog in blogs %}<li><h3>{{blog.name}}</h3></li>{% endfor %}</ul>",
-        dependencies: [{type: "query", nameId: "end-to-end-query-allblogs"}]
+        dependencies: [{type: "query", nameId: "end_to_end_query_allblogs"}]
     },
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Header", nameId: 'end-to-end-template-header', template: "<header>This is the end-to-end Header<br/>{% include 'end-to-end-template-blognav' %}</header>",
-        dependencies: [{type: "template", nameId: "end-to-end-template-blognav"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Footer", nameId: 'end-to-end-template-footer', template: "<footer>This is the end-to-end Footer</footer>" },
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Master", nameId: 'end-to-end-template-master', template: "{% include 'end-to-end-template-header' %} <div>{{ content }}</div> {% include 'end-to-end-template-footer' %}",
-        dependencies: [{type: "template", nameId: "end-to-end-template-header"}, {type: "template", nameId: "end-to-end-template-footer"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate_Header", nameId: 'end_to_end_template_header', template: "<header>This is the end-to-end Header<br/>{% include 'end_to_end_template_blognav' %}</header>",
+        dependencies: [{type: "template", nameId: "end_to_end_template_blognav"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate_Footer", nameId: 'end_to_end_template_footer', template: "<footer>This is the end-to-end Footer</footer>" },
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate_Master", nameId: 'end_to_end_template_master', template: "{% include 'end_to_end_template_header' %} <div>{{ content }}</div> {% include 'end_to_end_template_footer' %}",
+        dependencies: [{type: "template", nameId: "end_to_end_template_header"}, {type: "template", nameId: "end_to_end_template_footer"}]}
 ];
 
 let existingPagesForEndToEndTests = [
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-Home", nameId: 'end-to-end-template-home', url: "home", layout: "end-to-end-template-master", template: "<h1>End-to-End Home Page</h1>", regenerate: 0,
-        dependencies: [{type: "template", nameId: "end-to-end-template-master"}]},
-    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate-About", nameId: 'end-to-end-template-about', url: "about", layout: "end-to-end-template-master", template: "<h1>End-to-End About</h1>", regenerate: 0,
-        dependencies: [{type: "template", nameId: "end-to-end-template-master"}]}
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate_Home", nameId: 'end_to_end_template_home', url: "home", layout: "end_to_end_template_master", template: "<h1>End-to-End Home Page</h1>", regenerate: 0,
+        dependencies: [{type: "template", nameId: "end_to_end_template_master"}]},
+    { orgId: testOrgId, siteId: testSiteId, name: "EndToEndTemplate_About", nameId: 'end_to_end_template_about', url: "about", layout: "end_to_end_template_master", template: "<h1>End-to-End About</h1>", regenerate: 0,
+        dependencies: [{type: "template", nameId: "end_to_end_template_master"}]}
 ];
 
 // We don't render templates on their own anymore, only within the context of a page because each page can potentially alter the rendered output of an included template
 // let expectedRenderedTemplates = new Map();
-// expectedRenderedTemplates.set("RegenerateTemplate-Navigation", "<nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav>");
-// expectedRenderedTemplates.set("RegenerateTemplate-Header", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header>");
-// expectedRenderedTemplates.set("RegenerateTemplate-Footer", "<header>This is a Footer</header>");
-// expectedRenderedTemplates.set("RegenerateTemplate-Master", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div>{{ content }}</div> <header>This is a Footer</header>");
+// expectedRenderedTemplates.set("RegenerateTemplate_Navigation", "<nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav>");
+// expectedRenderedTemplates.set("RegenerateTemplate_Header", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header>");
+// expectedRenderedTemplates.set("RegenerateTemplate_Footer", "<header>This is a Footer</header>");
+// expectedRenderedTemplates.set("RegenerateTemplate_Master", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div>{{ content }}</div> <header>This is a Footer</header>");
 
 let expectedRenderedPages = new Map();
-expectedRenderedPages.set("regenerate-page-homepage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <footer>This is a Footer</footer>");
-expectedRenderedPages.set("regenerate-page-about", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <footer>This is a Footer</footer>");
+expectedRenderedPages.set("regenerate_page_homepage", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>Home Page</h1></div> <footer>This is a Footer</footer>");
+expectedRenderedPages.set("regenerate_page_about", "<header>This is a Header<br/><nav><ul><li><a href='/nav1'>Nav1</a></li><li><a href='/nav2'>Nav2</a></li><li><a href='/nav3'>Nav3</a></li></ul></nav></header> <div><h1>About</h1></div> <footer>This is a Footer</footer>");
 
 let expectedRenderedQueries = new Map();
-expectedRenderedQueries.set("regenerate-query-nav-items", existingNavItems);
-expectedRenderedQueries.set("regenerate-query-alltestimonials", existingTestimonials);
+expectedRenderedQueries.set("regenerate_query_nav_items", existingNavItems);
+expectedRenderedQueries.set("regenerate_query_alltestimonials", existingTestimonials);
 
 var pubTestHelper = {
     testOrgId: testOrgId,
@@ -219,7 +219,7 @@ function createPageRegenerateList() {
         })
         .then((result) => {
             // throw in one that should not be regenerated, and actually has a regenerate property with a value of 0
-            return database.templates.insert({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegeneratePageNOT1", url: "no-regen-page1", template: "do not regenerate me", regenerate: 0 });
+            return database.templates.insert({ orgId: pubTestHelper.testOrgId, siteId: pubTestHelper.testSiteId, name: "RegeneratePageNOT1", url: "no_regen_page1", template: "do not regenerate me", regenerate: 0 });
         });
 }
 
@@ -269,7 +269,7 @@ function deleteAllTestCustomData() {
 }
 
 function deleteCustomDataForEndToEndTests() {
-    return database.customData.remove({orgId: testOrgId, contentType: 'blog-posts'});
+    return database.customData.remove({orgId: testOrgId, contentType: 'blog_posts'});
 }
 
 function deleteAllTemplateRegenTemplates() {

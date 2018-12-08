@@ -79,6 +79,8 @@ class CustomApolloServer extends ApolloServer {
             // this will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
             const { schema, ...serverObj } = this;
 
+            const customSchema = await this.getCustomSchema(req);
+
             /**
              * This is the main reason to extend, to access graphqlExpress(),
              * to be able to modify the schema based on the request
@@ -90,7 +92,7 @@ class CustomApolloServer extends ApolloServer {
                     ...serverObj,
                     graphqlPath: path,
                     /* Retrieves a custom graphql schema based on request */
-                    schema: this.getCustomSchema(req), //makeExecutableSchema(this.getCustomSchema(req))
+                    schema: customSchema, //makeExecutableSchema(this.getCustomSchema(req))
                     context: {
                         db: db,
                         request: req
@@ -109,6 +111,8 @@ class CustomApolloServer extends ApolloServer {
 
     getCustomSchema(req) {
         const siteCode = req.vhost[0];
+        // todo: enforce auth - make sure the creds match the requested siteCode
+
         // todo: create tests and make this work!!!
         return this.schemaService.getSchemaBySiteCode(siteCode);
         //

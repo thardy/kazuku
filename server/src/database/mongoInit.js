@@ -18,7 +18,7 @@
 // db.createCollection('customSchemas', {});
 // db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
 //
-// // sample document - https://github.com/dschnelldavis/angular2-json-schema-form (contentType must be kebab-cased)
+// // sample document - https://github.com/dschnelldavis/angular2-json-schema-form (contentType must be snake-cased (e.g. product_types)
 // var newCustomSchema = {
 // id: 1,
 //    orgId: 1,

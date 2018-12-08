@@ -89,8 +89,8 @@ export class QueryComponent extends BaseComponent implements OnInit {
     }
 
     onDisplayNameChange(newDisplayName: string) {
-        const kebabCasedDisplayName = _.kebabCase(newDisplayName);
-        this.query.nameId = kebabCasedDisplayName;
+        const snakeCasedDisplayName = _.snakeCase(newDisplayName);
+        this.query.nameId = snakeCasedDisplayName;
     }
 
 }

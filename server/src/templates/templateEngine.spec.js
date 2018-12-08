@@ -16,7 +16,7 @@ const testOrgId = testHelper.testOrgId;
 
 let partialWithModelQuery = {
     name: 'partialWithModelQuery',
-    products: 'query(top-5-products)',
+    products: 'query(top_5_products)',
     template: "<ul>{% for product in products %}<li>{{product.name}}</li>{% endfor %}</ul>"
 };
 

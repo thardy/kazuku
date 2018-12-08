@@ -92,7 +92,7 @@ export class SiteComponent extends BaseComponent implements OnInit {
     }
 
     onNameChange(newName: string) {
-        const kebabCasedName = _.kebabCase(newName);
-        this.site.code = kebabCasedName;
+        const snakeCasedName = _.snakeCase(newName);
+        this.site.code = snakeCasedName;
     }
 }

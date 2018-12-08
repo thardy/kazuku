@@ -78,7 +78,7 @@ class QueryService extends GenericService {
         const resolveModelProperty = (modelProperty) => {
             const queryNameId = this.getNameIdOfNamedQuery(modelProperty);
             if (queryNameId) {
-                // property is a named query, e.g. query(top-5-products)
+                // property is a named query, e.g. query(top_5_products)
                 return resolveQueryByNameId(queryNameId);
             }
             else if (this.propertyIsQuery(modelProperty)) {

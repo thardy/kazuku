@@ -67,7 +67,7 @@ class TemplateService extends GenericService {
                 let renderPromise = null;
 
                 if (objectWithTemplate.layout) {
-                    // layout must be kebab-cased
+                    // layout must be snake-cased
                     renderPromise = this.getTemplateFunction(orgId, objectWithTemplate.layout)
                         .then((layoutObject) => {
                             return this.renderInsideLayout(orgId, objectWithTemplate.template, model, layoutObject)
@@ -200,7 +200,7 @@ class TemplateService extends GenericService {
     getDependenciesOfTemplate(templateObject) {
         let dependencies = [];
 
-        // a layout is a dependency.  layout property must be kebab-cased nameId of the template that is the layout
+        // a layout is a dependency.  layout property must be snake-cased nameId of the template that is the layout
         if ("layout" in templateObject) {
             dependencies.push({type: "template", nameId: templateObject.layout});
         }

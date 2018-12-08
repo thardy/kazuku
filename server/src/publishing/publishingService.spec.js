@@ -188,7 +188,7 @@ describe("PublishingService", function () {
                     //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
                     //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved/updated.
                     // contentType must be 'blogPosts' in order to get cleaned up by testing helpers
-                    var customData = { orgId: pubTestHelper.testOrgId, contentType: 'blog-posts', title: 'New Test Blog Post', template: 'New blog post. It is new.' };
+                    var customData = { orgId: pubTestHelper.testOrgId, contentType: 'blog_posts', title: 'New Test Blog Post', template: 'New blog post. It is new.' };
 
                     return customDataService.create(pubTestHelper.testOrgId, customData);
                 })
@@ -196,12 +196,12 @@ describe("PublishingService", function () {
                     // verify outcome
                     // Here is the chain of dependencies that should get
                     let expectedQueriesFlaggedForRegeneration = [
-                        { type: "query", nameId: "end-to-end-query-allblogs" }
+                        { type: "query", nameId: "end_to_end_query_allblogs" }
                     ];
                     //  only be pages should get flagged, no plain templates
                     let expectedPagesFlaggedForRegeneration = [
-                        { type: "page", nameId: "end-to-end-template-home" },
-                        { type: "page", nameId: "end-to-end-template-about" }
+                        { type: "page", nameId: "end_to_end_template_home" },
+                        { type: "page", nameId: "end_to_end_template_about" }
                     ];
 
                     let promises = [];
@@ -249,7 +249,7 @@ describe("PublishingService", function () {
                     // update a template, which should cause other templates to get flagged for regeneration, which should
                     //  cause pages to get flagged for regeneration.  We don't flag the intermediary template dependencies,
                     //  but we need to go through them to figure out what pages should get flagged.  They just don't get saved.
-                    let blogNavTemplate = _.find(pubTestHelper.existingTemplatesForEndToEndTests, (template) => { return template.name === "EndToEndTemplate-BlogNav"});
+                    let blogNavTemplate = _.find(pubTestHelper.existingTemplatesForEndToEndTests, (template) => { return template.name === "EndToEndTemplate_BlogNav"});
                     // We need to always update the entire templateObject.  Partial updates can cause the dependencies check
                     //  and subsequent overwrite in templateService.OnBeforeUpdate to be inaccurate, saving a faulty dependencies array
                     blogNavTemplate.template = "<h1>Updated!</h1><ul class='cool-blog-list'>{% for blog in blogs %}<li><h3>{{blog.name}}</h3></li>{% endfor %}</ul>";
@@ -261,8 +261,8 @@ describe("PublishingService", function () {
                     // Here is the chain of dependencies that should get flagged for regeneration
                     //  only pages should get flagged, no plain templates
                     let expectedPagesFlaggedForRegeneration = [
-                        { type: "page", nameId: "end-to-end-template-home" },
-                        { type: "page", nameId: "end-to-end-template-about" }
+                        { type: "page", nameId: "end_to_end_template_home" },
+                        { type: "page", nameId: "end_to_end_template_about" }
                     ];
 
                     let promises = [];

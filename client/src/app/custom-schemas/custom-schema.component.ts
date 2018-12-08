@@ -308,8 +308,8 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     }
 
     onDisplayNameChange(newDisplayName: string) {
-        const kebabCasedDisplayName = _.kebabCase(newDisplayName);
-        const newValue = {contentType: kebabCasedDisplayName};
+        const snakeCasedDisplayName = _.snakeCase(newDisplayName);
+        const newValue = {contentType: snakeCasedDisplayName};
         this.form.patchValue(newValue);
     }
 }

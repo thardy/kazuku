@@ -306,7 +306,7 @@ describe("QueryService", function () {
                     orgId: queryTestHelper.testOrgId,
                     siteId: 1,
                     name: "top5Products",
-                    nameId: 'top-5-products',
+                    nameId: 'top_5_products',
                     query: "eq(contentType,products)&sort(created)&limit(5,0)"
                 };
 

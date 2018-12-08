@@ -18,7 +18,7 @@ class DependencyService {
     // }
 
     // returns array of dependents in "item" format (nameId is kebab-cased,
-    //  e.g. [{type:"query", nameId:"top-5-products"}, {type:"template", nameId:"master"}]
+    //  e.g. [{type:"query", nameId:"top_5_products"}, {type:"template", nameId:"master"}]
     getAllDependentsOfItem(orgId, item, recurseLevel) {
         // Look for any queries or templates that are dependent on this item (their dependencies array contains item)
         if (!recurseLevel) {
