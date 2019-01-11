@@ -127,18 +127,18 @@ class SchemaService {
                     const contentTypeFields = this.getCustomDataTypeFieldsForCustomSchema(customSchema);
                     allContentTypesFields[contentTypeName] = contentTypeFields;
                     // we need a placeholder to hold all the finished GraphQLObjectType objects because we have to reference them by their
-                    //  friendly names before we've even defined them (***see this complicated thing***)
+                    //  contentTypeNames before we've even defined the contentType objects (***see this complicated thing***)
                     allContentTypesByFriendlyName[contentTypeName] = {};
                 }
 
-                // make the second pass here, once we've got customDataTypeFields for every customSchema for this org
+                // second pass - we have all the simplified type data, knowing which types reference other types and which ones they reference
                 // loop through all the types, replacing all reference types with references to those type objects (or at least their
                 //  GraphQLObjectType placeholders)
-                for (const customDataTypeName in allContentTypesFields) {
-                    const customDataTypeFields = allContentTypesFields[customDataTypeName];
-                    for (const customDataTypeName in customDataTypeFields) {
+                for (const contentTypeName in allContentTypesFields) {
+                    const contentTypeFields = allContentTypesFields[contentTypeName];
+                    for (const contentFieldName in contentTypeFields) {
                         //  whenever we see a customDataTypeFields[propertyName].type that starts with either 'array:' or '$ref:',
-                        const graphQLType = customDataTypeFields[customDataTypeName].type;
+                        const graphQLType = contentTypeFields[contentFieldName].type;
                         let referencedTypeId = '';
                         let referencedTypeName = '';
 
@@ -156,21 +156,21 @@ class SchemaService {
                             //         children: { type: new GraphQLList(categoryType) } // self-referencing relationship
                             //     })
                             // });
-                            customDataTypeFields[propertyName].type = new GraphQLList(graphQLTypeObject);
+                            contentTypeFields[contentFieldName].type = new GraphQLList(graphQLTypeObject);
                         }
                         else if (graphQLType.startsWith('$ref:')) {
                             referencedTypeId = graphQLType.replace('$ref:', '');
-                            referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId]
+                            referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
                             const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
-                            customDataTypeFields[propertyName].type = graphQLTypeObject;
+                            contentTypeFields[contentFieldName].type = graphQLTypeObject;
                         }
                     }
                 }
 
                 // last pass - create the actual GraphQLObjectType objects, as well as the actions for queries and mutations
-                for (const customDataTypeName in allContentTypesFields) {
-                    const contentTypeAction = this.getGraphQLActionForCustomSchema(customDataTypeName,
-                        allContentTypesFields[customDataTypeName], allContentTypesByFriendlyName);
+                for (const contentTypeName in allContentTypesFields) {
+                    const contentTypeAction = this.getGraphQLActionForCustomSchema(contentTypeName,
+                        allContentTypesFields[contentTypeName], allContentTypesByFriendlyName);
                     contentTypeActions.push(contentTypeAction);
                 }
 
@@ -204,23 +204,23 @@ class SchemaService {
             });
     }
 
-    getGraphQLActionForCustomSchema(graphQLFriendlyTypeName, customDataTypeFields, allCustomDataTypesByFriendlyName) {
-        const customDataType = new GraphQLObjectType({
-            name: graphQLFriendlyTypeName,
-            fields: () => (customDataTypeFields) // is this one necessary?? - the () => {}?
+    getGraphQLActionForCustomSchema(contentTypeName, contentTypeFields, allContentTypesByFriendlyName) {
+        const contentType = new GraphQLObjectType({
+            name: contentTypeName,
+            fields: () => (contentTypeFields) // is this one necessary?? - the () => {}?
         });
 
         // ***this complicated thing*** this is where we replace the placeholder with the actual GraphQLObjectType object.
         // Whenever GraphQL accesses the fields, it gets the actual referenced types
-        allCustomDataTypesByFriendlyName[graphQLFriendlyTypeName] = customDataType;
+        allContentTypesByFriendlyName[contentTypeName] = contentType;
 
         const contentTypeAction = {
-            id: graphQLFriendlyTypeName,
-            query: simpleQuery(customSchema.contentType, customDataType),
+            id: contentTypeName,
+            query: simpleQuery(customSchema.contentType, contentType),
             mutation: {
-                create: simpleCreateMutation(customSchema.contentType, customDataType),
-                update: simpleUpdateMutation(customSchema.contentType, customDataType),
-                delete: simpleDeleteMutation(customSchema.contentType, customDataType),
+                create: simpleCreateMutation(customSchema.contentType, contentType),
+                update: simpleUpdateMutation(customSchema.contentType, contentType),
+                delete: simpleDeleteMutation(customSchema.contentType, contentType),
             }
         };
 
@@ -228,15 +228,15 @@ class SchemaService {
     }
 
     getCustomDataTypeFieldsForCustomSchema(customSchema, jsonSchemaIdToNameMappings) {
-        const graphQLFriendlyTypeName = _.camelCase(customSchema.name.trim()); //.replace(/ /g, '');
+        const contentTypeName = _.camelCase(customSchema.name.trim()); //.replace(/ /g, '');
 
         if (customSchema['$id']) {
             // map the jsonSchemaId to the friendly name - we will map any customSchema that comes through with an '$id' specified
             // (e.g.  jsonSchemaIdToNameMappings['https://thanos.kazuku.com/api/jsonschemas/tags.schema.json'] = 'tags')
-            jsonSchemaIdToNameMappings[customSchema['$id']] = graphQLFriendlyTypeName;
+            jsonSchemaIdToNameMappings[customSchema['$id']] = contentTypeName;
         }
 
-        const customDataTypeFields = {
+        const contentTypeFields = {
             _id: {
                 type: GraphQLID
             },
@@ -309,7 +309,7 @@ class SchemaService {
                 }
             }
 
-            customDataTypeFields[propertyName] = {
+            contentTypeFields[propertyName] = {
                 type: graphQLType
             };
 
@@ -331,7 +331,7 @@ class SchemaService {
         // // we will need all the customDataTypes easily accessible by name after we are done creating them all
         // allCustomDataTypes[customDataType.name] = customDataTypeData;
 
-        return customDataTypeFields;
+        return contentTypeFields;
     }
 
     getGraphQLTypeForSchemaProperty(propertyType) {
