@@ -1,6 +1,4 @@
-import {GraphQLList} from "graphql";
-
-const {GraphQLSchema, GraphQLObjectType, GraphQLID, GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull} = require('graphql');
+const {GraphQLSchema, GraphQLObjectType, GraphQLID, GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = require('graphql');
 const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = require('./graphql.helper');
 const {GraphQLDateTime} = require('graphql-iso-date');
 const {makeExecutableSchema} = require('apollo-server-express');
@@ -9,6 +7,7 @@ const CustomSchemaService = require('../../customSchemas/customSchemaService');
 const _ = require("lodash");
 
 const typesThatNeedFurtherProcessing = ['$ref', 'array'];
+const jsonSchemaMappingKeys = ['jsonSchemaSchema', 'jsonSchemaId', 'jsonSchemaRef'];
 
 class SchemaService {
 
@@ -230,10 +229,10 @@ class SchemaService {
     getCustomDataTypeFieldsForCustomSchema(customSchema, jsonSchemaIdToNameMappings) {
         const contentTypeName = _.camelCase(customSchema.name.trim()); //.replace(/ /g, '');
 
-        if (customSchema['$id']) {
+        if (customSchema.jsonSchema['$id']) {
             // map the jsonSchemaId to the friendly name - we will map any customSchema that comes through with an '$id' specified
             // (e.g.  jsonSchemaIdToNameMappings['https://thanos.kazuku.com/api/jsonschemas/tags.schema.json'] = 'tags')
-            jsonSchemaIdToNameMappings[customSchema['$id']] = contentTypeName;
+            jsonSchemaIdToNameMappings[customSchema.jsonSchema['$id']] = contentTypeName;
         }
 
         const contentTypeFields = {
@@ -364,28 +363,61 @@ class SchemaService {
         return graphQLType;
     }
 
-    mapJsonSchemaProperties(orgCustomSchema) {
+    mapJsonSchemaProperties(customSchema) {
         if (customSchema.jsonSchema) {
-            for (const property in customSchema.jsonSchema) {
-                if (jsonSchemaMappingKeys.includes(property)) {
-                    const translatedKey = this.translateJsonSchemaKey(property);
-                    customSchema.jsonSchema[translatedKey] = customSchema.jsonSchema[property];
-                    delete customSchema.jsonSchema[property];
+            this.recursivelyFindPropertyName(customSchema.jsonSchema, jsonSchemaMappingKeys, (source, property) => {
+                const translatedKey = this.translateJsonSchemaKey(property);
+                // replace the property with a new property using the translatedKey name, then delete the old property
+                source[translatedKey] = source[property];
+                delete source[property];
+            }, 4);
+
+
+            // for (const property in customSchema.jsonSchema) {
+            //     if (jsonSchemaMappingKeys.includes(property)) {
+            //         const translatedKey = this.translateJsonSchemaKey(property);
+            //         customSchema.jsonSchema[translatedKey] = customSchema.jsonSchema[property];
+            //         delete customSchema.jsonSchema[property];
+            //     }
+            // }
+            //
+            // if (customSchema.jsonSchema.properties) {
+            //     for (const propertyName in customSchema.jsonSchema.properties) {
+            //         if (jsonSchemaMappingKeys.includes(propertyName)) {
+            //             const translatedKey = this.translateJsonSchemaKey(propertyName);
+            //             customSchema.jsonSchema.properties[translatedKey] = customSchema.jsonSchema.properties[propertyName];
+            //             delete customSchema.jsonSchema.properties[propertyName];
+            //         }
+            //     }
+            // }
+        }
+
+        return customSchema;
+    }
+
+    recursivelyFindPropertyName(source, namesToLookFor, someAction, maxLevels, currentLevel = 0) {
+        currentLevel += 1;
+
+        if (currentLevel > maxLevels) {
+            // only search down to maxLevels deep
+            return;
+        }
+
+        if (source !== null && typeof source === 'object') {
+            for (const property in source) {
+                if (namesToLookFor.includes(property)) {
+                    // we found a property whose name is in our list - do the thing
+                    someAction(source, property);
                 }
             }
 
-            if (customSchema.jsonSchema.properties) {
-                for (const propertyName in customSchema.jsonSchema.properties) {
-                    if (jsonSchemaMappingKeys.includes(propertyName)) {
-                        const translatedKey = this.translateJsonSchemaKey(propertyName);
-                        customSchema.jsonSchema.properties[translatedKey] = customSchema.jsonSchema.properties[propertyName];
-                        delete customSchema.jsonSchema.properties[propertyName];
-                    }
+            // start checking for child objects, and search their properties
+            for (const property in source) {
+                if (source[property] !== null && typeof source[property] === 'object') {
+                    this.recursivelyFindPropertyName(source[property], namesToLookFor, someAction, maxLevels, currentLevel)
                 }
             }
         }
-
-        return schema;
     }
 
     translateJsonSchemaKey(jsonSchemaKey) {
