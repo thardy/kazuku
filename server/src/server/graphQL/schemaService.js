@@ -119,63 +119,75 @@ class SchemaService {
                 const allContentTypesFields = {}; // the simplified graphQL field data for each custom contentType
                 const jsonSchemaIdToNameMappings = {}; // used to map jsonSchema ids to contentTypeNames
                 const allContentTypesByFriendlyName = {}; // the GraphQLObjectType objects for each contentType
+                const allObjectDefinitionsByFriendlyName = {};
                 const contentTypeActions = []; // used to create the root query and mutations
 
+                // first pass
                 for (const customSchema of orgCustomSchemas) {
                     const contentTypeName = _.camelCase(customSchema.name.trim()); //.replace(/ /g, '');
-                    const contentTypeFields = this.getCustomDataTypeFieldsForCustomSchema(customSchema, jsonSchemaIdToNameMappings);
-                    allContentTypesFields[contentTypeName] = contentTypeFields;
+                    const firstPassContentTypeFields = this.getContentTypeFieldsForCustomSchema(customSchema, jsonSchemaIdToNameMappings);
+                    allContentTypesFields[contentTypeName] = firstPassContentTypeFields;
                     // we need a placeholder to hold all the finished GraphQLObjectType objects because we have to reference them by their
                     //  contentTypeNames before we've even defined the contentType objects (***see this complicated thing***)
                     allContentTypesByFriendlyName[contentTypeName] = GraphQLString;
                 }
 
-                // second pass - we have all the simplified type data, knowing which types reference other types and which ones they reference
+                // second pass - we have all the simplified type data, knowing which types reference other types and which ones they reference.
                 // loop through all the types, replacing all reference types with references to those type objects (or at least their
                 //  GraphQLObjectType placeholders)
+                // todo: TRY THIS NEXT. pretty sure this entire second pass loop needs to go INSIDE the fields: () => thing
+                // for (const contentTypeName in allContentTypesFields) {
+                //     const contentTypeFields = allContentTypesFields[contentTypeName];
+                //     for (const contentFieldName in contentTypeFields) {
+                //         //  whenever we see a customDataTypeFields[propertyName].type that starts with either 'array:' or '$ref:',
+                //         const jsonSchemaType = contentTypeFields[contentFieldName].type;
+                //         let referencedTypeId = '';
+                //         let referencedTypeName = '';
+                //
+                //         if (jsonSchemaType.startsWith('array:')) {
+                //             referencedTypeId = jsonSchemaType.replace('array:', '');
+                //             referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
+                //             const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
+                //             // ***this complicated thing***
+                //             // e.g. what an actual object looks like with relationships. Note the categoryType - it's referenced before it's even
+                //             //  defined, but it works because of the timing of the () => {} evaluation (javascript for the win :)...
+                //             // const categoryType = new GraphQLObjectType({
+                //             //     name: 'CategoryType',
+                //             //     fields: () => ({
+                //             //         name: { type: GraphQLString },
+                //             //         children: { type: new GraphQLList(categoryType) } // self-referencing relationship
+                //             //     })
+                //             // });
+                //             // todo: I think I need to delay the wrapping new GraphQLList() around the type name until the fields definition - do all this stuff (the whole loop) below?
+                //             //contentTypeFields[contentFieldName].type = new GraphQLList(graphQLTypeObject);
+                //             contentTypeFields[contentFieldName].type = GraphQLList(graphQLTypeObject); // todo: THIS has to happen inside the fields: () => thing
+                //         }
+                //         else if (jsonSchemaType.startsWith('$ref:')) { // we might be able to do these outside, but I'm pretty sure the GraphQLList ones must go inside
+                //             referencedTypeId = jsonSchemaType.replace('$ref:', '');
+                //             referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
+                //             const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
+                //             contentTypeFields[contentFieldName].type = graphQLTypeObject;
+                //         }
+                //         else {
+                //             const graphQLType = this.getGraphQLTypeForScalarProperty(jsonSchemaType);
+                //             contentTypeFields[contentFieldName].type = graphQLType;
+                //         }
+                //     }
+                // }
                 for (const contentTypeName in allContentTypesFields) {
-                    const contentTypeFields = allContentTypesFields[contentTypeName];
-                    for (const contentFieldName in contentTypeFields) {
-                        //  whenever we see a customDataTypeFields[propertyName].type that starts with either 'array:' or '$ref:',
-                        const jsonSchemaType = contentTypeFields[contentFieldName].type;
-                        let referencedTypeId = '';
-                        let referencedTypeName = '';
+                    const objectDefinition = this.getGraphQLObjectDefinition(contentTypeName, allContentTypesFields, jsonSchemaIdToNameMappings, allContentTypesByFriendlyName);
+                    allObjectDefinitionsByFriendlyName[contentTypeName] = objectDefinition;
+                    const contentType = new GraphQLObjectType(objectDefinition);
 
-                        if (jsonSchemaType.startsWith('array:')) {
-                            referencedTypeId = jsonSchemaType.replace('array:', '');
-                            referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
-                            const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
-                            // ***this complicated thing***
-                            // e.g. what an actual object looks like with relationships. Note the categoryType - it's referenced before it's even
-                            //  defined, but it works because of the timing of the () => {} evaluation (javascript for the win :)...
-                            // const categoryType = new GraphQLObjectType({
-                            //     name: 'CategoryType',
-                            //     fields: () => ({
-                            //         name: { type: GraphQLString },
-                            //         children: { type: new GraphQLList(categoryType) } // self-referencing relationship
-                            //     })
-                            // });
-                            // todo: I think I need to delay the wrapping new GraphQLList() around the type name until the fields definition - do all this stuff (the whole loop) below?
-                            //contentTypeFields[contentFieldName].type = new GraphQLList(graphQLTypeObject);
-                            contentTypeFields[contentFieldName].type = GraphQLList(graphQLTypeObject);
-                        }
-                        else if (jsonSchemaType.startsWith('$ref:')) {
-                            referencedTypeId = jsonSchemaType.replace('$ref:', '');
-                            referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
-                            const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
-                            contentTypeFields[contentFieldName].type = graphQLTypeObject;
-                        }
-                        else {
-                            const graphQLType = this.getGraphQLTypeForScalarProperty(jsonSchemaType);
-                            contentTypeFields[contentFieldName].type = graphQLType;
-                        }
-                    }
+                    // ***this complicated thing*** this is where we replace the placeholder with the actual GraphQLObjectType object.
+                    // Whenever GraphQL accesses the fields, it gets the actual referenced types
+                    allContentTypesByFriendlyName[contentTypeName] = contentType;
                 }
+
 
                 // last pass - create the actual GraphQLObjectType objects, as well as the actions for queries and mutations
                 for (const contentTypeName in allContentTypesFields) {
-                    const contentTypeAction = this.getGraphQLActionForCustomSchema(contentTypeName,
-                        allContentTypesFields[contentTypeName], allContentTypesByFriendlyName);
+                    const contentTypeAction = this.getGraphQLActionForCustomSchema(contentTypeName, allObjectDefinitionsByFriendlyName, allContentTypesByFriendlyName[contentTypeName]);
                     contentTypeActions.push(contentTypeAction);
                 }
 
@@ -189,14 +201,16 @@ class SchemaService {
                     fields: () => rootQueryFields
                 });
 
+                const rootMutationFields = contentTypeActions.reduce((acc, action) => {
+                    for (let key in action.mutation) {
+                        acc[key+'_'+action.id] = action.mutation[key];
+                    }
+                    return acc;
+                }, {});
+
                 const rootMutation = new GraphQLObjectType({
                     name: 'root_mutation',
-                    fields: contentTypeActions.reduce((acc, action) => {
-                        for (let key in action.mutation) {
-                            acc[key+'_'+action.id] = action.mutation[key];
-                        }
-                        return acc;
-                    }, {})
+                    fields: rootMutationFields
                 });
 
                 schema = new GraphQLSchema({
@@ -209,7 +223,11 @@ class SchemaService {
             });
     }
 
-    getGraphQLActionForCustomSchema(contentTypeName, contentTypeFields, allContentTypesByFriendlyName) {
+    // getGraphQLObjectType(contentTypeName, allContentTypeFields, allContentTypesByFriendlyName) {
+    //
+    // }
+
+    getGraphQLActionForCustomSchema(contentTypeName, allObjectDefinitionsByFriendlyName, contentType) {
         // figuring out what I need to dynamically put these together...
         // const contentType = {
         //     name: 'CategoryType',
@@ -235,21 +253,17 @@ class SchemaService {
         //     } // tagType = allContentTypesByFriendlyName[referencedTypeName]
         // };
 
-        const contentType = new GraphQLObjectType({
-            name: contentTypeName,
-            // todo: here?!?
-            fields: () => (contentTypeFields)
-        });
-
-        // ***this complicated thing*** this is where we replace the placeholder with the actual GraphQLObjectType object.
-        // Whenever GraphQL accesses the fields, it gets the actual referenced types
-        allContentTypesByFriendlyName[contentTypeName] = contentType;
+        // const contentType = new GraphQLObjectType(this.getGraphQLObjectDefinition(contentTypeName, allContentTypeFields));
+        //
+        // // ***this complicated thing*** this is where we replace the placeholder with the actual GraphQLObjectType object.
+        // // Whenever GraphQL accesses the fields, it gets the actual referenced types
+        // allContentTypesByFriendlyName[contentTypeName] = contentType;
 
         const contentTypeAction = {
             id: contentTypeName,
             query: simpleQuery(contentTypeName, contentType),
             mutation: {
-                create: simpleCreateMutation(contentTypeName, contentType),
+                create: simpleCreateMutation(contentTypeName, allObjectDefinitionsByFriendlyName, contentType),
                 update: simpleUpdateMutation(contentTypeName, contentType),
                 delete: simpleDeleteMutation(contentTypeName, contentType),
             }
@@ -258,7 +272,68 @@ class SchemaService {
         return contentTypeAction;
     }
 
-    getCustomDataTypeFieldsForCustomSchema(customSchema, jsonSchemaIdToNameMappings) {
+    getGraphQLObjectDefinition(contentTypeName, allContentTypesFields, jsonSchemaIdToNameMappings, allContentTypesByFriendlyName) {
+        // define meta object {name: 'blah', fields: ???, referenceType: 'array or $ref or undefined'
+        // const objectDefinition = {
+        //     name: contentTypeName,
+        //     // todo: as far as I can tell, I have to put the loop that looks for "needsFurtherProcessing" inside the fields: () => thing
+        //     fields: () => (contentTypeFields)
+        // };
+
+        const graphQLObjectDefinition = {
+            name: contentTypeName,
+            // todo: as far as I can tell, I have to put the loop that looks for "needsFurtherProcessing" inside the fields: () => thing
+            fields: () => {
+                const contentTypeFields = {};
+                // todo: TRY THIS NEXT. pretty sure this entire second pass loop needs to go INSIDE the fields: () => thing
+                const firstPassContentTypeFields = allContentTypesFields[contentTypeName];
+                // handle any reference fields by pointing them to the appropriate contentType
+                for (const contentFieldName in firstPassContentTypeFields) {
+                    //  whenever we see a firstPassContentTypefields[contentFieldName].type that starts with either 'array:' or '$ref:',
+                    const jsonSchemaType = firstPassContentTypeFields[contentFieldName].type;
+                    let referencedTypeId = '';
+                    let referencedTypeName = '';
+
+                    if (jsonSchemaType.startsWith('array:')) {
+                        referencedTypeId = jsonSchemaType.replace('array:', '');
+                        referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
+                        const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
+                        // ***this complicated thing***
+                        // e.g. what an actual object looks like with relationships. Note the categoryType - it's referenced before it's even
+                        //  defined, but it works because of the timing of the () => {} evaluation (javascript for the win :)...
+                        // const categoryType = new GraphQLObjectType({
+                        //     name: 'CategoryType',
+                        //     fields: () => ({
+                        //         name: { type: GraphQLString },
+                        //         children: { type: new GraphQLList(categoryType) } // self-referencing relationship
+                        //     })
+                        // });
+                        // todo: I think I need to delay the wrapping new GraphQLList() around the type name until the fields definition - do all this stuff (the whole loop) below?
+                        //contentTypeFields[contentFieldName].type = new GraphQLList(graphQLTypeObject);
+                        contentTypeFields[contentFieldName] = {};
+                        contentTypeFields[contentFieldName].type = GraphQLList(graphQLTypeObject); // todo: THIS has to happen inside the fields: () => thing
+                    }
+                    else if (jsonSchemaType.startsWith('$ref:')) {
+                        referencedTypeId = jsonSchemaType.replace('$ref:', '');
+                        referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
+                        const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
+                        contentTypeFields[contentFieldName] = {};
+                        contentTypeFields[contentFieldName].type = graphQLTypeObject;
+                    }
+                    else {
+                        const graphQLType = this.getGraphQLTypeForScalarProperty(jsonSchemaType);
+                        contentTypeFields[contentFieldName] = {};
+                        contentTypeFields[contentFieldName].type = graphQLType;
+                    }
+                }
+                return contentTypeFields;
+            }
+        };
+
+        return graphQLObjectDefinition;
+    }
+
+    getContentTypeFieldsForCustomSchema(customSchema, jsonSchemaIdToNameMappings) {
         const contentTypeName = _.camelCase(customSchema.name.trim()); //.replace(/ /g, '');
 
         if (customSchema.jsonSchema['$id']) {

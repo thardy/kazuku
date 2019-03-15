@@ -1,5 +1,5 @@
 const { getGraphQLUpdateArgs, getMongoDbUpdateResolver, getGraphQLQueryArgs, getMongoDbQueryResolver } = require('graphql-to-mongodb');
-const { GraphQLList } = require('graphql');
+const { GraphQLList, GraphQLObjectType, GraphQLInputObjectType } = require('graphql');
 const AcknowledgeType = require('./acknowledge.type');
 const ObjectID = require('mongodb').ObjectID;
 const current = require('../../common/current');
@@ -11,26 +11,35 @@ const current = require('../../common/current');
 //     return config;
 // };
 
-const typeToArgs = (type, defaults = {}) => {
+const typeToArgs = (type, allObjectDefinitionsByFriendlyName, defaults = {}) => {
     let fields = type._fields();
     //let fields = type._typeConfig.fields;
-    return Object.keys(fields)
-        .reduce(
-            (acc, field) => {
-                acc[field] = {
-                    type: fields[field].type,
-                    defaultValue: defaults[field],
-                };
-                return acc;
-            },
-            {}
-        );
+    let argsObject = Object.keys(fields).reduce((acc, field) => {
+        let fieldType = fields[field].type;
+        if (fieldType instanceof GraphQLObjectType) {
+            const objectDefinition = allObjectDefinitionsByFriendlyName[fieldType.name];
+            objectDefinition.name = objectDefinition.name + 'Input'; // can't use the same name as the type itself for an input type
+            fieldType = new GraphQLInputObjectType(objectDefinition);
+        }
+        else if (fieldType instanceof GraphQLList && fieldType.ofType instanceof GraphQLObjectType) {
+            const objectDefinition = allObjectDefinitionsByFriendlyName[fieldType.ofType.name];
+            objectDefinition.name = objectDefinition.name + 'Input'; // can't use the same name as the type itself for an input type
+            fieldType = new GraphQLInputObjectType(objectDefinition);
+        }
+        acc[field] = {
+            type: fieldType,
+            defaultValue: defaults[field],
+        };
+        return acc;
+    }, {});
+
+    return argsObject;
 };
 
-const simpleCreateMutation = (contentType, inputType) => {
+const simpleCreateMutation = (contentType, allObjectDefinitionsByFriendlyName, inputType) => {
     return {
         type: AcknowledgeType,
-        args: typeToArgs(inputType),
+        args: typeToArgs(inputType, allObjectDefinitionsByFriendlyName),
         resolve: async (object, objectToCreate, context, info) => {
             objectToCreate['orgId'] = getCurrentOrgId();
             objectToCreate['contentType'] = contentType;
