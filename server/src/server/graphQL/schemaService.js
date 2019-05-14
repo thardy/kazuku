@@ -174,6 +174,7 @@ class SchemaService {
                 //         }
                 //     }
                 // }
+                // second pass - create the actual GraphQLObjectType objects
                 for (const contentTypeName in allContentTypesFields) {
                     const objectDefinition = this.getGraphQLObjectDefinition(contentTypeName, allContentTypesFields, jsonSchemaIdToNameMappings, allContentTypesByFriendlyName);
                     allObjectDefinitionsByFriendlyName[contentTypeName] = objectDefinition;
@@ -185,7 +186,7 @@ class SchemaService {
                 }
 
 
-                // last pass - create the actual GraphQLObjectType objects, as well as the actions for queries and mutations
+                // last pass - create the actions for queries and mutations
                 for (const contentTypeName in allContentTypesFields) {
                     const contentTypeAction = this.getGraphQLActionForCustomSchema(contentTypeName, allObjectDefinitionsByFriendlyName, allContentTypesByFriendlyName[contentTypeName]);
                     contentTypeActions.push(contentTypeAction);
@@ -282,10 +283,9 @@ class SchemaService {
 
         const graphQLObjectDefinition = {
             name: contentTypeName,
-            // todo: as far as I can tell, I have to put the loop that looks for "needsFurtherProcessing" inside the fields: () => thing
+            // the loop that looks for "needsFurtherProcessing" has to go inside fields: () =>
             fields: () => {
                 const contentTypeFields = {};
-                // todo: TRY THIS NEXT. pretty sure this entire second pass loop needs to go INSIDE the fields: () => thing
                 const firstPassContentTypeFields = allContentTypesFields[contentTypeName];
                 // handle any reference fields by pointing them to the appropriate contentType
                 for (const contentFieldName in firstPassContentTypeFields) {
@@ -295,9 +295,9 @@ class SchemaService {
                     let referencedTypeName = '';
 
                     if (jsonSchemaType.startsWith('array:')) {
-                        referencedTypeId = jsonSchemaType.replace('array:', '');
-                        referencedTypeName = jsonSchemaIdToNameMappings[referencedTypeId];
-                        const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
+                        const arrayType = jsonSchemaType.replace('array:', '');
+                        referencedTypeName = jsonSchemaIdToNameMappings[arrayType];
+                        const graphQLTypeObject = referencedTypeName ? allContentTypesByFriendlyName[referencedTypeName] : this.getGraphQLTypeForScalarProperty(arrayType);
                         // ***this complicated thing***
                         // e.g. what an actual object looks like with relationships. Note the categoryType - it's referenced before it's even
                         //  defined, but it works because of the timing of the () => {} evaluation (javascript for the win :)...
@@ -393,7 +393,14 @@ class SchemaService {
                         // }
                         let typeInArray = '';
                         if (customSchema.jsonSchema.properties[property].items.type) {
-                            jsonSchemaType = new GraphQLList(customSchema.jsonSchema.properties[property].items.type);
+                            // need to store this as a meta-type, something like 'array: something' and translate to new GraphQLList(GraphQLString) later
+                            // const jsonSchemaType = customSchema.jsonSchema.properties[property].items.type;
+                            // const graphQLType = this.getGraphQLTypeForScalarProperty(jsonSchemaType);
+                            // jsonSchemaType = new GraphQLList(graphQLType);
+                            // new fix attempt
+                            jsonSchemaType = `array:${customSchema.jsonSchema.properties[property].items.type}`;
+                            // it was this... the above is my first attempt to fix it
+                            //jsonSchemaType = new GraphQLList(customSchema.jsonSchema.properties[property].items.type);
                         }
                         else if (customSchema.jsonSchema.properties[property].items['$ref']) {
                             // this will just be a placeholder.  We have to make a second pass after all other types are done to replace with
