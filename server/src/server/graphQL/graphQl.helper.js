@@ -36,10 +36,11 @@ const typeToArgs = (type, allObjectDefinitionsByFriendlyName, defaults = {}) => 
     return argsObject;
 };
 
-const simpleCreateMutation = (contentType, allObjectDefinitionsByFriendlyName, inputType) => {
+// todo: refactor the caller to handle this change
+const simpleCreateMutation = (contentType, inputTypeFields) => {
     return {
-        type: AcknowledgeType,
-        args: typeToArgs(inputType, allObjectDefinitionsByFriendlyName),
+        type: contentType,
+        args: inputTypeFields,
         resolve: async (object, objectToCreate, context, info) => {
             objectToCreate['orgId'] = getCurrentOrgId();
             objectToCreate['contentType'] = contentType;

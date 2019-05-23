@@ -1,4 +1,5 @@
-const {GraphQLSchema, GraphQLObjectType, GraphQLID, GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = require('graphql');
+const {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
+       GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = require('graphql');
 const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = require('./graphql.helper');
 const {GraphQLDateTime} = require('graphql-iso-date');
 const {makeExecutableSchema} = require('apollo-server-express');
@@ -119,7 +120,10 @@ class SchemaService {
                 const allContentTypesFields = {}; // the simplified graphQL field data for each custom contentType
                 const jsonSchemaIdToNameMappings = {}; // used to map jsonSchema ids to contentTypeNames
                 const allContentTypesByFriendlyName = {}; // the GraphQLObjectType objects for each contentType
+                // todo: refactor to get rid of this
                 const allObjectDefinitionsByFriendlyName = {};
+                const allInputTypeFieldsByFriendlyName = {};
+                const allInputTypesByFriendlyName = {};
                 const contentTypeActions = []; // used to create the root query and mutations
 
                 // first pass
@@ -130,6 +134,19 @@ class SchemaService {
                     // we need a placeholder to hold all the finished GraphQLObjectType objects because we have to reference them by their
                     //  contentTypeNames before we've even defined the contentType objects (***see this complicated thing***)
                     allContentTypesByFriendlyName[contentTypeName] = GraphQLString;
+                }
+
+                // create inputTypes from allContentTypeFields
+                for (const contentTypeName in allContentTypesFields) {
+                    const inputTypeFields = this.getInputTypeFieldsFromContentTypeFields(allContentTypesFields[contentTypeName]);
+                    allInputTypeFieldsByFriendlyName[contentTypeName] = inputTypeFields;
+
+                    const inputType = new GraphQLInputObjectType({
+                        name: contentTypeName + 'Input',
+                        fields: inputTypeFields
+                    });
+
+                    allInputTypesByFriendlyName[contentTypeName] = inputType;
                 }
 
                 // second pass - we have all the simplified type data, knowing which types reference other types and which ones they reference.
@@ -568,6 +585,43 @@ class SchemaService {
                 break;
         }
         return translatedKey;
+    }
+
+    getInputTypeFieldsFromContentTypeFields(contentTypeFields) {
+        let inputTypeFields = _.cloneDeep(contentTypeFields);
+        const idFieldNames = ['_id', 'id'];
+
+        // remove id field
+        for (const property in inputTypeFields) {
+            if (inputTypeFields.hasOwnProperty(property) && idFieldNames.includes(property)) {
+                delete inputTypeFields[property];
+            }
+        }
+
+        // remove all reference fields
+        for (const property in inputTypeFields) {
+            if (inputTypeFields.hasOwnProperty(property) && this.isReferenceField(inputTypeFields[property])) {
+                delete inputTypeFields[property];
+            }
+        }
+
+        return inputTypeFields;
+    }
+
+    isReferenceField(field) {
+        let result = false;
+
+        if (field.startsWith('$ref:')) {
+            result = true;
+        }
+        else if (field.startsWith('array:')) {
+            const arrayType = field.replace('array:', '');
+            if (arrayType.startsWith('https://') || arrayType.startsWith('$ref:')) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 }
 
