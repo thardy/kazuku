@@ -205,7 +205,10 @@ class SchemaService {
 
                 // last pass - create the actions for queries and mutations
                 for (const contentTypeName in allContentTypesFields) {
-                    const contentTypeAction = this.getGraphQLActionForCustomSchema(contentTypeName, allObjectDefinitionsByFriendlyName, allContentTypesByFriendlyName[contentTypeName]);
+                    const contentTypeAction = this.getGraphQLActionForCustomSchema(contentTypeName,
+                        allContentTypesByFriendlyName[contentTypeName],
+                        allInputTypesByFriendlyName[contentTypeName],
+                        allInputTypeFieldsByFriendlyName[contentTypeName]);
                     contentTypeActions.push(contentTypeAction);
                 }
 
@@ -245,7 +248,7 @@ class SchemaService {
     //
     // }
 
-    getGraphQLActionForCustomSchema(contentTypeName, allObjectDefinitionsByFriendlyName, contentType) {
+    getGraphQLActionForCustomSchema(contentTypeName, contentType, inputType, inputTypeFields) {
         // figuring out what I need to dynamically put these together...
         // const contentType = {
         //     name: 'CategoryType',
@@ -279,11 +282,11 @@ class SchemaService {
 
         const contentTypeAction = {
             id: contentTypeName,
-            query: simpleQuery(contentTypeName, contentType),
+            query: simpleQuery(contentType, inputType),
             mutation: {
-                create: simpleCreateMutation(contentTypeName, allObjectDefinitionsByFriendlyName, contentType),
-                update: simpleUpdateMutation(contentTypeName, contentType),
-                delete: simpleDeleteMutation(contentTypeName, contentType),
+                create: simpleCreateMutation(contentType, inputTypeFields),
+                update: simpleUpdateMutation(contentType, inputType),
+                delete: simpleDeleteMutation(contentType, inputType),
             }
         };
 
@@ -591,17 +594,31 @@ class SchemaService {
         let inputTypeFields = _.cloneDeep(contentTypeFields);
         const idFieldNames = ['_id', 'id'];
 
-        // remove id field
         for (const property in inputTypeFields) {
-            if (inputTypeFields.hasOwnProperty(property) && idFieldNames.includes(property)) {
-                delete inputTypeFields[property];
-            }
-        }
+            if (inputTypeFields.hasOwnProperty(property)) {
+                if (idFieldNames.includes(property)) {
+                    // remove id field
+                    delete inputTypeFields[property];
+                }
+                else if (this.isReferenceField(inputTypeFields[property])) {
+                    // remove all reference fields
+                    delete inputTypeFields[property];
+                }
+                else {
+                    // convert from jsonSchemaTypes to graphQLTypes
+                    const jsonSchemaType = inputTypeFields[property].type;
+                    let graphQLScalarType = GraphQLString;
 
-        // remove all reference fields
-        for (const property in inputTypeFields) {
-            if (inputTypeFields.hasOwnProperty(property) && this.isReferenceField(inputTypeFields[property])) {
-                delete inputTypeFields[property];
+                    if (jsonSchemaType.startsWith('array:')) {
+                        const arrayType = jsonSchemaType.replace('array:', '');
+                        const graphQLTypeObject = this.getGraphQLTypeForScalarProperty(arrayType);
+                        graphQLScalarType = GraphQLList(graphQLTypeObject);
+                    }
+                    else {
+                        graphQLScalarType = this.getGraphQLTypeForScalarProperty(jsonSchemaType);
+                    }
+                    inputTypeFields[property].type = graphQLScalarType;
+                }
             }
         }
 
@@ -611,13 +628,15 @@ class SchemaService {
     isReferenceField(field) {
         let result = false;
 
-        if (field.startsWith('$ref:')) {
-            result = true;
-        }
-        else if (field.startsWith('array:')) {
-            const arrayType = field.replace('array:', '');
-            if (arrayType.startsWith('https://') || arrayType.startsWith('$ref:')) {
+        if (field.type) {
+            if (field.type.startsWith('$ref:')) {
                 result = true;
+            }
+            else if (field.type.startsWith('array:')) {
+                const arrayType = field.type.replace('array:', '');
+                if (arrayType.startsWith('https://') || arrayType.startsWith('$ref:')) {
+                    result = true;
+                }
             }
         }
 

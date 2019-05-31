@@ -11,30 +11,30 @@ const current = require('../../common/current');
 //     return config;
 // };
 
-const typeToArgs = (type, allObjectDefinitionsByFriendlyName, defaults = {}) => {
-    let fields = type._fields();
-    //let fields = type._typeConfig.fields;
-    let argsObject = Object.keys(fields).reduce((acc, field) => {
-        let fieldType = fields[field].type;
-        if (fieldType instanceof GraphQLObjectType) {
-            const objectDefinition = allObjectDefinitionsByFriendlyName[fieldType.name];
-            objectDefinition.name = objectDefinition.name + 'Input'; // can't use the same name as the type itself for an input type
-            fieldType = new GraphQLInputObjectType(objectDefinition);
-        }
-        else if (fieldType instanceof GraphQLList && fieldType.ofType instanceof GraphQLObjectType) {
-            const objectDefinition = allObjectDefinitionsByFriendlyName[fieldType.ofType.name];
-            objectDefinition.name = objectDefinition.name + 'Input'; // can't use the same name as the type itself for an input type
-            fieldType = new GraphQLInputObjectType(objectDefinition);
-        }
-        acc[field] = {
-            type: fieldType,
-            defaultValue: defaults[field],
-        };
-        return acc;
-    }, {});
-
-    return argsObject;
-};
+// const typeToArgs = (type, allObjectDefinitionsByFriendlyName, defaults = {}) => {
+//     let fields = type._fields();
+//     //let fields = type._typeConfig.fields;
+//     let argsObject = Object.keys(fields).reduce((acc, field) => {
+//         let fieldType = fields[field].type;
+//         if (fieldType instanceof GraphQLObjectType) {
+//             const objectDefinition = allObjectDefinitionsByFriendlyName[fieldType.name];
+//             objectDefinition.name = objectDefinition.name + 'Input'; // can't use the same name as the type itself for an input type
+//             fieldType = new GraphQLInputObjectType(objectDefinition);
+//         }
+//         else if (fieldType instanceof GraphQLList && fieldType.ofType instanceof GraphQLObjectType) {
+//             const objectDefinition = allObjectDefinitionsByFriendlyName[fieldType.ofType.name];
+//             objectDefinition.name = objectDefinition.name + 'Input'; // can't use the same name as the type itself for an input type
+//             fieldType = new GraphQLInputObjectType(objectDefinition);
+//         }
+//         acc[field] = {
+//             type: fieldType,
+//             defaultValue: defaults[field],
+//         };
+//         return acc;
+//     }, {});
+//
+//     return argsObject;
+// };
 
 // todo: refactor the caller to handle this change
 const simpleCreateMutation = (contentType, inputTypeFields) => {
@@ -43,7 +43,7 @@ const simpleCreateMutation = (contentType, inputTypeFields) => {
         args: inputTypeFields,
         resolve: async (object, objectToCreate, context, info) => {
             objectToCreate['orgId'] = getCurrentOrgId();
-            objectToCreate['contentType'] = contentType;
+            objectToCreate['contentType'] = contentType.name;
 
             const result = await context.db.collection('customData').insertOne(objectToCreate);
             return result.result;
@@ -58,10 +58,10 @@ const simpleUpdateMutation = (contentType, inputType) => {
         type: AcknowledgeType,
         args: getGraphQLUpdateArgs(inputType),
         resolve: getMongoDbUpdateResolver(
-            inputType,
+            contentType,
             async (filter, update, options, projection, source, args, context, info) => {
                 filter['orgId'] = { $eq: getCurrentOrgId() };
-                filter['contentType'] = { $eq: contentType };
+                filter['contentType'] = { $eq: contentType.name };
 
                 convertStringIdToObjectId(filter);
                 const result = await context.db.collection('customData').updateMany(filter, update, options);
@@ -83,11 +83,11 @@ const simpleDeleteMutation = (contentType, inputType) => {
         type: AcknowledgeType,
         args: getGraphQLQueryArgs(inputType),
         resolve: getMongoDbQueryResolver(
-            inputType,
+            contentType,
             async (filter, projection, options, obj, args, context) => {
                 // alter filter to have orgId and contentType
                 filter['orgId'] = { $eq: getCurrentOrgId() };
-                filter['contentType'] = { $eq: contentType };
+                filter['contentType'] = { $eq: contentType.name };
 
                 options.projection = projection;
                 convertStringIdToObjectId(filter);
@@ -106,19 +106,22 @@ const simpleDeleteMutation = (contentType, inputType) => {
 
 const simpleQuery = (contentType, inputType) => {
     return {
-        type: new GraphQLList(inputType),
+        type: new GraphQLList(contentType),
         args: getGraphQLQueryArgs(inputType),
         resolve: getMongoDbQueryResolver(
-            inputType,
+            contentType,
             async (filter, projection, options, obj, args, context) => {
                 // alter filter to have orgId and contentType
-                filter['orgId'] = { $eq: getCurrentOrgId() };
-                filter['contentType'] = { $eq: contentType };
+                // todo: need to convert contentType to underscore thingy 'blogPosts' => 'blog_posts'
+                // do I need to convert this to an ObjectID?
+                filter['orgId'] = { $eq: getCurrentOrgId() }; //{ $eq: new ObjectID(getCurrentOrgId()) };
+                filter['contentType'] = { $eq: contentType.name };
 
                 options.projection = projection;
                 convertStringIdToObjectId(filter);
-                const results = (await context.db.collection('customData').find(filter, options).toArray()).map(convertObjectIdToStringId);
-                return results;
+                const results = await context.db.collection('customData').find(filter, options).toArray();
+                const convertedResults = results.map(convertObjectIdToStringId);
+                return convertedResults;
                 //this.customDataService.getByContentType(current.context.orgId, contentType)
             }
         )
@@ -148,7 +151,7 @@ convertObjectIdToStringId = (doc) => {
 
 
 module.exports = {
-    typeToArgs,
+    //typeToArgs,
     simpleQuery,
     simpleCreateMutation,
     simpleUpdateMutation,
