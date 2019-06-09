@@ -3,6 +3,7 @@ const { GraphQLList, GraphQLObjectType, GraphQLInputObjectType } = require('grap
 const AcknowledgeType = require('./acknowledge.type');
 const ObjectID = require('mongodb').ObjectID;
 const current = require('../../common/current');
+const _ = require('lodash');
 // const Auth = require('../auth/auth');
 
 
@@ -42,13 +43,15 @@ const simpleCreateMutation = (contentType, inputTypeFields) => {
         type: contentType,
         args: inputTypeFields,
         resolve: async (object, objectToCreate, context, info) => {
+            const snakeCasedContentTypeName = _.snakeCase(contentType.name);
+
             objectToCreate['orgId'] = getCurrentOrgId();
-            objectToCreate['contentType'] = contentType.name;
+            objectToCreate['contentType'] = snakeCasedContentTypeName;
 
             const result = await context.db.collection('customData').insertOne(objectToCreate);
-            return result.result;
-
-            // return (await context.db.collection(collection).insertOne(args)).result;
+            //return result.ops[0];
+            const newlyCreatedObject = result.ops[0];
+            return {...newlyCreatedObject, _id: newlyCreatedObject['_id'].toString()};
         }
     }
 };
@@ -60,8 +63,10 @@ const simpleUpdateMutation = (contentType, inputType) => {
         resolve: getMongoDbUpdateResolver(
             contentType,
             async (filter, update, options, projection, source, args, context, info) => {
+                const snakeCasedContentTypeName = _.snakeCase(contentType.name);
+
                 filter['orgId'] = { $eq: getCurrentOrgId() };
-                filter['contentType'] = { $eq: contentType.name };
+                filter['contentType'] = { $eq: snakeCasedContentTypeName };
 
                 convertStringIdToObjectId(filter);
                 const result = await context.db.collection('customData').updateMany(filter, update, options);
@@ -85,9 +90,11 @@ const simpleDeleteMutation = (contentType, inputType) => {
         resolve: getMongoDbQueryResolver(
             contentType,
             async (filter, projection, options, obj, args, context) => {
+                const snakeCasedContentTypeName = _.snakeCase(contentType.name);
+
                 // alter filter to have orgId and contentType
                 filter['orgId'] = { $eq: getCurrentOrgId() };
-                filter['contentType'] = { $eq: contentType.name };
+                filter['contentType'] = { $eq: snakeCasedContentTypeName };
 
                 options.projection = projection;
                 convertStringIdToObjectId(filter);
@@ -112,10 +119,12 @@ const simpleQuery = (contentType, inputType) => {
             contentType,
             async (filter, projection, options, obj, args, context) => {
                 // alter filter to have orgId and contentType
-                // todo: need to convert contentType to underscore thingy 'blogPosts' => 'blog_posts'
+                // need to convert contentType to snakeCase 'blogPosts' => 'blog_posts'
+                const snakeCasedContentTypeName = _.snakeCase(contentType.name);
+
                 // do I need to convert this to an ObjectID?
                 filter['orgId'] = { $eq: getCurrentOrgId() }; //{ $eq: new ObjectID(getCurrentOrgId()) };
-                filter['contentType'] = { $eq: contentType.name };
+                filter['contentType'] = { $eq: snakeCasedContentTypeName };
 
                 options.projection = projection;
                 convertStringIdToObjectId(filter);
