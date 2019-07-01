@@ -37,7 +37,6 @@ const _ = require('lodash');
 //     return argsObject;
 // };
 
-// todo: refactor the caller to handle this change
 const simpleCreateMutation = (contentType, inputTypeFields) => {
     return {
         type: contentType,

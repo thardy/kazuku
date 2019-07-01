@@ -294,13 +294,6 @@ class SchemaService {
     }
 
     getGraphQLObjectDefinition(contentTypeName, allContentTypesFields, jsonSchemaIdToNameMappings, allContentTypesByFriendlyName) {
-        // define meta object {name: 'blah', fields: ???, referenceType: 'array or $ref or undefined'
-        // const objectDefinition = {
-        //     name: contentTypeName,
-        //     // todo: as far as I can tell, I have to put the loop that looks for "needsFurtherProcessing" inside the fields: () => thing
-        //     fields: () => (contentTypeFields)
-        // };
-
         const graphQLObjectDefinition = {
             name: contentTypeName,
             // the loop that looks for "needsFurtherProcessing" has to go inside fields: () =>
@@ -329,7 +322,6 @@ class SchemaService {
                         //     })
                         // });
                         // todo: I think I need to delay the wrapping new GraphQLList() around the type name until the fields definition - do all this stuff (the whole loop) below?
-                        //contentTypeFields[contentFieldName].type = new GraphQLList(graphQLTypeObject);
                         contentTypeFields[contentFieldName] = {};
                         contentTypeFields[contentFieldName].type = GraphQLList(graphQLTypeObject); // todo: THIS has to happen inside the fields: () => thing
                     }
@@ -596,11 +588,13 @@ class SchemaService {
 
         for (const property in inputTypeFields) {
             if (inputTypeFields.hasOwnProperty(property)) {
-                if (idFieldNames.includes(property)) {
-                    // remove id field
-                    delete inputTypeFields[property];
-                }
-                else if (this.isReferenceField(inputTypeFields[property])) {
+                // I've decided I want the id filed in the input type
+                // if (idFieldNames.includes(property)) {
+                //     // remove id field
+                //     delete inputTypeFields[property];
+                // }
+                //else
+                if (this.isReferenceField(inputTypeFields[property])) {
                     // remove all reference fields
                     delete inputTypeFields[property];
                 }

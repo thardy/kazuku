@@ -102,7 +102,8 @@ class CustomApolloServer extends ApolloServer {
                         settings: {
                             'editor.theme': 'dark',
                             'editor.cursorShape': 'line',
-                        }
+                        },
+                        version: '1.7.25'
                     }
                 })
             )(req, res, next);
