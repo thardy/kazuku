@@ -5,6 +5,10 @@ const {GraphQLDateTime} = require('graphql-iso-date');
 const {makeExecutableSchema} = require('apollo-server-express');
 const CustomDataService = require('../../customData/customDataService');
 const CustomSchemaService = require('../../customSchemas/customSchemaService');
+const current = require('../../common/current');
+const ObjectId = require('mongodb').ObjectID;
+const mongoHelper = require('../../common/mongoHelper');
+const pluralize = require('pluralize')
 const _ = require("lodash");
 
 const typesThatNeedFurtherProcessing = ['$ref', 'array'];
@@ -321,9 +325,35 @@ class SchemaService {
                         //         children: { type: new GraphQLList(categoryType) } // self-referencing relationship
                         //     })
                         // });
-                        // todo: I think I need to delay the wrapping new GraphQLList() around the type name until the fields definition - do all this stuff (the whole loop) below?
+                        // we need to delay the wrapping new GraphQLList() around the type name until the fields definition - hence we do it here
                         contentTypeFields[contentFieldName] = {};
-                        contentTypeFields[contentFieldName].type = GraphQLList(graphQLTypeObject); // todo: THIS has to happen inside the fields: () => thing
+                        contentTypeFields[contentFieldName].type = GraphQLList(graphQLTypeObject); // THIS has to happen inside the fields: () => thing
+
+                        if (referencedTypeName) {
+                            // create the resolve function to retrieve the array of related items
+                            contentTypeFields[contentFieldName].resolve = async (parent, {ignoredFilter}, context) => {
+                                // todo: for preview functionality, we need to check the customDataDrafts db for results here, then pull the same results from
+                                //  the normal/live db.  Have the drafts results override any live results, but only if present (nulls/nodata don't override anything).
+                                // need singular of the contentFieldName
+                                const singularContentFieldName = pluralize.singular(contentFieldName);
+                                const relationIdField = singularContentFieldName + "Ids";
+                                const relationIdFieldValues = mongoHelper.convertArrayOfStringIdsToObjectIds(parent[relationIdField]);
+                                let convertedResults = null;
+
+                                if (relationIdFieldValues && relationIdFieldValues.length > 0) {
+                                    const snakeCasedReferencedContentTypeName = _.snakeCase(referencedTypeName);
+                                    const filter = {_id: { $in: relationIdFieldValues }};
+
+                                    filter['orgId'] = {$eq: current.context.orgId};
+                                    filter['contentType'] = {$eq: snakeCasedReferencedContentTypeName};
+
+                                    const results = await context.db.collection('customData').find(filter).toArray();
+                                    convertedResults = results.map(mongoHelper.convertObjectIdToStringId);
+                                }
+
+                                return convertedResults;
+                            }
+                        }
                     }
                     else if (jsonSchemaType.startsWith('$ref:')) {
                         referencedTypeId = jsonSchemaType.replace('$ref:', '');
@@ -331,6 +361,26 @@ class SchemaService {
                         const graphQLTypeObject = allContentTypesByFriendlyName[referencedTypeName];
                         contentTypeFields[contentFieldName] = {};
                         contentTypeFields[contentFieldName].type = graphQLTypeObject;
+
+                        // create the resolve function to retrieve the single related item
+                        contentTypeFields[contentFieldName].resolve = async (parent, {ignoredFilter}, context) => {
+                            const relationIdField = contentFieldName + "Id";
+                            const relationIdFieldValue = parent[relationIdField];
+                            let convertedResult = null;
+
+                            if (relationIdFieldValue) {
+                                const snakeCasedReferencedContentTypeName = _.snakeCase(referencedTypeName);
+                                const filter = {_id: new ObjectId(relationIdFieldValue)};
+
+                                filter['orgId'] = {$eq: current.context.orgId};
+                                filter['contentType'] = {$eq: snakeCasedReferencedContentTypeName};
+
+                                const result = await context.db.collection('customData').findOne(filter);
+                                convertedResult = mongoHelper.convertObjectIdToStringId(result);
+                            }
+
+                            return convertedResult;
+                        }
                     }
                     else {
                         const graphQLType = this.getGraphQLTypeForScalarProperty(jsonSchemaType);

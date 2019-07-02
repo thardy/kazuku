@@ -1,8 +1,8 @@
 const { getGraphQLUpdateArgs, getMongoDbUpdateResolver, getGraphQLQueryArgs, getMongoDbQueryResolver } = require('graphql-to-mongodb');
 const { GraphQLList, GraphQLObjectType, GraphQLInputObjectType } = require('graphql');
 const AcknowledgeType = require('./acknowledge.type');
-const ObjectID = require('mongodb').ObjectID;
 const current = require('../../common/current');
+const mongoHelper = require('../../common/mongoHelper');
 const _ = require('lodash');
 // const Auth = require('../auth/auth');
 
@@ -44,7 +44,7 @@ const simpleCreateMutation = (contentType, inputTypeFields) => {
         resolve: async (object, objectToCreate, context, info) => {
             const snakeCasedContentTypeName = _.snakeCase(contentType.name);
 
-            objectToCreate['orgId'] = getCurrentOrgId();
+            objectToCreate['orgId'] = current.context.orgId;
             objectToCreate['contentType'] = snakeCasedContentTypeName;
 
             const result = await context.db.collection('customData').insertOne(objectToCreate);
@@ -64,14 +64,14 @@ const simpleUpdateMutation = (contentType, inputType) => {
             async (filter, update, options, projection, source, args, context, info) => {
                 const snakeCasedContentTypeName = _.snakeCase(contentType.name);
 
-                filter['orgId'] = { $eq: getCurrentOrgId() };
+                filter['orgId'] = { $eq: current.context.orgId };
                 filter['contentType'] = { $eq: snakeCasedContentTypeName };
 
-                convertStringIdToObjectId(filter);
+                mongoHelper.convertFilterStringIdsToObjectIds(filter);
                 const result = await context.db.collection('customData').updateMany(filter, update, options);
                 return result.result;
 
-                // convertStringIdToObjectId(filter);
+                // mongoHelper.convertFilterStringIdsToObjectIds(filter);
                 // const result = await context.db.collection(collection).updateMany(filter, update, options);
                 // return result.result;
             },
@@ -92,15 +92,15 @@ const simpleDeleteMutation = (contentType, inputType) => {
                 const snakeCasedContentTypeName = _.snakeCase(contentType.name);
 
                 // alter filter to have orgId and contentType
-                filter['orgId'] = { $eq: getCurrentOrgId() };
+                filter['orgId'] = { $eq: current.context.orgId };
                 filter['contentType'] = { $eq: snakeCasedContentTypeName };
 
                 options.projection = projection;
-                convertStringIdToObjectId(filter);
+                mongoHelper.convertFilterStringIdsToObjectIds(filter);
                 const result = await context.db.collection('customData').deleteMany(filter, options);
                 return result.result;
 
-                // convertStringIdToObjectId(filter);
+                // mongoHelper.convertFilterStringIdsToObjectIds(filter);
                 // return (await context.db.collection(collection).deleteMany(filter, options)).result;
             },
             {
@@ -122,39 +122,18 @@ const simpleQuery = (contentType, inputType) => {
                 const snakeCasedContentTypeName = _.snakeCase(contentType.name);
 
                 // do I need to convert this to an ObjectID?
-                filter['orgId'] = { $eq: getCurrentOrgId() }; //{ $eq: new ObjectID(getCurrentOrgId()) };
+                filter['orgId'] = { $eq: current.context.orgId }; //{ $eq: new ObjectID(current.context.orgId) };
                 filter['contentType'] = { $eq: snakeCasedContentTypeName };
 
                 options.projection = projection;
-                convertStringIdToObjectId(filter);
+                mongoHelper.convertFilterStringIdsToObjectIds(filter);
                 const results = await context.db.collection('customData').find(filter, options).toArray();
-                const convertedResults = results.map(convertObjectIdToStringId);
+                const convertedResults = results.map(mongoHelper.convertObjectIdToStringId);
                 return convertedResults;
                 //this.customDataService.getByContentType(current.context.orgId, contentType)
             }
         )
     };
-};
-
-convertStringIdToObjectId = (filter) => {
-    if (filter['_id']) {
-        for (let property in  filter['_id']) {
-            if (filter['_id'].hasOwnProperty(property)) {
-                filter['_id'][property] = new ObjectID(filter['_id'][property]);
-            }
-        }
-    }
-};
-
-getCurrentOrgId = () => {
-    return '5ab7fe90da90fa0fa857a557';
-};
-
-convertObjectIdToStringId = (doc) => {
-    if (doc && doc._id) {
-        doc._id = doc._id.toHexString();
-    }
-    return doc;
 };
 
 
