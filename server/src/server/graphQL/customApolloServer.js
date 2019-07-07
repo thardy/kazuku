@@ -47,10 +47,8 @@ class CustomApolloServer extends ApolloServer {
 
     applyMiddleware({ app, path, db }) {
         /* Adds project specific middleware inside, just to keep in one place */
-        //let auth = undefined; // todo: figure out where this should come from
-        //app.use(path, json(), auth, (req, res, next) => {
-        //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        app.use(path, json(), async (req, res, next) => {
+        app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
+        //app.use(path, json(), async (req, res, next) => {
             if (this.playgroundOptions && req.method === 'GET') {
                 // perform more expensive content-type check only if necessary
                 // XXX We could potentially move this logic into the GuiOptions lambda,

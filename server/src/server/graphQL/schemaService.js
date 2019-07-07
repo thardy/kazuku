@@ -334,6 +334,8 @@ class SchemaService {
                             contentTypeFields[contentFieldName].resolve = async (parent, {ignoredFilter}, context) => {
                                 // todo: for preview functionality, we need to check the customDataDrafts db for results here, then pull the same results from
                                 //  the normal/live db.  Have the drafts results override any live results, but only if present (nulls/nodata don't override anything).
+                                //  If a draft result exists with the same _id as a live result, the draft result wins.
+
                                 // need singular of the contentFieldName
                                 const singularContentFieldName = pluralize.singular(contentFieldName);
                                 const relationIdField = singularContentFieldName + "Ids";
