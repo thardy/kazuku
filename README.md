@@ -19,6 +19,7 @@ Create a development.json file in the server/src/server/config folder. Here is a
 {
   "env": "dev",
   "host": "http://localhost:3001",
+  "hostname": "kazuku.com",
   "sessionSecret": "asecretkey",
   "saltWorkFactor": 10,
   "port": 3001,
