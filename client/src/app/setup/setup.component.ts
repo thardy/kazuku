@@ -1,9 +1,10 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
-import {SetupService} from "./setup.service";
-import {SetupConfig} from "./setup-config.model";
-import {Subject} from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
+import {SetupService} from './setup.service';
+import {SetupConfig} from './setup-config.model';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+
 
 @Component({
     selector: 'kz-setup',
@@ -30,7 +31,9 @@ export class SetupComponent implements OnInit, OnDestroy {
 
     save(form) {
         this.setupService.initialSetup(this.setupConfig)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((result) => {
                 this.router.navigate(['dashboard']);
             });

@@ -4,7 +4,8 @@ import {BaseComponent} from '../common/base-component';
 import {CustomDataService} from './custom-data.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {CustomSchemaService} from '../custom-schemas/custom-schema.service';
-import 'rxjs/add/operator/mergeMap';
+import {flatMap, takeUntil} from 'rxjs/operators';
+
 
 @Component({
     selector: 'kz-custom-data',
@@ -32,16 +33,18 @@ export class CustomDataComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .flatMap((params: Params) => {
-                this.contentType = params['contentType'];
-                this.customDataId = params['id'];
-                this.isEdit = this.contentType != null && this.customDataId != null;
+            .pipe(
+                flatMap((params: Params) => {
+                    this.contentType = params['contentType'];
+                    this.customDataId = params['id'];
+                    this.isEdit = this.contentType != null && this.customDataId != null;
 
-                // todo: what do we do if we don't find a contentType in the routeParams? Perhaps allow selection of a
-                //  contentType if we get here without one.  We have to at least have a contentType
-                return this.customSchemaService.getByContentType(this.contentType);
-            })
-            .subscribe((customSchema) => {
+                    // todo: what do we do if we don't find a contentType in the routeParams? Perhaps allow selection of a
+                    //  contentType if we get here without one.  We have to at least have a contentType
+                    return this.customSchemaService.getByContentType(this.contentType);
+                })
+            )
+            .subscribe((customSchema: any) => {
                 this.customSchema = customSchema;
                 //this.initForm(null);
 
@@ -79,7 +82,9 @@ export class CustomDataComponent extends BaseComponent implements OnInit {
 
         if (this.isEdit) {
             this.customDataService.updateByTypeAndId(this.contentType, this.customDataId, this.model)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe(
                     (result) => {
                         this.saving = false;
@@ -92,7 +97,9 @@ export class CustomDataComponent extends BaseComponent implements OnInit {
         }
         else {
             this.customDataService.createByContentType(this.contentType, this.model)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe((result) => {
                     this.saving = false;
                     this.original = Object.assign({}, this.model);

@@ -23,10 +23,10 @@ const BASE_TIMER_DELAY = 10;
 export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestroy {
 
     @Input('appAutofocus') shouldFocusElement: any; // ignore tslint. I want the directive name itself to be usable for specifying the autofocus condition = less wordy.
-    @Input() timerDelay: number | string;
+    @Input() timerDelay: number;
 
     private elementRef: ElementRef;
-    private timer: number;
+    private timer;
 
     // I initialize the autofocus directive.
     constructor(elementRef: ElementRef) {
@@ -120,8 +120,7 @@ export class AutofocusDirective implements AfterContentInit, OnChanges, OnDestro
                 this.timer = null;
                 this.elementRef.nativeElement.focus();
 
-            },
-            this.timerDelay
+            }, this.timerDelay
         );
 
     }

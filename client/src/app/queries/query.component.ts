@@ -4,9 +4,10 @@ import {BaseComponent} from '../common/base-component';
 import {Query} from './query.model';
 import {QueryService} from './query.service';
 import {NgForm} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergeMap';
+import {Observable, of} from 'rxjs';
+
 import * as _ from 'lodash';
+import {flatMap, takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'kz-query',
@@ -26,22 +27,22 @@ export class QueryComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .flatMap((params: Params) => {
-                const nameId = params['nameId'] || '';
-                if (nameId) {
-                    this.queryNameId = nameId;
-                    return this.queryService.getByNameId(this.queryNameId);
-                }
-                else {
-                    return Observable.of(null);
-                }
-            })
+            .pipe(
+                flatMap((params: Params) => {
+                    const nameId = params['nameId'] || '';
+                    if (nameId) {
+                        this.queryNameId = nameId;
+                        return this.queryService.getByNameId(this.queryNameId);
+                    } else {
+                        return of(null);
+                    }
+                })
+            )
             .subscribe((query) => {
                 if (query) {
                     this.query = query;
                     this.original = Object.assign({}, this.query);
-                }
-                else {
+                } else {
                     this.isCreate = true;
                     this.query = new Query();
                 }
@@ -58,15 +59,18 @@ export class QueryComponent extends BaseComponent implements OnInit {
 
         if (this.isCreate) {
             this.queryService.create(form.value)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe((result) => {
                     this.saving = false;
                     this.router.navigateByUrl('queries');
                 });
-        }
-        else {
+        } else {
             this.queryService.update(this.query.id, form.value)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe((result) => {
                     this.saving = false;
                     this.original = Object.assign({}, this.query);
@@ -81,8 +85,7 @@ export class QueryComponent extends BaseComponent implements OnInit {
     cancel(form: NgForm) {
         if (this.isCreate) {
             this.router.navigateByUrl('queries');
-        }
-        else {
+        } else {
             this.query = Object.assign({}, new Query(this.original));
             form.form.markAsPristine();
         }

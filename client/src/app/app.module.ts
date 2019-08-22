@@ -2,8 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
-import {InMemoryWebApiModule} from 'angular-in-memory-web-api';
-import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'angular2-schema-form';
+import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'ngx-schema-form';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
@@ -35,8 +34,6 @@ import {SetupGuardService} from './setup/setup-guard.service';
 import {AuthGuardService} from './common/auth/auth-guard.service';
 import {AsyncButtonDirective} from './common/ui/async-button.directive';
 import {PageComponent} from './pages/page.component';
-import {SuiModule} from 'ng2-semantic-ui';
-import {ModalComponent} from './common/modal/modal.component';
 import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
 import {CustomSchemaService} from './custom-schemas/custom-schema.service';
 import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
@@ -44,16 +41,17 @@ import {CustomDataComponent} from './custom-data/custom-data.component';
 import {CustomDataService} from './custom-data/custom-data.service';
 import {UnAuthenticatedInterceptor} from './unauthenticated.interceptor';
 import {HttpService} from './common/http.service';
-
-import {InMemoryDataService} from './in-memory-data.service';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import { SchedulesComponent } from './schedules/schedule.component';
 import {ScheduleService} from './schedules/schedule.service';
 import { ContextComponent } from './layout/context/context.component';
+import {AutofocusDirective} from './common/ui/autofocus.directive';
+import {BaseComponent} from './common/base-component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        BaseComponent,
         OrganizationListComponent,
         OrganizationComponent,
         SiteListComponent,
@@ -74,10 +72,10 @@ import { ContextComponent } from './layout/context/context.component';
         UserListComponent,
         SetupComponent,
         AsyncButtonDirective,
-        ModalComponent,
         CustomDataComponent,
         SchedulesComponent,
-        ContextComponent
+        ContextComponent,
+        AutofocusDirective
     ],
     imports: [
         BrowserModule,
@@ -86,8 +84,6 @@ import { ContextComponent } from './layout/context/context.component';
         ReactiveFormsModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        InMemoryWebApiModule.forRoot(InMemoryDataService, {apiBase: 'api/', passThruUnknownUrl: true}),
-        SuiModule,
         SchemaFormModule.forRoot(),
         NgxDatatableModule
     ],
@@ -110,7 +106,6 @@ import { ContextComponent } from './layout/context/context.component';
         {provide: WidgetRegistry, useClass: DefaultWidgetRegistry}
     ],
     entryComponents: [
-        ModalComponent
     ],
     bootstrap: [AppComponent]
 })

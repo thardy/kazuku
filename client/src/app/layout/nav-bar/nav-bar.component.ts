@@ -1,8 +1,9 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
-import {Subject} from 'rxjs/Subject';
-import {UserService} from "../../users/user.service";
-import {UserContext} from "../../users/user-context.model";
+import {Subject} from 'rxjs';
+import {UserService} from '../../users/user.service';
+import {UserContext} from '../../users/user-context.model';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'kz-nav-bar',
@@ -21,7 +22,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.navItems = this.getNavItems();
         this.userService.currentUserContext
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((userContext) => {
                 this.userContext = userContext;
 
@@ -33,8 +36,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
                         // not found so add it
                         this.navItems.push({name: 'Orgs', destination: 'organizations'});
                     }
-                }
-                else if (orgsIndex !== -1) {
+                } else if (orgsIndex !== -1) {
                     // found but doesn't belong, so remove it
                     this.navItems.splice(orgsIndex, 1);
                 }
@@ -48,7 +50,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
     logout() {
         this.userService.logout()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe(
                 () => {
                     this.router.navigate(['login']);
@@ -60,15 +64,15 @@ export class NavBarComponent implements OnInit, OnDestroy {
     }
 
     getNavItems() {
-        let navItems = [];
+        const navItems = [];
 
-        navItems.push({ name: 'Dashboard', destination: 'dashboard' });
-        navItems.push({ name: 'Content', destination: 'content' });
-        navItems.push({ name: 'Content Model', destination: 'content-models' });
-        navItems.push({ name: 'Sites', destination: 'sites' });
-        navItems.push({ name: 'Pages', destination: 'pages' });
-        navItems.push({ name: 'Templates', destination: 'templates' });
-        navItems.push({ name: 'Queries', destination: 'queries' });
+        navItems.push({name: 'Dashboard', destination: 'dashboard'});
+        navItems.push({name: 'Content', destination: 'content'});
+        navItems.push({name: 'Content Model', destination: 'content-models'});
+        navItems.push({name: 'Sites', destination: 'sites'});
+        navItems.push({name: 'Pages', destination: 'pages'});
+        navItems.push({name: 'Templates', destination: 'templates'});
+        navItems.push({name: 'Queries', destination: 'queries'});
 
         return navItems;
     }

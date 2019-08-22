@@ -1,15 +1,16 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {BaseComponent} from "../common/base-component";
-import {Organization} from "./organization.model";
-import {OrganizationService} from "./organization.service";
-import {NgForm} from "@angular/forms";
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergeMap';
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {BaseComponent} from '../common/base-component';
+import {Organization} from './organization.model';
+import {OrganizationService} from './organization.service';
+import {NgForm} from '@angular/forms';
+import {Observable, of} from 'rxjs';
+import {flatMap, takeUntil} from 'rxjs/operators';
+
 
 @Component({
-  selector: 'kz-organization',
-  templateUrl: './organization.component.html'
+    selector: 'kz-organization',
+    templateUrl: './organization.component.html'
 })
 export class OrganizationComponent extends BaseComponent implements OnInit {
 
@@ -25,22 +26,22 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .flatMap((params:Params) => {
-                const id = params['id'] || '';
-                if (id) {
-                    this.orgId = id;
-                    return this.orgService.getById(this.orgId);
-                }
-                else {
-                    return Observable.of(null);
-                }
-            })
+            .pipe(
+                flatMap((params: Params) => {
+                    const id = params['id'] || '';
+                    if (id) {
+                        this.orgId = id;
+                        return this.orgService.getById(this.orgId);
+                    } else {
+                        return of(null);
+                    }
+                })
+            )
             .subscribe((org) => {
                 if (org) {
                     this.organization = org;
                     this.original = Object.assign({}, this.organization);
-                }
-                else {
+                } else {
                     this.isCreate = true;
                     this.organization = new Organization();
                 }
@@ -57,15 +58,18 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
 
         if (this.isCreate) {
             this.orgService.create(form.value)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe((result) => {
                     this.saving = false;
                     this.router.navigateByUrl('organizations');
                 });
-        }
-        else {
+        } else {
             this.orgService.update(this.orgId, form.value)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe((result) => {
                     this.saving = false;
                     this.original = Object.assign({}, this.organization);
@@ -74,11 +78,10 @@ export class OrganizationComponent extends BaseComponent implements OnInit {
         }
     }
 
-    cancel(form: NgForm){
+    cancel(form: NgForm) {
         if (this.isCreate) {
             this.router.navigateByUrl('organizations');
-        }
-        else {
+        } else {
             this.organization = Object.assign({}, new Organization(this.original));
             form.form.markAsPristine();
         }

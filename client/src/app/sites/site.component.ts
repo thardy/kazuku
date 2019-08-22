@@ -4,9 +4,10 @@ import {NgForm} from '@angular/forms';
 import {Site} from './site.model';
 import {SiteService} from './site.service';
 import {BaseComponent} from '../common/base-component';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergeMap';
+import {Observable, of} from 'rxjs';
+
 import * as _ from 'lodash';
+import {flatMap, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'kz-site',
@@ -26,16 +27,18 @@ export class SiteComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.route.params
-            .flatMap((params: Params) => {
-                const id = params['id'] || '';
-                if (id) {
-                    this.siteId = id;
-                    return this.siteService.getById(this.siteId);
-                }
-                else {
-                    return Observable.of(null);
-                }
-            })
+            .pipe(
+                flatMap((params: Params) => {
+                    const id = params['id'] || '';
+                    if (id) {
+                        this.siteId = id;
+                        return this.siteService.getById(this.siteId);
+                    }
+                    else {
+                        return of(null);
+                    }
+                })
+            )
             .subscribe((site) => {
                 if (site) {
                     this.site = site;
@@ -59,7 +62,9 @@ export class SiteComponent extends BaseComponent implements OnInit {
 
         if (this.isCreate) {
             this.siteService.create(form.value)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe(
                     (result) => {
                         this.saving = false;
@@ -72,7 +77,9 @@ export class SiteComponent extends BaseComponent implements OnInit {
         }
         else {
             this.siteService.update(this.siteId, form.value)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe((result) => {
                     this.saving = false;
                     this.original = Object.assign({}, this.site);

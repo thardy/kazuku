@@ -4,11 +4,12 @@ import {FormGroup, FormControl, FormArray, Validators} from '@angular/forms';
 import {Template} from '../templates/template.model';
 import {TemplateService} from '../templates/template.service';
 import {BaseComponent} from '../common/base-component';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergeMap';
+import {Observable} from 'rxjs';
+
 import {SiteService} from '../sites/site.service';
 import {Site} from '../sites/site.model';
 import * as _ from 'lodash';
+import {takeUntil} from 'rxjs/operators';
 
 const systemProperties = ['_id', 'id', 'orgId', 'siteId', 'name', 'nameId', 'url', 'layout', 'description', 'template', 'created', 'createdBy', 'updated', 'updatedBy', 'dependencies', 'regenerate'];
 
@@ -68,10 +69,9 @@ export class TemplateComponent extends BaseComponent implements OnInit {
     initForm(template: any) {
         if (template) {
             this.form.patchValue(template);
-        }
-        else if (this.isEdit) {
+        } else if (this.isEdit) {
             this.templateService.getByNameId(this.templateNameId)
-                .subscribe((retrievedTemplate) => {
+                .subscribe((retrievedTemplate: any) => {
                     if (retrievedTemplate) {
                         this.template = retrievedTemplate;
                         this.form.patchValue(retrievedTemplate);
@@ -111,7 +111,9 @@ export class TemplateComponent extends BaseComponent implements OnInit {
 
         if (this.isEdit) {
             this.templateService.update(templateId, templateObject)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe(
                     (result) => {
                         this.original = Object.assign({}, this.template);
@@ -120,19 +122,22 @@ export class TemplateComponent extends BaseComponent implements OnInit {
                         }
                         this.router.navigateByUrl(this.isInPageMode ? 'pages' : 'templates');
                     },
-                    (error) => {},
+                    (error) => {
+                    },
                     () => {
                         this.saving = false;
                     });
-        }
-        else {
+        } else {
             this.templateService.create(templateObject)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe(
                     (result) => {
                         this.router.navigateByUrl(this.isInPageMode ? 'pages' : 'templates');
                     },
-                    (error) => {},
+                    (error) => {
+                    },
                     () => {
                         this.saving = false;
                     }
@@ -149,8 +154,7 @@ export class TemplateComponent extends BaseComponent implements OnInit {
             // re-initialize form
             //this.initForm(this.template);
             this.router.navigateByUrl(this.isInPageMode ? 'pages' : 'templates');
-        }
-        else {
+        } else {
             this.router.navigateByUrl(this.isInPageMode ? 'pages' : 'templates');
         }
     }
