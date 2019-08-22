@@ -123,7 +123,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "kz",
-      "styleext": "less"
+      "styleext": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "kz"
