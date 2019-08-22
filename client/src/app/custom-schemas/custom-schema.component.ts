@@ -4,9 +4,10 @@ import {BaseComponent} from '../common/base-component';
 import {CustomSchema} from './custom-schema.model';
 import {CustomSchemaService} from './custom-schema.service';
 import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/mergeMap';
+import {Observable} from 'rxjs';
+
 import * as _ from 'lodash';
+import {takeUntil} from 'rxjs/operators';
 
 const MANDATORY_FIELDS = ['name'];
 
@@ -59,7 +60,7 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         }
         else if (this.isEdit) {
             this.customSchemaService.getByContentType(this.contentType)
-                .subscribe((fetchedCustomSchema) => {
+                .subscribe((fetchedCustomSchema: any) => {
                     if (fetchedCustomSchema) {
                         this.customSchema = fetchedCustomSchema;
                         this.form.patchValue(fetchedCustomSchema);
@@ -113,7 +114,9 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
         if (this.isEdit) {
             this.customSchemaService.update(this.contentType, customSchema)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe(
                     (result) => {
                         this.original = Object.assign({}, this.customSchema);
@@ -138,7 +141,9 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         }
         else {
             this.customSchemaService.create(customSchema)
-                .takeUntil(this.ngUnsubscribe)
+                .pipe(
+                    takeUntil(this.ngUnsubscribe)
+                )
                 .subscribe(
                     (result) => {
                         this.router.navigateByUrl('content-models');
@@ -194,8 +199,8 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
     cancelField(field: FormGroup) {
         const fieldUx = this.fieldUx.get(field);
-        let index = this.getIndexOfItemInFormArray(this.fieldsFormArray, field);
-        let foundField = this.fieldsFormArray.at(index);
+        const index = this.getIndexOfItemInFormArray(this.fieldsFormArray, field);
+        const foundField = this.fieldsFormArray.at(index);
         if (foundField && !fieldUx.saved) {
             this.fieldsFormArray.removeAt(index);
         }
@@ -207,8 +212,8 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
 
     getIndexOfItemInFormArray(formArray: FormArray, control: AbstractControl) {
         let index = -1;
-        for (let i = 0; i < formArray.length; i++){
-            if (formArray.controls[i] == control) {
+        for (let i = 0; i < formArray.length; i++) {
+            if (formArray.controls[i] === control) {
                 index = i;
                 break;
             }

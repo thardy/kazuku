@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../users/user.service';
 import {BaseComponent} from '../../common/base-component';
 import {UserContext} from '../../users/user-context.model';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'kz-context',
@@ -17,7 +18,9 @@ export class ContextComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.userService.currentUserContext
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((userContext) => {
                 this.userContext = userContext;
             });

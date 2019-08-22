@@ -1,12 +1,13 @@
 import {Injectable, Inject} from '@angular/core';
 import {environment} from '../../environments/environment';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+
+
+
+
 import {Site} from './site.model';
 import {GenericService} from '../common/generic.service';
 import {HttpService} from '../common/http.service';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable()
 export class SiteService extends GenericService<Site> {
@@ -17,8 +18,10 @@ export class SiteService extends GenericService<Site> {
 
     getByName(name: string) {
         return this.http.get(`${this.baseUrl}/getbyname/${name}`)
-            .map(response => this.extractData(response))
-            .catch(error => this.handleError(error));
+            .pipe(
+                map(response => this.extractData(response)),
+                catchError(error => this.handleError(error))
+            );
     }
 
 }

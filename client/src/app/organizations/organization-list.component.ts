@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {UserService} from '../users/user.service';
 import {BaseComponent} from '../common/base-component';
 import {UserContext} from '../users/user-context.model';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'kz-organization-list',
@@ -26,7 +27,9 @@ export class OrganizationListComponent extends BaseComponent implements OnInit {
             });
 
         this.userService.currentUserContext
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe((userContext) => {
                 this.userContext = userContext;
             });
@@ -38,7 +41,9 @@ export class OrganizationListComponent extends BaseComponent implements OnInit {
 
     selectOrg(orgId: string) {
         this.userService.selectOrgContext(orgId)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe();
     }
 }

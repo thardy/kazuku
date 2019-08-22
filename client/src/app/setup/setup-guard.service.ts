@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {CanActivate} from '@angular/router';
-import {SetupService} from "./setup.service";
+import {SetupService} from './setup.service';
+import {map} from 'rxjs/operators';
 //import 'rxjs/add/operator/do';
 
 @Injectable()
@@ -10,13 +11,15 @@ export class SetupGuardService implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         return this.setupService.canWeSetup()
-            .map((canWeSetup) => {
-                if (!canWeSetup) {
-                    this.router.navigate(['dashboard']);
-                }
+            .pipe(
+                map((canWeSetup) => {
+                    if (!canWeSetup) {
+                        this.router.navigate(['dashboard']);
+                    }
 
-                return canWeSetup;
-            });
+                    return canWeSetup;
+                })
+            );
     }
 
 }

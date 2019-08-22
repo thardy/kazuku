@@ -1,8 +1,9 @@
+
+import {throwError as observableThrowError, Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
 import {environment} from '../../environments/environment';
-import 'rxjs/add/operator/catch';
+
 
 @Injectable()
 export class HttpService {
@@ -44,7 +45,7 @@ export class HttpService {
             return this.http.request(method, url, requestOptions);
         }
         catch (error) {
-            return Observable.throw(error);
+            return observableThrowError(error);
         }
 
     }

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {TemplateService} from "../templates/template.service";
-import {Router} from "@angular/router";
-import {Template} from "../templates/template.model";
+import {TemplateService} from '../templates/template.service';
+import {Router} from '@angular/router';
+import {Template} from '../templates/template.model';
 
 @Component({
     selector: 'kz-page-list',
@@ -18,7 +18,7 @@ export class PageListComponent implements OnInit {
     ngOnInit() {
         this.templateService.getAllPages()
             .subscribe(
-                (pages) => {
+                (pages: any) => {
                     this.pages = pages;
                     this.loading = false;
                 },

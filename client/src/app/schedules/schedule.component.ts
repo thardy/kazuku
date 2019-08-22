@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ScheduleService} from './schedule.service';
 import {NgForm} from '@angular/forms';
 import {BaseComponent} from '../common/base-component';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'kz-schedule',
@@ -19,7 +20,9 @@ export class SchedulesComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.scheduleService.getSiteScheduleJob(this.siteId)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+
+            )
             .subscribe((agendaJob) => {
                 if (agendaJob) {
                     const repeatInterval = agendaJob.repeatInterval;
@@ -33,7 +36,9 @@ export class SchedulesComponent extends BaseComponent implements OnInit {
     save(form: NgForm) {
         const minutes = form.value.regenerationInterval;
         this.scheduleService.save(this.siteId, minutes)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
             .subscribe(
                 (result) => {
                     this.regenerationInterval = minutes;

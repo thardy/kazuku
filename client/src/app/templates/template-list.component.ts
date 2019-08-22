@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Template} from "./template.model";
-import {TemplateService} from "./template.service";
-import {Router} from "@angular/router";
+import {Template} from './template.model';
+import {TemplateService} from './template.service';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'kz-template-list',
@@ -16,7 +16,7 @@ export class TemplateListComponent implements OnInit {
 
     ngOnInit() {
         this.templateService.getAllNonPageTemplates()
-            .subscribe((templates) => {
+            .subscribe((templates: any) => {
                 this.templates = templates;
             });
     }
