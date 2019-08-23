@@ -8,7 +8,7 @@ import {takeUntil} from 'rxjs/operators';
 @Component({
     selector: 'kz-nav-bar',
     templateUrl: './nav-bar.component.html',
-    styleUrls: ['./nav-bar.component.less']
+    styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
 

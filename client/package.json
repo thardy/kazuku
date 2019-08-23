@@ -10,7 +10,7 @@
     "lint": "tslint \"src/**/*.ts\" --project src/tsconfig.json --type-check && tslint \"e2e/**/*.ts\" -  -project e2e/tsconfig.json --type-check",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
     "e2e": "protractor",
-    "watch": "ng build --watch --extractCss",
+    "watch": "ng build --watch",
     "prodbuild": "ng build --extractCss --prod --e=local"
   },
   "private": true,
@@ -25,10 +25,12 @@
     "@angular/platform-server": "^8.2.2",
     "@angular/router": "^8.2.2",
     "@swimlane/ngx-datatable": "^15.0.2",
+    "bootstrap": "^4.3.1",
     "core-js": "^3.2.1",
     "jexl": "^2.1.1",
     "lodash": "^4.17.15",
     "ngx-schema-form": "^2.4.0",
+    "node-sass": "^4.12.0",
     "rxjs": "^6.5.2",
     "ts-helpers": "^1.1.1",
     "tslib": "^1.10.0",
@@ -53,6 +55,7 @@
     "protractor": "^5.4.2",
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.2"
   }
 }

@@ -9,7 +9,7 @@ import {takeUntil} from 'rxjs/operators';
 @Component({
     selector: 'kz-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.less']
+    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
     user: User = new User();

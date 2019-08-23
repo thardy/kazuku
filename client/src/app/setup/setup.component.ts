@@ -9,7 +9,7 @@ import {takeUntil} from 'rxjs/operators';
 @Component({
     selector: 'kz-setup',
     templateUrl: './setup.component.html',
-    styleUrls: ['./setup.component.less']
+    styleUrls: ['./setup.component.scss']
 })
 export class SetupComponent implements OnInit, OnDestroy {
     setupConfig: SetupConfig;
