@@ -1,0 +1,8 @@
+// -----------------------------------------------------------------------------
+// This file contains all @font-face declarations, if any.
+// -----------------------------------------------------------------------------
+@import url('https://fonts.googleapis.com/css?family=Archivo+Black|Archivo+Narrow:400,500,600,700|Archivo:400,500,600,700&display=swap');
+
+$font-family-base: 'Archivo';
+$headings-font-family: 'Archivo Black';
+$text-color:            $gray-dark !default;
