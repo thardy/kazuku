@@ -1,8 +1,9 @@
 <h1>Custom Schemas</h1>
+
 <ul>
     <li *ngFor="let customSchema of customSchemas">
         <a [routerLink]="['/content-models/' + customSchema.contentType]">{{customSchema.contentType}}</a>
     </li>
 </ul>
 
-<button class="btn primary" (click)="create()">Add</button>
+<button type="button" class="btn btn-outline-primary" (click)="create()">Add</button>

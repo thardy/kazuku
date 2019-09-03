@@ -23,7 +23,7 @@ export class UserService extends GenericService<User> {
 
     }
 
-    get currentUserContext() {
+    get currentUserContext(): Observable<any> {
         return this._currentUserContext.asObservable();
     }
 
