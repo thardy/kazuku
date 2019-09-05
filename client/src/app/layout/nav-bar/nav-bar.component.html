@@ -1,10 +1,15 @@
-<a class="item"
-   *ngFor="let navItem of navItems"
-   routerLinkActive="active"
-   [routerLink]="['/' + navItem.destination]">
-    {{navItem.name | uppercase}}
-</a>
-<a class="item" routerLinkActive="active" (click)="logout()">
-    Logout
-</a>
+<div class="sidebar-sticky">
+    <ul class="nav flex-column">
+        <li class="nav-item" *ngFor="let navItem of navItems">
+            <a class="nav-link"
+               routerLinkActive="active"
+               [routerLink]="['/' + navItem.destination]">
+                {{navItem.name}}
+            </a>
+        </li>
+        <!--    <a class="nav-link" (click)="logout()">-->
+        <!--        Logout-->
+        <!--    </a>-->
+    </ul>
 
+</div>

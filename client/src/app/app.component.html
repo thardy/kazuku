@@ -1,22 +1,12 @@
+<kz-workspace-actions></kz-workspace-actions>
+
 <div class="container-fluid">
-    <kz-nav-bar></kz-nav-bar>
-
-    <kz-context></kz-context>
-    <div class="menu right">
-        <div class="ui dropdown item" suiDropdown>
-            Profile Things
-            <div class="menu" suiDropdownMenu>
-                <a class="item" [routerLink]="['/dashboard']">My Dashboard</a>
-                <div class="item">Profile</div>
-                <div class="item">Account</div>
-                <div class="divider"></div>
-                <div class="item">Logout</div>
-            </div>
-        </div>
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <kz-nav-bar></kz-nav-bar>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <router-outlet></router-outlet>
+        </main>
     </div>
-
-    <button type="submit" class="btn btn-primary">Login</button>
-
-    <router-outlet></router-outlet>
-
 </div>

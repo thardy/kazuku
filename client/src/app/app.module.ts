@@ -47,6 +47,8 @@ import {ScheduleService} from './schedules/schedule.service';
 import { ContextComponent } from './layout/context/context.component';
 import {AutofocusDirective} from './common/ui/autofocus.directive';
 import {BaseComponent} from './common/base-component';
+import { WorkspaceActionsComponent } from './layout/workspace-actions/workspace-actions.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     declarations: [
@@ -75,7 +77,8 @@ import {BaseComponent} from './common/base-component';
         CustomDataComponent,
         SchedulesComponent,
         ContextComponent,
-        AutofocusDirective
+        AutofocusDirective,
+        WorkspaceActionsComponent
     ],
     imports: [
         BrowserModule,
@@ -85,7 +88,8 @@ import {BaseComponent} from './common/base-component';
         AppRoutingModule,
         BrowserAnimationsModule,
         SchemaFormModule.forRoot(),
-        NgxDatatableModule
+        NgxDatatableModule,
+        FontAwesomeModule
     ],
     providers: [
         {

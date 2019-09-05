@@ -1,0 +1,20 @@
+<!--<nav class="navbar navbar-light fixed-top flex-nowrap p-0 shadow">-->
+<!--    <kz-context></kz-context>-->
+<!--    <ul class="navbar-nav px-3">-->
+<!--        <li *ngFor="let item of (actionItems$ | async)" class="nav-item text-nowrap">-->
+<!--            <div class="nav-link">-->
+<!--                <fa-icon [icon]="item.icon"></fa-icon>-->
+<!--            </div>-->
+<!--        </li>-->
+<!--    </ul>-->
+<!--</nav>-->
+
+<nav class="navbar fixed-top flex-md-nowrap p-0">
+    <a class="bg-primary col-md-2 col-sm-3 mr-0 navbar-brand text-light" href="#">{{(userContext$ | async).org.name}}</a>
+<!--    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">-->
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="#">Sign out</a>
+        </li>
+    </ul>
+</nav>
