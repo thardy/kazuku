@@ -2,7 +2,6 @@
 
 <div>
     <div class="left-panel">
-
         <form [formGroup]="form" (submit)="save(form)" novalidate class="ui form content">
             <div id="schemaBuilder">
                 <div class="field">
@@ -33,14 +32,14 @@
                     <h4>Custom Fields:</h4>
 
                     <ul formArrayName="fields">
-                        <li *ngFor="let field of form.controls.fields.controls; let i = index" [formGroupName]="i">
+                        <li *ngFor="let field of form.controls.fields['controls']; let i = index" [formGroupName]="i">
                             <div *ngIf="!fieldUx.get(field).newField">
                                 {{field.value.description}} - {{field.value.type}}
                                 <a *ngIf="!fieldUx.get(field).isMandatory" href="javascript:void(0);" (click)="editField(field)">Edit</a>
                                 <a *ngIf="!fieldUx.get(field).isMandatory" href="javascript:void(0);" (click)="deleteField(i)">Delete</a>
                             </div>
                             <kz-field-builder *ngIf="fieldUx.get(field).showFieldBuilder"
-                                              [group]="form.controls.fields.controls[i]"
+                                              [group]="form.controls.fields['controls'][i]"
                                               (save)="saveField($event)"
                                               (cancel)="cancelField($event)"
                                               (delete)="deleteField($event)">
@@ -71,6 +70,5 @@
 
     <div class="right-panel">
         <textarea id="schema" name="schema" rows="20" cols="60">{{jsonSchemaString}}</textarea>
-
     </div>
 </div>
