@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./server/config');
@@ -36,9 +37,16 @@ async function init(config) {
     // let client = await mongoDb.MongoClient.connect('mongodb://localhost:27017');
     // const db = client.db('kazuku');
 
+    const playgroundApolloServer = createApolloServer();
+
     // main server app
     const main = express();
     main.set('port', config.port || 3001);
+
+    playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
+        app: main,
+        path: '/graphql', //`http://kazuku.com:3001/graphql`,
+    });
 
 // serve static files out of this folder - referenced as /css, /img, /js
     console.log('about to load static middleware');
@@ -93,7 +101,21 @@ async function init(config) {
 // site app - maps subdomains to site folders
     let siteApp = express();
     // Setup GraphQL for all subdomains
-    setupGraphQL(siteApp, db);
+
+    // apolloServer.applyGraphQlPlaygroundMiddleware({
+    //     app: siteApp,
+    //     path: '/graphql', //`http://thanosblog.kazuku.com:3001/graphql`,
+    // });
+
+    siteApp.use(cors());
+
+    const apiApolloServer = createApolloServer();
+    apiApolloServer.applyGraphQlApiMiddleware({
+        app: siteApp,
+        //path: `http://thanosblog.kazuku.com:3001/graphql`, //'/graphql', //`http://kazuku.com:3001/graphql`,
+        path: '/graphql-api',
+        db: db,
+    });
 
     siteApp.use((req, res) => {
         const siteCode = req.vhost[0];
@@ -118,7 +140,7 @@ async function init(config) {
     });
 }
 
-function setupGraphQL(app, db) {
+function createApolloServer() {
     const typeDefs = `
       type Query {
         "A simple type for getting started!"
@@ -137,12 +159,7 @@ function setupGraphQL(app, db) {
         schema: makeExecutableSchema({ typeDefs, resolvers })
     });
 
-    server.applyMiddleware({
-        app: app,
-        path: '/graphql', //`http://kazuku.com:3001/graphql`,
-        //db: database.db
-        db: db
-    });
+    return server;
 }
 
 // the following is now handled in www/bin

@@ -45,11 +45,12 @@ class CustomApolloServer extends ApolloServer {
         };
     }
 
-    applyMiddleware({ app, path, db }) {
+    applyGraphQlPlaygroundMiddleware({ app, path }) {
         /* Adds project specific middleware inside, just to keep in one place */
-        app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        //app.use(path, json(), async (req, res, next) => {
-            if (this.playgroundOptions && req.method === 'GET') {
+        //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
+        app.use(path, json(), async (req, res, next) => {
+            if (req.method === 'GET') {
+                // todo: maybe do the normal passport auth here, since this page will be hosted in our angular admin app
                 // perform more expensive content-type check only if necessary
                 // XXX We could potentially move this logic into the GuiOptions lambda,
                 // but I don't think it needs any overriding
@@ -61,17 +62,33 @@ class CustomApolloServer extends ApolloServer {
 
                 if (prefersHTML) {
                     const playgroundRenderPageOptions = {
-                        endpoint: path,
+                        // todo: change to be orgCode.api.metaSiteCode.com (e.g. thanos.api.kazuku.com)
+                        endpoint: `http://thanosblog.kazuku.com:3001/graphql-api`,
                         subscriptionEndpoint: this.subscriptionsPath,
-                        ...this.playgroundOptions,
+                        //...this.playgroundOptions,
+                        settings: {
+                            'editor.theme': 'dark',
+                            'editor.cursorShape': 'line',
+                        },
+                        version: '1.7.25'
                     };
                     res.setHeader('Content-Type', 'text/html');
                     const playground = renderPlaygroundPage(playgroundRenderPageOptions);
                     res.write(playground);
                     res.end();
-                    return;
+                    return;// next();
                 }
+
+                //return next();
             }
+        });
+    }
+
+    applyGraphQlApiMiddleware({ app, path, db }) {
+        /* Adds project specific middleware inside, just to keep in one place */
+        //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
+        app.use(path, json(), async (req, res, next) => {
+            // todo: maybe do the api auth here, since this section is all api-driven (
 
             /* Not necessary, but removing to ensure schema built on the request */
             // this will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
@@ -95,17 +112,10 @@ class CustomApolloServer extends ApolloServer {
                         db: db,
                         request: req
                     },
-                    playground: {
-                        endpoint: path,
-                        settings: {
-                            'editor.theme': 'dark',
-                            'editor.cursorShape': 'line',
-                        },
-                        version: '1.7.25'
-                    }
+                    playground: false,
                 })
             )(req, res, next);
-        })
+        });
     }
 
     getCustomSchema(req) {

@@ -1,11 +1,12 @@
 'use strict';
 
 // A middleware that checks to see if the user is authenticated & logged in
-const isAuthenticated = (req, res, next) => {
+const isAuthenticatedWithAdminUser = (req, res, next) => {
     let isAuthenticated = false;
-    const isAuthenticatedWithPassport = req.isAuthenticated();
+    const isAuthenticatedWithAdminUser = req.isAuthenticated();
 
-    isAuthenticated = isAuthenticatedWithPassport ? true : authenticateWithApiConsumer(req);
+    //isAuthenticated = isAuthenticatedWithAdminUser ? true : isAuthenticateWithApiConsumer(req);
+    isAuthenticated = isAuthenticatedWithAdminUser;
 
     if (isAuthenticated) {
         next();
@@ -15,7 +16,7 @@ const isAuthenticated = (req, res, next) => {
     }
 };
 
-const authenticateWithApiConsumer = (req) => {
+const isAuthenticatedWithApiConsumer = (req, res, next) => {
     let isAuthenticatedWithApiConsumer = false;
     if (req.headers && req.headers['authorization']) {
         let authHeader = req.headers['authorization'];
@@ -23,7 +24,6 @@ const authenticateWithApiConsumer = (req) => {
         if (authHeaderArray && authHeaderArray.length > 0) {
             const siteCode = req.vhost[0];
             const submittedAuthToken = authHeaderArray[1];
-            // todo: define and implement this somewhere
             if (siteService.validateSiteAuthToken(siteCode, submittedAuthToken)) {
                 isAuthenticatedWithApiConsumer = true;
             }
@@ -34,5 +34,5 @@ const authenticateWithApiConsumer = (req) => {
 };
 
 module.exports = {
-    isAuthenticated
+    isAuthenticated: isAuthenticatedWithAdminUser
 };
