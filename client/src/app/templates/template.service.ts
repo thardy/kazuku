@@ -7,7 +7,9 @@ import {GenericService} from '../common/generic.service';
 import {HttpService} from '../common/http.service';
 import {catchError, map} from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class TemplateService extends GenericService<Template> {
 
     constructor(@Inject(HttpService) http) {

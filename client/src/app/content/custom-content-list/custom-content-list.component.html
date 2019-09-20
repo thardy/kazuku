@@ -1,0 +1,27 @@
+<h1>Content</h1>
+
+<div class="container">
+    <ng-container *ngIf="(customContentList$ | async)?.length; else noData">
+        <ngx-datatable [rows]="customContentList$ | async">
+            <ngx-datatable-column name="Name">
+                <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+                    <span (click)="sort()">{{column.name}}</span>
+                </ng-template>
+                <ng-template let-item="row" let-value="value" ngx-datatable-cell-template>
+                    <a [routerLink]="['/content/' + item['contentType'] + '/' + item['id']]">{{value}}</a>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="ContentType"></ngx-datatable-column>
+        </ngx-datatable>
+    </ng-container>
+</div>
+
+<ng-template #noData>
+    <div class="jumbotron">
+        <h1 class="display-4">Hmmmm...</h1>
+        <p class="lead">Looks like you don't have any content created just yet.</p>
+        <hr class="my-4">
+        <p>Creating content</p>
+        <a class="btn btn-primary btn-lg" href="#" role="button">Create Model</a>
+    </div>
+</ng-template>

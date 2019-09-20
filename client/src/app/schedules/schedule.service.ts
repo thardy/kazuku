@@ -3,8 +3,11 @@ import {Inject, Injectable} from '@angular/core';
 import {HttpService} from '../common/http.service';
 import {environment} from '../../environments/environment';
 import {catchError, map} from 'rxjs/operators';
+import {SitesModule} from '../sites/sites.module';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class ScheduleService {
     protected baseUrl: string;
     protected http: HttpService;

@@ -1,0 +1,12 @@
+<ng-container *ngIf="(contentModels$ | async)?.length; else noData">
+    <p>something</p>
+</ng-container>
+
+<ng-template #noData>
+    <div class="jumbotron">
+        <h1 class="display-4">Hmmm...</h1>
+        <p class="lead">No content models currently!</p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" [routerLink]="['create']">Create Model</a>
+    </div>
+</ng-template>

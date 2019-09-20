@@ -13,13 +13,42 @@
     <!--<div id="or">or</div>-->
 
     <form #loginForm="ngForm" (ngSubmit)="login(loginForm)" novalidate>
-        <label for="email">Email</label>
-        <input autofocus type="email" id="email" name="email" [(ngModel)]="user.email" size="30" maxlength="100" placeholder="your@email.com">
 
-        <label for="email">Password</label>
-        <input type="password" id="password" name="password" [(ngModel)]="user.password" placeholder="********">
-        <a href="#">forgot?</a>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input class="form-control"
+                   autofocus
+                   type="email"
+                   id="email"
+                   name="email"
+                   [(ngModel)]="user.email"
+                   size="30"
+                   maxlength="100"
+                   placeholder="your@email.com">
+        </div>
 
-        <button type="submit" class="btn btn-primary">Login</button>
+        <div class="form-group">
+            <label for="email">Password</label>
+            <input class="form-control"
+                   type="password"
+                   id="password"
+                   name="password"
+                   [(ngModel)]="user.password"
+                   placeholder="********">
+        </div>
+
+
+        <div class="form-row">
+            <div class="col">
+                <a href="#">forgot?</a>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </div>
+
     </form>
 <!--</div>-->
