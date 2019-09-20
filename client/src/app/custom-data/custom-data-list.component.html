@@ -1,29 +1,28 @@
 <h1>Content</h1>
 
-<div>
-    <ngx-datatable
-        [rows]="customDataList">
-        <ngx-datatable-column name="Name">
-            <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
-                <span (click)="sort()">{{column.name}}</span>
-            </ng-template>
-            <ng-template let-item="row" let-value="value" ngx-datatable-cell-template>
-                <a [routerLink]="['/content/' + item['contentType'] + '/' + item['id']]">{{value}}</a>
-            </ng-template>
-        </ngx-datatable-column>
-        <ngx-datatable-column name="ContentType">
-        </ngx-datatable-column>
-    </ngx-datatable>
-</div>
+<!--<div>-->
+<!--    <ngx-datatable [rows]="customDataList">-->
+<!--        <ngx-datatable-column name="Name">-->
+<!--            <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>-->
+<!--                <span (click)="sort()">{{column.name}}</span>-->
+<!--            </ng-template>-->
+<!--            <ng-template let-item="row" let-value="value" ngx-datatable-cell-template>-->
+<!--                <a [routerLink]="['/content/' + item['contentType'] + '/' + item['id']]">{{value}}</a>-->
+<!--            </ng-template>-->
+<!--        </ngx-datatable-column>-->
+<!--        <ngx-datatable-column name="ContentType">-->
+<!--        </ngx-datatable-column>-->
+<!--    </ngx-datatable>-->
+<!--</div>-->
 
-<button class="btn primary" (click)="create()">Add</button>
+<!--<button class="btn primary" (click)="create()">Add</button>-->
 
-<ng-container *ngIf="showSchemaList">
-    <select class="ui fluid dropdown" [(ngModel)]="selectedContentType" name="selectedContentType" (change)="contentTypeSelected()" required>
-        <option value="undefined" [selected]="selectedContentType === undefined">Select a content model...</option>
-        <option *ngFor="let schema of customSchemas" [(ngValue)]="schema.contentType"
-                [selected]="schema.contentType === selectedContentType">
-            {{schema.name}}
-        </option>
-    </select>
-</ng-container>
+<!--<ng-container *ngIf="showSchemaList">-->
+<!--    <select class="ui fluid dropdown" [(ngModel)]="selectedContentType" name="selectedContentType" (change)="contentTypeSelected()" required>-->
+<!--        <option value="undefined" [selected]="selectedContentType === undefined">Select a content model...</option>-->
+<!--        <option *ngFor="let schema of customSchemas" [(ngValue)]="schema.contentType"-->
+<!--                [selected]="schema.contentType === selectedContentType">-->
+<!--            {{schema.name}}-->
+<!--        </option>-->
+<!--    </select>-->
+<!--</ng-container>-->

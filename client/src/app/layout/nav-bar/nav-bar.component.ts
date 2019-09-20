@@ -67,8 +67,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
         const navItems = [];
 
         navItems.push({name: 'Dashboard', destination: 'dashboard'});
-        navItems.push({name: 'Content', destination: 'content'});
-        navItems.push({name: 'Content Model', destination: 'content-models'});
+        navItems.push({name: 'Content', destination: 'content/list'});
+        navItems.push({name: 'Content Model', destination: 'content/models'});
         navItems.push({name: 'Sites', destination: 'sites'});
         navItems.push({name: 'Pages', destination: 'pages'});
         navItems.push({name: 'Templates', destination: 'templates'});
