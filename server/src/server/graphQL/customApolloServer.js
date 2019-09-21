@@ -48,7 +48,7 @@ class CustomApolloServer extends ApolloServer {
     applyGraphQlPlaygroundMiddleware({ app, path }) {
         /* Adds project specific middleware inside, just to keep in one place */
         //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        app.use(path, json(), async (req, res, next) => {
+        app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
             if (req.method === 'GET') {
                 // todo: maybe do the normal passport auth here, since this page will be hosted in our angular admin app
                 // perform more expensive content-type check only if necessary

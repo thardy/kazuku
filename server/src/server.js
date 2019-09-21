@@ -43,11 +43,6 @@ async function init(config) {
     const main = express();
     main.set('port', config.port || 3001);
 
-    playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
-        app: main,
-        path: '/graphql', //`http://kazuku.com:3001/graphql`,
-    });
-
 // serve static files out of this folder - referenced as /css, /img, /js
     console.log('about to load static middleware');
     main.use(express.static(global.appRoot + '/public', {extensions:['html']}));
@@ -58,6 +53,10 @@ async function init(config) {
     main.use(session);
     main.use(passport.initialize());
     main.use(passport.session());
+    playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
+        app: main,
+        path: '/graphql', //`http://kazuku.com:3001/graphql`,
+    });
 
     if (!module.parent) {
         // Only use morgan if we aren't running tests.  It clutters up the test output.
