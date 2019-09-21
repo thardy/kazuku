@@ -23,4 +23,8 @@ export class WorkspaceActionsComponent implements OnInit {
         this.actionItems$ = this.actionItemsService.getActions();
     }
 
+    logout() {
+        this.userService.logout();
+    }
+
 }

@@ -48,19 +48,20 @@ export class NavBarComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    logout() {
-        this.userService.logout()
-            .pipe(
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                () => {
-                    this.router.navigate(['login']);
-                },
-                (error) => {
-                    this.router.navigate(['login']);
-                }
-            );
+    async logout() {
+        // this.userService.logout()
+        //     .pipe(
+        //         takeUntil(this.ngUnsubscribe)
+        //     )
+        //     .subscribe(
+        //         () => {
+        //             this.router.navigate(['login']);
+        //         },
+        //         (error) => {
+        //             this.router.navigate(['login']);
+        //         }
+        //     );
+        await this.userService.logout();
     }
 
     getNavItems() {

@@ -35,7 +35,7 @@ export class UserService extends GenericService<User> {
             );
     }
 
-    logout() {
+    private logoutOnServer() {
         return this.http.get(`${this.baseUrl}/logout`)
             .pipe(
                 tap((result) => {
@@ -44,7 +44,16 @@ export class UserService extends GenericService<User> {
                     this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
                 }),
                 catchError((error) => this.handleError(error))
-            );
+            )
+            .toPromise();
+    }
+
+    async logout() {
+        await this.logoutOnServer();
+
+        this.clearClientsideAuth();
+        window.location.href = `/#/login`;
+        window.location.reload();
     }
 
     getUserContext() {
