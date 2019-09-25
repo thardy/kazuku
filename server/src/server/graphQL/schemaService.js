@@ -5,6 +5,7 @@ const {GraphQLDateTime} = require('graphql-iso-date');
 const {makeExecutableSchema} = require('apollo-server-express');
 const CustomDataService = require('../../customData/customDataService');
 const CustomSchemaService = require('../../customSchemas/customSchemaService');
+const OrganizationService = require('../../organizations/organizationService');
 const current = require('../../common/current');
 const ObjectId = require('mongodb').ObjectID;
 const mongoHelper = require('../../common/mongoHelper');
@@ -19,6 +20,7 @@ class SchemaService {
     constructor(database) {
         this.customDataService = new CustomDataService(database);
         this.customSchemaService = new CustomSchemaService(database);
+        this.orgService = new OrganizationService(database);
 
         // this.thanosTypedefs = `
         //     scalar GraphQLDateTime
@@ -104,10 +106,11 @@ class SchemaService {
 
     }
 
-    getSchemaBySiteCode(siteCode) {
+    getSchemaByRepoCode(orgCode) {
         let schema = {};
+        const orgId = this.getOrgIdByRepoCode(orgCode);
         // todo: get orgId from auth (current stuff) just as soon as I lock down apis.  I don't think we will have different schemas per site, just by org.
-        const orgId = '5ab7fe90da90fa0fa857a557';
+        //const orgId = '5ab7fe90da90fa0fa857a557';
 
         // todo: try to pull from cache
 
@@ -687,6 +690,13 @@ class SchemaService {
         }
 
         return result;
+    }
+
+    // Calling this getOrgIdByRepoCode because we intend to use Repos at some point.
+    //  Currently there is only one repo per org, so we are just using orgCode.
+    getOrgIdByRepoCode(orgCode) {
+        const org = this.orgService.findOne({code: orgCode});
+        return org.id;
     }
 }
 

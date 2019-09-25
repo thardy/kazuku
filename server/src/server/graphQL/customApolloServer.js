@@ -7,6 +7,8 @@ const accepts = require('accepts');
 const SchemaService = require('./schemaService');
 const database = require("../../database/database").database;
 const authHelper = require('../../common/authHelper');
+const OrganizationService = require('../../organizations/organizationService');
+const config = require('../config');
 
 /* Don't think it's exported normally, get directly */
 const { graphqlExpress } = require('apollo-server-express/dist/expressApollo');
@@ -16,6 +18,8 @@ class CustomApolloServer extends ApolloServer {
         super(options);
 
         this.schemaService = new SchemaService(database);
+        this.orgService = new OrganizationService(database);
+
         this.alphaSchema = {
             typeDefs: `
           type Query {
@@ -50,7 +54,6 @@ class CustomApolloServer extends ApolloServer {
         //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
         app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
             if (req.method === 'GET') {
-                // todo: maybe do the normal passport auth here, since this page will be hosted in our angular admin app
                 // perform more expensive content-type check only if necessary
                 // XXX We could potentially move this logic into the GuiOptions lambda,
                 // but I don't think it needs any overriding
@@ -61,9 +64,13 @@ class CustomApolloServer extends ApolloServer {
                     'text/html';
 
                 if (prefersHTML) {
+                    const org = await this.orgService.getById(req.user.orgId);
+                    const host = `${config.hostname}:${config.port}`;
+                    const endpoint = `http://${org.code}.${host}/graphql-api`;
                     const playgroundRenderPageOptions = {
-                        // todo: change to be orgCode.api.metaSiteCode.com (e.g. thanos.api.kazuku.com)
-                        endpoint: `http://thanosblog.kazuku.com:3001/graphql-api`,
+                        // todo: change to be orgCode.host (e.g. thanos.kazuku.com:3001)
+                        // endpoint: `http://thanosblog.kazuku.com:3001/graphql-api`,
+                        endpoint: endpoint,
                         subscriptionEndpoint: this.subscriptionsPath,
                         //...this.playgroundOptions,
                         settings: {
@@ -87,11 +94,9 @@ class CustomApolloServer extends ApolloServer {
     applyGraphQlApiMiddleware({ app, path, db }) {
         /* Adds project specific middleware inside, just to keep in one place */
         //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        app.use(path, json(), async (req, res, next) => {
-            // todo: maybe do the api auth here, since this section is all api-driven (
-
-            /* Not necessary, but removing to ensure schema built on the request */
-            // this will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
+        app.use(path, json(), authHelper.isAuthenticatedForApi, async (req, res, next) => {
+            /* Not necessary, but cloning 'this' without 'schema' property to ensure schema built on the request */
+            //  this technique will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
             const { schema, ...serverObj } = this;
 
             const customSchema = await this.getCustomSchema(req);
@@ -119,11 +124,10 @@ class CustomApolloServer extends ApolloServer {
     }
 
     getCustomSchema(req) {
-        const siteCode = req.vhost[0];
-        // todo: enforce auth - make sure the creds match the requested siteCode
+        const orgCode = req.vhost[0];
 
         // todo: create tests and make this work!!!
-        return this.schemaService.getSchemaBySiteCode(siteCode);
+        return this.schemaService.getSchemaByRepoCode(orgCode);
         //
         // let schema = '';
         // switch(req.query['orgId']) {

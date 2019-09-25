@@ -1,4 +1,5 @@
 'use strict';
+const { siteService } = require('../sites/siteService');
 
 // A middleware that checks to see if the user is authenticated & logged in
 const isAuthenticatedWithAdminUser = (req, res, next) => {
@@ -10,7 +11,8 @@ const isAuthenticatedWithAdminUser = (req, res, next) => {
 
     if (isAuthenticated) {
         next();
-    } else {
+    }
+    else {
         res.status(401);
         res.send('Unauthenticated');
     }
@@ -30,9 +32,19 @@ const isAuthenticatedWithApiConsumer = (req, res, next) => {
         }
     }
 
+    if (isAuthenticatedWithApiConsumer) {
+        next();
+    }
+    else {
+        res.status(401);
+        res.json({
+            errors: ['Unauthenticated']
+        });
+    }
     return isAuthenticatedWithApiConsumer;
 };
 
 module.exports = {
-    isAuthenticated: isAuthenticatedWithAdminUser
+    isAuthenticated: isAuthenticatedWithAdminUser,
+    isAuthenticatedForApi: isAuthenticatedWithApiConsumer
 };

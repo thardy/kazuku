@@ -4,66 +4,129 @@ const GenericService = require("../common/genericService");
 const Promise = require('bluebird');
 const conversionService = require("../common/conversionService");
 const config = require('../server/config');
+//let cache = require('memory-cache');
 
 class OrganizationService extends GenericService {
     constructor(database) {
-        super(database, 'organizations');
+        // I can't imagine a scenario where I would have different databases used in the same app instance for a service, so
+        //  using the first one created should be fine to get singleton functionality
+        if (!OrganizationService.instance) {
+            super(database, 'organizations');
+
+            // we will cache all orgs here because we use orgs in a lot of low-level code (e.g. every incoming api request!!!)
+            this.orgCache = [];
+            this.getAll()
+                .then((orgs) => {
+                    this.orgCache = orgs;
+                })
+                .catch((error) => {
+                    console.log('failed to getAll orgs in OrganizationService constructor');
+                });
+
+
+            OrganizationService.instance = this;
+        }
+
+        return OrganizationService.instance;
     }
 
     getAll() {
-        return this.collection.find({})
-            .then((docs) => {
-                let transformedDocs = [];
-                _.forEach(docs, (doc) => {
-                    this.useFriendlyId(doc);
-                    transformedDocs.push(doc);
-                });
+        let promise = null;
+        if (this.orgCache && this.orgCache.length > 0) {
+            promise = Promise.resolve(this.orgCache);
+        }
+        else {
+            promise = this.collection.find({})
+                .then((docs) => {
+                    let transformedDocs = [];
+                    _.forEach(docs, (doc) => {
+                        this.useFriendlyId(doc);
+                        transformedDocs.push(doc);
+                    });
 
-                return transformedDocs;
-            });
+                    return transformedDocs;
+                });
+        }
+
+        return promise;
     }
 
     getById(id) {
+        let promise = null;
         if (arguments.length !== 1) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.getById'));
+            promise = Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.getById'));
         }
-        if (!this.isValidObjectId(id)) {
-            return Promise.reject(new TypeError('id is not a valid ObjectId'));
+        else if (!this.isValidObjectId(id)) {
+            promise = Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
-        return this.collection.findOne({_id: id})
-            .then((doc) => {
-                this.useFriendlyId(doc);
-                return doc;
-            });
+        else {
+            if (this.orgCache && this.orgCache.length > 0) {
+                promise = Promise.resolve(_.find(this.orgCache, {id: id}));
+            }
+            else {
+                promise = this.collection.findOne({_id: id})
+                    .then((doc) => {
+                        this.useFriendlyId(doc);
+                        return doc;
+                    });
+            }
+        }
+
+        return promise;
     }
 
     getByName(name) {
-        return this.collection.findOne({name: name})
-            .then((doc) => {
-                this.useFriendlyId(doc);
-                return doc;
-            });
+        let promise = null;
+        if (this.orgCache && this.orgCache.length > 0) {
+            promise = Promise.resolve(_.find(this.orgCache, {name: name}));
+        }
+        else {
+            promise = this.collection.findOne({name: name})
+                .then((doc) => {
+                    this.useFriendlyId(doc);
+                    return doc;
+                });
+        }
+
+        return promise;
     }
 
     getByCode(code) {
-        return this.collection.findOne({code: code})
-            .then((doc) => {
-                this.useFriendlyId(doc);
-                return doc;
-            });
+        let promise = null;
+        if (this.orgCache && this.orgCache.length > 0) {
+            promise = Promise.resolve(_.find(this.orgCache, {code: code}));
+        }
+        else {
+            promise = this.collection.findOne({code: code})
+                .then((doc) => {
+                    this.useFriendlyId(doc);
+                    return doc;
+                });
+        }
+
+        return promise;
     }
 
     findOne(mongoQueryObject, projection) {
+        let promise = null;
+
         if (arguments.length < 1) { // need at least the queryObject
-            return Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.findOne'));
+            promise = Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.findOne'));
+        }
+        else {
+            if (this.orgCache && this.orgCache.length > 0) {
+                promise = Promise.resolve(_.find(this.orgCache, mongoQueryObject));
+            }
+            else {
+                promise = this.collection.findOne(mongoQueryObject, projection)
+                    .then((doc) => {
+                        this.useFriendlyId(doc);
+                        return doc;
+                    });
+            }
         }
 
-        return this.collection.findOne(mongoQueryObject, projection)
-            .then((doc) => {
-                this.useFriendlyId(doc);
-
-                return doc;
-            });
+        return promise;
     }
 
     create(doc) {
@@ -80,6 +143,7 @@ class OrganizationService extends GenericService {
 
         return this.onBeforeCreate(null, doc)
             .then((result) => {
+                this.orgCache.push(doc);
                 return this.collection.insert(doc)
             })
             .then((doc) => {
@@ -104,6 +168,9 @@ class OrganizationService extends GenericService {
         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
         return this.onBeforeUpdate(null, clone)
             .then((result) => {
+                const cachedItem = _.find(this.orgCache, queryObject);
+                _.assign(cachedItem, updatedDoc);
+
                 return this.collection.update(queryObject, {$set: clone})
             })
             .then((result) => {
@@ -123,6 +190,8 @@ class OrganizationService extends GenericService {
         let queryObject = { _id: id };
         return this.onBeforeDelete(null, queryObject)
             .then((result) => {
+                _.remove(this.orgCache, (org) => org._id === id);
+
                 return this.collection.remove(queryObject)
             })
             .then((result) => {
