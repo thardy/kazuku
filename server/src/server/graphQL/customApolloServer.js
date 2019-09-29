@@ -1,7 +1,7 @@
 /* Have to import these extra libraries */
 const { renderPlaygroundPage } = require('@apollographql/graphql-playground-html');
 const { json } = require('body-parser');
-const { ApolloServer, makeExecutableSchema } = require('apollo-server-express');
+const { ApolloServer, defaultPlaygroundOptions, makeExecutableSchema } = require('apollo-server-express');
 //const schema = require('./schema/schema');
 const accepts = require('accepts');
 const SchemaService = require('./schemaService');
@@ -57,6 +57,7 @@ class CustomApolloServer extends ApolloServer {
                 // perform more expensive content-type check only if necessary
                 // XXX We could potentially move this logic into the GuiOptions lambda,
                 // but I don't think it needs any overriding
+                // todo: consider getting rid of this because I don't see what value it provides - prefersHTML?
                 const accept = accepts(req);
                 const types = accept.types();
                 const prefersHTML =
@@ -64,18 +65,27 @@ class CustomApolloServer extends ApolloServer {
                     'text/html';
 
                 if (prefersHTML) {
+                    const authToken = await this.getAuthTokenByRepoCode(req.user.orgId); // until we implement repos, we use orgId
+                    const headers = JSON.stringify({
+                        'Authorization': authToken ? `Bearer ${authToken}` : null
+                    });
+
                     const org = await this.orgService.getById(req.user.orgId);
                     const host = `${config.hostname}:${config.port}`;
-                    const endpoint = `http://${org.code}.${host}/graphql-api`;
+                    const endpoint = `http://${org.code}.${host}/graphql-api?headers=${encodeURIComponent(headers)}`; // (e.g. http://thanos.kazuku.com:3001/graphql-api)
                     const playgroundRenderPageOptions = {
-                        // todo: change to be orgCode.host (e.g. thanos.kazuku.com:3001)
+                        ...defaultPlaygroundOptions,
+                        // todo: change to be orgCode.host
                         // endpoint: `http://thanosblog.kazuku.com:3001/graphql-api`,
                         endpoint: endpoint,
                         subscriptionEndpoint: this.subscriptionsPath,
                         //...this.playgroundOptions,
                         settings: {
+                            ...defaultPlaygroundOptions.settings,
                             'editor.theme': 'dark',
                             'editor.cursorShape': 'line',
+                            'request.credentials': 'same-origin',
+                            //'request.credentials': 'include',
                         },
                         version: '1.7.25'
                     };
@@ -99,6 +109,8 @@ class CustomApolloServer extends ApolloServer {
             //  this technique will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
             const { schema, ...serverObj } = this;
 
+            // todo: look into putting the orgId, and maybe even the entire org onto the req object or using Current (zone) to store the org once we get it once.
+            //  We're spending a lot of cycles asking for the current org a lot, and we need to just get it once.
             const customSchema = await this.getCustomSchema(req);
 
             /**
@@ -123,11 +135,11 @@ class CustomApolloServer extends ApolloServer {
         });
     }
 
-    getCustomSchema(req) {
+    async getCustomSchema(req) {
         const orgCode = req.vhost[0];
 
         // todo: create tests and make this work!!!
-        return this.schemaService.getSchemaByRepoCode(orgCode);
+        return await this.schemaService.getSchemaByRepoCode(orgCode);
         //
         // let schema = '';
         // switch(req.query['orgId']) {
@@ -140,6 +152,11 @@ class CustomApolloServer extends ApolloServer {
         //
         // }
         // return schema;
+    }
+
+    async getAuthTokenByRepoCode(orgId) {
+        const authToken = await this.orgService.getAuthTokenByRepoCode(orgId);
+        return authToken;
     }
 
 }

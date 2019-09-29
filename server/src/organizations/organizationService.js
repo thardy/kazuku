@@ -200,6 +200,21 @@ class OrganizationService extends GenericService {
             });
     }
 
+    async getAuthTokenByRepoCode(orgId) {
+        const org = await this.getById(orgId);
+        return org ? org.authToken : null;
+    }
+
+    // until we implement repos, we are using orgCode
+    async validateRepoAuthToken(orgCode, authToken) {
+        if (arguments.length !== 2) {
+            return Promise.reject(new Error('Incorrect number of arguments passed to SiteService.validateSiteAuthToken'));
+        }
+        const org = await this.findOne({ code: orgCode });
+
+        return org.authToken === authToken;
+    }
+
     validate(doc) {
         let valid = false;
         if (doc.name && doc.code) {

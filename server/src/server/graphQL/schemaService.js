@@ -106,9 +106,9 @@ class SchemaService {
 
     }
 
-    getSchemaByRepoCode(orgCode) {
+    async getSchemaByRepoCode(orgCode) {
         let schema = {};
-        const orgId = this.getOrgIdByRepoCode(orgCode);
+        const orgId = await this.getOrgIdByRepoCode(orgCode);
         // todo: get orgId from auth (current stuff) just as soon as I lock down apis.  I don't think we will have different schemas per site, just by org.
         //const orgId = '5ab7fe90da90fa0fa857a557';
 
@@ -694,8 +694,8 @@ class SchemaService {
 
     // Calling this getOrgIdByRepoCode because we intend to use Repos at some point.
     //  Currently there is only one repo per org, so we are just using orgCode.
-    getOrgIdByRepoCode(orgCode) {
-        const org = this.orgService.findOne({code: orgCode});
+    async getOrgIdByRepoCode(orgCode) {
+        const org = await this.orgService.findOne({code: orgCode});
         return org.id;
     }
 }

@@ -1,5 +1,8 @@
 'use strict';
-const { siteService } = require('../sites/siteService');
+const database = require('../database/database').database;
+const OrganizationService = require('../organizations/organizationService');
+
+const orgService = new OrganizationService(database);
 
 // A middleware that checks to see if the user is authenticated & logged in
 const isAuthenticatedWithAdminUser = (req, res, next) => {
@@ -18,17 +21,15 @@ const isAuthenticatedWithAdminUser = (req, res, next) => {
     }
 };
 
-const isAuthenticatedWithApiConsumer = (req, res, next) => {
+const isAuthenticatedWithApiConsumer = async (req, res, next) => {
     let isAuthenticatedWithApiConsumer = false;
     if (req.headers && req.headers['authorization']) {
         let authHeader = req.headers['authorization'];
         const authHeaderArray = authHeader.split('Bearer ');
         if (authHeaderArray && authHeaderArray.length > 0) {
-            const siteCode = req.vhost[0];
+            const orgCode = req.vhost[0];
             const submittedAuthToken = authHeaderArray[1];
-            if (siteService.validateSiteAuthToken(siteCode, submittedAuthToken)) {
-                isAuthenticatedWithApiConsumer = true;
-            }
+            isAuthenticatedWithApiConsumer = await orgService.validateRepoAuthToken(orgCode, submittedAuthToken);
         }
     }
 
