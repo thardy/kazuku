@@ -35,7 +35,13 @@ if (process.env.NODE_ENV === 'production') {
             password: redisPassword
         }
     };
-} else {
+}
+else if (process.env.NODE_ENV === 'test') {
+    let testConfig = require('./development.json');
+    testConfig.cache.orgCache = false;
+    module.exports = testConfig;
+}
+else {
     // Offer development variables
     module.exports = require('./development.json');
 }
