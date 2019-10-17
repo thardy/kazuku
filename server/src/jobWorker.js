@@ -2,7 +2,7 @@
 const config = require('./server/config');
 const moment = require('moment');
 
-const agenda = require('./schedules/agenda.js');
+const agenda = require('./schedules/agendaService.js');
 const path = require('path');
 
 global.appRoot = path.resolve(__dirname);
@@ -14,11 +14,17 @@ jobTypes.forEach(function(type) {
     require('./schedules/jobs/' + type)(agenda);
 });
 
-agenda.on('ready', function() {
+(async () => {
     if (jobTypes.length) {
-        agenda.start();
+        await agenda.start();
     }
-});
+})();
+
+// agenda.on('ready', async () => {
+//     if (jobTypes.length) {
+//         await agenda.start();
+//     }
+// });
 
 agenda.on('start', function(job) {
     console.log("Job %s starting", job.attrs.name);

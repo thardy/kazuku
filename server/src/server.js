@@ -1,24 +1,9 @@
 'use strict';
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const config = require('./server/config');
-const session = require('./server/session');
-const logger = require('./server/logger');
-const routes = require('./server/routes');
-const vhost = require('vhost');
-require('zone.js/dist/zone-node.js');
 const path = require('path');
-const CustomApolloServer = require('./server/graphQL/customApolloServer');
-const {makeExecutableSchema} = require('apollo-server-express');
-//const database = require("./database/database").database;
-const mongoDb = require('mongodb');
+require('zone.js/dist/zone-node.js');
+const pureMongoService = require('./database/pureMongoService');
 
 global.appRoot = path.resolve(__dirname);
-
-// Setup passport auth strategies
-const passportAuthStrategies = require('./server/passport')(passport); // pass passport for configuration
 
 function setupAuthZone(req, res, next) {
     return Zone.current.fork({
@@ -30,12 +15,47 @@ function setupAuthZone(req, res, next) {
     })
 }
 
-async function init(config) {
-    let client = await mongoDb.MongoClient.connect(config.mongoDbUrl,{useNewUrlParser:true});
-    const db = client.db();
+async function startServer(config) {
+    // Connect to mongo before anything else happens because other services need mongo to be connected
+    await pureMongoService.connectDb();
+    const db = pureMongoService.db;
 
-    // let client = await mongoDb.MongoClient.connect('mongodb://localhost:27017');
-    // const db = client.db('kazuku');
+
+    const express = require('express');
+    const cors = require('cors');
+    const bodyParser = require('body-parser');
+    const passport = require('passport');
+    // Setup passport auth strategies
+    const passportAuthStrategies = require('./server/passport')(passport); // pass passport for configuration
+    //const config = require('./server/config');
+    const session = require('./server/session');
+    const logger = require('./server/logger');
+    const routes = require('./server/routes');
+    const vhost = require('vhost');
+    const CustomApolloServer = require('./server/graphQL/customApolloServer');
+    const {makeExecutableSchema} = require('apollo-server-express');
+
+    const createApolloServer = () => {
+        const typeDefs = `
+      type Query {
+        "A simple type for getting started!"
+        hello: String
+      }
+    `;
+
+        const resolvers = {
+            Query: {
+                hello: () => 'world'
+            }
+        };
+
+        const server = new CustomApolloServer({
+            /* adding a default graphql schema initially */
+            schema: makeExecutableSchema({ typeDefs, resolvers })
+        });
+
+        return server;
+    };
 
     const playgroundApolloServer = createApolloServer();
 
@@ -139,27 +159,7 @@ async function init(config) {
     });
 }
 
-function createApolloServer() {
-    const typeDefs = `
-      type Query {
-        "A simple type for getting started!"
-        hello: String
-      }
-    `;
 
-    const resolvers = {
-        Query: {
-            hello: () => 'world'
-        }
-    };
-
-    const server = new CustomApolloServer({
-        /* adding a default graphql schema initially */
-        schema: makeExecutableSchema({ typeDefs, resolvers })
-    });
-
-    return server;
-}
 
 // the following is now handled in www/bin
 // // module.parent check is required to support mocha watch
@@ -175,4 +175,4 @@ function createApolloServer() {
 
 
 
-module.exports = init;
+module.exports = startServer;
