@@ -5,9 +5,9 @@ const ScheduleService = require('../schedules/scheduleService');
 const current = require('../common/current');
 
 class SiteService extends GenericService {
-    constructor(database) {
+    constructor(database, pureMongoDb) {
         super(database, 'sites');
-        this.scheduleService = new ScheduleService();
+        this.scheduleService = new ScheduleService(pureMongoDb);
     }
 
     validate(doc) {

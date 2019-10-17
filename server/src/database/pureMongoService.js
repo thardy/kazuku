@@ -13,6 +13,8 @@ class PureMongoService {
 
         this.db = this.client.db(config.databaseName);
         // this.Users = new Users(this.db);
+
+        return this.client;
     }
 }
 

@@ -1,17 +1,13 @@
 const Agenda = require('agenda');
-const config = require('../server/config');
-// const mongoClient = require("../database/pureMongo").client;
-//const { db } = require("../database/pureMongoService");
-const db = require('monk')('localhost/mydb')
 
 // latest try
 class AgendaService {
-    constructor(db) {
-        this.agenda = new Agenda({mongo: db});
+    constructor(pureMongoDb) {
+        this.agenda = new Agenda({mongo: pureMongoDb});
     }
 }
 
-module.exports = new AgendaService(db);
+module.exports = AgendaService;
 
 // const mongoDb = require('mongodb');
 //

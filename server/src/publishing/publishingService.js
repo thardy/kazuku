@@ -13,12 +13,12 @@ Promise.promisifyAll(fs);
 
 class PublishingService {
 
-    constructor(database) {
+    constructor(database, pureMongoDb) {
         this.db = database;
         this.queryService = new QueryService(database);
         this.templateService = new TemplateService(database, this.queryService);
         this.orgService = new OrganizationService(database);
-        this.siteService = new SiteService(database);
+        this.siteService = new SiteService(database, pureMongoDb);
     }
 
     regenerateItems(orgId, siteId) {
