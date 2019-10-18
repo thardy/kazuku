@@ -9,7 +9,7 @@ class PureMongoService {
 
     async connectDb() {
         // ignore if we've already connected (some tests require me to kick this off independently)
-        if (!_db) {
+        if (!this.db) {
             this.client = await mongoDb.MongoClient.connect(config.mongoDbUrl, {useUnifiedTopology: true, useNewUrlParser: true});
             console.log('mongoDb connected');
 
