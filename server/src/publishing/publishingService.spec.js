@@ -1,7 +1,7 @@
 'use strict';
 
 let database = require('../database/database').database;
-const pureMongoService = require('../database/pureMongoService');
+// const pureMongoService = require('../database/pureMongoService');
 let PublishingService = require('./publishingService');
 let CustomDataService = require('../customData/customDataService');
 let QueryService = require('../queries/queryService');
@@ -28,17 +28,6 @@ describe("PublishingService", function () {
     let publishingService = {};
     let queryService = {};
     let templateService = {};
-    let pureMongoClient;
-    let pureMongoDb;
-
-    before(async () => {
-        pureMongoClient = await pureMongoService.connectDb();
-        pureMongoDb = pureMongoService.db;
-    });
-
-    after(() => {
-        pureMongoClient.close();
-    });
 
     describe("regenerateItems", function () {
         before(() => {
@@ -48,8 +37,7 @@ describe("PublishingService", function () {
             // future: need CustomDataService, to get list of all data to create Page-per-item pages
             //  and to get data for templates with PagedOn property (create pages for resultset)
             // need some sort of FileService, to save and delete files
-
-            publishingService = new PublishingService(database, pureMongoDb);
+            publishingService = new PublishingService(database);
             queryService = new QueryService(database);
             templateService = new TemplateService(database);
         });

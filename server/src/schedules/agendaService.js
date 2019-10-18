@@ -1,30 +1,41 @@
 const Agenda = require('agenda');
+const config = require('../server/config');
+// const database = require("../database/database").database;
+const pureMongoService = require('../database/pureMongoService');
 
 // latest try
-class AgendaService {
-    constructor(pureMongoDb) {
-        this.agenda = new Agenda({mongo: pureMongoDb});
-    }
-}
+let client = {};
+let db = {};
+let agenda = {};
 
-module.exports = AgendaService;
+(async () => {
+    // connect to the database
+    await pureMongoService.connectDb();
+    agenda = new Agenda({mongo: pureMongoService.db});
+    // agenda = new Agenda({mongo: database.db});
 
-// const mongoDb = require('mongodb');
+    await agenda.start();
+})();
+
+module.exports = agenda;
+
+
+// second to latest try
+// class AgendaService {
+//     constructor(pureMongoDb) {
+//         this.agenda = new Agenda({mongo: pureMongoDb});
+//     }
 //
-// let client = {};
-// let db = {};
-// let agenda = {};
 //
-// (async () => {
-//     // connect to the database
-//     client = await mongoDb.MongoClient.connect(config.mongoDbUrl,{ useUnifiedTopology: true, useNewUrlParser:true });
-//     db = client.db();
-//     agenda = new Agenda({mongo: client.db('kazuku')});
+//     async start() {
+//         await this.agenda.start();
+//     }
 //
-//     await agenda.start();
-// })();
+// }
 //
-// module.exports = agenda;
+// module.exports = AgendaService;
+
+
 
 
 // let agenda;

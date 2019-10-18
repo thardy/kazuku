@@ -12,14 +12,13 @@ function setupAuthZone(req, res, next) {
     .run(() => {
         Zone.current.id = Math.random();
         next();
-    })
+    });
 }
 
 async function startServer(config) {
     // Connect to mongo before anything else happens because other services need mongo to be connected
     await pureMongoService.connectDb();
     const db = pureMongoService.db;
-
 
     const express = require('express');
     const cors = require('cors');

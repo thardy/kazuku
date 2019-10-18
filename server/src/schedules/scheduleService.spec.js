@@ -3,7 +3,7 @@ const Promise = require("bluebird");
 const SchedulingService = require("./scheduleService");
 const OrganizationService = require("../organizations/organizationService");
 const database = require("../database/database").database;
-const pureMongoService = require('../database/pureMongoService');
+// const pureMongoService = require('../database/pureMongoService');
 const chai = require("chai");
 const should = chai.Should();
 const expect = chai.expect;
@@ -20,14 +20,9 @@ describe("ScheduleService", () => {
     let existingOrgs = [];
     let testOrgPrefix = '00TestOrg00-';
     let testSiteId = 1;
-    let pureMongoClient;
-    let pureMongoDb;
 
     before(async () => {
-        pureMongoClient = await pureMongoService.connectDb();
-        pureMongoDb = pureMongoService.db;
-
-        scheduleService = new SchedulingService(pureMongoDb);
+        scheduleService = new SchedulingService();
         orgService = new OrganizationService(database);
         let newOrg1 = {
             name: `${testOrgPrefix}Acme Corp`,
@@ -86,8 +81,6 @@ describe("ScheduleService", () => {
     });
 
     after(() => {
-        pureMongoClient.close();
-
         return deleteAllTestSchedules()
             .then((result) => {
                 return deleteAllTestOrganizations();

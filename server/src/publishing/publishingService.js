@@ -1,7 +1,6 @@
 'use strict';
 let _ = require('lodash');
 let Promise = require('bluebird');
-let database = require('../database/database').database;
 let QueryService = require('../queries/queryService');
 let OrganizationService = require('../organizations/organizationService');
 let SiteService = require('../sites/siteService');
@@ -13,12 +12,12 @@ Promise.promisifyAll(fs);
 
 class PublishingService {
 
-    constructor(database, pureMongoDb) {
+    constructor(database) {
         this.db = database;
         this.queryService = new QueryService(database);
         this.templateService = new TemplateService(database, this.queryService);
         this.orgService = new OrganizationService(database);
-        this.siteService = new SiteService(database, pureMongoDb);
+        this.siteService = new SiteService(database);
     }
 
     regenerateItems(orgId, siteId) {

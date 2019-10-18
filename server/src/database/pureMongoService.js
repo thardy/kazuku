@@ -8,11 +8,14 @@ class PureMongoService {
     }
 
     async connectDb() {
-        this.client = await mongoDb.MongoClient.connect(config.mongoDbUrl,{ useUnifiedTopology: true, useNewUrlParser:true });
-        console.log('mongoDb connected');
+        // ignore if we've already connected (some tests require me to kick this off independently)
+        if (!_db) {
+            this.client = await mongoDb.MongoClient.connect(config.mongoDbUrl, {useUnifiedTopology: true, useNewUrlParser: true});
+            console.log('mongoDb connected');
 
-        this.db = this.client.db(config.databaseName);
-        // this.Users = new Users(this.db);
+            this.db = this.client.db(config.databaseName);
+            // this.Users = new Users(this.db);
+        }
 
         return this.client;
     }

@@ -15,9 +15,9 @@ jobTypes.forEach(function(type) {
 });
 
 (async () => {
-    if (jobTypes.length) {
-        await agenda.start();
-    }
+    // if (jobTypes.length) {
+    //     await agenda.start();
+    // }
 })();
 
 // agenda.on('ready', async () => {
