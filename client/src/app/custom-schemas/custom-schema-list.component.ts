@@ -11,7 +11,8 @@ export class CustomSchemaListComponent implements OnInit {
 
     customSchemas: CustomSchema[] = [];
 
-    constructor(private customSchemaService: CustomSchemaService, private router: Router) {
+    constructor(private customSchemaService: CustomSchemaService,
+                private router: Router) {
     }
 
     ngOnInit() {

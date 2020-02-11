@@ -1,20 +1,34 @@
 <div class="container">
 
-    <div class="form-group">
-        <label for="name">Display Name</label>
-        <input id="name" class="form-control" type="text" />
-        <small id="displayNameHelp">Display name helper text</small>
-    </div>
+    <form [formGroup]="modelForm" (ngSubmit)="saveModel(modelForm)">
+        <div class="form-group">
+            <label for="name">Display Name</label>
+            <input id="name"
+                   class="form-control"
+                   type="text"
+                   formControlName="name" />
+            <small id="displayNameHelp">Display name helper text</small>
+        </div>
 
-    <div class="form-group">
-        <label>Content Type Name</label>
-        <input type="text" class="form-control" id="contentType" />
-        <small>Helper text.</small>
-    </div>
+        <div class="form-group">
+            <label>Content Type Name</label>
+            <input type="text"
+                   class="form-control"
+                   id="contentType"
+                   formControlName="contentType" />
+        </div>
 
-    <div class="form-group">
-        <label for="exampleFormControlTextarea1">Description</label>
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" cols="50"></textarea>
-    </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Description</label>
+            <textarea class="form-control"
+                      id="exampleFormControlTextarea1"
+                      rows="4"
+                      cols="50"
+                      formControlName="description"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
 
 </div>

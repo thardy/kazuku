@@ -32,6 +32,7 @@ export class GenericService<T extends BaseModel> {
     }
 
     create(item: T): Observable<T> {
+        console.log(item);
         return this.http.post(`${this.baseUrl}`, item).pipe(
             map(response => this.extractAnyData(response)),
             catchError(error => this.handleError(error))
