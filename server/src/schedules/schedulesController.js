@@ -2,11 +2,12 @@
 const ScheduleService = require("./scheduleService");
 const authHelper = require('../common/authHelper');
 const current = require('../common/current');
+const pureMongoService = require('../database/pureMongoService');
 
 class SchedulesController {
     constructor(app) {
         this.app = app;
-        this.service = new ScheduleService();
+        this.service = new ScheduleService(pureMongoService.db);
         this.resourceName = 'schedules';
 
         this.mapRoutes(app);

@@ -11,6 +11,7 @@ if (process.env.NODE_ENV === 'production') {
         hostname: process.env.hostName || '',
         port: process.env.port,
         mongoDbUrl: process.env.mongoDbUrl,
+        databaseName: process.env.databaseName,
         sessionSecret: process.env.sessionSecret,
         siteDefaults: {
             defaultRegenerationInterval: process.env.defaultRegenerationInterval
@@ -35,7 +36,13 @@ if (process.env.NODE_ENV === 'production') {
             password: redisPassword
         }
     };
-} else {
+}
+else if (process.env.NODE_ENV === 'test') {
+    let testConfig = require('./development.json');
+    testConfig.cache.orgCache = false;
+    module.exports = testConfig;
+}
+else {
     // Offer development variables
     module.exports = require('./development.json');
 }
