@@ -212,7 +212,9 @@ class OrganizationService extends GenericService {
         }
         const org = await this.findOne({ code: orgCode });
 
-        return org.authToken === authToken;
+        const orgId = org.authToken === authToken ? org.id : null;
+
+        return orgId;
     }
 
     validate(doc) {

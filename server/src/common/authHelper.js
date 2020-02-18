@@ -29,7 +29,11 @@ const isAuthenticatedWithApiConsumer = async (req, res, next) => {
         if (authHeaderArray && authHeaderArray.length > 0) {
             const orgCode = req.vhost[0];
             const submittedAuthToken = authHeaderArray[1];
-            isAuthenticatedWithApiConsumer = await orgService.validateRepoAuthToken(orgCode, submittedAuthToken);
+            // returns orgId if valid
+            const orgId = await orgService.validateRepoAuthToken(orgCode, submittedAuthToken);
+            isAuthenticatedWithApiConsumer = !!orgId;
+            const fullContext = { user: {firstName: 'Api', lastName: 'Consumer', email:'api_consumer'}, orgId: orgId };
+            Zone.current.context = fullContext;
         }
     }
 
