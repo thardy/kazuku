@@ -15,7 +15,7 @@ let current = {
                 user: {
                     id: testHelper.testUserId,
                     orgId: testHelper.testOrgId,
-                    email: 'imatest@test.com',
+                    email: testHelper.testUserEmail,
                 },
                 orgId: testHelper.testOrgId
             };

@@ -16,6 +16,9 @@ if (process.env.NODE_ENV === 'production') {
         siteDefaults: {
             defaultRegenerationInterval: process.env.defaultRegenerationInterval
         },
+        cache: {
+            orgCache: process.env.cache.orgCache || true,
+        },
         fb: {
             clientID: process.env.fbClientID,
             clientSecret: process.env.fbClientSecret,

@@ -286,6 +286,7 @@ function stripFriendlyIdsFromModel(model) { }
 var testHelper = {
     apiUrl: 'http://localhost:3001',
     testOrgId: testOrgId,
+    testUserEmail: 'imatest@test.com',
     testUserId: testUserId,
     testSiteId: testSiteId,
     testProductsContentType: testProductsContentType,
