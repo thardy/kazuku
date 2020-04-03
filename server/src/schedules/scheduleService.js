@@ -10,6 +10,7 @@ class ScheduleService {
     }
 
     getbyOrgAndSite(orgId, siteId) {
+        return Promise.resolve()
         return new Promise((resolve, reject) => {
             // this.agendaService.agenda.jobs({name: `regenerateJob`, 'data.orgId': orgId, 'data.siteId': siteId}, (err, jobs) => {
             this.agenda.jobs({name: `regenerateJob`, 'data.orgId': orgId, 'data.siteId': siteId}, (err, jobs) => {
@@ -31,7 +32,7 @@ class ScheduleService {
                     return new Promise((resolve, reject) => {
                         // test attribute is a hack to be able to designate test jobs for easy deletion in testing
                         job.repeatEvery(`${minutes} minutes`);
-                        job.save(resolve(job));
+                        return job.save(resolve(job));
                     });
                 }
                 else {
@@ -39,9 +40,9 @@ class ScheduleService {
                     return new Promise((resolve, reject) => {
                         // test attribute is a hack to be able to designate test jobs for easy deletion in testing
                         // const job = this.agendaService.agenda.create('regenerateJob', {orgId: orgId, siteId: siteId, test: test})
-                        const job = this.agenda.create('regenerateJob', {orgId: orgId, siteId: siteId, test: test})
+                        const newJob = this.agenda.create('regenerateJob', {orgId: orgId, siteId: siteId, test: test})
                             .repeatEvery(`${minutes} minutes`);
-                        job.save(resolve(job));
+                        return newJob.save(resolve(job));
                     });
                 }
             });

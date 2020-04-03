@@ -71,6 +71,7 @@ describe("ScheduleService", () => {
                     // don't create a schedule for org3
                     if (doc.id !== existingOrgs[2].id) {
                         promises.push(scheduleService.scheduleRegenerateJobForOrgSite(doc.id, siteId, minutes, true));
+                        //promises.push(new Promise.resolve(null));
                     }
                 });
                 return Promise.all(promises);
