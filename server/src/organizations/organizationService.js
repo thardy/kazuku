@@ -32,7 +32,7 @@ class OrganizationService extends GenericService {
 
     getAll() {
         let promise = null;
-        if (this.orgCache && this.orgCache.length > 0) {
+        if (config.cache.orgCache && this.orgCache && this.orgCache.length > 0) {
             promise = Promise.resolve(this.orgCache);
         }
         else {
@@ -60,7 +60,7 @@ class OrganizationService extends GenericService {
             promise = Promise.reject(new TypeError('id is not a valid ObjectId'));
         }
         else {
-            if (this.orgCache && this.orgCache.length > 0) {
+            if (config.cache.orgCache && this.orgCache && this.orgCache.length > 0) {
                 promise = Promise.resolve(_.find(this.orgCache, {id: id}));
             }
             else {
@@ -77,7 +77,7 @@ class OrganizationService extends GenericService {
 
     getByName(name) {
         let promise = null;
-        if (this.orgCache && this.orgCache.length > 0) {
+        if (config.cache.orgCache && this.orgCache && this.orgCache.length > 0) {
             promise = Promise.resolve(_.find(this.orgCache, {name: name}));
         }
         else {
@@ -93,7 +93,7 @@ class OrganizationService extends GenericService {
 
     getByCode(code) {
         let promise = null;
-        if (this.orgCache && this.orgCache.length > 0) {
+        if (config.cache.orgCache && this.orgCache && this.orgCache.length > 0) {
             promise = Promise.resolve(_.find(this.orgCache, {code: code}));
         }
         else {
@@ -114,7 +114,7 @@ class OrganizationService extends GenericService {
             promise = Promise.reject(new Error('Incorrect number of arguments passed to OrganizationService.findOne'));
         }
         else {
-            if (this.orgCache && this.orgCache.length > 0) {
+            if (config.cache.orgCache && this.orgCache && this.orgCache.length > 0) {
                 promise = Promise.resolve(_.find(this.orgCache, mongoQueryObject));
             }
             else {

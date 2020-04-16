@@ -167,7 +167,7 @@ describe("CustomDataService", function () {
                     const created = moment.utc(doc.created, PARSE_FORMAT);
                     const withinExpectedTimeframe = created.isBefore(thirtySecondsFromNow) && created.isSameOrAfter(now, 'second'); // had to specify the precision to get isSameOrAfter to work
                     expect(withinExpectedTimeframe).to.equal(true);
-                    return expect(doc.createdBy).to.equal(testHelper.testUserId);
+                    return expect(doc.createdBy).to.equal(testHelper.testUserEmail);
                 });
 
             // Promise.all([
