@@ -1,0 +1,12 @@
+<ng-container *ngFor="let field of form.value.fields; let i = index">
+    <div class="row my-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <kz-model-field [field]="field"
+                                    [modelForm]="form"></kz-model-field>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

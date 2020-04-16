@@ -9,7 +9,6 @@ import {AppComponent} from './app.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
 // import {TemplateListComponent} from './templates/template-list.component';
 // import {TemplateComponent} from './templates/template.component';
-import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.component';
 import {CustomDataListComponent} from './custom-data/custom-data-list.component';
 import {QueryListComponent} from './queries/query-list.component';
 import {QueryComponent} from './queries/query.component';
@@ -24,9 +23,6 @@ import {SetupComponent} from './setup/setup.component';
 import {SetupService} from './setup/setup.service';
 import {SetupGuardService} from './setup/setup-guard.service';
 import {AuthGuardService} from './common/auth/auth-guard.service';
-import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
-import {CustomSchemaService} from './custom-schemas/custom-schema.service';
-import {FieldBuilderComponent} from './custom-schemas/field-builder.component';
 import {CustomDataComponent} from './custom-data/custom-data.component';
 import {CustomDataService} from './custom-data/custom-data.service';
 import {UnAuthenticatedInterceptor} from './unauthenticated.interceptor';
@@ -40,15 +36,13 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { SitesModule } from './sites/sites.module';
 import { PagesModule } from './pages/pages.module';
 import { SharedModule } from './shared/shared.module';
+import { SchemaModule } from './custom-schemas/schema.module';
 
 @NgModule({
     declarations: [
         AppComponent,
         BaseComponent,
         NavBarComponent,
-        CustomSchemaListComponent,
-        CustomSchemaComponent,
-        FieldBuilderComponent,
         CustomDataListComponent,
         QueryListComponent,
         QueryComponent,
@@ -71,7 +65,8 @@ import { SharedModule } from './shared/shared.module';
         OrganizationsModule,
         SitesModule,
         PagesModule,
-        SharedModule
+        SharedModule,
+        SchemaModule
     ],
     providers: [
         {
@@ -79,7 +74,6 @@ import { SharedModule } from './shared/shared.module';
         },
         HttpService,
         OrganizationService,
-        CustomSchemaService,
         SiteService,
         QueryService,
         UserService,

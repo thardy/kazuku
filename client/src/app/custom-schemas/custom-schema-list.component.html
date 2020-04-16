@@ -1,9 +1,16 @@
-<h1>Custom Schemas</h1>
+<div class="row">
+    <div class="col">
+        <h1>Content Models</h1>
+    </div>
+    <div class="col d-flex justify-content-end align-items-center">
+        <button type="button" class="btn btn-outline-primary" (click)="create()">Add</button>
+    </div>
+</div>
 
-<ul>
-    <li *ngFor="let customSchema of customSchemas">
-        <a [routerLink]="['/content-models/' + customSchema.contentType]">{{customSchema.contentType}}</a>
-    </li>
+<ul class="list-group">
+    <ng-container *ngFor="let customSchema of (customSchemas$ | async)">
+        <a class="list-group-item list-group-item-action" [routerLink]="['/content-models/' + customSchema.contentType]">{{customSchema.contentType}}</a>
+    </ng-container>
 </ul>
 
-<button type="button" class="btn btn-outline-primary" (click)="create()">Add</button>
+

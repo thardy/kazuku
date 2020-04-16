@@ -14,7 +14,7 @@ export class ContentModelService extends GenericService<CustomSchema> {
         super('customSchemas', http);
     }
 
-    getByContentType(contentType: string) {
+    getByContentType(contentType: string): Observable<any> {
         return this.http.get(`${this.baseUrl}/${contentType}`)
             .pipe(
                 map(response => this.extractData(response)),

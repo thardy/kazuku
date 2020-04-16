@@ -1,20 +1,20 @@
 import {Injectable, Inject} from '@angular/core';
 import {Observable} from 'rxjs';
-
-
 import {GenericService} from '../common/generic.service';
 import {CustomSchema} from 'app/custom-schemas/custom-schema.model';
 import {HttpService} from '../common/http.service';
 import {catchError, map} from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class CustomSchemaService extends GenericService<CustomSchema> {
 
     constructor(@Inject(HttpService) http) {
         super('customSchemas', http);
     }
 
-    getByContentType(contentType: string) {
+    getByContentType(contentType: string): Observable<any> {
         return this.http.get(`${this.baseUrl}/${contentType}`)
             .pipe(
                 map(response => this.extractData(response)),
