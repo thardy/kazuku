@@ -47,5 +47,7 @@ else if (process.env.NODE_ENV === 'test') {
 }
 else {
     // Offer development variables
-    module.exports = require('./development.json');
+    let testConfig = module.exports = require('./development.json');
+    testConfig.cache.orgCache = false;
+    module.exports = testConfig;
 }
