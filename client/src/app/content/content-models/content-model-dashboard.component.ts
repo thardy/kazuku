@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {ContentModelService} from '../content-model.service';
+import {Observable} from 'rxjs';
+import {CustomSchema} from '../../custom-schemas/custom-schema.model';
 
 @Component({
   selector: 'kz-content-model-dashboard',
@@ -6,10 +9,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./content-model-dashboard.component.scss']
 })
 export class ContentModelDashboardComponent implements OnInit {
+    contentModels$: Observable<CustomSchema[]>;
 
-  constructor() { }
+  constructor(private contentModelService: ContentModelService) { }
 
   ngOnInit() {
+      this.contentModels$ = this.contentModelService.getAll();
+      this.contentModels$.subscribe(x => console.log(x));
   }
 
 }

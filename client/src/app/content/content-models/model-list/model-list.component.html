@@ -1,5 +1,16 @@
 <ng-container *ngIf="(contentModels$ | async)?.length; else noData">
-    <p>something</p>
+    <div class="list-group list-group-flush">
+        <a *ngFor="let model of (contentModels$ | async)" [routerLink]="[model.contentType]" class="list-group-item list-group-item-action">
+            <div class="row">
+                <div class="col">
+                    {{model.name}}
+                </div>
+                <div class="col">
+                    {{model.contentType}}
+                </div>
+            </div>
+        </a>
+    </div>
 </ng-container>
 
 <ng-template #noData>

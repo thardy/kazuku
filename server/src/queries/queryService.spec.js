@@ -127,28 +127,38 @@ describe("QueryService", function () {
 
             var createPromise = queryService.create(queryTestHelper.testOrgId, newQuery);
 
-            return createPromise.then((doc) => {
-                return queryService.delete(queryTestHelper.testOrgId, doc.id).then(function(result) {
-                    return queryService.getById(queryTestHelper.testOrgId, doc.id).then(function(retrievedDoc) {
-                        return expect(retrievedDoc).to.equal(null);
-                    });
+            let createdQuery = null;
+            return createPromise
+                .then((doc) => {
+                    createdQuery = doc;
+                    return queryService.delete(queryTestHelper.testOrgId, createdQuery.id)
+                })
+                .then(function(result) {
+                    return queryService.getById(queryTestHelper.testOrgId, createdQuery.id)
+                })
+                .then(function(retrievedDoc) {
+                    return expect(retrievedDoc).to.equal(null);
                 });
-            });
         });
 
         it("getAllDependentsOfItem with data item returns item array of dependent queries", function () {
             let item = {type: "data", nameId: queryTestHelper.testQueryDataContentType};
             let expectedDependents = [
-                {type: "query", nameId: "dataquery-one"},
-                {type: "query", nameId: "dataquery-two"},
-                {type: "query", nameId: "dataquery-three"},
+                {type: "query", nameId: "dataquery_one"},
+                {type: "query", nameId: "dataquery_two"},
+                {type: "query", nameId: "dataquery_three"},
             ];
 
             return queryTestHelper.createExistingDataQueries()
                 .then(() => {
-                    let promise = queryService.getAllDependentsOfItem(queryTestHelper.testOrgId, item);
-
-                    return promise.should.eventually.deep.include.members(expectedDependents);
+                    return queryService.getAllDependentsOfItem(queryTestHelper.testOrgId, item);
+                })
+                .then((allDependents) => {
+                    // Chai: this is how to test unordered array equivalency (objects are never equal in javascript)
+                    //  https://medium.com/building-ibotta/testing-arrays-and-objects-with-chai-js-4b372310fe6d
+                    //  - deep compares object equivalency
+                    //  - have and members compares unordered array equality
+                    return expect(allDependents).to.have.deep.members(expectedDependents);
                 });
         });
 
@@ -244,10 +254,10 @@ describe("QueryService", function () {
 
         it("can resolve all query properties on model object", function () {
             let model = {
-                propertyOne: "query(dataquery-one)",
-                propertyTwo: "query(dataquery-two)",
+                propertyOne: "query(dataquery_one)",
+                propertyTwo: "query(dataquery_two)",
                 propertyThree: "someString",
-                propertyFour: "query(dataquery-three)"
+                propertyFour: "query(dataquery_three)"
             };
             let expected = {
                 propertyOne: [
@@ -277,7 +287,7 @@ describe("QueryService", function () {
 
         it("random customData query test using date", function () {
             let customDataService = new CustomDataService(database);
-            let findPromise = customDataService.find(queryTestHelper.testOrgId, "eq(contentType,test-query-data-content-type)&ge(created,date:2016-02-20)&sort(created)&limit(2,0)");
+            let findPromise = customDataService.find(queryTestHelper.testOrgId, "eq(contentType,test_query_data_content_type)&ge(created,date:2016-02-20)&sort(created)&limit(2,0)");
             let expected = [
                 queryTestHelper.existingQueryData[1],
                 queryTestHelper.existingQueryData[2]

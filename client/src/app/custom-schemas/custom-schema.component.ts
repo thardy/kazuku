@@ -7,7 +7,7 @@ import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} 
 import {Observable} from 'rxjs';
 
 import * as _ from 'lodash';
-import {takeUntil} from 'rxjs/operators';
+import {switchMap, takeUntil, tap} from 'rxjs/operators';
 
 const MANDATORY_FIELDS = ['name'];
 
@@ -16,6 +16,7 @@ const MANDATORY_FIELDS = ['name'];
     templateUrl: './custom-schema.component.html'
 })
 export class CustomSchemaComponent extends BaseComponent implements OnInit {
+    schema$: Observable<CustomSchema>;
     customSchema: CustomSchema = new CustomSchema();
     saving = false;
     original = {};
@@ -26,11 +27,26 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
     jsonSchemaString: string;
     fieldUx = new Map<FormGroup, any>();
 
-    constructor(private route: ActivatedRoute, private customSchemaService: CustomSchemaService, private router: Router) {
+    constructor(private route: ActivatedRoute,
+                private customSchemaService: CustomSchemaService,
+                private router: Router) {
         super();
     }
 
     ngOnInit() {
+        this.schema$ = this.route.params.pipe(
+            tap((params: Params) => {
+                this.contentType = params['contentType'];
+                this.isEdit = params['contentType'] != null;
+            }),
+            switchMap((params: Params) => {
+                return this.customSchemaService.getByContentType(params['contentType']);
+            }),
+            tap((schema: CustomSchema) => {
+                console.log(schema);
+            })
+        );
+
         this.route.params
             .subscribe((params: Params) => {
                 this.contentType = params['contentType'];
@@ -312,9 +328,10 @@ export class CustomSchemaComponent extends BaseComponent implements OnInit {
         return {showFieldBuilder: true, newField: true, saved: false, originalValues: {}};
     }
 
-    onDisplayNameChange(newDisplayName: string) {
-        const snakeCasedDisplayName = _.snakeCase(newDisplayName);
-        const newValue = {contentType: snakeCasedDisplayName};
-        this.form.patchValue(newValue);
+    onDisplayNameChange(newDisplayName: any) {
+        console.log(newDisplayName);
+        // const snakeCasedDisplayName = _.snakeCase(newDisplayName);
+        // const newValue = {contentType: snakeCasedDisplayName};
+        // this.form.patchValue(newValue);
     }
 }

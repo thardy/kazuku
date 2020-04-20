@@ -26,9 +26,11 @@ const APP_ROUTES: Routes = [
         loadChildren: () => import('./organizations/organizations.module').then(mod => mod.OrganizationsModule),
         canActivate: [AuthGuardService]
     },
-    {path: 'content-models', component: CustomSchemaListComponent, canActivate: [AuthGuardService]},
-    {path: 'content-models/create', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
-    {path: 'content-models/:contentType', component: CustomSchemaComponent, canActivate: [AuthGuardService]},
+    {
+        path: 'content-models',
+        loadChildren: () => import('./custom-schemas/schema.module').then(mod => mod.SchemaModule),
+        canActivate: [AuthGuardService]
+    },
     {
         path: 'content',
         loadChildren: () => import('./content/content.module').then(mod => mod.ContentModule),

@@ -18,7 +18,8 @@ export class ModelListComponent implements OnInit {
     }
 
     ngOnInit() {
-        // this.contentModels$ = this.modelService.getAll();
+        this.contentModels$ = this.modelService.getAll();
+        this.contentModels$.subscribe(x => console.log(x));
     }
 
     createModel() {

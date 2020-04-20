@@ -1,7 +1,6 @@
 'use strict';
 let _ = require('lodash');
 let Promise = require('bluebird');
-let database = require('../database/database').database;
 let QueryService = require('../queries/queryService');
 let OrganizationService = require('../organizations/organizationService');
 let SiteService = require('../sites/siteService');

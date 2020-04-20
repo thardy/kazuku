@@ -30,6 +30,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@swimlane/ngx-datatable": "^15.0.2",
     "bootstrap": "^4.3.1",
+    "bootstrap-icons": "^1.0.0-alpha2",
     "core-js": "^3.2.1",
     "jexl": "^2.1.1",
     "lodash": "^4.17.15",

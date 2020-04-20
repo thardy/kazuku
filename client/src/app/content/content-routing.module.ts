@@ -30,7 +30,7 @@ const routes: Routes = [
                 component: CreateModelComponent
             },
             {
-                path: ':id',
+                path: ':contentType',
                 component: ModelDetailsComponent
             }
         ]

@@ -15,14 +15,14 @@ let current = {
                 user: {
                     id: testHelper.testUserId,
                     orgId: testHelper.testOrgId,
-                    email: 'imatest@test.com',
+                    email: testHelper.testUserEmail,
                 },
                 orgId: testHelper.testOrgId
             };
         }
         else {
-            return { orgId: '5ab7fe90da90fa0fa857a557' }; // todo: super temporary!!!
-            //return Zone.current && Zone.current.context ? Zone.current.context : null;
+            //return { orgId: '5ab7fe90da90fa0fa857a557' }; // todo: super temporary!!!
+            return Zone.current && Zone.current.context ? Zone.current.context : null;
         }
     }
 };

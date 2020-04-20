@@ -1,6 +1,7 @@
 'use strict';
 
 let database = require('../database/database').database;
+// const pureMongoService = require('../database/pureMongoService');
 let PublishingService = require('./publishingService');
 let CustomDataService = require('../customData/customDataService');
 let QueryService = require('../queries/queryService');
@@ -29,14 +30,13 @@ describe("PublishingService", function () {
     let templateService = {};
 
     describe("regenerateItems", function () {
-        before(function () {
+        before(() => {
             // need TemplateService to get list of all templates that need to be regenerated
             // need QueryService to get list of all queries that need to be regenerated
             // future: need CustomSchemaService to get list of all schemas setup for Page-per-item
             // future: need CustomDataService, to get list of all data to create Page-per-item pages
             //  and to get data for templates with PagedOn property (create pages for resultset)
             // need some sort of FileService, to save and delete files
-
             publishingService = new PublishingService(database);
             queryService = new QueryService(database);
             templateService = new TemplateService(database);
