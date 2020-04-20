@@ -25,6 +25,12 @@ Create a development.json file in the server/src/server/config folder. Here is a
   "port": 3001,
   "mongoDbUrl": "mongodb://localhost:27017/kazuku",
   "jobTypes": "publishingJobs",
+  "siteDefaults": {
+      "defaultRegenerationInterval": 10
+    },
+  "cache": {
+      "orgCache": true
+    },
   "fb": {
     "clientID": "yourFacebookClientId",
     "clientSecret": "yourFacebookClientSecret",
