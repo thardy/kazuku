@@ -7,8 +7,16 @@ var chai = require("chai");
 var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
-var Query = require("rql/query").Query;
+// var Query = require("rql/query").Query;
 const testHelper = require("../common/testHelper");
+
+const gql = require('graphql-tag');
+const pureMongoService = require('../database/pureMongoService');
+const SchemaService = require('../server/graphQL/schemaService');
+const CustomApolloServer = require('../server/graphQL/customApolloServer');
+const {makeExecutableSchema} = require('apollo-server-express');
+const { createTestClient } = require('apollo-server-testing');
+
 
 //temp
 var mongoRql = require('mongo-rql');
@@ -18,16 +26,73 @@ chai.use(require('chai-things'));
 
 let testOrgId = testHelper.testOrgId;
 
+const GET_ALL_DATA_FOR_ORG = gql`
+  query {
+    customData(
+      filter: {
+        orgId: { EQ: "${testOrgId}" }
+      }
+    ) {
+      name,
+      contentType,
+      content
+    }
+  }
+`;
+
 describe("CustomDataService", function () {
     describe("CRUD", function () {
-        var customDataService = {};
-        var existingCustomData1 = {};
-        var existingCustomData2 = {};
-        var theUpdatedCustomData = {};
-        var testContentType = 'testType';
+        let customDataService = {};
+        let schemaService = {};
+        let existingCustomData1 = {};
+        let existingCustomData2 = {};
+        let theUpdatedCustomData = {};
+        let testContentType = 'testType';
+        let query = {};
+        let mutate = {};
+        let testApolloServer = {};
+        let apolloTestClient = {};
 
-        before(function () {
+        before(async () => {
             customDataService = new CustomDataService(database);
+            schemaService = new SchemaService(database);
+
+            await pureMongoService.connectDb();
+            const db = pureMongoService.db;
+
+            // todo: replace with something that calls customApolloServer.getCustomSchema (get the real schema for the test org)
+            const createApolloServer = async () => {
+                // const typeDefs = `
+                //   type Query {
+                //     "A simple type for getting started!"
+                //     hello: String
+                //   }
+                // `;
+                //
+                // const resolvers = {
+                //     Query: {
+                //         hello: () => 'world'
+                //     }
+                // };
+
+                const customSchema = await schemaService.getSchemaByRepoCode('');
+
+                // todo: Add "createTestSchema" to testHelper.  We don't have any customSchemas for the testOrg when we run this, so it fails
+                const server = new CustomApolloServer({
+                    //schema: makeExecutableSchema({ typeDefs, resolvers })
+                    schema: customSchema,
+                    context: {
+                        db: db,
+                    },
+                });
+
+                return server;
+            };
+
+            testApolloServer = await createApolloServer();
+            apolloTestClient = createTestClient(testApolloServer);
+
+
 
             // Insert some docs to be present before all tests start
             return testHelper.deleteAllCustomDataForTestOrg()
@@ -77,13 +142,21 @@ describe("CustomDataService", function () {
                 });
         });
 
-        it("can get all data for an org", function () {
-            var getByContentTypePromise = customDataService.getAll(testOrgId);
+        it("can get all data for an org", async () => {
+            // my first attempt at using GraphQL in my tests
+            const result = await apolloTestClient.query({
+                query: GET_ALL_DATA_FOR_ORG
+            });
 
-            return Promise.all([
-                getByContentTypePromise.should.eventually.be.instanceOf(Array),
-                getByContentTypePromise.should.eventually.have.length(5)
-            ]);
+            expect(result).to.be.instanceOf(Array);
+            expect(result.to.have.length(5));
+
+            // var getByContentTypePromise = customDataService.getAll(testOrgId);
+            //
+            // return Promise.all([
+            //     getByContentTypePromise.should.eventually.be.instanceOf(Array),
+            //     getByContentTypePromise.should.eventually.have.length(5)
+            // ]);
         });
 
         it("can create customData of a specified ContentType", function () {
@@ -210,7 +283,7 @@ describe("CustomDataService", function () {
         });
     });
 
-    describe("Resource Query Language", function () {
+    describe("Graph QL", function () {
         var customDataService = {};
         var existingProducts = [];
         var testContentType = 'testProducts';

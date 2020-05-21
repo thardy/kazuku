@@ -29,6 +29,7 @@
     "graphql": "^14.1.1",
     "graphql-iso-date": "^3.6.1",
     "graphql-playground-middleware-express": "^1.7.6",
+    "graphql-tag": "^2.10.3",
     "graphql-to-mongodb": "^1.6.2",
     "graphql-tools": "^4.0.5",
     "liquid-node": "^3.0.0",
@@ -54,6 +55,7 @@
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
+    "apollo-server-testing": "^2.13.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-things": "^0.2.0",
