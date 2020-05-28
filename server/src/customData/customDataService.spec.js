@@ -26,16 +26,29 @@ chai.use(require('chai-things'));
 
 let testOrgId = testHelper.testOrgId;
 
-const GET_ALL_DATA_FOR_ORG = gql`
+const GET_ALL_TEST_PRODUCTS = gql`
   query {
-    customData(
+    testProducts {
+      _id,
+      name,
+      description,
+      price,
+      quantity
+    }
+  }
+`;
+const stuff = gql`
+  query {
+    testProducts(
       filter: {
         orgId: { EQ: "${testOrgId}" }
       }
     ) {
+      _id,
       name,
-      contentType,
-      content
+      description,
+      price,
+      quantity
     }
   }
 `;
@@ -43,56 +56,15 @@ const GET_ALL_DATA_FOR_ORG = gql`
 describe("CustomDataService", function () {
     describe("CRUD", function () {
         let customDataService = {};
-        let schemaService = {};
         let existingCustomData1 = {};
         let existingCustomData2 = {};
         let theUpdatedCustomData = {};
         let testContentType = 'testType';
         let query = {};
         let mutate = {};
-        let testApolloServer = {};
-        let apolloTestClient = {};
 
         before(async () => {
             customDataService = new CustomDataService(database);
-            schemaService = new SchemaService(database);
-
-            await pureMongoService.connectDb();
-            const db = pureMongoService.db;
-
-            // todo: replace with something that calls customApolloServer.getCustomSchema (get the real schema for the test org)
-            const createApolloServer = async () => {
-                // const typeDefs = `
-                //   type Query {
-                //     "A simple type for getting started!"
-                //     hello: String
-                //   }
-                // `;
-                //
-                // const resolvers = {
-                //     Query: {
-                //         hello: () => 'world'
-                //     }
-                // };
-
-                const customSchema = await schemaService.getSchemaByRepoCode('');
-
-                // todo: Add "createTestSchema" to testHelper.  We don't have any customSchemas for the testOrg when we run this, so it fails
-                const server = new CustomApolloServer({
-                    //schema: makeExecutableSchema({ typeDefs, resolvers })
-                    schema: customSchema,
-                    context: {
-                        db: db,
-                    },
-                });
-
-                return server;
-            };
-
-            testApolloServer = await createApolloServer();
-            apolloTestClient = createTestClient(testApolloServer);
-
-
 
             // Insert some docs to be present before all tests start
             return testHelper.deleteAllCustomDataForTestOrg()
@@ -142,21 +114,13 @@ describe("CustomDataService", function () {
                 });
         });
 
-        it("can get all data for an org", async () => {
-            // my first attempt at using GraphQL in my tests
-            const result = await apolloTestClient.query({
-                query: GET_ALL_DATA_FOR_ORG
-            });
+        it("can get all data for an org", () => {
+            var getByContentTypePromise = customDataService.getAll(testOrgId);
 
-            expect(result).to.be.instanceOf(Array);
-            expect(result.to.have.length(5));
-
-            // var getByContentTypePromise = customDataService.getAll(testOrgId);
-            //
-            // return Promise.all([
-            //     getByContentTypePromise.should.eventually.be.instanceOf(Array),
-            //     getByContentTypePromise.should.eventually.have.length(5)
-            // ]);
+            return Promise.all([
+                getByContentTypePromise.should.eventually.be.instanceOf(Array),
+                getByContentTypePromise.should.eventually.have.length(5)
+            ]);
         });
 
         it("can create customData of a specified ContentType", function () {
@@ -283,60 +247,83 @@ describe("CustomDataService", function () {
         });
     });
 
-    describe("Graph QL", function () {
-        var customDataService = {};
-        var existingProducts = [];
-        var testContentType = 'testProducts';
-        var now = moment().format('MMMM Do YYYY, h:mm:ss a');
-        var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
-        var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
-        var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00')  };
+    describe("GraphQL", () => {
+        let customDataService = {};
+        let schemaService = {};
+        let existingProducts = [];
+        let testContentType = 'testProducts';
+        let now = moment().format('MMMM Do YYYY, h:mm:ss a');
+        let newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, date_released: new Date('2014-01-01T00:00:00') };
+        let newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, date_released: new Date('2015-05-20T00:00:00') };
+        let newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, date_released: new Date('2015-01-27T00:00:00')  };
+        let testApolloServer = {};
+        let apolloTestClient = {};
 
-        before(function () {
+        before(async () => {
             customDataService = new CustomDataService(database);
-            // Insert some docs to be present before all tests start
+            schemaService = new SchemaService(database);
 
-            return testHelper.setupTestProducts();
-            // return deleteAllTestData()
-            //     .then(function(result) {
-            //         return Promise.all([
-            //             database.customData.insert(newProduct1),
-            //             database.customData.insert(newProduct2),
-            //             database.customData.insert(newProduct3)
-            //         ]);
-            //     })
-            //     .then(function(docs) {
-            //         // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
-            //         existingProducts = docs;
-            //         _.forEach(existingProducts, function (item) {
-            //             item.id = item._id.toHexString();
-            //         });
-            //         return docs;
-            //     })
-            //     .catch(error => {
-            //         console.log(error);
-            //         throw error;
-            //     });
+            await pureMongoService.connectDb();
+            const db = pureMongoService.db;
+
+            await testHelper.setupSchemasForQueryTests();
+
+            const createApolloServer = async () => {
+                const customSchema = await schemaService.getSchemaByRepoCode('');
+
+                const server = new CustomApolloServer({
+                    //schema: makeExecutableSchema({ typeDefs, resolvers })
+                    schema: customSchema,
+                    context: {
+                        db: db,
+                    },
+                });
+
+                return server;
+            };
+
+            testApolloServer = await createApolloServer();
+            apolloTestClient = createTestClient(testApolloServer);
+
+            // Insert some docs to be present before all tests start
+            return Promise.all([
+                testHelper.setupTestProducts(),
+            ]);
         });
 
         after(function () {
             // Remove all Test documents
             // return deleteAllTestData();
-            return testHelper.deleteAllTestProducts();
+            return Promise.all([
+                testHelper.deleteAllTestSchemas(),
+                testHelper.deleteAllTestProducts(),
+            ])
         });
 
         function deleteAllTestData() {
             return database.customData.remove({orgId: testOrgId, contentType: testContentType});
         }
 
-        it("can query using an RQL query object", function () {
-            var name = 'Widget';
-            var query = new Query().eq('name', name);
-            var expected = [];
-            expected.push(testHelper.newProduct1);
-            var findPromise = customDataService.find(testOrgId, query);
+        it("can query using an RQL query object", async () => {
+            // my first attempt at using GraphQL in my tests - I just want to make sure I can call the apollo server with a query
+            // todo: debug into the actual query to see exactly what is happening (set a breakpoint in a good place)
+            const result = await apolloTestClient.query({
+                query: GET_ALL_TEST_PRODUCTS
+            });
 
-            return findPromise.should.eventually.deep.equal(expected);
+            // this is returning an empty array
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(3);
+
+
+            // todo: convert this to use GraphQL
+            // var name = 'Widget';
+            // var query = new Query().eq('name', name);
+            // var expected = [];
+            // expected.push(testHelper.newProduct1);
+            // var findPromise = customDataService.find(testOrgId, query);
+            //
+            // return findPromise.should.eventually.deep.equal(expected);
         });
 
 //        it("can start my own query parsing experiment", function () {

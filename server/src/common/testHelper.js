@@ -17,12 +17,65 @@ var differentTestProductsContentType = 'differentTestProducts';
 let testOrg1 = { _id: new ObjectId(testOrgId), name: 'The Test Org One', code: 'test-org1', isMetaOrg: false, description: 'used in a lot of tests', statusId: 1 };
 let testSite1 = { _id: new ObjectId(testSiteId), orgId: testOrgId, name: 'Test Site One', code: 'test-site1' };
 
-var newProduct1 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
-var newProduct2 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
-var newProduct3 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00') };
+let categorySchema = {
+    "_id" : ObjectId("5ecfadbbbe699c289e2d2fb5"),
+    "orgId" : testOrgId,
+    "name" : "Categories",
+    "contentType" : "categories",
+    "description" : "These are categories. PH34R them!!!",
+    "jsonSchema" : {
+        "type" : "object",
+        "properties" : {
+            "name" : {
+                "type" : "string",
+                "description" : "Name"
+            },
+            "description" : {
+                "type" : "string",
+                "description" : "Description"
+            },
+        }
+    }
+};
+let productSchema = {
+    "_id" : ObjectId("5ec7d849ca136410308d2a7d"),
+    "orgId" : testOrgId,
+    "name" : "Test Products",
+    "contentType" : "testProducts",
+    "description" : "they are Test PRODUCTS!!!!",
+    "jsonSchema" : {
+        "type" : "object",
+        "properties" : {
+            "name" : {
+                "type" : "string",
+                "description" : "Name"
+            },
+            "description" : {
+                "type" : "string",
+                "description" : "Description"
+            },
+            "price" : {
+                "type" : "number",
+                "description" : "Price"
+            },
+            "quantity" : {
+                "type" : "number",
+                "description" : "Quantity"
+            },
+            "date_released" : {
+                "type" : "date",
+                "description" : "Date Released"
+            }
+        }
+    }
+};
 
-var differentProduct1 = { orgId: testOrgId, contentType: differentTestProductsContentType, name: 'Thingamajig', description: 'We do not know what this is.', price: 14.99, quantity: 1000, created: new Date('2016-01-01T00:00:00') };
-var differentProduct2 = { orgId: testOrgId, contentType: differentTestProductsContentType, name: 'Rock', description: 'Natural fun, naturally.', price: 199.99, quantity: 20000, created: new Date('2016-05-20T00:00:00') };
+var newProduct1 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, date_released: new Date('2014-01-01T00:00:00') };
+var newProduct2 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, date_released: new Date('2015-05-20T00:00:00') };
+var newProduct3 = { orgId: testOrgId, contentType: testProductsContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, date_released: new Date('2015-01-27T00:00:00') };
+
+var differentProduct1 = { orgId: testOrgId, contentType: differentTestProductsContentType, name: 'Thingamajig', description: 'We do not know what this is.', price: 14.99, quantity: 1000, date_released: new Date('2016-01-01T00:00:00') };
+var differentProduct2 = { orgId: testOrgId, contentType: differentTestProductsContentType, name: 'Rock', description: 'Natural fun, naturally.', price: 199.99, quantity: 20000, date_released: new Date('2016-05-20T00:00:00') };
 
 var testContentType1 = 'testType1';
 var testContentType2 = 'testType2';
@@ -88,6 +141,17 @@ function setupTestSites() {
     });
 }
 
+function setupSchemasForQueryTests() {
+    return deleteAllTestSchemas()
+        .then(function(result) {
+            return createSchemaForQueryTests();
+        })
+        .catch(error => {
+            console.log(error);
+            throw error;
+        });
+}
+
 function setupTestProducts() {
     return deleteAllTestProducts()
         .then(function(result) {
@@ -125,6 +189,25 @@ function setupTestUsers() {
   return deleteAllTestUsers()
     .then(result => {
         return createTestUsers();
+    })
+    .catch(error => {
+        console.log(error);
+        throw error;
+    });
+}
+
+function createSchemaForQueryTests() {
+    return Promise.all([
+        database.customSchemas.insert(categorySchema),
+        database.customSchemas.insert(productSchema),
+    ])
+    .then((schemas) => {
+        testHelper.existingSchemas = schemas;
+        // do I really need to do this - set a string "id" on each doc?
+        _.forEach(testHelper.existingSchemas, function (item) {
+            item.id = item._id.toHexString();
+        });
+        return schemas;
     })
     .catch(error => {
         console.log(error);
@@ -308,6 +391,7 @@ var testHelper = {
     existingSites: [],
     setupTestOrgs: setupTestOrgs,
     setupTestSites: setupTestSites,
+    setupSchemasForQueryTests: setupSchemasForQueryTests,
     setupTestProducts: setupTestProducts,
     setupDifferentTestProducts: setupDifferentTestProducts,
     createTestProducts: createTestProducts,
@@ -316,7 +400,6 @@ var testHelper = {
     deleteAllDifferentTestProducts: deleteAllDifferentTestProducts,
     deleteAllTestOrgCustomData: deleteAllTestOrgCustomData,
     setupTestSchemas: setupTestSchemas,
-    createTestSchemas: createTestSchemas,
     deleteAllTestSchemas: deleteAllTestSchemas,
     setupTestUsers: setupTestUsers,
     createTestUsers: createTestUsers,
