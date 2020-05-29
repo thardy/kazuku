@@ -11,8 +11,8 @@ const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
 var testOrgId = '5aad6ee15069c6aa32dea338';
 var testUserId = '5af51f4cf6dd9aae8deaeffa';
 var testSiteId = '5aad6ee15069c6aa32dea339';
-var testProductsContentType = 'testProducts';
-var differentTestProductsContentType = 'differentTestProducts';
+var testProductsContentType = 'test_products';
+var differentTestProductsContentType = 'different_test_products';
 
 let testOrg1 = { _id: new ObjectId(testOrgId), name: 'The Test Org One', code: 'test-org1', isMetaOrg: false, description: 'used in a lot of tests', statusId: 1 };
 let testSite1 = { _id: new ObjectId(testSiteId), orgId: testOrgId, name: 'Test Site One', code: 'test-site1' };
@@ -41,7 +41,7 @@ let productSchema = {
     "_id" : ObjectId("5ec7d849ca136410308d2a7d"),
     "orgId" : testOrgId,
     "name" : "Test Products",
-    "contentType" : "testProducts",
+    "contentType" : testProductsContentType,
     "description" : "they are Test PRODUCTS!!!!",
     "jsonSchema" : {
         "type" : "object",
