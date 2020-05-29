@@ -37,21 +37,6 @@ const GET_ALL_TEST_PRODUCTS = gql`
     }
   }
 `;
-const stuff = gql`
-  query {
-    testProducts(
-      filter: {
-        orgId: { EQ: "${testOrgId}" }
-      }
-    ) {
-      _id,
-      name,
-      description,
-      price,
-      quantity
-    }
-  }
-`;
 
 describe("CustomDataService", function () {
     describe("CRUD", function () {
@@ -306,7 +291,6 @@ describe("CustomDataService", function () {
 
         it("can query using an RQL query object", async () => {
             // my first attempt at using GraphQL in my tests - I just want to make sure I can call the apollo server with a query
-            // todo: debug into the actual query to see exactly what is happening (set a breakpoint in a good place)
             const result = await apolloTestClient.query({
                 query: GET_ALL_TEST_PRODUCTS
             });
@@ -362,16 +346,24 @@ describe("CustomDataService", function () {
 //
 //        });
 
-        it("can query using RQL limit", function () {
-            var query = "eq(orgId,1)&eq(contentType,testContentType)&sort(created)&limit(2,0)"; // limit must be last
-            var actual = mongoRql(query);
-            let expected = {
-                sort: { created: 1 },
-                limit: 2
-            };
+        it("can query using pagination limit", async () => {
+            const limit = 2;
+            const query = gql`
+              query {
+                testProducts(
+                  sort: { dateReleased: DESC }
+                  pagination: { limit: ${limit} }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            actual.should.have.deep.property("sort.created", expected.sort.created);
-            actual.should.have.property("limit", expected.limit);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.have.length(limit);
         });
 
         it("can query using multiple RQL operators", function () {
