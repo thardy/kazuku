@@ -542,6 +542,7 @@ class SchemaService {
     getGraphQLTypeForScalarProperty(propertyType) {
         let graphQLType = GraphQLString;
 
+
         switch(propertyType) {
             case 'graphQLID':
                 graphQLType = GraphQLID;
@@ -549,8 +550,11 @@ class SchemaService {
             case 'string':
                 graphQLType = GraphQLString;
                 break;
+            case 'integer':
+                graphQLType = GraphQLInt
+                break;
             case 'number':
-                graphQLType = GraphQLInt;
+                graphQLType = GraphQLFloat;
                 break;
             case 'date':
                 graphQLType = GraphQLDateTime;

@@ -366,14 +366,37 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts).to.have.length(limit);
         });
 
-        it("can query using multiple RQL operators", function () {
-            var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
-            var findPromise = customDataService.find(testOrgId, query);
+        it("can query float fields", async () => {
+            const limit = 2;
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    price: { GT: 10.00 },
+                    quantity: { GT: 50 } 
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.be.instanceOf(Array),
-                findPromise.should.eventually.have.length(2)
-            ]);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.have.length(1);
+            const firstProduct = result.data.testProducts[0];
+            expect(firstProduct.name).to.equal('Doohicky');
+
+
+            // var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
+            // var findPromise = customDataService.find(testOrgId, query);
+            //
+            // return Promise.all([
+            //     findPromise.should.eventually.be.instanceOf(Array),
+            //     findPromise.should.eventually.have.length(2)
+            // ]);
         });
 
         it("can query using an RQL string in method format", function () {

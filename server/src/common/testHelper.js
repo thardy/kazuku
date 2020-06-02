@@ -59,7 +59,7 @@ let productSchema = {
                 "description" : "Price"
             },
             "quantity" : {
-                "type" : "number",
+                "type" : "integer",
                 "description" : "Quantity"
             },
             "date_released" : {
