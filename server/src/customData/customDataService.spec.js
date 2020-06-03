@@ -310,6 +310,7 @@ describe("CustomDataService", function () {
             // return findPromise.should.eventually.deep.equal(expected);
         });
 
+        // this is old, back when I was using RQL.  Determine if there's anything of value here then delete.
 //        it("can start my own query parsing experiment", function () {
 //            let expectedResults = [newProduct1, newProduct3];
 //            let queryString = `eq(contentType, ${testContentType})&limit(2)&sort(created)`;
@@ -346,7 +347,7 @@ describe("CustomDataService", function () {
 //
 //        });
 
-        it("can query using pagination limit", async () => {
+        it("can filter using pagination limit", async () => {
             const limit = 2;
             const query = gql`
               query {
@@ -366,8 +367,7 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts).to.have.length(limit);
         });
 
-        it("can query float fields", async () => {
-            const limit = 2;
+        it("can filter float fields", async () => {
             const query = gql`
               query {
                 testProducts(
@@ -388,66 +388,85 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts).to.have.length(1);
             const firstProduct = result.data.testProducts[0];
             expect(firstProduct.name).to.equal('Doohicky');
-
-
-            // var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
-            // var findPromise = customDataService.find(testOrgId, query);
-            //
-            // return Promise.all([
-            //     findPromise.should.eventually.be.instanceOf(Array),
-            //     findPromise.should.eventually.have.length(2)
-            // ]);
         });
 
-        it("can query using an RQL string in method format", function () {
-            let expectedResults = [testHelper.newProduct1, testHelper.newProduct3];
-            let query = `eq(contentType,${testContentType})&sort(created)&limit(2,0)`; // limit must come last or it won't work
+        // it("can query using an RQL string in method format", function () {
+        //     let expectedResults = [testHelper.newProduct1, testHelper.newProduct3];
+        //     let query = `eq(contentType,${testContentType})&sort(created)&limit(2,0)`; // limit must come last or it won't work
+        //
+        //     let findPromise = customDataService.find(testOrgId, query);
+        //
+        //     return findPromise.should.eventually.deep.equal(expectedResults);
+        // });
+        //
+        // it("can query using an RQL string", function () {
+        //     var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&price=gt=10.5&quantity=lt=50');
+        //     //var findPromise = customDataService.find('name=Widget');
+        //
+        //     return Promise.all([
+        //         findPromise.should.eventually.be.instanceOf(Array),
+        //         findPromise.should.eventually.have.length(1),
+        //         findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+        //     ]);
+        // });
 
-            let findPromise = customDataService.find(testOrgId, query);
+        it("can filter dates", async () => {
+            const dateFilter = '2015-05-10T00:00:00Z';
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    dateReleased: { LTE: "${dateFilter}" },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return findPromise.should.eventually.deep.equal(expectedResults);
-        });
+            const result = await apolloTestClient.query({
+                query: query
+            });
 
-        it("can query using an RQL string", function () {
-            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&price=gt=10.5&quantity=lt=50');
-            //var findPromise = customDataService.find('name=Widget');
-
-            return Promise.all([
-                findPromise.should.eventually.be.instanceOf(Array),
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-            ]);
-        });
-
-        it("can query dates using an RQL string", function () {
-            //var findPromise = customDataService.find('created=lt=date:2015-06-10');
-            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&created=lt=date:2015-05-10T00:00:00Z');
-
-            //var findPromise = customDataService.find('name=Widget');
-
-//        return findPromise.then(function (docs) {
-//            var i = 0;
-//        });
-            return Promise.all([
-                findPromise.should.eventually.be.instanceOf(Array),
-                findPromise.should.eventually.have.length(2)
-            ]);
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(2);
         });
 
         // todo: Find a way to do a contains search (RegEx would be nice)
-        it("can query custom string fields using regex", function () {
-            var query = new Query().eq('contentType', testContentType).eq('description', /.*toy.*/i); // this one works
-            var findPromise = customDataService.find(testOrgId, query);
-            //var findPromise = customDataService.find(testOrgId, "contentType={0}&description=/.*toy.*/i".format(testContentType)); // does not work
+        it("can query strings using contains filter", async () => {
+            const containsFilter = 'toy';
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    description: { IN: "${containsFilter}" },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-            ]);
-//            return Promise.all(
-//                findPromise.should.eventually.have.length(1),
-//                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-//            );
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(2);
+
+
+//             var query = new Query().eq('contentType', testContentType).eq('description', /.*toy.*/i); // this one works
+//             var findPromise = customDataService.find(testOrgId, query);
+//             //var findPromise = customDataService.find(testOrgId, "contentType={0}&description=/.*toy.*/i".format(testContentType)); // does not work
+//
+//             return Promise.all([
+//                 findPromise.should.eventually.have.length(1),
+//                 findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+//             ]);
+// //            return Promise.all(
+// //                findPromise.should.eventually.have.length(1),
+// //                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+// //            );
         });
 
         it("can query custom number fields by value", function () {
