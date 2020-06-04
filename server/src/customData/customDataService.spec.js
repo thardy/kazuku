@@ -432,14 +432,14 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts).to.have.length(2);
         });
 
-        // todo: Find a way to do a contains search (RegEx would be nice)
+        // todo: Find a way to do a contains search (RegEx would be nice) - I have a question up here - https://github.com/Soluto/graphql-to-mongodb/issues/62
         it("can query strings using contains filter", async () => {
-            const containsFilter = 'toy';
-            const query = gql`
+            const regexPattern = 'toy';
+            const query = `
               query {
                 testProducts(
                   filter: { 
-                    description: { IN: "${containsFilter}" },
+                    description: { $regex: "${regexPattern}", $options: "i" }
                   }
                 ) {
                   _id, name, description, price, quantity, dateReleased
@@ -469,21 +469,49 @@ describe("CustomDataService", function () {
 // //            );
         });
 
-        it("can query custom number fields by value", function () {
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&quantity={1}".format(testContentType, 85));
+        it("can query custom number fields by value", async () => {
+            const quantity = newProduct3.quantity; // make sure newProduct3 always has a unique quantity in the test data
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    quantity: { EQ: ${quantity} },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct3.name)
-            ]);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(1);
+            expect(result.data.testProducts[0].name).to.equal(newProduct3.name);
         });
-        it("can query custom number fields greater than value", function () {
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&quantity=gt={1}".format(testContentType, 90));
+        it("can query custom number fields greater than value", async () => {
+            const quantity = 90;
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    quantity: { GT: ${quantity} },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct1.name)
-            ]);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(1);
+            expect(result.data.testProducts[0].name).to.equal(newProduct1.name);
         });
         it("can query custom number fields in range", function () {
             var findPromise = customDataService.find(testOrgId, "contentType={0}&price=ge={1}&price=le={2}&sort(created)".format(testContentType, 5.00, 20.00));
