@@ -1,7 +1,11 @@
+const {GraphQLDateTime} = require('graphql-iso-date');
+const {GraphQLISODateTime} = require('./graphQLDateTime');
+const {GraphQLObjectId} = require('./graphQLObjectId');
+
 const {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
        GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = require('graphql');
 const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = require('./graphql.helper');
-const {GraphQLDateTime} = require('graphql-iso-date');
+
 const {makeExecutableSchema} = require('apollo-server-express');
 const CustomDataService = require('../../customData/customDataService');
 const CustomSchemaService = require('../../customSchemas/customSchemaService');
@@ -557,13 +561,13 @@ class SchemaService {
                 graphQLType = GraphQLFloat;
                 break;
             case 'date':
-                graphQLType = GraphQLDateTime;
+                //graphQLType = GraphQLDateTime;
+                graphQLType = GraphQLISODateTime;
                 break;
             default:
                 graphQLType = GraphQLString;
                 break;
         }
-        // todo: types to be implemented: GraphQLFloat, ???
 
         return graphQLType;
     }

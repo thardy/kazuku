@@ -1,8 +1,11 @@
 'use strict';
-const path = require('path');
-require('zone.js/dist/zone-node.js');
-const pureMongoService = require('./database/pureMongoService');
+import path from 'path';
+import zone from 'zone.js/dist/zone-node.js';
+import pureMongoService from './database/pureMongoService.js';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 global.appRoot = path.resolve(__dirname);
 
 function setupAuthZone(req, res, next) {
@@ -20,19 +23,20 @@ async function startServer(config) {
     await pureMongoService.connectDb();
     const db = pureMongoService.db;
 
-    const express = require('express');
-    const cors = require('cors');
-    const bodyParser = require('body-parser');
-    const passport = require('passport');
+    import express from 'express';
+    import cors from 'cors';
+    import bodyParser from 'body-parser';
+    import passport from 'passport';
     // Setup passport auth strategies
-    const passportAuthStrategies = require('./server/passport')(passport); // pass passport for configuration
+    import passportConfig from './server/passport/index.js';
+    const passportAuthStrategies = passportConfig(passport); // pass passport for configuration
     //const config = require('./server/config');
-    const session = require('./server/session');
-    const logger = require('./server/logger');
-    const routes = require('./server/routes');
-    const vhost = require('vhost');
-    const CustomApolloServer = require('./server/graphQL/customApolloServer');
-    const {makeExecutableSchema} = require('apollo-server-express');
+    import session from './server/session';
+    import logger from './server/logger';
+    import routes from './server/routes';
+    import vhost from 'vhost';
+    import CustomApolloServer from './server/graphQL/customApolloServer';
+    import {makeExecutableSchema} from 'apollo-server-express';
 
     const createApolloServer = () => {
         const typeDefs = `
@@ -79,7 +83,8 @@ async function startServer(config) {
 
     if (!module.parent) {
         // Only use morgan if we aren't running tests.  It clutters up the test output.
-        main.use(require('morgan')('combined', {
+        import morgan from 'morgan';
+        main.use(morgan('combined', {
             stream: {
                 write: (message) => {
                     // Write to logs
@@ -146,7 +151,7 @@ async function startServer(config) {
     });
 
 // Vhost app
-    let app = module.exports = express();
+    let app = express();
 
     app.use(vhost(config.hostname, main)); // Serves top level domain via main server app
     app.use(vhost(`*.${config.hostname}`, siteApp)); // Serves all subdomains via siteApp
@@ -174,4 +179,4 @@ async function startServer(config) {
 
 
 
-module.exports = startServer;
+export default startServer;

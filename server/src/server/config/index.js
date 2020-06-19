@@ -1,11 +1,14 @@
 'use strict';
+import testConfig from './development.json';
+let config = {};
+
 if (process.env.NODE_ENV === 'production') {
     // Offer production environment variables
     // process.env.REDIS_URL :: redis://redistogo:blahblah
     let redisURI = require('url').parse(process.env.REDIS_URL);
     let redisPassword = redisURI.auth.split(':')[1];
 
-    module.exports = {
+    config = {
         env: process.env.NODE_ENV,
         host: process.env.host || '',
         hostname: process.env.hostName || '',
@@ -41,13 +44,15 @@ if (process.env.NODE_ENV === 'production') {
     };
 }
 else if (process.env.NODE_ENV === 'test') {
-    let testConfig = require('./development.json');
+    // let testConfig = require('./development.json');
     testConfig.cache.orgCache = false;
-    module.exports = testConfig;
+    config = testConfig;
 }
 else {
     // Offer development variables
-    let testConfig = module.exports = require('./development.json');
+    // let testConfig = require('./development.json');
     testConfig.cache.orgCache = false;
-    module.exports = testConfig;
+    config = testConfig;
 }
+
+export default config;

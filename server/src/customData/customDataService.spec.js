@@ -424,7 +424,7 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts).to.have.length(2);
         });
 
-        // todo: Find a way to do a contains search (RegEx would be nice) - I have a question up here - https://github.com/Soluto/graphql-to-mongodb/issues/62
+        // I found where they added the REGEX filter to graphql-to-mongodb - https://github.com/Soluto/graphql-to-mongodb/commit/52d91618514ab28d4280b23b10a26105a3f0c817
         it("can query strings using regex filter", async () => {
             const regexPattern = 'toy';
             const query = `
@@ -542,7 +542,8 @@ describe("CustomDataService", function () {
         });
         it("can query custom date fields greater than value", async () => {
             // todo: Fix stupid lazy date, format that won't allow '2015-01-01' -> Expected type DateTime, found "2015-01-01"; DateTime cannot represent an invalid date-time-string 2015-01-01.
-            const lowRange = '2015-01-01T00:00:00Z';
+            const lowRange = '2015-01-01';
+            // const lowRange = '2015-01-01T00:00:00Z';
             const query = gql`
               query {
                 testProducts(

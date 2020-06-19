@@ -1,5 +1,5 @@
-const config = require('../server/config');
-const mongoDb = require('mongodb');
+import config from '../server/config/index.js';
+import mongoDb from 'mongodb';
 
 // latest
 class PureMongoService {
@@ -21,7 +21,7 @@ class PureMongoService {
     }
 }
 
-module.exports = new PureMongoService();
+export default new PureMongoService();
 
 // almost latest
 // let _db;
