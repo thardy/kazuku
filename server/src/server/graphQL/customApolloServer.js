@@ -5,10 +5,10 @@ const { ApolloServer, defaultPlaygroundOptions, makeExecutableSchema } = require
 //const schema = require('./schema/schema');
 const accepts = require('accepts');
 const SchemaService = require('./schemaService');
-const database = require("../../database/database").database;
+import {database} from '../../database/database.js';
 const authHelper = require('../../common/authHelper');
 const OrganizationService = require('../../organizations/organizationService');
-const config = require('../config');
+import config from '../config/index.js';
 
 /* Don't think it's exported normally, get directly */
 const { graphqlExpress } = require('apollo-server-express/dist/expressApollo');
@@ -161,4 +161,4 @@ class CustomApolloServer extends ApolloServer {
 
 }
 
-module.exports = CustomApolloServer;
+export default CustomApolloServer;

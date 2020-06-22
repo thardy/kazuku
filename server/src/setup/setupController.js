@@ -1,5 +1,5 @@
 'use strict';
-const Promise = require('bluebird');
+import Promise from 'bluebird';
 const database = require('../database/database').database;
 const SetupService = require('./setupService');
 const OrganizationService = require('../organizations/organizationService');

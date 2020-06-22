@@ -4,6 +4,24 @@ import zone from 'zone.js/dist/zone-node.js';
 import pureMongoService from './database/pureMongoService.js';
 import { fileURLToPath } from 'url';
 
+
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import passport from 'passport';
+// Setup passport auth strategies
+import passportConfig from './server/passport/index.js';
+const passportAuthStrategies = passportConfig(passport); // pass passport for configuration
+//const config = require('./server/config');
+import session from './server/session/index.js';
+import logger from './server/logger/index.js';
+import routes from './server/routes/index.js';
+import vhost from 'vhost';
+import CustomApolloServer from './server/graphQL/customApolloServer.js';
+import makeExecutableSchema from 'apollo-server-express';
+import morgan from 'morgan';
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 global.appRoot = path.resolve(__dirname);
@@ -22,21 +40,6 @@ async function startServer(config) {
     // Connect to mongo before anything else happens because other services need mongo to be connected
     await pureMongoService.connectDb();
     const db = pureMongoService.db;
-
-    import express from 'express';
-    import cors from 'cors';
-    import bodyParser from 'body-parser';
-    import passport from 'passport';
-    // Setup passport auth strategies
-    import passportConfig from './server/passport/index.js';
-    const passportAuthStrategies = passportConfig(passport); // pass passport for configuration
-    //const config = require('./server/config');
-    import session from './server/session';
-    import logger from './server/logger';
-    import routes from './server/routes';
-    import vhost from 'vhost';
-    import CustomApolloServer from './server/graphQL/customApolloServer';
-    import {makeExecutableSchema} from 'apollo-server-express';
 
     const createApolloServer = () => {
         const typeDefs = `
@@ -83,7 +86,6 @@ async function startServer(config) {
 
     if (!module.parent) {
         // Only use morgan if we aren't running tests.  It clutters up the test output.
-        import morgan from 'morgan';
         main.use(morgan('combined', {
             stream: {
                 write: (message) => {

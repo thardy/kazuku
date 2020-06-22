@@ -1,4 +1,4 @@
-const chai = require("chai");
+import chai from 'chai';
 const chaiAsPromised = require("chai-as-promised");
 const expect = chai.expect;
 const should = chai.Should();

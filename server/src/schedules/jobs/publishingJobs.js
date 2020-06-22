@@ -1,6 +1,6 @@
-const database = require("../../database/database").database;
+import {database} from '../../database/database.js';
 const PublishingService = require('../../publishing/publishingService');
-require('zone.js/dist/zone-node.js');
+import zone from 'zone.js/dist/zone-node.js';
 
 module.exports = function(agenda) {
     const publishingService = new PublishingService(database);

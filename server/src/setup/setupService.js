@@ -1,7 +1,7 @@
 'use strict';
-const _ = require("lodash");
+import _ from 'lodash';
 const Promise = require("bluebird");
-const config = require('../server/config');
+import config from '../server/config/index.js';
 const database = require("../database/database").database;
 const OrganizationService = require('../organizations/organizationService');
 const UserService = require('../users/userService');

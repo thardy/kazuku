@@ -14,7 +14,7 @@ const current = require('../../common/current');
 const ObjectId = require('mongodb').ObjectID;
 const mongoHelper = require('../../common/mongoHelper');
 const pluralize = require('pluralize')
-const _ = require("lodash");
+import _ from 'lodash';
 
 const typesThatNeedFurtherProcessing = ['$ref', 'array'];
 const jsonSchemaMappingKeys = ['jsonSchemaSchema', 'jsonSchemaId', 'jsonSchemaRef'];

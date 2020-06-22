@@ -1,16 +1,18 @@
-const _ = require("lodash");
-const config = require('../server/config');
-const app = require('../server');
-const request = require('supertest')(`http://${config.hostname}:${config.port}`);
-const chai = require("chai");
+import _ from 'lodash';
+import config from '../server/config/index.js';
+import app from '../server.js';
+import supertest from 'supertest';
+const request = supertest(`http://${config.hostname}:${config.port}`);
+import chai from 'chai';
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));
 const should = chai.Should();
 const expect = chai.expect;
-const Promise = require('bluebird');
-const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
+import Promise from 'bluebird';
+import bcryptNodejs from 'bcrypt-nodejs';
+const bcrypt = Promise.promisifyAll(bcryptNodejs);
 
-const testHelper = require("../common/testHelper");
+import testHelper from '../common/testHelper.js';
 const utils = require('../utils/index');
 
 describe("ApiTests", function () {

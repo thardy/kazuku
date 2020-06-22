@@ -1,6 +1,6 @@
 'use strict';
 const config = require('./server/config');
-const moment = require('moment');
+import moment from 'moment';
 
 const agendaService = require('./schedules/agendaService.js');
 const path = require('path');

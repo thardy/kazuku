@@ -8,7 +8,7 @@ var should = chai.Should();
 var expect = chai.expect;
 var moment = require("moment");
 // var Query = require("rql/query").Query;
-const testHelper = require("../common/testHelper");
+import testHelper from '../common/testHelper.js';
 
 const gql = require('graphql-tag');
 const pureMongoService = require('../database/pureMongoService');

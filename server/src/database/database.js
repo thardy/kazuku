@@ -1,5 +1,5 @@
-const config = require('../server/config');
-const monk = require("monk");
+import config from '../server/config/index.js';
+import monk from 'monk';
 
 // connect to the database
 //var _db = monk(config.mongoDbUrl);
@@ -37,7 +37,9 @@ class Database {
 // }
 
 //module.exports = Database;
-module.exports = {
-    database: new Database(),
-    Database: Database
+const database = new Database();
+
+export {
+    database,
+    Database
 };

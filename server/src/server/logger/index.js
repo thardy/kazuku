@@ -1,6 +1,6 @@
 'use strict';
 
-const winston = require('winston');
+import winston from 'winston';
 // equivalent to - require('./winston/logger').Logger
 const logger = winston.createLogger({
     transports: [
@@ -18,4 +18,4 @@ const logger = winston.createLogger({
     exitOnError: false
 });
 
-module.exports = logger;
+export default logger;

@@ -4,7 +4,8 @@ var database = require("../database/database").database;
 const ObjectId = require('mongodb').ObjectID;
 var _ = require("lodash");
 var moment = require("moment");
-const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
+import bcryptNodejs from 'bcrypt-nodejs';
+const bcrypt = Promise.promisifyAll(bcryptNodejs);
 
 //var existingProducts = [];
 //var testOrgId = '5ab7fe90da90fa0fa857a557'; // temporary: until I get actual auth working for graphQL.  this probably breaks a lot of tests

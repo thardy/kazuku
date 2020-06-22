@@ -1,9 +1,9 @@
 'use strict';
 const _ = require('lodash');
-const Promise = require('bluebird');
+import Promise from 'bluebird';
 const conversionService = require('./conversionService');
 const ObjectId = require('mongodb').ObjectID;
-const moment = require('moment');
+import moment from 'moment';
 const current = require('../common/current');
 
 class GenericService {

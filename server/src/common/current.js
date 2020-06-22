@@ -1,6 +1,6 @@
 /* A helper module for retrieving data on the current request context */
 'use strict';
-require('zone.js/dist/zone-node.js');
+import zone from 'zone.js/dist/zone-node.js';
 const testHelper = require('./testHelper');
 
 const isInTest = typeof global.it === 'function';

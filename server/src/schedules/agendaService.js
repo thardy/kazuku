@@ -1,5 +1,5 @@
 const Agenda = require('agenda');
-const config = require('../server/config');
+import config from '../server/config/index.js';
 // const database = require("../database/database").database;
 const pureMongoService = require('../database/pureMongoService');
 
