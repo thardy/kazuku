@@ -1,12 +1,12 @@
 var CustomSchemaService = require("./customSchemaService");
 var Promise = require("bluebird");
 var database = require("../database/database").database;
-var _ = require("lodash");
+import _ from 'lodash';
 var chai = require("chai");
 var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");
 var expect = chai.expect;
-var moment = require("moment");
+import moment from 'moment';
 const testHelper = require('../common/testHelper');
 
 chai.use(chaiAsPromised);

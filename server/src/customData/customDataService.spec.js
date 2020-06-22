@@ -2,11 +2,11 @@
 var CustomDataService = require("./customDataService");
 var Promise = require("bluebird");
 var database = require("../database/database").database;
-var _ = require("lodash");
+import _ from 'lodash';
 var chai = require("chai");
 var should = chai.Should();
 var expect = chai.expect;
-var moment = require("moment");
+import moment from 'moment';
 // var Query = require("rql/query").Query;
 import testHelper from '../common/testHelper.js';
 

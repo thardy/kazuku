@@ -2,7 +2,7 @@
 const database = require("../database/database").database;
 const CustomDataService = require("./customDataService");
 const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+import current from '../common/current.js';
 
 class CustomDataController {
 

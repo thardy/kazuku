@@ -7,8 +7,8 @@ var DependencyService = require("../dependencies/dependencyService");
 var QueryService = require("../queries/queryService");
 var Promise = require("bluebird");
 var frontMatter = require('front-matter');
-var _ = require("lodash");
-const current = require('../common/current');
+import _ from 'lodash';
+import current from '../common/current.js';
 
 const systemProperties = ["_id", "id", "orgId", "siteId", "name", "url", "layout", "template", "created", "createdBy", "updated", "updatedBy", "dependencies", "regenerate"];
 

@@ -5,12 +5,12 @@ var queryTestHelper = require("./queryTestHelper");
 var database = require("../database/database").database;
 var Promise = require("bluebird");
 var testHelper = require("../common/testHelper");
-var _ = require("lodash");
+import _ from 'lodash';
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 var should = chai.Should();
 var expect = chai.expect;
-var moment = require("moment");
+import moment from 'moment';
 
 // temporary
 var CustomDataService = require("../customData/customDataService");

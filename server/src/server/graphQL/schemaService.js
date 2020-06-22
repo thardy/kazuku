@@ -11,7 +11,8 @@ const CustomDataService = require('../../customData/customDataService');
 const CustomSchemaService = require('../../customSchemas/customSchemaService');
 const OrganizationService = require('../../organizations/organizationService');
 const current = require('../../common/current');
-const ObjectId = require('mongodb').ObjectID;
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
 const mongoHelper = require('../../common/mongoHelper');
 const pluralize = require('pluralize')
 import _ from 'lodash';

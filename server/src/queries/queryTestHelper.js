@@ -1,6 +1,6 @@
 "use strict";
 var database = require("../database/database").database;
-var _ = require("lodash");
+import _ from 'lodash';
 const testHelper = require('../common/testHelper');
 
 let testOrgId = testHelper.testOrgId;

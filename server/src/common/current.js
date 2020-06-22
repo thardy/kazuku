@@ -1,7 +1,7 @@
 /* A helper module for retrieving data on the current request context */
 'use strict';
 import zone from 'zone.js/dist/zone-node.js';
-const testHelper = require('./testHelper');
+import testHelper from './testHelper.js';
 
 const isInTest = typeof global.it === 'function';
 
@@ -27,5 +27,5 @@ let current = {
     }
 };
 
-module.exports = current;
+export default current;
 

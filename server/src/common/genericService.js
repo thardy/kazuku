@@ -1,10 +1,11 @@
 'use strict';
-const _ = require('lodash');
+import _ from 'lodash';
 import Promise from 'bluebird';
-const conversionService = require('./conversionService');
-const ObjectId = require('mongodb').ObjectID;
+import conversionService from './conversionService.js';
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
 import moment from 'moment';
-const current = require('../common/current');
+import current from '../common/current.js';
 
 class GenericService {
 
@@ -265,4 +266,4 @@ class GenericService {
     transformSingle(single) { return single; }
 }
 
-module.exports = GenericService;
+export default GenericService;

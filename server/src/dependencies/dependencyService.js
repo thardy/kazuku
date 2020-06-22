@@ -1,5 +1,5 @@
 "use strict";
-var _ = require("lodash");
+import _ from 'lodash';
 var Promise = require("bluebird");
 
 class DependencyService {

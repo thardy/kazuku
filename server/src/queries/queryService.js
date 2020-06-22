@@ -1,5 +1,5 @@
 'use strict';
-var _ = require("lodash");
+import _ from 'lodash';
 var Promise = require("bluebird");
 var GenericService = require("../common/genericService");
 var CustomDataService = require("../customData/customDataService");

@@ -1,9 +1,10 @@
-var config = require('../server/config');
+import config from '../server/config.js';
 var Promise = require("bluebird");
-var database = require("../database/database").database;
-const ObjectId = require('mongodb').ObjectID;
-var _ = require("lodash");
-var moment = require("moment");
+import {database} from '../database/database.js';
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
+import _ from 'lodash';
+import moment from 'moment';
 import bcryptNodejs from 'bcrypt-nodejs';
 const bcrypt = Promise.promisifyAll(bcryptNodejs);
 
@@ -408,4 +409,4 @@ var testHelper = {
     stripFriendlyIdsFromModel: stripFriendlyIdsFromModel
 };
 
-module.exports = testHelper;
+export default testHelper;

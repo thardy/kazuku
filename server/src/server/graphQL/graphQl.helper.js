@@ -3,7 +3,7 @@ const { GraphQLList, GraphQLObjectType, GraphQLInputObjectType } = require('grap
 const AcknowledgeType = require('./acknowledge.type');
 const current = require('../../common/current');
 const mongoHelper = require('../../common/mongoHelper');
-const _ = require('lodash');
+import _ from 'lodash';
 // const Auth = require('../auth/auth');
 
 

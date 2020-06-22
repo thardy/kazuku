@@ -2,7 +2,7 @@
 import config from '../server/config/index.js';
 const GenericService = require('../common/genericService');
 const ScheduleService = require('../schedules/scheduleService');
-const current = require('../common/current');
+import current from '../common/current.js';
 
 class SiteService extends GenericService {
     constructor(database) {

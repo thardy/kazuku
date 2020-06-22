@@ -2,11 +2,11 @@
 var DependencyService = require("./dependencyService");
 var dependencyTestHelper = require("./dependencyTestHelper");
 var Promise = require("bluebird");
-var _ = require("lodash");
+import _ from 'lodash';
 var chai = require("chai");
 var should = chai.Should();
 var expect = chai.expect;
-var moment = require("moment");
+import moment from 'moment';
 var sinon = require("sinon");
 
 chai.use(require("chai-as-promised"));

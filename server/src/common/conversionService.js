@@ -1,4 +1,4 @@
-//var moment = require("moment");
+//import moment from 'moment';
 
 var conversionHelper = {
     convertISOStringDateTimesToMongoDates: convertISOStringDateTimesToMongoDates
@@ -17,4 +17,4 @@ function convertISOStringDateTimesToMongoDates(objectToConvert) {
     }
 }
 
-module.exports = conversionHelper;
+export default conversionHelper;

@@ -3,7 +3,7 @@ const database = require('../database/database').database;
 const CrudController = require('../common/crudController');
 const CustomSchemaService = require('./customSchemaService');
 const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+import current from '../common/current.js';
 
 class CustomSchemasController extends CrudController {
     constructor(app) {

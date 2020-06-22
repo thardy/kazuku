@@ -1,6 +1,7 @@
 // const AgendaService = require('./agendaService');
 const agendaService = require('./agendaService');
-const ObjectId = require('mongodb').ObjectID;
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
 
 class ScheduleService {
     constructor(database) {

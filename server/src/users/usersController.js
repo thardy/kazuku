@@ -5,7 +5,7 @@ const CrudController = require("../common/crudController");
 const UserService = require("./userService");
 const OrganizationService = require("../organizations/organizationService");
 const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+import current from '../common/current.js';
 // const Joi = require('joi');
 
 class UsersController extends CrudController {

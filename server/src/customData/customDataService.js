@@ -1,5 +1,5 @@
 "use strict";
-var _ = require("lodash");
+import _ from 'lodash';
 var util = require("util");
 var GenericService = require("../common/genericService");
 var DependencyService = require("../dependencies/dependencyService");

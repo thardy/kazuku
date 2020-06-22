@@ -1,7 +1,7 @@
 'use strict';
 const ScheduleService = require("./scheduleService");
 const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+import current from '../common/current.js';
 const pureMongoService = require('../database/pureMongoService');
 
 class SchedulesController {
