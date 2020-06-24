@@ -1,7 +1,7 @@
 "use strict";
-const database = require("../database/database").database;
-const CustomDataService = require("./customDataService");
-const authHelper = require('../common/authHelper');
+import {database} from '../database/database.js';
+import CustomDataService from './customDataService.js';
+import authHelper from '../common/authHelper.js';
 import current from '../common/current.js';
 
 class CustomDataController {
@@ -189,4 +189,4 @@ class CustomDataController {
     }
 }
 
-module.exports = CustomDataController;
+export default CustomDataController;

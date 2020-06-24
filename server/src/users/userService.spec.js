@@ -5,8 +5,8 @@ const should = chai.Should();
 chai.use(chaiAsPromised);
 const testHelper = require('../common/testHelper');
 
-const UserService = require("./userService");
-const database = require("../database/database").database;
+import UserService from './userService.js';
+import {database} from '../database/database.js';
 
 const testOrgId = testHelper.testOrgId;
 

@@ -1,7 +1,6 @@
 'use strict';
-var _ = require('lodash');
-var util = require('util');
-var GenericService = require('../common/genericService');
+import _ from 'lodash';
+import GenericService from '../common/genericService.js';
 
 class CustomSchemaService extends GenericService {
     constructor(database) {
@@ -53,6 +52,6 @@ class CustomSchemaService extends GenericService {
 
 }
 
-module.exports = CustomSchemaService;
+export default CustomSchemaService;
 
 

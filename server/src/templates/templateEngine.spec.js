@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 var TemplateEngine = require('./templateEngine');
 var QueryService = require('../queries/queryService');
 var sinon = require('sinon');
-var _ = require('lodash');
+import _ from 'lodash';
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 var expect = chai.expect;

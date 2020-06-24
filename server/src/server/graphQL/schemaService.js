@@ -1,10 +1,10 @@
-const {GraphQLDateTime} = require('graphql-iso-date');
-const {GraphQLISODateTime} = require('./graphQLDateTime');
-const {GraphQLObjectId} = require('./graphQLObjectId');
+import GraphQLDateTime from 'graphql-iso-date';
+import GraphQLISODateTime from './graphQLDateTime.js';
+import GraphQLObjectId from './graphQLObjectId.js';
 
-const {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
-       GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = require('graphql');
-const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = require('./graphql.helper');
+import {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
+       GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} from 'graphql';
+import {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} from './graphql.helper.js';
 
 const {makeExecutableSchema} = require('apollo-server-express');
 const CustomDataService = require('../../customData/customDataService');
@@ -710,4 +710,4 @@ class SchemaService {
     }
 }
 
-module.exports = SchemaService;
+export default SchemaService;

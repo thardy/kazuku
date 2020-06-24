@@ -1,5 +1,5 @@
 var database = require("./database").database;
-var Promise = require("bluebird");
+import Promise from 'bluebird';
 var chai = require("chai");
 var should = chai.Should();
 var chaiAsPromised = require("chai-as-promised");

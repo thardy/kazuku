@@ -1,8 +1,8 @@
 'use strict';
-const ScheduleService = require("./scheduleService");
-const authHelper = require('../common/authHelper');
+import ScheduleService from './scheduleService.js';
+import authHelper from '../common/authHelper.js';
 import current from '../common/current.js';
-const pureMongoService = require('../database/pureMongoService');
+import pureMongoService from '../database/pureMongoService.js';
 
 class SchedulesController {
     constructor(app) {
@@ -88,4 +88,4 @@ class SchedulesController {
 
 }
 
-module.exports = SchedulesController;
+export default SchedulesController;

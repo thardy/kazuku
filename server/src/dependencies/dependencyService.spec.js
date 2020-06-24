@@ -1,7 +1,7 @@
 "use strict";
 var DependencyService = require("./dependencyService");
 var dependencyTestHelper = require("./dependencyTestHelper");
-var Promise = require("bluebird");
+import Promise from 'bluebird';
 import _ from 'lodash';
 var chai = require("chai");
 var should = chai.Should();

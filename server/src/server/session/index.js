@@ -1,9 +1,10 @@
 'use strict';
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+import session from 'express-session';
+import connectMongo from 'connect-mongo';
+const MongoStore = connectMongo(session);
 //const SkinStore = require('connect-mongoskin');
 import config from '../config/index.js';
-const db = require('../../database/database').database;
+import {database} from '../../database/database.js';
 
 let theExport = {};
 

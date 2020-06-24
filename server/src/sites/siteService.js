@@ -1,7 +1,7 @@
 'use strict';
 import config from '../server/config/index.js';
-const GenericService = require('../common/genericService');
-const ScheduleService = require('../schedules/scheduleService');
+import GenericService from '../common/genericService.js';
+import ScheduleService from '../schedules/scheduleService.js';
 import current from '../common/current.js';
 
 class SiteService extends GenericService {
@@ -27,4 +27,4 @@ class SiteService extends GenericService {
 
 }
 
-module.exports = SiteService;
+export default SiteService;

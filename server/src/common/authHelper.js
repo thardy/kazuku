@@ -1,6 +1,6 @@
 'use strict';
-const database = require('../database/database').database;
-const OrganizationService = require('../organizations/organizationService');
+import {database} from '../database/database.js';
+import OrganizationService from '../organizations/organizationService.js';
 
 const orgService = new OrganizationService(database);
 
@@ -49,7 +49,7 @@ const isAuthenticatedWithApiConsumer = async (req, res, next) => {
     return isAuthenticatedWithApiConsumer;
 };
 
-module.exports = {
+export default {
     isAuthenticated: isAuthenticatedWithAdminUser,
     isAuthenticatedForApi: isAuthenticatedWithApiConsumer
 };

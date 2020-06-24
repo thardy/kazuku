@@ -1,7 +1,7 @@
 'use strict';
 
 let database = require('../database/database').database;
-// const pureMongoService = require('../database/pureMongoService');
+// import pureMongoService from '../database/pureMongoService.js';
 let PublishingService = require('./publishingService');
 let CustomDataService = require('../customData/customDataService');
 let QueryService = require('../queries/queryService');

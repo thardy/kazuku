@@ -1,7 +1,7 @@
-const Agenda = require('agenda');
+import Agenda from 'agenda';
 import config from '../server/config/index.js';
-// const database = require("../database/database").database;
-const pureMongoService = require('../database/pureMongoService');
+// import {database} from '../database/database.js';
+import pureMongoService from '../database/pureMongoService.js';
 
 // latest try
 // let client = {};
@@ -16,7 +16,7 @@ const pureMongoService = require('../database/pureMongoService');
 //     await agenda.start();
 // })();
 //
-// module.exports = agenda;
+// export default agenda;
 
 // This is a good example of how to do an async export - we'll get it to you as soon as it's ready
 let callbackList = [];
@@ -35,7 +35,7 @@ let agenda;
     }
 })();
 
-module.exports = (callback) => {
+export default (callback) => {
     if (typeof agenda != 'undefined'){
         callback(agenda); // If agenda is already defined, give it to them immediately
     } else {

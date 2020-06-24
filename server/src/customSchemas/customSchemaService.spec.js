@@ -1,5 +1,5 @@
 var CustomSchemaService = require("./customSchemaService");
-var Promise = require("bluebird");
+import Promise from 'bluebird';
 var database = require("../database/database").database;
 import _ from 'lodash';
 var chai = require("chai");

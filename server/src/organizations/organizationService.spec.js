@@ -6,8 +6,8 @@ const expect = chai.expect;
 const should = chai.Should();
 chai.use(chaiAsPromised);
 
-const OrganizationService = require("./organizationService");
-const database = require("../database/database").database;
+import OrganizationService from './organizationService.js';
+import {database} from '../database/database.js';
 
 describe("OrganizationService CRUD", function () {
     let orgService = {};

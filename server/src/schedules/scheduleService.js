@@ -1,5 +1,5 @@
-// const AgendaService = require('./agendaService');
-const agendaService = require('./agendaService');
+// import agendaService from './agendaService.js';
+import agendaService from './agendaService.js';
 import mongodb from 'mongodb';
 const ObjectId = mongodb.ObjectID;
 
@@ -63,5 +63,5 @@ class ScheduleService {
     }
 }
 
-module.exports = ScheduleService;
+export default ScheduleService;
 

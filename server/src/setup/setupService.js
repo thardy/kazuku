@@ -1,10 +1,10 @@
 'use strict';
 import _ from 'lodash';
-const Promise = require("bluebird");
+import Promise from 'bluebird';
 import config from '../server/config/index.js';
-const database = require("../database/database").database;
-const OrganizationService = require('../organizations/organizationService');
-const UserService = require('../users/userService');
+import {database} from '../database/database.js';
+import OrganizationService from '../organizations/organizationService.js';
+import UserService from '../users/userService.js';
 
 class SetupService {
 
@@ -73,4 +73,4 @@ class SetupService {
 
 }
 
-module.exports = SetupService;
+export default SetupService;

@@ -1,6 +1,6 @@
 'use strict';
-const Promise = require("bluebird");
-const authHelper = require('../common/authHelper');
+import Promise from 'bluebird';
+import authHelper from '../common/authHelper.js';
 import current from '../common/current.js';
 
 class CrudController {
@@ -119,5 +119,5 @@ class CrudController {
     }
 }
 
-module.exports = CrudController;
+export default CrudController;
 

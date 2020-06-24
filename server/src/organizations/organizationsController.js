@@ -1,8 +1,8 @@
 'use strict';
-const database = require("../database/database").database;
-const CrudController = require("../common/crudController");
-const OrganizationService = require("./organizationService");
-const authHelper = require('../common/authHelper');
+import {database} from '../database/database.js';
+import CrudController from '../common/crudController.js';
+import OrganizationService from './organizationService.js';
+import authHelper from '../common/authHelper.js';
 
 class OrganizationsController extends CrudController {
     constructor(app) {
@@ -147,4 +147,4 @@ class OrganizationsController extends CrudController {
 
 }
 
-module.exports = OrganizationsController;
+export default OrganizationsController;

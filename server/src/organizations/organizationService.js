@@ -231,4 +231,4 @@ class OrganizationService extends GenericService {
 }
 
 
-module.exports = OrganizationService;
+export default OrganizationService;

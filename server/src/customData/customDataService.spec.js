@@ -1,6 +1,6 @@
 "use strict";
 var CustomDataService = require("./customDataService");
-var Promise = require("bluebird");
+import Promise from 'bluebird';
 var database = require("../database/database").database;
 import _ from 'lodash';
 var chai = require("chai");
@@ -11,7 +11,7 @@ import moment from 'moment';
 import testHelper from '../common/testHelper.js';
 
 const gql = require('graphql-tag');
-const pureMongoService = require('../database/pureMongoService');
+import pureMongoService from '../database/pureMongoService.js';
 const SchemaService = require('../server/graphQL/schemaService');
 const CustomApolloServer = require('../server/graphQL/customApolloServer');
 const {makeExecutableSchema} = require('apollo-server-express');
@@ -19,7 +19,7 @@ const { createTestClient } = require('apollo-server-testing');
 
 
 //temp
-var mongoRql = require('mongo-rql');
+import mongoRql from 'mongo-rql';
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));

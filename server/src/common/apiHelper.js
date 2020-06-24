@@ -4,6 +4,6 @@ let apiResult = (body) => {
     return {data: body};
 };
 
-module.exports = {
+export default {
     apiResult
 };

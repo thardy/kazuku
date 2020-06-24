@@ -1,6 +1,6 @@
 'use strict';
 var database = require('../database/database').database;
-var _ = require('lodash');
+import _ from 'lodash';
 var CustomDataService = require('../customData/customDataService');
 var TemplateService = require('../templates/templateService');
 var QueryService = require('../queries/queryService');

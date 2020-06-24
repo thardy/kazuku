@@ -7,7 +7,7 @@ import chai from 'chai';
 const should = chai.Should();
 const expect = chai.expect;
 import moment from 'moment';
-const database = require("../database/database").database;
+import {database} from '../database/database.js';
 
 chai.use(require("chai-as-promised"));
 chai.use(require('chai-things'));

@@ -3,7 +3,7 @@
 var QueryService = require("./queryService");
 var queryTestHelper = require("./queryTestHelper");
 var database = require("../database/database").database;
-var Promise = require("bluebird");
+import Promise from 'bluebird';
 var testHelper = require("../common/testHelper");
 import _ from 'lodash';
 var chai = require("chai");
@@ -13,7 +13,7 @@ var expect = chai.expect;
 import moment from 'moment';
 
 // temporary
-var CustomDataService = require("../customData/customDataService");
+import CustomDataService from '../customData/customDataService.js';
 
 chai.use(chaiAsPromised);
 

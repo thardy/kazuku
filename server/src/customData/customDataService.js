@@ -1,9 +1,8 @@
 "use strict";
 import _ from 'lodash';
-var util = require("util");
-var GenericService = require("../common/genericService");
-var DependencyService = require("../dependencies/dependencyService");
-var mongoRql = require('mongo-rql');
+import GenericService from '../common/genericService.js';
+import DependencyService from '../dependencies/dependencyService.js';
+import mongoRql from 'mongo-rql';
 //var Query = require('rql/query').Query;
 
 class CustomDataService extends GenericService {
@@ -44,6 +43,7 @@ class CustomDataService extends GenericService {
             });
     }
 
+    // todo: Remove all usages of this method and remove this method - it uses RQL, which we've abandoned.  We are using GraphQL for all queries.
     find(orgId, query) {
         if (arguments.length !== 2) {
             return Promise.reject(new Error('Incorrect number of arguments passed to CustomDataService.find'));
@@ -135,5 +135,5 @@ class CustomDataService extends GenericService {
 
 }
 
-module.exports = CustomDataService;
+export default CustomDataService;
 

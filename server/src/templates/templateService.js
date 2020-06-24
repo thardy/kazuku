@@ -1,12 +1,12 @@
 "use strict";
 
-var GenericService = require("../common/genericService");
-var TemplateEngine = require("./templateEngine");
-var CustomDataService = require("../customData/customDataService");
-var DependencyService = require("../dependencies/dependencyService");
-var QueryService = require("../queries/queryService");
-var Promise = require("bluebird");
-var frontMatter = require('front-matter');
+import GenericService from '../common/genericService.js';
+import TemplateEngine from './templateEngine.js';
+import CustomDataService from '../customData/customDataService.js';
+import DependencyService from '../dependencies/dependencyService.js';
+import QueryService from '../queries/queryService.js';
+import Promise from 'bluebird';
+import frontMatter from 'front-matter';
 import _ from 'lodash';
 import current from '../common/current.js';
 
@@ -281,4 +281,4 @@ class TemplateService extends GenericService {
     }
 }
 
-module.exports = TemplateService;
+export default TemplateService;

@@ -1,17 +1,18 @@
 /* Have to import these extra libraries */
-const { renderPlaygroundPage } = require('@apollographql/graphql-playground-html');
-const { json } = require('body-parser');
-const { ApolloServer, defaultPlaygroundOptions, makeExecutableSchema } = require('apollo-server-express');
+import renderPlaygroundPage from '@apollographql/graphql-playground-html';
+import json from 'body-parser';
+import apolloServerExpress from 'apollo-server-express';
+const {ApolloServer, defaultPlaygroundOptions, makeExecutableSchema} = apolloServerExpress;
 //const schema = require('./schema/schema');
-const accepts = require('accepts');
-const SchemaService = require('./schemaService');
+import accepts from 'accepts';
+import SchemaService from './schemaService.js';
 import {database} from '../../database/database.js';
-const authHelper = require('../../common/authHelper');
-const OrganizationService = require('../../organizations/organizationService');
+import authHelper from '../../common/authHelper.js';
+import OrganizationService from '../../organizations/organizationService.js';
 import config from '../config/index.js';
 
 /* Don't think it's exported normally, get directly */
-const { graphqlExpress } = require('apollo-server-express/dist/expressApollo');
+import graphqlExpress from 'apollo-server-express/dist/expressApollo.js';
 
 class CustomApolloServer extends ApolloServer {
     constructor(options) {

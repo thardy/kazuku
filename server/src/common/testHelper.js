@@ -1,5 +1,5 @@
-import config from '../server/config.js';
-var Promise = require("bluebird");
+import config from '../server/config/index.js';
+import Promise from 'bluebird';
 import {database} from '../database/database.js';
 import mongodb from 'mongodb';
 const ObjectId = mongodb.ObjectID;
