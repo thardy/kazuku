@@ -12,13 +12,14 @@ import passport from 'passport';
 // Setup passport auth strategies
 import passportConfig from './server/passport/index.js';
 const passportAuthStrategies = passportConfig(passport); // pass passport for configuration
-//const config = require('./server/config');
+import config from './server/config/index.js';
 import session from './server/session/index.js';
 import logger from './server/logger/index.js';
 import routes from './server/routes/index.js';
 import vhost from 'vhost';
 import CustomApolloServer from './server/graphQL/customApolloServer.js';
-import makeExecutableSchema from 'apollo-server-express';
+import apolloServerExpress from 'apollo-server-express';
+const {makeExecutableSchema} = apolloServerExpress;
 import morgan from 'morgan';
 
 
@@ -84,7 +85,7 @@ async function startServer(config) {
         path: '/graphql', //`http://kazuku.com:3001/graphql`,
     });
 
-    if (!module.parent) {
+    if (config.env !== 'test') {
         // Only use morgan if we aren't running tests.  It clutters up the test output.
         main.use(morgan('combined', {
             stream: {
@@ -97,7 +98,7 @@ async function startServer(config) {
     }
 
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
-    routes.map(main);
+    routes(main);
 
 // custom 404 handler.  This will prevent html being returned for 404s.
     main.use((req, res, next) => {

@@ -1,20 +1,23 @@
 import GraphQLDateTime from 'graphql-iso-date';
-import GraphQLISODateTime from './graphQLDateTime.js';
+//import GraphQLISODateTime from './graphQLDateTime.js';
 import GraphQLObjectId from './graphQLObjectId.js';
 
-import {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
-       GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} from 'graphql';
-import {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} from './graphql.helper.js';
+import graphql from 'graphql';
+const {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
+    GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = graphql;
+import graphqlHelper from './graphql.helper.js';
+const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = graphqlHelper;
 
-const {makeExecutableSchema} = require('apollo-server-express');
-const CustomDataService = require('../../customData/customDataService');
-const CustomSchemaService = require('../../customSchemas/customSchemaService');
-const OrganizationService = require('../../organizations/organizationService');
-const current = require('../../common/current');
+import apolloServerExpress from 'apollo-server-express';
+const {makeExecutableSchema} = apolloServerExpress;
+import CustomDataService from '../../customData/customDataService.js';
+import CustomSchemaService from '../../customSchemas/customSchemaService.js';
+import OrganizationService from '../../organizations/organizationService.js';
+import current from '../../common/current.js';
 import mongodb from 'mongodb';
 const ObjectId = mongodb.ObjectID;
-const mongoHelper = require('../../common/mongoHelper');
-const pluralize = require('pluralize')
+import mongoHelper from '../../common/mongoHelper.js';
+import pluralize from 'pluralize';
 import _ from 'lodash';
 
 const typesThatNeedFurtherProcessing = ['$ref', 'array'];
@@ -562,8 +565,8 @@ class SchemaService {
                 graphQLType = GraphQLFloat;
                 break;
             case 'date':
-                //graphQLType = GraphQLDateTime;
-                graphQLType = GraphQLISODateTime;
+                graphQLType = GraphQLDateTime;
+                //graphQLType = GraphQLISODateTime;
                 break;
             default:
                 graphQLType = GraphQLString;

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --experimental-json-modules ./bin/www.js",
+    "start": "node --experimental-json-modules --es-module-specifier-resolution=node ./bin/www.js",
     "linTest": "NODE_ENV=test ./node_modules/.bin/mocha --grep ApiTests --invert src/**/*.spec.js --timeout 5000",
     "winTest": "set NODE_ENV=test&& mocha --grep ApiTests --invert src/**/*.spec.js --timeout 5000",
     "linApiTest": "NODE_ENV=test ./node_modules/.bin/mocha --grep ApiTests src/**/*.spec.js",

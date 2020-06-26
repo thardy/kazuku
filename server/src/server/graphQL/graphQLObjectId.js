@@ -1,5 +1,6 @@
-const { GraphQLScalarType, Kind } = require('graphql');
-const { ObjectId } = require('mongodb');
+import graphql from 'graphql';
+const { GraphQLScalarType, Kind } = graphql;
+import ObjectId from 'mongodb';
 
 const GraphQLObjectId = new GraphQLScalarType({
     name: "ObjectId",
@@ -18,6 +19,6 @@ const GraphQLObjectId = new GraphQLScalarType({
     },
 });
 
-module.exports = {
+export default {
     GraphQLObjectId,
 };

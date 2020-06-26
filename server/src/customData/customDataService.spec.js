@@ -14,7 +14,8 @@ const gql = require('graphql-tag');
 import pureMongoService from '../database/pureMongoService.js';
 const SchemaService = require('../server/graphQL/schemaService');
 const CustomApolloServer = require('../server/graphQL/customApolloServer');
-const {makeExecutableSchema} = require('apollo-server-express');
+import apolloServerExpress from 'apollo-server-express';
+const {makeExecutableSchema} = apolloServerExpress;
 const { createTestClient } = require('apollo-server-testing');
 
 

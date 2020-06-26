@@ -143,7 +143,8 @@ export default (passport) => {
     };
 
     passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
-    passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
+    // todo: receiving "OAuthStrategy requires a consumerKey option" out of the blue.  Figure that out if you want to use GoogleStrategy
+    // passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
     passport.use('local', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',

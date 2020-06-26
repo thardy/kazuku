@@ -29,7 +29,7 @@ const convertObjectIdToStringId = (doc) => {
     return doc;
 };
 
-module.exports = {
+export default {
     convertObjectIdToStringId,
     convertFilterStringIdsToObjectIds,
     convertArrayOfStringIdsToObjectIds

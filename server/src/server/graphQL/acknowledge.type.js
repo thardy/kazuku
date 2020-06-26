@@ -1,4 +1,5 @@
-const {GraphQLObjectType, GraphQLBoolean, GraphQLInt} = require('graphql');
+import graphql from 'graphql';
+const {GraphQLObjectType, GraphQLBoolean, GraphQLInt} = graphql;
 
 const AcknowledgeType = new GraphQLObjectType({
     name: 'AcknowledgeType',
@@ -15,4 +16,4 @@ const AcknowledgeType = new GraphQLObjectType({
     }
 });
 
-module.exports = AcknowledgeType;
+export default AcknowledgeType;
