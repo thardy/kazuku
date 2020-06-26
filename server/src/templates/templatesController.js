@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 import {database} from '../database/database.js';
 import CrudController from '../common/crudController.js';
 import TemplateService from './templateService.js';

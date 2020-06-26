@@ -1,16 +1,18 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-const SchedulingService = require("./scheduleService");
+import SchedulingService from './scheduleService.js';
 import OrganizationService from '../organizations/organizationService.js';
 import {database} from '../database/database.js';
-import pureMongoService from '../database/pureMongoService.js';
+import SchemaService from '../server/graphQL/schemaService.js';
 import chai from 'chai';
 const should = chai.Should();
 const expect = chai.expect;
-const testHelper = require('../common/testHelper');
+import testHelper from '../common/testHelper.js';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 const testOrgId = testHelper.testOrgId;
 

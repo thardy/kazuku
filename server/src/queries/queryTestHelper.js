@@ -1,7 +1,7 @@
-"use strict";
-var database = require("../database/database").database;
+'use strict';
+import {database} from '../database/database.js';
 import _ from 'lodash';
-const testHelper = require('../common/testHelper');
+import testHelper from '../common/testHelper.js';
 
 let testOrgId = testHelper.testOrgId;
 let testSiteId = 1;

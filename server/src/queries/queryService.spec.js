@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-var QueryService = require("./queryService");
-var queryTestHelper = require("./queryTestHelper");
-var database = require("../database/database").database;
+import QueryService from './queryService.js';
+import queryTestHelper from './queryTestHelper.js';
+import {database} from '../database/database.js';
 import Promise from 'bluebird';
-var testHelper = require("../common/testHelper");
+import testHelper from '../common/testHelper.js';
 import _ from 'lodash';
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-var should = chai.Should();
-var expect = chai.expect;
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+const should = chai.Should();
+const expect = chai.expect;
 import moment from 'moment';
 
 // temporary

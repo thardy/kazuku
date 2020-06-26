@@ -4,8 +4,10 @@ import app from '../server.js';
 import supertest from 'supertest';
 const request = supertest(`http://${config.hostname}:${config.port}`);
 import chai from 'chai';
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 const should = chai.Should();
 const expect = chai.expect;
 import Promise from 'bluebird';
@@ -13,7 +15,7 @@ import bcryptNodejs from 'bcrypt-nodejs';
 const bcrypt = Promise.promisifyAll(bcryptNodejs);
 
 import testHelper from '../common/testHelper.js';
-const utils = require('../utils/index');
+import utils from '../utils/index.js';
 
 describe("ApiTests", function () {
     let server = {};

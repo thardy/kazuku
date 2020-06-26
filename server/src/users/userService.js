@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 import _ from 'lodash';
 import GenericService from '../common/genericService.js';
 import Promise from 'bluebird';

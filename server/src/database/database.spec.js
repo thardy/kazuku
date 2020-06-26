@@ -1,9 +1,9 @@
-var database = require("./database").database;
+import {database} from './database.js';
 import Promise from 'bluebird';
-var chai = require("chai");
-var should = chai.Should();
-var chaiAsPromised = require("chai-as-promised");
-var expect = chai.expect;
+import chai from 'chai';
+const should = chai.Should();
+import chaiAsPromised from 'chai-as-promised';
+const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 

@@ -9,8 +9,10 @@ const expect = chai.expect;
 import moment from 'moment';
 import {database} from '../database/database.js';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 describe("ApiTests", function () {
     let server = {};

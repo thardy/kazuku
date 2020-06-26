@@ -1,13 +1,13 @@
 'use strict';
-var database = require('../database/database').database;
+import {database} from '../database/database.js';
 import _ from 'lodash';
-var CustomDataService = require('../customData/customDataService');
-var TemplateService = require('../templates/templateService');
-var QueryService = require('../queries/queryService');
-var CustomSchemaService = require('../customSchemas/customSchemaService');
-var sinon = require('sinon');
-var Promise = require('bluebird');
-const testHelper = require('../common/testHelper');
+import CustomDataService from '../customData/customDataService.js';
+import TemplateService from '../templates/templateService.js';
+import QueryService from '../queries/queryService.js';
+import CustomSchemaService from '../customSchemas/customSchemaService.js';
+import sinon from 'sinon';
+import Promise from 'bluebird';
+import testHelper from '../common/testHelper.js';
 
 let testOrgId = testHelper.testOrgId;
 let testSiteId = testHelper.testSiteId;

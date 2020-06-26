@@ -1,7 +1,7 @@
 'use strict';
 import _ from 'lodash';
 import chai from 'chai';
-const chaiAsPromised = require("chai-as-promised");
+import chaiAsPromised from 'chai-as-promised';
 const expect = chai.expect;
 const should = chai.Should();
 chai.use(chaiAsPromised);

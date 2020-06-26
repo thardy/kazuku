@@ -1,29 +1,30 @@
-"use strict";
+'use strict';
 var CustomDataService = require("./customDataService");
 import Promise from 'bluebird';
-var database = require("../database/database").database;
+import {database} from '../database/database.js';
 import _ from 'lodash';
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
+import chai from 'chai';
+const should = chai.Should();
+const expect = chai.expect;
 import moment from 'moment';
 // var Query = require("rql/query").Query;
 import testHelper from '../common/testHelper.js';
 
 const gql = require('graphql-tag');
-import pureMongoService from '../database/pureMongoService.js';
-const SchemaService = require('../server/graphQL/schemaService');
-const CustomApolloServer = require('../server/graphQL/customApolloServer');
+import SchemaService from '../server/graphQL/schemaService.js';
+import CustomApolloServer from '../server/graphQL/customApolloServer.js';
 import apolloServerExpress from 'apollo-server-express';
 const {makeExecutableSchema} = apolloServerExpress;
-const { createTestClient } = require('apollo-server-testing');
+import createTestClient from 'apollo-server-testing';
 
 
 //temp
 import mongoRql from 'mongo-rql';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 let testOrgId = testHelper.testOrgId;
 

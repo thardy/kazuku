@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 import {database} from '../database/database.js';
 import CustomDataService from './customDataService.js';
 import authHelper from '../common/authHelper.js';

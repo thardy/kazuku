@@ -1,16 +1,18 @@
-"use strict";
-var DependencyService = require("./dependencyService");
-var dependencyTestHelper = require("./dependencyTestHelper");
+'use strict';
+import DependencyService from './dependencyService.js';
+import dependencyTestHelper from './dependencyTestHelper.js';
 import Promise from 'bluebird';
 import _ from 'lodash';
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
+import chai from 'chai';
+const should = chai.Should();
+const expect = chai.expect;
 import moment from 'moment';
-var sinon = require("sinon");
+import sinon from 'sinon';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 
 describe("DependencyService", function () {

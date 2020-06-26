@@ -1,5 +1,5 @@
 import {database} from '../../database/database.js';
-const PublishingService = require('../../publishing/publishingService');
+import PublishingService from '../../publishing/publishingService.js';
 import zone from 'zone.js/dist/zone-node.js';
 
 module.exports = function(agenda) {
@@ -30,7 +30,7 @@ module.exports = function(agenda) {
     });
 
     // agenda.define('anotherPublishingJob'), function(job, done) {
-    //     "use strict";
+    //     'use strict';
     //     return theThingToDo(job.attrs.data.someParm)
     //         .then((result) => {
     //             done();

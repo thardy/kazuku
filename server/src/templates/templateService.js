@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import GenericService from '../common/genericService.js';
 import TemplateEngine from './templateEngine.js';

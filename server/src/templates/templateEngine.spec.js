@@ -1,14 +1,14 @@
 'use strict';
 
-var Promise = require('bluebird');
+import Promise from 'bluebird';
 var TemplateEngine = require('./templateEngine');
-var QueryService = require('../queries/queryService');
-var sinon = require('sinon');
+import QueryService from '../queries/queryService.js';
+import sinon from 'sinon';
 import _ from 'lodash';
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
-var expect = chai.expect;
-const testHelper = require('../common/testHelper');
+const expect = chai.expect;
+import testHelper from '../common/testHelper.js';
 
 chai.use(chaiAsPromised);
 

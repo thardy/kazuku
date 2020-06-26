@@ -9,10 +9,12 @@ const should = chai.Should();
 const expect = chai.expect;
 import moment from 'moment';
 import testHelper from '../common/testHelper.js';
-const utils = require('../utils/index');
+import utils from '../utils/index.js';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 describe("ApiTests", function () {
 

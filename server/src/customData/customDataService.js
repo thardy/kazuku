@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 import _ from 'lodash';
 import GenericService from '../common/genericService.js';
 import DependencyService from '../dependencies/dependencyService.js';

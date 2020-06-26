@@ -10,8 +10,10 @@ const expect = chai.expect;
 import moment from 'moment';
 import testHelper from '../common/testHelper.js';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 describe("ApiTests", function () {
     // todo: consider moving this into a more global spot before running all api-related tests.  See http://beletsky.net/2014/03/testable-apis-with-node-dot-js.html

@@ -1,12 +1,12 @@
 'use strict';
-let _ = require('lodash');
-let Promise = require('bluebird');
-let QueryService = require('../queries/queryService');
+import _ from 'lodash';
+import Promise from 'bluebird';
+import QueryService from '../queries/queryService.js';
 let OrganizationService = require('../organizations/organizationService');
 let SiteService = require('../sites/siteService');
-let TemplateService = require('../templates/templateService');
+import TemplateService from '../templates/templateService.js';
 let cache = require('memory-cache');
-let fs = require('fs-extra');
+import fs from 'fs-extra';
 let path = require('path');
 Promise.promisifyAll(fs);
 

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 import {database} from '../database/database.js';
 import passport from 'passport';
 import CrudController from '../common/crudController.js';

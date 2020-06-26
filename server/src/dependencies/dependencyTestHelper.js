@@ -1,10 +1,10 @@
 'use strict';
-var CustomDataService = require('../customData/customDataService');
-var TemplateService = require('../templates/templateService');
-var QueryService = require('../queries/queryService');
-let Database = require('../database/database').Database;
-var sinon = require('sinon');
-const testHelper = require('../common/testHelper');
+import CustomDataService from '../customData/customDataService.js';
+import TemplateService from '../templates/templateService.js';
+import QueryService from '../queries/queryService.js';
+import {Database} from '../database/database.js';
+import sinon from 'sinon';
+import testHelper from '../common/testHelper.js';
 
 const testOrgId = testHelper.testOrgId;
 let testSiteId = 1;

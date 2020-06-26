@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-var TemplateService = require("./templateService");
-var templateTestHelper = require("./templateTestHelper");
-var database = require("../database/database").database;
+import TemplateService from './templateService.js';
+import templateTestHelper from './templateTestHelper.js';
+import {database} from '../database/database.js';
 import Promise from 'bluebird';
-var testHelper = require("../common/testHelper");
+import testHelper from '../common/testHelper.js';
 import _ from 'lodash';
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-var should = chai.Should();
-var expect = chai.expect;
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+const should = chai.Should();
+const expect = chai.expect;
 import moment from 'moment';
 
 chai.use(chaiAsPromised);
