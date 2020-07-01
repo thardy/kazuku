@@ -308,5 +308,5 @@ function deleteAllTestTemplates() {
     return database.templates.remove({orgId: testOrgId});
 }
 
-module.exports = pubTestHelper;
+export default pubTestHelper;
 

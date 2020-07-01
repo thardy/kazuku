@@ -3,7 +3,7 @@
 import {database} from '../database/database.js';
 // import SchemaService from '../server/graphQL/schemaService.js';
 import PublishingService from './publishingService.js';
-import CustomDataService from '../customData/customDataService';
+import CustomDataService from '../customData/customDataService.js';
 import QueryService from '../queries/queryService.js';
 import TemplateService from '../templates/templateService.js';
 import pubTestHelper from './publishingTestHelper.js';

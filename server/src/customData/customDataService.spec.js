@@ -1,7 +1,8 @@
 'use strict';
-var CustomDataService = require("./customDataService");
+import CustomDataService from './customDataService.js';
 import Promise from 'bluebird';
 import {database} from '../database/database.js';
+import pureMongoService from '../database/pureMongoService.js';
 import _ from 'lodash';
 import chai from 'chai';
 const should = chai.Should();
@@ -10,12 +11,13 @@ import moment from 'moment';
 // var Query = require("rql/query").Query;
 import testHelper from '../common/testHelper.js';
 
-const gql = require('graphql-tag');
+import gql from 'graphql-tag';
 import SchemaService from '../server/graphQL/schemaService.js';
 import CustomApolloServer from '../server/graphQL/customApolloServer.js';
 import apolloServerExpress from 'apollo-server-express';
 const {makeExecutableSchema} = apolloServerExpress;
-import createTestClient from 'apollo-server-testing';
+import apolloServerTesting from 'apollo-server-testing';
+const {createTestClient} = apolloServerTesting;
 
 
 //temp

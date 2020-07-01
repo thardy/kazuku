@@ -101,4 +101,4 @@ function initMockDependencyChain() {
 
 }
 
-module.exports = dependencyTestHelper;
+export default dependencyTestHelper;

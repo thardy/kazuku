@@ -1,6 +1,7 @@
 import Agenda from 'agenda';
 import config from '../server/config/index.js';
 // import {database} from '../database/database.js';
+import pureMongoService from '../database/pureMongoService.js';
 import SchemaService from '../server/graphQL/schemaService.js';
 
 // latest try

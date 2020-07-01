@@ -121,5 +121,5 @@ function deleteAllRegenTemplates() {
     return database.templates.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^RegenerateTemplate/ }});
 }
 
-module.exports = templateTestHelper;
+export default templateTestHelper;
 

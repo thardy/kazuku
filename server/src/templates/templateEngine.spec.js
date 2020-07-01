@@ -1,12 +1,12 @@
 'use strict';
 
 import Promise from 'bluebird';
-var TemplateEngine = require('./templateEngine');
+import TemplateEngine from './templateEngine.js';
 import QueryService from '../queries/queryService.js';
 import sinon from 'sinon';
 import _ from 'lodash';
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 const expect = chai.expect;
 import testHelper from '../common/testHelper.js';
 

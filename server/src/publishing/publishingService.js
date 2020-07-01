@@ -2,12 +2,12 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import QueryService from '../queries/queryService.js';
-let OrganizationService = require('../organizations/organizationService');
-let SiteService = require('../sites/siteService');
+import OrganizationService from '../organizations/organizationService.js';
+import SiteService from '../sites/siteService.js';
 import TemplateService from '../templates/templateService.js';
-let cache = require('memory-cache');
+import cache from 'memory-cache';
 import fs from 'fs-extra';
-let path = require('path');
+import path from 'path';
 Promise.promisifyAll(fs);
 
 class PublishingService {
@@ -165,4 +165,4 @@ class PublishingService {
 
 }
 
-module.exports = PublishingService;
+export default PublishingService;

@@ -151,6 +151,6 @@ function deleteAllQueryData() {
 }
 
 
-module.exports = queryTestHelper;
+export default queryTestHelper;
 
 
