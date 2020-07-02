@@ -3,6 +3,7 @@ import ScheduleService from './scheduleService.js';
 import authHelper from '../common/authHelper.js';
 import current from '../common/current.js';
 import SchemaService from '../server/graphQL/schemaService.js';
+import pureMongoService from '../database/pureMongoService.js';
 
 class SchedulesController {
     constructor(app) {
