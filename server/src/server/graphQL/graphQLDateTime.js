@@ -41,6 +41,7 @@
 
 import graphql from 'graphql';
 const {GraphQLScalarType, Kind, GraphQLScalarTypeConfig} = graphql;
+import moment from 'moment';
 
 //const GraphQLISODateTime = new GraphQLScalarType({
 const config = {
@@ -58,7 +59,9 @@ const config = {
     },
     parseLiteral(ast) {
         if (ast.kind === Kind.STRING) {
-            return new Date(ast.value);
+            const momentDate = moment(ast.value);
+            return momentDate.toDate();
+            //return new Date(ast.value);
         }
         return null;
     },

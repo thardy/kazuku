@@ -571,9 +571,9 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts[1].name).to.equal(newProduct3.name);
         });
         it("can query custom date fields within range", async () => {
-            const startDate = '2015-01-27T00:00:00Z';
+            const startDate = '2015-01-27';
             // todo: this is currently failing - it succeeds if I add one day.  The LTE (less than or equal to) is not working as it should.
-            const endDate = '2015-05-20T00:00:00Z';
+            const endDate = '2015-05-20';
             const query = gql`
               query {
                 testProducts(
@@ -596,6 +596,8 @@ describe("CustomDataService", function () {
             expect(result.data.testProducts[0].name).to.equal(newProduct2.name);
             expect(result.data.testProducts[1].name).to.equal(newProduct3.name);
         });
+
+        // todo: add timezone tests
     });
 
 

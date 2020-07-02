@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import SchedulingService from './scheduleService.js';
 import OrganizationService from '../organizations/organizationService.js';
 import {database} from '../database/database.js';
+import pureMongoService from '../database/pureMongoService.js';
 import SchemaService from '../server/graphQL/schemaService.js';
 import chai from 'chai';
 const should = chai.Should();
