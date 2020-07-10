@@ -1,8 +1,9 @@
 /* Have to import these extra libraries */
-import renderPlaygroundPage from '@apollographql/graphql-playground-html';
-import json from 'body-parser';
+import graphqlPlayground from '@apollographql/graphql-playground-html';
+const {renderPlaygroundPage} = graphqlPlayground;
+import bodyparser from 'body-parser';
 import apolloServerExpress from 'apollo-server-express';
-const {ApolloServer, defaultPlaygroundOptions, makeExecutableSchema} = apolloServerExpress;
+const {ApolloServer, defaultPlaygroundOptions} = apolloServerExpress;
 //const schema = require('./schema/schema');
 import accepts from 'accepts';
 import SchemaService from './schemaService.js';
@@ -12,7 +13,8 @@ import OrganizationService from '../../organizations/organizationService.js';
 import config from '../config/index.js';
 
 /* Don't think it's exported normally, get directly */
-import graphqlExpress from 'apollo-server-express/dist/expressApollo.js';
+import expressApollo from 'apollo-server-express/dist/expressApollo.js';
+const {graphqlExpress} = expressApollo;
 
 class CustomApolloServer extends ApolloServer {
     constructor(options) {
@@ -53,7 +55,7 @@ class CustomApolloServer extends ApolloServer {
     applyGraphQlPlaygroundMiddleware({ app, path }) {
         /* Adds project specific middleware inside, just to keep in one place */
         //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
+        app.use(path, bodyparser.json(), authHelper.isAuthenticated, async (req, res, next) => {
             if (req.method === 'GET') {
                 // perform more expensive content-type check only if necessary
                 // XXX We could potentially move this logic into the GuiOptions lambda,
@@ -105,7 +107,7 @@ class CustomApolloServer extends ApolloServer {
     applyGraphQlApiMiddleware({ app, path, db }) {
         /* Adds project specific middleware inside, just to keep in one place */
         //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        app.use(path, json(), authHelper.isAuthenticatedForApi, async (req, res, next) => {
+        app.use(path, bodyparser.json(), authHelper.isAuthenticatedForApi, async (req, res, next) => {
             /* Not necessary, but cloning 'this' without 'schema' property to ensure schema built on the request */
             //  this technique will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
             const { schema, ...serverObj } = this;
@@ -120,19 +122,19 @@ class CustomApolloServer extends ApolloServer {
              * It binds to our new object, since the parent accesses the schema
              * from this.schema etc.
              */
-            return graphqlExpress(
-                super.createGraphQLServerOptions.bind({
-                    ...serverObj,
-                    graphqlPath: path,
-                    /* Retrieves a custom graphql schema based on request */
-                    schema: customSchema, //makeExecutableSchema(this.getCustomSchema(req))
-                    context: {
-                        db: db,
-                        request: req
-                    },
-                    playground: false,
-                })
-            )(req, res, next);
+            const customThis = {
+                ...serverObj,
+                graphqlPath: path,
+                /* Retrieves a custom graphql schema based on request */
+                schema: customSchema, //makeExecutableSchema(this.getCustomSchema(req))
+                context: {
+                    db: db,
+                    request: req
+                },
+                playground: false,
+            };
+            const options = super.createGraphQLServerOptions.bind(customThis);
+            return graphqlExpress(options)(req, res, next);
         });
     }
 

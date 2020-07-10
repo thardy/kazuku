@@ -1,4 +1,5 @@
-import GraphQLDateTime from 'graphql-iso-date';
+import graphQlIsoDate from 'graphql-iso-date';
+const {GraphQLDateTime} = graphQlIsoDate;
 import GraphQLISODateTime from './graphQLDateTime.js';
 import GraphQLObjectId from './graphQLObjectId.js';
 
@@ -565,8 +566,8 @@ class SchemaService {
                 graphQLType = GraphQLFloat;
                 break;
             case 'date':
-                //graphQLType = GraphQLDateTime;
-                graphQLType = GraphQLISODateTime;
+                graphQLType = GraphQLDateTime;
+                //graphQLType = GraphQLISODateTime;
                 break;
             default:
                 graphQLType = GraphQLString;
