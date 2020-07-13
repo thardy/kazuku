@@ -3,7 +3,7 @@ import graphqlPlayground from '@apollographql/graphql-playground-html';
 const {renderPlaygroundPage} = graphqlPlayground;
 import bodyparser from 'body-parser';
 import apolloServerExpress from 'apollo-server-express';
-const {ApolloServer, defaultPlaygroundOptions} = apolloServerExpress;
+const {ApolloServer, defaultPlaygroundOptions, makeExecutableSchema} = apolloServerExpress;
 //const schema = require('./schema/schema');
 import accepts from 'accepts';
 import SchemaService from './schemaService.js';
@@ -14,7 +14,7 @@ import config from '../config/index.js';
 
 /* Don't think it's exported normally, get directly */
 import expressApollo from 'apollo-server-express/dist/expressApollo.js';
-const {graphqlExpress} = expressApollo;
+const {graphqlExpress, GraphQLOptions} = expressApollo;
 
 class CustomApolloServer extends ApolloServer {
     constructor(options) {
@@ -104,38 +104,99 @@ class CustomApolloServer extends ApolloServer {
         });
     }
 
-    applyGraphQlApiMiddleware({ app, path, db }) {
-        /* Adds project specific middleware inside, just to keep in one place */
-        //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
-        app.use(path, bodyparser.json(), authHelper.isAuthenticatedForApi, async (req, res, next) => {
+    // derived from https://github.com/apollographql/apollo-server/issues/2560
+    applyMiddleware({ app, path, db }) {
+        app.use(path, async (req, res, next) => {
+            // if (ENABLE_PLAYGROUND) {
+            //     // copy playground code from apollo applyMiddleware source
+            // }
+
             /* Not necessary, but cloning 'this' without 'schema' property to ensure schema built on the request */
             //  this technique will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
             const { schema, ...serverObj } = this;
 
-            // todo: look into putting the orgId, and maybe even the entire org onto the req object or using Current (zone) to store the org once we get it once.
-            //  We're spending a lot of cycles asking for the current org a lot, and we need to just get it once.
             const customSchema = await this.getCustomSchema(req);
+            const customContext = {
+                ...this.context,
+                db: db,
+                request: req
+            };
 
-            /**
-             * This is the main reason to extend, to access graphqlExpress(),
-             * to be able to modify the schema based on the request
-             * It binds to our new object, since the parent accesses the schema
-             * from this.schema etc.
-             */
             const customThis = {
                 ...serverObj,
                 graphqlPath: path,
                 /* Retrieves a custom graphql schema based on request */
-                schema: customSchema, //makeExecutableSchema(this.getCustomSchema(req))
-                context: {
-                    db: db,
-                    request: req
-                },
+                schema: customSchema,
+                context: customContext,
                 playground: false,
             };
-            const options = super.createGraphQLServerOptions.bind(customThis);
-            return graphqlExpress(options)(req, res, next);
-        });
+
+            // todo: ok, here's what I have so far...
+            //  createGraphQLServerOptions inevitably ends up using a this.schemaDerivedData, which is not at all influenced by this.schema
+            //  (which we went through a whole lot of trouble to override).
+            //  Either figure out a way to dynamically influence/change this.schemaDerivedData or use GraphQLOptions here instead of
+            //  createGraphQLServerOptions
+            const graphQLOptions = {
+                schema: customSchema,
+                context: customContext,
+            };
+            //const options = super.createGraphQLServerOptions.bind(customThis);
+            return graphqlExpress(graphQLOptions)(req, res, next);
+
+
+
+            // this.context is the current server / request context, you can keep or override below
+            // const contextObj = { ...this.context, request: req } // ...other context etc
+            //
+            // const gqlOptions = {
+            //     ...this,
+            //     graphqlPath: path,
+            //     schema: await makeExecutableSchema(customSchema),
+            //     context: contextObj,
+            // }
+            // return graphqlExpress(super.createGraphQLServerOptions.bind(gqlOptions))(
+            //     req,
+            //     res,
+            //     next
+            // )
+        })
+    }
+
+    applyGraphQlApiMiddleware({ app, path, db }) {
+        app.use(path, bodyparser.json(), authHelper.isAuthenticatedForApi);
+        this.applyMiddleware({app, path, db});
+
+        /* Adds project specific middleware inside, just to keep in one place */
+        //app.use(path, json(), authHelper.isAuthenticated, async (req, res, next) => {
+        // app.use(path, bodyparser.json(), authHelper.isAuthenticatedForApi, async (req, res, next) => {
+        //     /* Not necessary, but cloning 'this' without 'schema' property to ensure schema built on the request */
+        //     //  this technique will create two new objects, schema and serverObj (using rest operator).  serverObj will be a clone of this, minus the schema property
+        //     const { schema, ...serverObj } = this;
+        //
+        //     // todo: look into putting the orgId, and maybe even the entire org onto the req object or using Current (zone) to store the org once we get it once.
+        //     //  We're spending a lot of cycles asking for the current org a lot, and we need to just get it once.
+        //     const customSchema = await this.getCustomSchema(req);
+        //
+        //     /**
+        //      * This is the main reason to extend, to access graphqlExpress(),
+        //      * to be able to modify the schema based on the request
+        //      * It binds to our new object, since the parent accesses the schema
+        //      * from this.schema etc.
+        //      */
+        //     const customThis = {
+        //         ...serverObj,
+        //         graphqlPath: path,
+        //         /* Retrieves a custom graphql schema based on request */
+        //         schema: customSchema, //makeExecutableSchema(this.getCustomSchema(req))
+        //         context: {
+        //             db: db,
+        //             request: req
+        //         },
+        //         playground: false,
+        //     };
+        //     const options = super.createGraphQLServerOptions.bind(customThis);
+        //     return graphqlExpress(options)(req, res, next);
+        // });
     }
 
     async getCustomSchema(req) {

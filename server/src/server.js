@@ -56,10 +56,8 @@ async function startServer(config) {
             }
         };
 
-        const server = new CustomApolloServer({
-            /* adding a default graphql schema initially */
-            schema: makeExecutableSchema({ typeDefs, resolvers })
-        });
+        // adding a default graphql schema initially
+        const server = new CustomApolloServer({typeDefs, resolvers});
 
         return server;
     };
