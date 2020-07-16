@@ -8,7 +8,7 @@ import {UserContext} from '../../users/user-context.model';
 @Component({
     selector: 'kz-workspace-actions',
     templateUrl: './workspace-actions.component.html',
-    styleUrls: ['./workspace-actions.component.scss']
+    styleUrls: ['./workspace-actions.component.less']
 })
 export class WorkspaceActionsComponent implements OnInit {
     actionItems$: Observable<WorkspaceActionItem[]>;

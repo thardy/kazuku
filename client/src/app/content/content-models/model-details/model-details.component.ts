@@ -10,7 +10,7 @@ import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 @Component({
     selector: 'kz-model-details',
     templateUrl: './model-details.component.html',
-    styleUrls: ['./model-details.component.scss']
+    styleUrls: ['./model-details.component.less']
 })
 export class ModelDetailsComponent extends BaseComponent implements OnInit {
     customSchema$: Observable<CustomSchema>;

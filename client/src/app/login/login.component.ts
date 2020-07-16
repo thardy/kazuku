@@ -5,21 +5,30 @@ import {User} from '../users/user.model';
 
 import {Router, ActivatedRoute} from '@angular/router';
 import {takeUntil} from 'rxjs/operators';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 
 @Component({
     selector: 'kz-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
+    styleUrls: ['./login.component.less']
 })
 export class LoginComponent implements OnInit, OnDestroy {
+    loginForm: FormGroup = new FormGroup({
+        userName: new FormControl(''),
+        password: new FormControl(''),
+        rememberMe: new FormControl(false)
+    });
+
     user: User = new User();
     returnUrl: string;
     loggingIn = false;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) {
-    }
+    constructor(private userService: UserService,
+                private router: Router,
+                private route: ActivatedRoute,
+                private fb: FormBuilder) {}
 
     ngOnInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
@@ -32,8 +41,9 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     login(form) {
         this.loggingIn = true;
+        console.log(form);
         if (!form.invalid) {
-            this.userService.login(this.user.email, this.user.password)
+            this.userService.login(form.value.userName, form.value.password)
                 .pipe(
                     takeUntil(this.ngUnsubscribe)
                 )

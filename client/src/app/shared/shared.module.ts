@@ -6,6 +6,7 @@ import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import {AsyncButtonDirective} from '../common/ui/async-button.directive';
 import {BootstrapModule} from './bootstrap.module';
+import {AntdModule} from './modules/antd/antd.module';
 
 
 @NgModule({
@@ -16,14 +17,16 @@ import {BootstrapModule} from './bootstrap.module';
         CommonModule,
         NgxDatatableModule,
         FontAwesomeModule,
-        BootstrapModule
+        BootstrapModule,
+        AntdModule
     ],
     exports: [
         AsyncButtonDirective,
         FormsModule,
         ReactiveFormsModule,
         FontAwesomeModule,
-        BootstrapModule
+        BootstrapModule,
+        AntdModule
     ]
 })
 export class SharedModule {

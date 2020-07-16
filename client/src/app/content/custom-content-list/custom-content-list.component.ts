@@ -6,7 +6,7 @@ import {Observable} from 'rxjs';
 @Component({
     selector: 'kz-custom-content-list',
     templateUrl: './custom-content-list.component.html',
-    styleUrls: ['./custom-content-list.component.scss']
+    styleUrls: ['./custom-content-list.component.less']
 })
 export class CustomContentListComponent implements OnInit {
     customContentList$: Observable<any[]>;

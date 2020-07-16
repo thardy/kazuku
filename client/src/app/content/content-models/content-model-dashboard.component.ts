@@ -6,7 +6,7 @@ import {CustomSchema} from '../../custom-schemas/custom-schema.model';
 @Component({
   selector: 'kz-content-model-dashboard',
   templateUrl: './content-model-dashboard.component.html',
-  styleUrls: ['./content-model-dashboard.component.scss']
+  styleUrls: ['./content-model-dashboard.component.less']
 })
 export class ContentModelDashboardComponent implements OnInit {
     contentModels$: Observable<CustomSchema[]>;

@@ -1,4 +1,4 @@
-import {Routes, RouterModule} from '@angular/router';
+import {Routes, RouterModule, PreloadAllModules} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {TemplateListComponent} from './templates/template-list.component';
 import {TemplateComponent} from './templates/template.component';
@@ -10,12 +10,14 @@ import {QueryListComponent} from './queries/query-list.component';
 import {QueryComponent} from './queries/query.component';
 import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.component';
 import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
-import {CustomDataListComponent} from 'app/custom-data/custom-data-list.component';
 import {CustomDataComponent} from './custom-data/custom-data.component';
 
 // This is where we setup our routes!
 const APP_ROUTES: Routes = [
-    {path: 'login', component: LoginComponent},
+    {
+        path: 'login',
+        component: LoginComponent
+    },
     {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(mod => mod.DashboardModule),
