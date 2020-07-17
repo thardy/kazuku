@@ -1,32 +1,58 @@
-"use strict";
-var CustomDataService = require("./customDataService");
-var Promise = require("bluebird");
-var database = require("../database/database").database;
-var _ = require("lodash");
-var chai = require("chai");
-var should = chai.Should();
-var expect = chai.expect;
-var moment = require("moment");
-var Query = require("rql/query").Query;
-const testHelper = require("../common/testHelper");
+'use strict';
+import CustomDataService from './customDataService.js';
+import Promise from 'bluebird';
+import {database} from '../database/database.js';
+import pureMongoService from '../database/pureMongoService.js';
+import _ from 'lodash';
+import chai from 'chai';
+const should = chai.Should();
+const expect = chai.expect;
+import moment from 'moment';
+// var Query = require("rql/query").Query;
+import testHelper from '../common/testHelper.js';
+
+import gql from 'graphql-tag';
+import SchemaService from '../server/graphQL/schemaService.js';
+import CustomApolloServer from '../server/graphQL/customApolloServer.js';
+import apolloServerExpress from 'apollo-server-express';
+const {makeExecutableSchema} = apolloServerExpress;
+import apolloServerTesting from 'apollo-server-testing';
+const {createTestClient} = apolloServerTesting;
+
 
 //temp
-var mongoRql = require('mongo-rql');
+import mongoRql from 'mongo-rql';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 let testOrgId = testHelper.testOrgId;
 
+const GET_ALL_TEST_PRODUCTS = gql`
+  query {
+    testProducts {
+      _id,
+      name,
+      description,
+      price,
+      quantity
+    }
+  }
+`;
+
 describe("CustomDataService", function () {
     describe("CRUD", function () {
-        var customDataService = {};
-        var existingCustomData1 = {};
-        var existingCustomData2 = {};
-        var theUpdatedCustomData = {};
-        var testContentType = 'testType';
+        let customDataService = {};
+        let existingCustomData1 = {};
+        let existingCustomData2 = {};
+        let theUpdatedCustomData = {};
+        let testContentType = 'testType';
+        let query = {};
+        let mutate = {};
 
-        before(function () {
+        before(async () => {
             customDataService = new CustomDataService(database);
 
             // Insert some docs to be present before all tests start
@@ -77,7 +103,7 @@ describe("CustomDataService", function () {
                 });
         });
 
-        it("can get all data for an org", function () {
+        it("can get all data for an org", () => {
             var getByContentTypePromise = customDataService.getAll(testOrgId);
 
             return Promise.all([
@@ -210,62 +236,77 @@ describe("CustomDataService", function () {
         });
     });
 
-    describe("Resource Query Language", function () {
-        var customDataService = {};
-        var existingProducts = [];
-        var testContentType = 'testProducts';
-        var now = moment().format('MMMM Do YYYY, h:mm:ss a');
-        var newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, created: new Date('2014-01-01T00:00:00') };
-        var newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, created: new Date('2015-05-20T00:00:00') };
-        var newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, created: new Date('2015-01-27T00:00:00')  };
+    describe("GraphQL", () => {
+        let customDataService = {};
+        let schemaService = {};
+        let existingProducts = [];
+        let testContentType = 'testProducts';
+        let now = moment().format('MMMM Do YYYY, h:mm:ss a');
+        // todo: remove these.  use the testHelper.
+        // todo: figure out the whole date_released/dateReleased thing.  What is going on there?
+        let newProduct1 = { orgId: testOrgId, contentType: testContentType, name: 'Widget', description: 'It is a widget.', price: 9.99, quantity: 1000, date_released: new Date('2014-01-01T00:00:00') };
+        let newProduct2 = { orgId: testOrgId, contentType: testContentType, name: 'Log', description: 'Such a wonderful toy! It\'s fun for a girl or a boy.', price: 99.99, quantity: 20, date_released: new Date('2015-05-20T00:00:00') };
+        let newProduct3 = { orgId: testOrgId, contentType: testContentType, name: 'Doohicky', description: 'Like a widget, only better.', price: 19.99, quantity: 85, date_released: new Date('2015-01-27T00:00:00')  };
+        let testApolloServer = {};
+        let apolloTestClient = {};
 
-        before(function () {
+        before(async () => {
             customDataService = new CustomDataService(database);
-            // Insert some docs to be present before all tests start
+            schemaService = new SchemaService(database);
 
-            return testHelper.setupTestProducts();
-            // return deleteAllTestData()
-            //     .then(function(result) {
-            //         return Promise.all([
-            //             database.customData.insert(newProduct1),
-            //             database.customData.insert(newProduct2),
-            //             database.customData.insert(newProduct3)
-            //         ]);
-            //     })
-            //     .then(function(docs) {
-            //         // todo: find a more elegant way to get ids on these existing objects - maybe just use my service instead of database object
-            //         existingProducts = docs;
-            //         _.forEach(existingProducts, function (item) {
-            //             item.id = item._id.toHexString();
-            //         });
-            //         return docs;
-            //     })
-            //     .catch(error => {
-            //         console.log(error);
-            //         throw error;
-            //     });
+            await pureMongoService.connectDb();
+            const db = pureMongoService.db;
+
+            await testHelper.setupSchemasForQueryTests();
+
+            const createApolloServer = async () => {
+                const customSchema = await schemaService.getSchemaByRepoCode('');
+
+                const server = new CustomApolloServer({
+                    //schema: makeExecutableSchema({ typeDefs, resolvers })
+                    schema: customSchema,
+                    context: {
+                        db: db,
+                    },
+                });
+
+                return server;
+            };
+
+            testApolloServer = await createApolloServer();
+            apolloTestClient = createTestClient(testApolloServer);
+
+            // Insert some docs to be present before all tests start
+            return Promise.all([
+                testHelper.setupTestProducts(),
+            ]);
         });
 
         after(function () {
             // Remove all Test documents
             // return deleteAllTestData();
-            return testHelper.deleteAllTestProducts();
+            return Promise.all([
+                testHelper.deleteAllTestSchemas(),
+                testHelper.deleteAllTestProducts(),
+            ])
         });
 
         function deleteAllTestData() {
             return database.customData.remove({orgId: testOrgId, contentType: testContentType});
         }
 
-        it("can query using an RQL query object", function () {
-            var name = 'Widget';
-            var query = new Query().eq('name', name);
-            var expected = [];
-            expected.push(testHelper.newProduct1);
-            var findPromise = customDataService.find(testOrgId, query);
+        it("can query GraphQL", async () => {
+            // my first attempt at using GraphQL in my tests - I just want to make sure I can call the apollo server with a query
+            const result = await apolloTestClient.query({
+                query: GET_ALL_TEST_PRODUCTS
+            });
 
-            return findPromise.should.eventually.deep.equal(expected);
+            // this is returning an empty array
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(3);
         });
 
+        // this is old, back when I was using RQL.  Determine if there's anything of value here then delete.
 //        it("can start my own query parsing experiment", function () {
 //            let expectedResults = [newProduct1, newProduct3];
 //            let queryString = `eq(contentType, ${testContentType})&limit(2)&sort(created)`;
@@ -302,135 +343,261 @@ describe("CustomDataService", function () {
 //
 //        });
 
-        it("can query using RQL limit", function () {
-            var query = "eq(orgId,1)&eq(contentType,testContentType)&sort(created)&limit(2,0)"; // limit must be last
-            var actual = mongoRql(query);
-            let expected = {
-                sort: { created: 1 },
-                limit: 2
-            };
+        it("can filter using pagination limit", async () => {
+            const limit = 2;
+            const query = gql`
+              query {
+                testProducts(
+                  sort: { dateReleased: DESC }
+                  pagination: { limit: ${limit} }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            actual.should.have.deep.property("sort.created", expected.sort.created);
-            actual.should.have.property("limit", expected.limit);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.have.length(limit);
         });
 
-        it("can query using multiple RQL operators", function () {
-            var query = new Query().gt('price', 10.00).eq('contentType', testContentType);
-            var findPromise = customDataService.find(testOrgId, query);
+        it("can filter float fields", async () => {
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    price: { GT: 10.00 },
+                    quantity: { GT: 50 } 
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.be.instanceOf(Array),
-                findPromise.should.eventually.have.length(2)
-            ]);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.have.length(1);
+            const firstProduct = result.data.testProducts[0];
+            expect(firstProduct.name).to.equal('Doohicky');
         });
 
-        it("can query using an RQL string in method format", function () {
-            let expectedResults = [testHelper.newProduct1, testHelper.newProduct3];
-            let query = `eq(contentType,${testContentType})&sort(created)&limit(2,0)`; // limit must come last or it won't work
+        // it("can query using an RQL string in method format", function () {
+        //     let expectedResults = [testHelper.newProduct1, testHelper.newProduct3];
+        //     let query = `eq(contentType,${testContentType})&sort(created)&limit(2,0)`; // limit must come last or it won't work
+        //
+        //     let findPromise = customDataService.find(testOrgId, query);
+        //
+        //     return findPromise.should.eventually.deep.equal(expectedResults);
+        // });
+        //
+        // it("can query using an RQL string", function () {
+        //     var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&price=gt=10.5&quantity=lt=50');
+        //     //var findPromise = customDataService.find('name=Widget');
+        //
+        //     return Promise.all([
+        //         findPromise.should.eventually.be.instanceOf(Array),
+        //         findPromise.should.eventually.have.length(1),
+        //         findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
+        //     ]);
+        // });
 
-            let findPromise = customDataService.find(testOrgId, query);
+        it("can filter dates", async () => {
+            const dateFilter = '2015-05-10T00:00:00Z';
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    dateReleased: { LTE: "${dateFilter}" },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return findPromise.should.eventually.deep.equal(expectedResults);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(2);
         });
 
-        it("can query using an RQL string", function () {
-            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&price=gt=10.5&quantity=lt=50');
-            //var findPromise = customDataService.find('name=Widget');
+        // I found where they added the REGEX filter to graphql-to-mongodb - https://github.com/Soluto/graphql-to-mongodb/commit/52d91618514ab28d4280b23b10a26105a3f0c817
+        it("can query strings using regex filter", async () => {
+            const regexPattern = 'toy';
+            const query = `
+              query {
+                testProducts(
+                  filter: { 
+                    description: { REGEX: "${regexPattern}", OPTIONS: "i" }
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.be.instanceOf(Array),
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-            ]);
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(1);
+            expect(result.data.testProducts[0].name).to.equal(newProduct2.name);
         });
 
-        it("can query dates using an RQL string", function () {
-            //var findPromise = customDataService.find('created=lt=date:2015-06-10');
-            var findPromise = customDataService.find(testOrgId, 'contentType=testProducts&created=lt=date:2015-05-10T00:00:00Z');
+        it("can query custom number fields by value", async () => {
+            const quantity = newProduct3.quantity; // make sure newProduct3 always has a unique quantity in the test data
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    quantity: { EQ: ${quantity} },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            //var findPromise = customDataService.find('name=Widget');
+            const result = await apolloTestClient.query({
+                query: query
+            });
 
-//        return findPromise.then(function (docs) {
-//            var i = 0;
-//        });
-            return Promise.all([
-                findPromise.should.eventually.be.instanceOf(Array),
-                findPromise.should.eventually.have.length(2)
-            ]);
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(1);
+            expect(result.data.testProducts[0].name).to.equal(newProduct3.name);
+        });
+        it("can query custom number fields greater than value", async () => {
+            const quantity = 90;
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    quantity: { GT: ${quantity} },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
+
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(1);
+            expect(result.data.testProducts[0].name).to.equal(newProduct1.name);
+        });
+        it("can query custom number fields in range", async () => {
+            const lowRange = 5.00;
+            const highRange = 20.00;
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    price: { GTE: ${lowRange}, LTE: ${highRange} },
+                  },
+                  sort: { created: ASC }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
+
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(2);
+            expect(result.data.testProducts[0].name).to.equal(newProduct1.name);
+            expect(result.data.testProducts[1].name).to.equal(newProduct3.name);
         });
 
-        // todo: Find a way to do a contains search (RegEx would be nice)
-        it("can query custom string fields using regex", function () {
-            var query = new Query().eq('contentType', testContentType).eq('description', /.*toy.*/i); // this one works
-            var findPromise = customDataService.find(testOrgId, query);
-            //var findPromise = customDataService.find(testOrgId, "contentType={0}&description=/.*toy.*/i".format(testContentType)); // does not work
+        it("can query custom date fields by value", async () => {
+            const findDate = moment(newProduct2.date_released).toISOString(); //'2015-06-10T00:00:00Z';
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    dateReleased: { EQ: "${findDate}" },
+                  }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
 
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-            ]);
-//            return Promise.all(
-//                findPromise.should.eventually.have.length(1),
-//                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-//            );
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(1);
+            expect(result.data.testProducts[0].name).to.equal(newProduct2.name);
+        });
+        it("can query custom date fields greater than value", async () => {
+            // todo: Fix stupid lazy date, format that won't allow '2015-01-01' -> Expected type DateTime, found "2015-01-01"; DateTime cannot represent an invalid date-time-string 2015-01-01.
+            const lowRange = '2015-01-01';
+            // const lowRange = '2015-01-01T00:00:00Z';
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    dateReleased: { GT: "${lowRange}" },
+                  },
+                  sort: { dateReleased: DESC }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
+
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(2);
+            expect(result.data.testProducts[0].name).to.equal(newProduct2.name);
+            expect(result.data.testProducts[1].name).to.equal(newProduct3.name);
+        });
+        it("can query custom date fields within range", async () => {
+            const startDate = '2015-01-27';
+            // todo: this is currently failing - it succeeds if I add one day.  The LTE (less than or equal to) is not working as it should.
+            const endDate = '2015-05-20';
+            const query = gql`
+              query {
+                testProducts(
+                  filter: { 
+                    dateReleased: { GTE: "${startDate}", LTE: "${endDate}" },
+                  },
+                  sort: { dateReleased: DESC }
+                ) {
+                  _id, name, description, price, quantity, dateReleased
+                }
+              }
+            `;
+
+            const result = await apolloTestClient.query({
+                query: query
+            });
+
+            expect(result.data.testProducts).to.be.instanceOf(Array);
+            expect(result.data.testProducts).to.have.length(2);
+            expect(result.data.testProducts[0].name).to.equal(newProduct2.name);
+            expect(result.data.testProducts[1].name).to.equal(newProduct3.name);
         });
 
-        it("can query custom number fields by value", function () {
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&quantity={1}".format(testContentType, 85));
-
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct3.name)
-            ]);
-        });
-        it("can query custom number fields greater than value", function () {
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&quantity=gt={1}".format(testContentType, 90));
-
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct1.name)
-            ]);
-        });
-        it("can query custom number fields in range", function () {
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&price=ge={1}&price=le={2}&sort(created)".format(testContentType, 5.00, 20.00));
-
-            return Promise.all([
-                findPromise.should.eventually.have.length(2),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct1.name),
-                findPromise.should.eventually.have.deep.property('[1].name', newProduct3.name)
-            ]);
-        });
-
-        it("can query custom date fields by value", function () {
-            var findDate = moment(newProduct2.created).toISOString(); //'2015-06-10T00:00:00Z';
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&created=date:{1}".format(testContentType, findDate));
-
-            return Promise.all([
-                findPromise.should.eventually.have.length(1),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name)
-            ]);
-        });
-        it("can query custom date fields greater than value", function () {
-            var findDate = '2015-01-01';
-            var findPromise = customDataService.find(testOrgId, "contentType={0}&created=gt=date:{1}&sort(-created)".format(testContentType, findDate));
-
-            return Promise.all([
-                findPromise.should.eventually.have.length(2),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name),
-                findPromise.should.eventually.have.deep.property('[1].name', newProduct3.name)
-            ]);
-        });
-        it("can query custom date fields within range", function () {
-            var startDate = '2015-01-27';
-            var endDate = '2015-05-20'; // todo: this is currently failing - it succeeds if I add one day.  The le (less than or equal to) is not working.
-            var findPromise = customDataService.find(testOrgId, 'contentType={0}&created=ge=date:{1}&created=le=date:{2}&sort(-created)'.format(testContentType, startDate, endDate));
-
-            return Promise.all([
-                findPromise.should.eventually.have.length(2),
-                findPromise.should.eventually.have.deep.property('[0].name', newProduct2.name),
-                findPromise.should.eventually.have.deep.property('[1].name', newProduct3.name)
-            ]);
-        });
+        // todo: add timezone tests
     });
 
 

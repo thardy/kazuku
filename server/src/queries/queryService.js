@@ -1,10 +1,10 @@
 'use strict';
-var _ = require("lodash");
-var Promise = require("bluebird");
-var GenericService = require("../common/genericService");
-var CustomDataService = require("../customData/customDataService");
-var DependencyService = require("../dependencies/dependencyService");
-var cache = require("memory-cache");
+import _ from 'lodash';
+import Promise from 'bluebird';
+import GenericService from '../common/genericService.js';
+import CustomDataService from '../customData/customDataService.js';
+import DependencyService from '../dependencies/dependencyService.js';
+import cache from 'memory-cache';
 
 class QueryService extends GenericService {
     constructor(database) {
@@ -218,4 +218,4 @@ class QueryService extends GenericService {
 
 }
 
-module.exports = QueryService;
+export default QueryService;

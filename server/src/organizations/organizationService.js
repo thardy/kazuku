@@ -1,9 +1,9 @@
-"use strict";
-const _ = require("lodash");
-const GenericService = require("../common/genericService");
-const Promise = require('bluebird');
-const conversionService = require("../common/conversionService");
-const config = require('../server/config');
+'use strict';
+import _ from 'lodash';
+import GenericService from '../common/genericService.js';
+import Promise from 'bluebird';
+import conversionService from '../common/conversionService.js';
+import config from '../server/config/index.js';
 //let cache = require('memory-cache');
 
 class OrganizationService extends GenericService {
@@ -231,4 +231,4 @@ class OrganizationService extends GenericService {
 }
 
 
-module.exports = OrganizationService;
+export default OrganizationService;

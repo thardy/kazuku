@@ -1,5 +1,6 @@
 'use strict';
-const ObjectId = require('mongodb').ObjectID;
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
 
 const convertFilterStringIdsToObjectIds = (filter) => {
     if (filter['_id']) {
@@ -28,7 +29,7 @@ const convertObjectIdToStringId = (doc) => {
     return doc;
 };
 
-module.exports = {
+export default {
     convertObjectIdToStringId,
     convertFilterStringIdsToObjectIds,
     convertArrayOfStringIdsToObjectIds

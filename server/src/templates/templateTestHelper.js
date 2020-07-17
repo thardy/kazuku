@@ -1,7 +1,7 @@
-"use strict";
-let database = require("../database/database").database;
-let _ = require("lodash");
-const testHelper = require('../common/testHelper');
+'use strict';
+import {database} from '../database/database.js';
+import _ from 'lodash';
+import testHelper from '../common/testHelper.js';
 
 const testOrgId = testHelper.testOrgId;
 const testSiteId = testHelper.testSiteId;
@@ -121,5 +121,5 @@ function deleteAllRegenTemplates() {
     return database.templates.remove({orgId: templateTestHelper.testOrgId, name: { $regex: /^RegenerateTemplate/ }});
 }
 
-module.exports = templateTestHelper;
+export default templateTestHelper;
 

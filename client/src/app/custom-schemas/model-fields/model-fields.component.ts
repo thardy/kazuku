@@ -6,7 +6,7 @@ import {FieldTypes} from '../../common/constants/field-types';
 @Component({
     selector: 'kz-model-fields',
     templateUrl: './model-fields.component.html',
-    styleUrls: ['./model-fields.component.scss']
+    styleUrls: ['./model-fields.component.less']
 })
 export class ModelFieldsComponent extends BaseComponent implements OnInit, OnChanges {
     @Input() form: any;

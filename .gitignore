@@ -30,6 +30,6 @@ client/vendor/*/*/*
 client/vendor/*/*/*/*
 env-config.js
 development.json
-!server/bin/www
+!server/bin/www.js
 server/src/public
 server/src/siteContent

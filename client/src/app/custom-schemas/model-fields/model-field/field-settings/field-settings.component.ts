@@ -8,7 +8,7 @@ import {FormGroup} from '@angular/forms';
 @Component({
     selector: 'kz-field-settings',
     templateUrl: './field-settings.component.html',
-    styleUrls: ['./field-settings.component.scss']
+    styleUrls: ['./field-settings.component.less']
 })
 export class FieldSettingsComponent extends BaseComponent implements OnInit, AfterViewInit {
     @ViewChild('fieldSettingsTabs', {static: false}) fieldSettingsTabs: TabsetComponent;

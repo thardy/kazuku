@@ -1,8 +1,30 @@
 'use strict';
-const path = require('path');
-require('zone.js/dist/zone-node.js');
-const pureMongoService = require('./database/pureMongoService');
+import path from 'path';
+import zone from 'zone.js/dist/zone-node.js';
+import pureMongoService from './database/pureMongoService.js';
+import { fileURLToPath } from 'url';
 
+
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import passport from 'passport';
+// Setup passport auth strategies
+import passportConfig from './server/passport/index.js';
+const passportAuthStrategies = passportConfig(passport); // pass passport for configuration
+import config from './server/config/index.js';
+import session from './server/session/index.js';
+import logger from './server/logger/index.js';
+import routes from './server/routes/index.js';
+import vhost from 'vhost';
+import CustomApolloServer from './server/graphQL/customApolloServer.js';
+import apolloServerExpress from 'apollo-server-express';
+const {makeExecutableSchema} = apolloServerExpress;
+import morgan from 'morgan';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 global.appRoot = path.resolve(__dirname);
 
 function setupAuthZone(req, res, next) {
@@ -19,20 +41,6 @@ async function startServer(config) {
     // Connect to mongo before anything else happens because other services need mongo to be connected
     await pureMongoService.connectDb();
     const db = pureMongoService.db;
-
-    const express = require('express');
-    const cors = require('cors');
-    const bodyParser = require('body-parser');
-    const passport = require('passport');
-    // Setup passport auth strategies
-    const passportAuthStrategies = require('./server/passport')(passport); // pass passport for configuration
-    //const config = require('./server/config');
-    const session = require('./server/session');
-    const logger = require('./server/logger');
-    const routes = require('./server/routes');
-    const vhost = require('vhost');
-    const CustomApolloServer = require('./server/graphQL/customApolloServer');
-    const {makeExecutableSchema} = require('apollo-server-express');
 
     const createApolloServer = () => {
         const typeDefs = `
@@ -77,9 +85,9 @@ async function startServer(config) {
         path: '/graphql', //`http://kazuku.com:3001/graphql`,
     });
 
-    if (!module.parent) {
+    if (config.env !== 'test') {
         // Only use morgan if we aren't running tests.  It clutters up the test output.
-        main.use(require('morgan')('combined', {
+        main.use(morgan('combined', {
             stream: {
                 write: (message) => {
                     // Write to logs
@@ -90,7 +98,7 @@ async function startServer(config) {
     }
 
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
-    routes.map(main);
+    routes(main);
 
 // custom 404 handler.  This will prevent html being returned for 404s.
     main.use((req, res, next) => {
@@ -146,7 +154,7 @@ async function startServer(config) {
     });
 
 // Vhost app
-    let app = module.exports = express();
+    let app = express();
 
     app.use(vhost(config.hostname, main)); // Serves top level domain via main server app
     app.use(vhost(`*.${config.hostname}`, siteApp)); // Serves all subdomains via siteApp
@@ -174,4 +182,4 @@ async function startServer(config) {
 
 
 
-module.exports = startServer;
+export default startServer;

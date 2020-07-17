@@ -1,13 +1,13 @@
 'use strict';
-const _ = require("lodash");
-const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised");
+import _ from 'lodash';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 const expect = chai.expect;
 const should = chai.Should();
 chai.use(chaiAsPromised);
 
-const OrganizationService = require("./organizationService");
-const database = require("../database/database").database;
+import OrganizationService from './organizationService.js';
+import {database} from '../database/database.js';
 
 describe("OrganizationService CRUD", function () {
     let orgService = {};

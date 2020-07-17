@@ -8,7 +8,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 @Component({
     selector: 'kz-model-field',
     templateUrl: './model-field.component.html',
-    styleUrls: ['./model-field.component.scss']
+    styleUrls: ['./model-field.component.less']
 })
 export class ModelFieldComponent extends BaseComponent implements OnInit {
     @Input() field: {

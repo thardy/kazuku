@@ -1,6 +1,6 @@
-"use strict";
-var _ = require("lodash");
-var Promise = require("bluebird");
+'use strict';
+import _ from 'lodash';
+import Promise from 'bluebird';
 
 class DependencyService {
 
@@ -137,4 +137,4 @@ class DependencyService {
 
 }
 
-module.exports = DependencyService;
+export default DependencyService;

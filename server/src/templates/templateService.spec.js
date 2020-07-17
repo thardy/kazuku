@@ -1,16 +1,16 @@
-"use strict";
+'use strict';
 
-var TemplateService = require("./templateService");
-var templateTestHelper = require("./templateTestHelper");
-var database = require("../database/database").database;
-var Promise = require("bluebird");
-var testHelper = require("../common/testHelper");
-var _ = require("lodash");
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-var should = chai.Should();
-var expect = chai.expect;
-var moment = require("moment");
+import TemplateService from './templateService.js';
+import templateTestHelper from './templateTestHelper.js';
+import {database} from '../database/database.js';
+import Promise from 'bluebird';
+import testHelper from '../common/testHelper.js';
+import _ from 'lodash';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+const should = chai.Should();
+const expect = chai.expect;
+import moment from 'moment';
 
 chai.use(chaiAsPromised);
 

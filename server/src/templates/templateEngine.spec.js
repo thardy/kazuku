@@ -1,14 +1,14 @@
 'use strict';
 
-var Promise = require('bluebird');
-var TemplateEngine = require('./templateEngine');
-var QueryService = require('../queries/queryService');
-var sinon = require('sinon');
-var _ = require('lodash');
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var expect = chai.expect;
-const testHelper = require('../common/testHelper');
+import Promise from 'bluebird';
+import TemplateEngine from './templateEngine.js';
+import QueryService from '../queries/queryService.js';
+import sinon from 'sinon';
+import _ from 'lodash';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+const expect = chai.expect;
+import testHelper from '../common/testHelper.js';
 
 chai.use(chaiAsPromised);
 

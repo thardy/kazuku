@@ -1,7 +1,7 @@
-"use strict";
-var database = require("../database/database").database;
-var _ = require("lodash");
-const testHelper = require('../common/testHelper');
+'use strict';
+import {database} from '../database/database.js';
+import _ from 'lodash';
+import testHelper from '../common/testHelper.js';
 
 let testOrgId = testHelper.testOrgId;
 let testSiteId = 1;
@@ -151,6 +151,6 @@ function deleteAllQueryData() {
 }
 
 
-module.exports = queryTestHelper;
+export default queryTestHelper;
 
 

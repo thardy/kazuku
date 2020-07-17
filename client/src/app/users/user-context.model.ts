@@ -1,5 +1,5 @@
 import {User} from './user.model';
-import {Organization} from '../organizations/organization.model';
+import {Organization} from '../organizations/shared/organization.model';
 
 export class UserContext {
     user: User;

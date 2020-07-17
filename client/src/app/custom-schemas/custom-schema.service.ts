@@ -1,9 +1,9 @@
 import {Injectable, Inject} from '@angular/core';
 import {Observable} from 'rxjs';
 import {GenericService} from '../common/generic.service';
-import {CustomSchema} from 'app/custom-schemas/custom-schema.model';
 import {HttpService} from '../common/http.service';
 import {catchError, map} from 'rxjs/operators';
+import {CustomSchema} from './custom-schema.model';
 
 @Injectable({
     providedIn: 'root'

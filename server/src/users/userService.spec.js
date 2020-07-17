@@ -1,12 +1,12 @@
-const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised");
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 const expect = chai.expect;
 const should = chai.Should();
 chai.use(chaiAsPromised);
-const testHelper = require('../common/testHelper');
+import testHelper from '../common/testHelper.js';
 
-const UserService = require("./userService");
-const database = require("../database/database").database;
+import UserService from './userService.js';
+import {database} from '../database/database.js';
 
 const testOrgId = testHelper.testOrgId;
 

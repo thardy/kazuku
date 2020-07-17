@@ -1,6 +1,7 @@
-// const AgendaService = require('./agendaService');
-const agendaService = require('./agendaService');
-const ObjectId = require('mongodb').ObjectID;
+// import agendaService from './agendaService.js';
+import agendaService from './agendaService.js';
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
 
 class ScheduleService {
     constructor(database) {
@@ -62,5 +63,5 @@ class ScheduleService {
     }
 }
 
-module.exports = ScheduleService;
+export default ScheduleService;
 

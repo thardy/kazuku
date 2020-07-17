@@ -1,9 +1,9 @@
 'use strict';
-const database = require("../database/database").database;
-const CrudController = require("../common/crudController");
-const QueryService = require("./queryService");
-const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+import {database} from '../database/database.js';
+import CrudController from '../common/crudController.js';
+import QueryService from './queryService.js';
+import authHelper from '../common/authHelper.js';
+import current from '../common/current.js';
 
 class QueriesController extends CrudController {
     constructor(app) {
@@ -36,7 +36,7 @@ class QueriesController extends CrudController {
 
 }
 
-module.exports = QueriesController;
+export default QueriesController;
 
 
 

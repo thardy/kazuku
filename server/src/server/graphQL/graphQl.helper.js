@@ -1,9 +1,11 @@
-const { getGraphQLUpdateArgs, getMongoDbUpdateResolver, getGraphQLQueryArgs, getMongoDbQueryResolver } = require('graphql-to-mongodb');
-const { GraphQLList, GraphQLObjectType, GraphQLInputObjectType } = require('graphql');
-const AcknowledgeType = require('./acknowledge.type');
-const current = require('../../common/current');
-const mongoHelper = require('../../common/mongoHelper');
-const _ = require('lodash');
+import graphqlToMongoDb from 'graphql-to-mongodb';
+const {getGraphQLUpdateArgs, getMongoDbUpdateResolver, getGraphQLQueryArgs, getMongoDbQueryResolver} = graphqlToMongoDb;
+import graphql from 'graphql';
+const {GraphQLList, GraphQLObjectType, GraphQLInputObjectType} = graphql;
+import AcknowledgeType from './acknowledge.type.js';
+import current from '../../common/current.js';
+import mongoHelper from '../../common/mongoHelper.js';
+import _ from 'lodash';
 // const Auth = require('../auth/auth');
 
 
@@ -137,8 +139,7 @@ const simpleQuery = (contentType, inputType) => {
 };
 
 
-module.exports = {
-    //typeToArgs,
+export default {
     simpleQuery,
     simpleCreateMutation,
     simpleUpdateMutation,

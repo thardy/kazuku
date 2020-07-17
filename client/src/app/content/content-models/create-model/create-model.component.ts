@@ -10,7 +10,7 @@ import {takeUntil} from 'rxjs/operators';
 @Component({
     selector: 'kz-create-model',
     templateUrl: './create-model.component.html',
-    styleUrls: ['./create-model.component.scss']
+    styleUrls: ['./create-model.component.less']
 })
 export class CreateModelComponent extends BaseComponent implements OnInit {
     modelForm: FormGroup = new FormGroup({});

@@ -1,17 +1,20 @@
 'use strict';
-const config = require('../config');
-const logger = require('../logger');
-const database = require("../../database/database").database;
-const FacebookStrategy = require('passport-facebook').Strategy;
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-const LocalStrategy = require('passport-local').Strategy;
-const UserService = require('../../users/userService');
-const moment = require('moment');
-const bcrypt = require('bcrypt-nodejs');
-require('zone.js/dist/zone-node.js');
+import config from '../config/index.js';
+import logger from '../logger/index.js';
+import {database} from '../../database/database.js';
+import passportFacebook from 'passport-facebook';
+const FacebookStrategy = passportFacebook.Strategy;
+import passportGoogleOauth from 'passport-google-oauth';
+const GoogleStrategy = passportGoogleOauth.Strategy;
+import passportLocal from 'passport-local';
+const LocalStrategy = passportLocal.Strategy;
+import UserService from '../../users/userService.js';
+import moment from 'moment';
+import bcrypt from 'bcrypt-nodejs';
+import zone from 'zone.js/dist/zone-node.js';
 const SALT_WORK_FACTOR = 10;
 
-module.exports = (passport) => {
+export default (passport) => {
     let userService = new UserService(database);
 
     // the "context" parm here comes from the done(null, context) call in our LocalStrategy below
@@ -140,7 +143,8 @@ module.exports = (passport) => {
     };
 
     passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
-    passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
+    // todo: receiving "OAuthStrategy requires a consumerKey option" out of the blue.  Figure that out if you want to use GoogleStrategy
+    // passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
     passport.use('local', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',

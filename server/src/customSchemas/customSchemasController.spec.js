@@ -1,17 +1,20 @@
-const _ = require("lodash");
-const config = require('../server/config');
-const express = require("express");
-const app = require('../server');
-const request = require('supertest')(`http://${config.hostname}:${config.port}`);
-const chai = require("chai");
+import _ from 'lodash';
+import config from '../server/config/index.js';
+import express from 'express';
+import app from '../server.js';
+import supertest from 'supertest';
+const request = supertest(`http://${config.hostname}:${config.port}`);
+import chai from 'chai';
 const should = chai.Should();
 const expect = chai.expect;
-const moment = require("moment");
-const testHelper = require("../common/testHelper");
-const utils = require('../utils/index');
+import moment from 'moment';
+import testHelper from '../common/testHelper.js';
+import utils from '../utils/index.js';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 describe("ApiTests", function () {
 

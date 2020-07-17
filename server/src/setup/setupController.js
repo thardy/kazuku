@@ -1,9 +1,9 @@
 'use strict';
-const Promise = require('bluebird');
-const database = require('../database/database').database;
-const SetupService = require('./setupService');
-const OrganizationService = require('../organizations/organizationService');
-const apiHelper = require('../common/apiHelper');
+import Promise from 'bluebird';
+import {database} from '../database/database.js';
+import SetupService from './setupService.js';
+import OrganizationService from '../organizations/organizationService.js';
+import apiHelper from '../common/apiHelper.js';
 
 class SetupController {
 
@@ -54,5 +54,5 @@ class SetupController {
 
 }
 
-module.exports = SetupController;
+export default SetupController;
 

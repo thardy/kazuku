@@ -1,54 +1,94 @@
-<h1>Login</h1>
+<div class="login-page">
 
-<!--<div class="loginButton">-->
-    <!--<a href="/api/users/google">-->
-        <!--<img id="googleLoginBtnImg" src="/assets/images/googleLoginBtn.png" alt="Sign-In with Google">-->
-    <!--</a>-->
+    <div nz-row>
+        <div nz-col nzSpan="12" nzOffset="6" style="padding-top: 20vh;">
 
-    <!--<a href="/api/users/facebook">-->
-        <!--<img id="facebookLoginBtnImg" src="/assets/images/fbLoginBtn.png" alt="Sign-In with Facebook">-->
-    <!--</a>-->
+            <h1>Login</h1>
 
-    <!--<hr>-->
-    <!--<div id="or">or</div>-->
+            <form nz-form [formGroup]="loginForm" (ngSubmit)="login(loginForm)">
 
-    <form #loginForm="ngForm" (ngSubmit)="login(loginForm)" novalidate>
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Please input your username!">
+                        <nz-input-group nzPrefixIcon="user">
+                            <input type="text" nz-input formControlName="userName" placeholder="Username" />
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input class="form-control"
-                   autofocus
-                   type="email"
-                   id="email"
-                   name="email"
-                   [(ngModel)]="user.email"
-                   size="30"
-                   maxlength="100"
-                   placeholder="your@email.com">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Please input your Password!">
+                        <nz-input-group nzPrefixIcon="lock">
+                            <input type="password" nz-input formControlName="password" placeholder="Password" />
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-control>
+                        <label nz-checkbox formControlName="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <div nz-row>
+                            <div nz-col nzSpan="12">
+                                <a class="login-form-forgot" class="login-form-forgot">Forgot password</a>
+                            </div>
+                        </div>
+                        <div nz-row>
+                            <div nz-col>
+                                <button nz-button class="login-form-button" [nzType]="'primary'">Log in</button>
+                                Or
+                                <a>register now!</a>
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+
+            </form>
+
         </div>
-
-        <div class="form-group">
-            <label for="email">Password</label>
-            <input class="form-control"
-                   type="password"
-                   id="password"
-                   name="password"
-                   [(ngModel)]="user.password"
-                   placeholder="********">
-        </div>
+    </div>
 
 
-        <div class="form-row">
-            <div class="col">
-                <a href="#">forgot?</a>
-            </div>
-        </div>
 
-        <div class="form-row">
-            <div class="col">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-        </div>
 
-    </form>
-<!--</div>-->
+    <!--<form #loginForm="ngForm" (ngSubmit)="login(loginForm)" novalidate>-->
+
+    <!--    <div class="form-group">-->
+    <!--        <label for="email">Email</label>-->
+    <!--        <input class="form-control"-->
+    <!--               autofocus-->
+    <!--               type="email"-->
+    <!--               id="email"-->
+    <!--               name="email"-->
+    <!--               [(ngModel)]="user.email"-->
+    <!--               size="30"-->
+    <!--               maxlength="100"-->
+    <!--               placeholder="your@email.com">-->
+    <!--    </div>-->
+
+    <!--    <div class="form-group">-->
+    <!--        <label for="email">Password</label>-->
+    <!--        <input class="form-control"-->
+    <!--               type="password"-->
+    <!--               id="password"-->
+    <!--               name="password"-->
+    <!--               [(ngModel)]="user.password"-->
+    <!--               placeholder="********">-->
+    <!--    </div>-->
+
+
+    <!--    <div class="form-row">-->
+    <!--        <div class="col">-->
+    <!--            <a href="#">forgot?</a>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <!--    <div class="form-row">-->
+    <!--        <div class="col">-->
+    <!--            <button type="submit" class="btn btn-primary">Login</button>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <!--</form>-->
+
+</div>

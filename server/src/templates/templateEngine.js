@@ -1,13 +1,12 @@
-"use strict";
+'use strict';
 
-var assert = require('assert');
-var Promise = require("bluebird");
+import assert from 'assert';
+import Promise from 'bluebird';
 //var swig = require('swig');
 //var Liquid = require('liquid-node');
-var Liquid = require('shopify-liquid');
-var util = require('util');
-var _ = require("lodash");
-const current = require('../common/current');
+import Liquid from 'shopify-liquid';
+import _ from 'lodash';
+import current from '../common/current.js';
 
 // Constructor
 var TemplateEngine = function(args) {
@@ -77,5 +76,5 @@ var TemplateEngine = function(args) {
     return templateEngine;
 };
 
-module.exports = TemplateEngine;
+export default TemplateEngine;
 

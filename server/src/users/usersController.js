@@ -1,11 +1,11 @@
-"use strict";
-const database = require("../database/database").database;
-const passport = require('passport');
-const CrudController = require("../common/crudController");
-const UserService = require("./userService");
-const OrganizationService = require("../organizations/organizationService");
-const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+'use strict';
+import {database} from '../database/database.js';
+import passport from 'passport';
+import CrudController from '../common/crudController.js';
+import UserService from './userService.js';
+import OrganizationService from '../organizations/organizationService.js';
+import authHelper from '../common/authHelper.js';
+import current from '../common/current.js';
 // const Joi = require('joi');
 
 class UsersController extends CrudController {
@@ -148,4 +148,4 @@ class UsersController extends CrudController {
 
 }
 
-module.exports = UsersController;
+export default UsersController;

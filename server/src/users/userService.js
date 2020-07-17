@@ -1,10 +1,11 @@
-"use strict";
-const _ = require("lodash");
-const GenericService = require("../common/genericService");
-const Promise = require('bluebird');
-const conversionService = require("../common/conversionService");
-const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'));
-const config = require('../server/config');
+'use strict';
+import _ from 'lodash';
+import GenericService from '../common/genericService.js';
+import Promise from 'bluebird';
+import conversionService from '../common/conversionService.js';
+import bcryptNodejs from 'bcrypt-nodejs';
+const bcrypt = Promise.promisifyAll(bcryptNodejs);
+import config from '../server/config/index.js';
 
 class UserService extends GenericService {
     constructor(database) {
@@ -117,5 +118,5 @@ class UserService extends GenericService {
 }
 
 
-module.exports = UserService;
+export default UserService;
 

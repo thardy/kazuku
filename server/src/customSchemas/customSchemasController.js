@@ -1,9 +1,9 @@
 'use strict';
-const database = require('../database/database').database;
-const CrudController = require('../common/crudController');
-const CustomSchemaService = require('./customSchemaService');
-const authHelper = require('../common/authHelper');
-const current = require('../common/current');
+import {database} from '../database/database.js';
+import CrudController from '../common/crudController.js';
+import CustomSchemaService from './customSchemaService.js';
+import authHelper from '../common/authHelper.js';
+import current from '../common/current.js';
 
 class CustomSchemasController extends CrudController {
     constructor(app) {
@@ -83,7 +83,7 @@ class CustomSchemasController extends CrudController {
     }
 }
 
-module.exports = CustomSchemasController;
+export default CustomSchemasController;
 
 
 

@@ -6,7 +6,7 @@ const FIELD_TYPES = ['string', 'number', 'date'];
 @Component({
     selector: 'kz-basic-field-settings',
     templateUrl: './basic-field-settings.component.html',
-    styleUrls: ['./basic-field-settings.component.scss']
+    styleUrls: ['./basic-field-settings.component.less']
 })
 export class BasicFieldSettingsComponent implements OnInit {
     fieldTypes = FIELD_TYPES;

@@ -1,8 +1,8 @@
 'use strict';
-const config = require('../server/config');
-const GenericService = require('../common/genericService');
-const ScheduleService = require('../schedules/scheduleService');
-const current = require('../common/current');
+import config from '../server/config/index.js';
+import GenericService from '../common/genericService.js';
+import ScheduleService from '../schedules/scheduleService.js';
+import current from '../common/current.js';
 
 class SiteService extends GenericService {
     constructor(database) {
@@ -27,4 +27,4 @@ class SiteService extends GenericService {
 
 }
 
-module.exports = SiteService;
+export default SiteService;

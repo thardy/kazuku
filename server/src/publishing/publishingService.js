@@ -1,13 +1,13 @@
 'use strict';
-let _ = require('lodash');
-let Promise = require('bluebird');
-let QueryService = require('../queries/queryService');
-let OrganizationService = require('../organizations/organizationService');
-let SiteService = require('../sites/siteService');
-let TemplateService = require('../templates/templateService');
-let cache = require('memory-cache');
-let fs = require('fs-extra');
-let path = require('path');
+import _ from 'lodash';
+import Promise from 'bluebird';
+import QueryService from '../queries/queryService.js';
+import OrganizationService from '../organizations/organizationService.js';
+import SiteService from '../sites/siteService.js';
+import TemplateService from '../templates/templateService.js';
+import cache from 'memory-cache';
+import fs from 'fs-extra';
+import path from 'path';
 Promise.promisifyAll(fs);
 
 class PublishingService {
@@ -165,4 +165,4 @@ class PublishingService {
 
 }
 
-module.exports = PublishingService;
+export default PublishingService;

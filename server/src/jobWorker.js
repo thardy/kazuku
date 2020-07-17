@@ -1,9 +1,9 @@
 'use strict';
-const config = require('./server/config');
-const moment = require('moment');
+import config from './server/config.js';
+import moment from 'moment';
 
-const agendaService = require('./schedules/agendaService.js');
-const path = require('path');
+import agendaService from './schedules/agendaService.js';
+import path from 'path';
 
 global.appRoot = path.resolve(__dirname);
 let agenda;

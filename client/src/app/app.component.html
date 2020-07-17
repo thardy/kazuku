@@ -1,12 +1,29 @@
-<kz-workspace-actions></kz-workspace-actions>
+<nz-layout>
+    <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" nzWidth="200px">
+        <div class="logo"></div>
+        <kz-nav-bar [collapsedSidenav]="isCollapsed"></kz-nav-bar>
+    </nz-sider>
+    <nz-layout>
+        <nz-content>
+            <div class="inner-content">
+                <router-outlet></router-outlet>
+            </div>
+        </nz-content>
+        <nz-footer>©2020 Omega Creations</nz-footer>
+    </nz-layout>
+</nz-layout>
 
-<div class="container-fluid">
-    <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <kz-nav-bar></kz-nav-bar>
-        </nav>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <router-outlet></router-outlet>
-        </main>
-    </div>
-</div>
+
+
+<!--<kz-workspace-actions></kz-workspace-actions>-->
+
+<!--<div class="container-fluid">-->
+<!--    <div class="row">-->
+<!--        <nav class="col-md-2 d-none d-md-block bg-light sidebar">-->
+<!--            <kz-nav-bar></kz-nav-bar>-->
+<!--        </nav>-->
+<!--        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">-->
+<!--            <router-outlet></router-outlet>-->
+<!--        </main>-->
+<!--    </div>-->
+<!--</div>-->

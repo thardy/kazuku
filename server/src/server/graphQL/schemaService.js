@@ -1,16 +1,24 @@
+import GraphQLDateTime from 'graphql-iso-date';
+import GraphQLISODateTime from './graphQLDateTime.js';
+import GraphQLObjectId from './graphQLObjectId.js';
+
+import graphql from 'graphql';
 const {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
-       GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = require('graphql');
-const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = require('./graphql.helper');
-const {GraphQLDateTime} = require('graphql-iso-date');
-const {makeExecutableSchema} = require('apollo-server-express');
-const CustomDataService = require('../../customData/customDataService');
-const CustomSchemaService = require('../../customSchemas/customSchemaService');
-const OrganizationService = require('../../organizations/organizationService');
-const current = require('../../common/current');
-const ObjectId = require('mongodb').ObjectID;
-const mongoHelper = require('../../common/mongoHelper');
-const pluralize = require('pluralize')
-const _ = require("lodash");
+    GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = graphql;
+import graphqlHelper from './graphql.helper.js';
+const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = graphqlHelper;
+
+import apolloServerExpress from 'apollo-server-express';
+const {makeExecutableSchema} = apolloServerExpress;
+import CustomDataService from '../../customData/customDataService.js';
+import CustomSchemaService from '../../customSchemas/customSchemaService.js';
+import OrganizationService from '../../organizations/organizationService.js';
+import current from '../../common/current.js';
+import mongodb from 'mongodb';
+const ObjectId = mongodb.ObjectID;
+import mongoHelper from '../../common/mongoHelper.js';
+import pluralize from 'pluralize';
+import _ from 'lodash';
 
 const typesThatNeedFurtherProcessing = ['$ref', 'array'];
 const jsonSchemaMappingKeys = ['jsonSchemaSchema', 'jsonSchemaId', 'jsonSchemaRef'];
@@ -542,6 +550,7 @@ class SchemaService {
     getGraphQLTypeForScalarProperty(propertyType) {
         let graphQLType = GraphQLString;
 
+
         switch(propertyType) {
             case 'graphQLID':
                 graphQLType = GraphQLID;
@@ -549,17 +558,20 @@ class SchemaService {
             case 'string':
                 graphQLType = GraphQLString;
                 break;
+            case 'integer':
+                graphQLType = GraphQLInt
+                break;
             case 'number':
-                graphQLType = GraphQLInt;
+                graphQLType = GraphQLFloat;
                 break;
             case 'date':
-                graphQLType = GraphQLDateTime;
+                //graphQLType = GraphQLDateTime;
+                graphQLType = GraphQLISODateTime;
                 break;
             default:
                 graphQLType = GraphQLString;
                 break;
         }
-        // todo: types to be implemented: GraphQLFloat, ???
 
         return graphQLType;
     }
@@ -701,4 +713,4 @@ class SchemaService {
     }
 }
 
-module.exports = SchemaService;
+export default SchemaService;

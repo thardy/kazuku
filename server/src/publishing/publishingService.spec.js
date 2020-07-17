@@ -1,26 +1,28 @@
 'use strict';
 
-let database = require('../database/database').database;
-// const pureMongoService = require('../database/pureMongoService');
-let PublishingService = require('./publishingService');
-let CustomDataService = require('../customData/customDataService');
-let QueryService = require('../queries/queryService');
-let TemplateService = require('../templates/templateService');
-let pubTestHelper = require('./publishingTestHelper');
-let templateTestHelper = require('../templates/templateTestHelper');
-let queryTestHelper = require('../queries/queryTestHelper');
-const testHelper = require('../common/testHelper');
-let fs = require('fs-extra');
-const path = require('path');
-let Promise = require('bluebird');
-let _ = require('lodash');
-let chai = require('chai');
-let should = chai.Should();
-let expect = chai.expect;
+import {database} from '../database/database.js';
+// import SchemaService from '../server/graphQL/schemaService.js';
+import PublishingService from './publishingService.js';
+import CustomDataService from '../customData/customDataService.js';
+import QueryService from '../queries/queryService.js';
+import TemplateService from '../templates/templateService.js';
+import pubTestHelper from './publishingTestHelper.js';
+import templateTestHelper from '../templates/templateTestHelper.js';
+import queryTestHelper from '../queries/queryTestHelper.js';
+import testHelper from '../common/testHelper.js';
+import fs from 'fs-extra';
+import path from 'path';
+import Promise from 'bluebird';
+import _ from 'lodash';
+import chai from 'chai';
+const should = chai.Should();
+const expect = chai.expect;
 
 Promise.promisifyAll(fs);
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-things'));
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+import chaiThings from 'chai-things';
+chai.use(chaiThings);
 
 global.appRoot = path.resolve('/');
 

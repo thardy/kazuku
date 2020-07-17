@@ -1,13 +1,16 @@
 'use strict';
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+import session from 'express-session';
+import connectMongo from 'connect-mongo';
+const MongoStore = connectMongo(session);
 //const SkinStore = require('connect-mongoskin');
-const config = require('../config');
-const db = require('../../database/database').database;
+import config from '../config/index.js';
+import {database} from '../../database/database.js';
+
+let theExport = {};
 
 if (process.env.NODE_ENV === 'production') {
     // Initialize session with settings for prod
-    module.exports = session({
+    theExport = session({
         secret: config.sessionSecret,
         rolling: true,
         resave: true,
@@ -17,7 +20,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 } else {
     // Initialize session with settings for dev
-    module.exports = session({
+    theExport = session({
         secret: config.sessionSecret,
         rolling: true,
         resave: true,
@@ -28,3 +31,5 @@ if (process.env.NODE_ENV === 'production') {
         cookie: { maxAge: 3600000 }
     });
 }
+
+export default theExport;
