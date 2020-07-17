@@ -11,8 +11,8 @@ import {FormGroup} from '@angular/forms';
     styleUrls: ['./field-settings.component.less']
 })
 export class FieldSettingsComponent extends BaseComponent implements OnInit, AfterViewInit {
-    @ViewChild('fieldSettingsTabs', {static: false}) fieldSettingsTabs: TabsetComponent;
-    @ViewChild('basicFieldSettings', {static: false}) basicFieldSettings: BasicFieldSettingsComponent;
+    @ViewChild('fieldSettingsTabs') fieldSettingsTabs: TabsetComponent;
+    @ViewChild('basicFieldSettings') basicFieldSettings: BasicFieldSettingsComponent;
     fieldTitle: string;
     fieldType: FieldTypes;
     fieldUI: any;
