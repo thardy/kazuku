@@ -28,12 +28,12 @@
     "@fortawesome/angular-fontawesome": "^0.7.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
-    "@swimlane/ngx-datatable": "^15.0.2",
+    "@swimlane/ngx-datatable": "^17.1.0",
     "core-js": "^3.2.1",
     "jexl": "^2.1.1",
     "lodash": "^4.17.15",
     "ng-zorro-antd": "^9.3.0",
-    "ngx-bootstrap": "^5.1.1",
+    "ngx-bootstrap": "^5.6.1",
     "ngx-schema-form": "^2.5.4",
     "rxjs": "^6.6.0",
     "ts-helpers": "^1.1.1",
@@ -59,7 +59,7 @@
     "protractor": "^5.4.2",
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
-    "typescript": "^3.8.3",
+    "typescript": "^3.7.5",
     "webpack": "^4.39.2"
   }
 }

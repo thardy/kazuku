@@ -1,9 +1,10 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {BaseComponent} from '../../../../common/base-component';
-import {BsModalRef, TabsetComponent} from 'ngx-bootstrap';
 import {FieldTypes} from '../../../../common/constants/field-types';
 import {BasicFieldSettingsComponent} from './basic-field-settings/basic-field-settings.component';
 import {FormGroup} from '@angular/forms';
+import {TabsetComponent} from 'ngx-bootstrap/tabs';
+import {BsModalRef} from 'ngx-bootstrap/modal';
 
 @Component({
     selector: 'kz-field-settings',
