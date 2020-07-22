@@ -1,14 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FieldTypes, FieldTypesUI} from '../../../common/constants/field-types';
 import {BaseComponent} from '../../../common/base-component';
-import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FieldSettingsComponent} from './field-settings/field-settings.component';
 import {FormControl, FormGroup} from '@angular/forms';
+import {BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
 
 @Component({
     selector: 'kz-model-field',
     templateUrl: './model-field.component.html',
-    styleUrls: ['./model-field.component.scss']
+    styleUrls: ['./model-field.component.less']
 })
 export class ModelFieldComponent extends BaseComponent implements OnInit {
     @Input() field: {

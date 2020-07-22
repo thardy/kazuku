@@ -7,7 +7,7 @@ import {Router} from '@angular/router';
 @Component({
     selector: 'kz-model-list',
     templateUrl: './model-list.component.html',
-    styleUrls: ['./model-list.component.scss']
+    styleUrls: ['./model-list.component.less']
 })
 export class ModelListComponent implements OnInit {
 

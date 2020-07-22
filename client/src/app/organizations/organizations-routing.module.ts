@@ -1,9 +1,8 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import {OrganizationListComponent} from './organization-list.component';
-import {OrganizationComponent} from './organization.component';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
+import {OrganizationListComponent} from './organization-list/organization-list.component';
+import {OrganizationComponent} from './organization/organization.component';
 import {AuthGuardService} from '../common/auth/auth-guard.service';
-
 
 const routes: Routes = [
     {
@@ -24,7 +23,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
-export class OrganizationsRoutingModule { }
+export class OrganizationsRoutingModule {
+}

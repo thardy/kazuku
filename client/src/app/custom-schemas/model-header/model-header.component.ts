@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 @Component({
     selector: 'kz-model-header',
     templateUrl: './model-header.component.html',
-    styleUrls: ['./model-header.component.scss']
+    styleUrls: ['./model-header.component.less']
 })
 export class ModelHeaderComponent implements OnInit {
     @Input() model$: Observable<CustomSchema>;

@@ -13,7 +13,7 @@ import {CustomDataListComponent} from './custom-data/custom-data-list.component'
 import {QueryListComponent} from './queries/query-list.component';
 import {QueryComponent} from './queries/query.component';
 // import {TemplateService} from './templates/template.service';
-import {OrganizationService} from './organizations/organization.service';
+import {OrganizationService} from './organizations/shared/organization.service';
 import {SiteService} from './sites/site.service';
 import {LoginComponent} from './login/login.component';
 import {UserListComponent} from './users/user-list.component';
@@ -27,16 +27,16 @@ import {CustomDataComponent} from './custom-data/custom-data.component';
 import {CustomDataService} from './custom-data/custom-data.service';
 import {UnAuthenticatedInterceptor} from './unauthenticated.interceptor';
 import {HttpService} from './common/http.service';
-import { ContextComponent } from './layout/context/context.component';
+import {ContextComponent} from './layout/context/context.component';
 import {AutofocusDirective} from './common/ui/autofocus.directive';
 import {BaseComponent} from './common/base-component';
-import { WorkspaceActionsComponent } from './layout/workspace-actions/workspace-actions.component';
-import { DashboardModule } from './dashboard/dashboard.module';
-import { OrganizationsModule } from './organizations/organizations.module';
-import { SitesModule } from './sites/sites.module';
-import { PagesModule } from './pages/pages.module';
-import { SharedModule } from './shared/shared.module';
-import { SchemaModule } from './custom-schemas/schema.module';
+import {WorkspaceActionsComponent} from './layout/workspace-actions/workspace-actions.component';
+import {DashboardModule} from './dashboard/dashboard.module';
+import {OrganizationsModule} from './organizations/organizations.module';
+import {SitesModule} from './sites/sites.module';
+import {PagesModule} from './pages/pages.module';
+import {SharedModule} from './shared/shared.module';
+import {SchemaModule} from './custom-schemas/schema.module';
 
 @NgModule({
     declarations: [
@@ -65,7 +65,6 @@ import { SchemaModule } from './custom-schemas/schema.module';
         OrganizationsModule,
         SitesModule,
         PagesModule,
-        SharedModule,
         SchemaModule
     ],
     providers: [
@@ -83,8 +82,7 @@ import { SchemaModule } from './custom-schemas/schema.module';
         CustomDataService,
         {provide: WidgetRegistry, useClass: DefaultWidgetRegistry}
     ],
-    entryComponents: [
-    ],
+    entryComponents: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {

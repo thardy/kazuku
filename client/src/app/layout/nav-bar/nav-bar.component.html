@@ -1,15 +1,35 @@
-<div class="sidebar-sticky">
-    <ul class="nav flex-column">
-        <li class="nav-item" *ngFor="let navItem of navItems">
-            <a class="nav-link"
-               routerLinkActive="active"
-               [routerLink]="['/' + navItem.destination]">
-                {{navItem.name}}
-            </a>
-        </li>
-        <!--    <a class="nav-link" (click)="logout()">-->
-        <!--        Logout-->
-        <!--    </a>-->
-    </ul>
 
-</div>
+
+<ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="collapsedSidenav">
+    <li *ngFor="let navItem of navItems" nz-menu-item>
+        <a routerLinkActive="active"
+           [routerLink]="['/' + navItem.destination]">
+            <ng-container *ngIf="navItem.icon">
+                <i nz-icon [nzType]="navItem.icon" nzTheme="outline"></i>
+            </ng-container>
+            {{navItem.name}}
+        </a>
+    </li>
+</ul>
+
+
+
+<!--<ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">-->
+<!--    <li nz-submenu nzTitle="User" nzIcon="user">-->
+<!--        <ul>-->
+<!--            <li nz-menu-item>Tom</li>-->
+<!--            <li nz-menu-item>Bill</li>-->
+<!--            <li nz-menu-item>Alex</li>-->
+<!--        </ul>-->
+<!--    </li>-->
+<!--    <li nz-submenu nzTitle="Team" nzIcon="team">-->
+<!--        <ul>-->
+<!--            <li nz-menu-item>Team 1</li>-->
+<!--            <li nz-menu-item>Team 2</li>-->
+<!--        </ul>-->
+<!--    </li>-->
+<!--    <li nz-menu-item>-->
+<!--        <i nz-icon nzType="file"></i>-->
+<!--        <span>File</span>-->
+<!--    </li>-->
+<!--</ul>-->
