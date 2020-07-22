@@ -65,7 +65,7 @@
 
         <h5>Data Properties</h5>
         <div formArrayName="dataProperties">
-            <div *ngFor="let dataProperty of form.controls.dataProperties.controls; let i = index" [formGroupName]="i">
+            <div *ngFor="let dataProperty of form.controls.dataProperties['controls']; let i = index" [formGroupName]="i">
                 Name:
                 <input type="text"
                        formControlName="name">
