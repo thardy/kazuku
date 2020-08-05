@@ -1,3 +1,8 @@
+export interface UserEmailLoginInformation {
+    email: string;
+    password: string;
+}
+
 export class User {
     id: string;
     orgId: string;

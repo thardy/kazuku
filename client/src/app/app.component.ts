@@ -10,11 +10,6 @@ import {switchMap} from 'rxjs/operators';
     styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit {
-    // pageTitle$: Observable<any> = this.route.data.pipe(
-    //     switchMap((data) => {
-    //         return data.mainPageTitle;
-    //     })
-    // );
     isCollapsed = false;
     cogIcon = faCogs;
     title = 'kz works!';
@@ -24,12 +19,6 @@ export class AppComponent implements OnInit {
 
     }
 
-    ngOnInit() {
-        console.log('test');
-        this.route.data.subscribe((data: any) => {
-            console.log(data);
-        });
-        console.log(this.route);
-    }
+    ngOnInit() {}
 
 }
