@@ -28,7 +28,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     constructor(private userService: UserService,
                 private router: Router,
                 private route: ActivatedRoute,
-                private fb: FormBuilder) {}
+                private fb: FormBuilder) {
+    }
 
     ngOnInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
@@ -47,8 +48,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                 .pipe(
                     takeUntil(this.ngUnsubscribe)
                 )
-                .subscribe(
-                    (result) => {
+                .subscribe((result) => {
+                        console.log(result);
                         if (this.returnUrl) {
                             this.router.navigate([this.returnUrl]);
                         } else {

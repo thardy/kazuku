@@ -1,8 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {faCogs} from '@fortawesome/free-solid-svg-icons';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {UserService} from './users/user.service';
 
 @Component({
     selector: 'kz-root',
@@ -11,14 +8,15 @@ import {switchMap} from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
     isCollapsed = false;
-    cogIcon = faCogs;
-    title = 'kz works!';
 
-    constructor(private router: Router,
-                private route: ActivatedRoute) {
+    constructor(private userService: UserService) {
 
     }
 
     ngOnInit() {}
+
+    logout() {
+        this.userService.logout();
+    }
 
 }

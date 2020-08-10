@@ -82,5 +82,3 @@ export class GenericService<T extends BaseModel> {
         return observableThrowError(error || 'Server error');
     }
 }
-
-

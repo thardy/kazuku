@@ -13,12 +13,13 @@ export function userReducer(state: UserState = INITIAL_STATE, action: userAction
 
         case UserActionTypes.USER_LOGIN_SUCCESS:
             console.log(action.payload);
-            const userInfo = action.payload;
+            const userContext = action.payload;
             return {
                 ...state,
                 loading: false,
                 loaded: true,
-                user: userInfo
+                user: userContext.user,
+                organization: userContext.org
             };
 
         case UserActionTypes.USER_LOGIN_FAILURE:

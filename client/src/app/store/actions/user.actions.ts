@@ -1,5 +1,6 @@
 import {Action} from '@ngrx/store';
 import {User, UserEmailLoginInformation} from '../../users/user.model';
+import {UserContext} from '../../users/user-context.model';
 
 export enum UserActionTypes {
     USER_LOGIN = '[User] Login',
@@ -17,7 +18,7 @@ export class LoginUser implements Action {
 export class LoginUserSuccess implements Action {
     readonly type = UserActionTypes.USER_LOGIN_SUCCESS;
 
-    constructor(public payload: User) {
+    constructor(public payload: UserContext) {
     }
 }
 
