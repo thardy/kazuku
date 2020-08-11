@@ -37,6 +37,15 @@ import {SitesModule} from './sites/sites.module';
 import {PagesModule} from './pages/pages.module';
 import {SharedModule} from './shared/shared.module';
 import {SchemaModule} from './custom-schemas/schema.module';
+import {StoreModule} from '@ngrx/store';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {environment} from '../environments/environment';
+import {EffectsModule} from '@ngrx/effects';
+import {StoreRouterConnectingModule} from '@ngrx/router-store';
+import {EntityDataModule} from '@ngrx/data';
+import {entityConfig} from './entity-metadata';
+
+import {reducers, effects} from './store';
 
 @NgModule({
     declarations: [
@@ -65,7 +74,12 @@ import {SchemaModule} from './custom-schemas/schema.module';
         OrganizationsModule,
         SitesModule,
         PagesModule,
-        SchemaModule
+        SchemaModule,
+        StoreModule.forRoot(reducers, {}),
+        StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
+        EffectsModule.forRoot(effects),
+        StoreRouterConnectingModule.forRoot(),
+        EntityDataModule.forRoot(entityConfig)
     ],
     providers: [
         {

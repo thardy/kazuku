@@ -1,4 +1,3 @@
-
 import {throwError as observableThrowError, Observable, BehaviorSubject} from 'rxjs';
 import {Injectable, Inject} from '@angular/core';
 
@@ -8,6 +7,8 @@ import {UserContext} from './user-context.model';
 import {GenericService} from '../common/generic.service';
 import {HttpService} from '../common/http.service';
 import {catchError, map, tap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {LoginUserSuccess} from '../store/actions';
 
 @Injectable()
 export class UserService extends GenericService<User> {
@@ -16,7 +17,8 @@ export class UserService extends GenericService<User> {
         userContext: UserContext
     };
 
-    constructor(@Inject(HttpService) http) {
+    constructor(@Inject(HttpService) http,
+                private store: Store<any>) {
         super('users', http);
         this.dataStore = {userContext: new UserContext()};
         this._currentUserContext = <BehaviorSubject<UserContext>>new BehaviorSubject(new UserContext());
@@ -30,6 +32,7 @@ export class UserService extends GenericService<User> {
     login(email: string, password: string) {
         return this.http.post(`${this.baseUrl}/login`, {email: email, password: password})
             .pipe(
+                tap(res => console.log(res)),
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))
             );
@@ -62,6 +65,7 @@ export class UserService extends GenericService<User> {
             .pipe(
                 map(response => <UserContext>this.extractAnyData(response)),
                 tap(userContext => {
+                        this.store.dispatch(new LoginUserSuccess(userContext));
                         this.dataStore.userContext = userContext;
                         // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
                         this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
