@@ -90,6 +90,9 @@ class UserService extends GenericService {
     }
 
     verifyPassword(candidatePassword, hashedPassword) {
+        // bcrypt handles comparing the plain text password with the hashed password for you.  I think it
+        //  gets the salt out of the hashed password and uses it on the plain text password, but they aren't
+        //  super forthcoming about the implementation.
         return bcrypt.compareAsync(candidatePassword, hashedPassword);
     }
 
