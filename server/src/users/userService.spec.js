@@ -10,7 +10,7 @@ import {database} from '../database/database.js';
 
 const testOrgId = testHelper.testOrgId;
 
-describe("UserService CRUD", function () {
+describe("AuthService CRUD", function () {
     let userService = {};
     let existingUser = {};
 
@@ -48,7 +48,7 @@ describe("UserService CRUD", function () {
 
     it("can throw error while getting user by Id, if the id is not specified", () => {
         let getByIdPromise = userService.getById();
-        return getByIdPromise.should.be.rejectedWith('Incorrect number of arguments passed to UserService.getById');
+        return getByIdPromise.should.be.rejectedWith('Incorrect number of arguments passed to AuthService.getById');
     });
 
     it("can get user by email", () => {
@@ -77,7 +77,7 @@ describe("UserService CRUD", function () {
 
     it("can throw error while creating user, if orgId and user object is not specified", () => {
         let createPromise = userService.create({});
-        return createPromise.should.be.rejectedWith("Incorrect number of arguments passed to UserService.create");
+        return createPromise.should.be.rejectedWith("Incorrect number of arguments passed to AuthService.create");
     });
 
     it("can hash and verify password", () => {

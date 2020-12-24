@@ -1,11 +1,11 @@
 import {Injectable, Injector, OnDestroy} from '@angular/core';
 import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse} from '@angular/common/http';
 import {Observable, Subject} from 'rxjs';
-import {UserService} from './users/user.service';
+import {AuthService} from '../auth/auth.service';
 import {tap} from 'rxjs/operators';
 
 @Injectable()
-export class UnAuthenticatedInterceptor implements HttpInterceptor, OnDestroy {
+export class UnAuthenticatedResponseInterceptor implements HttpInterceptor, OnDestroy {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -21,10 +21,11 @@ export class UnAuthenticatedInterceptor implements HttpInterceptor, OnDestroy {
         return next.handle(req).pipe(
             tap(event => {
             }, err => {
-                if (err instanceof HttpErrorResponse && err.status === 401) {
-                    const userService = this.injector.get(UserService);
+                if (err instanceof HttpErrorResponse && err.status === 401 || err.status === 403) {
+                    const userService = this.injector.get(AuthService);
+                    const error = err.status === 401 ? 'Unauthenticated' : 'Unauthorized';
 
-                    console.log('Unauthenticated request made to a secure api... logging out.');
+                    console.log(`${error} request made to a secure api... logging out.`);
                     userService.clearClientsideAuth();
                     window.location.href = `/#/login`;
                     window.location.reload();

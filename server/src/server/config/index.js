@@ -16,6 +16,7 @@ if (process.env.NODE_ENV === 'production') {
         mongoDbUrl: process.env.mongoDbUrl,
         databaseName: process.env.databaseName,
         sessionSecret: process.env.sessionSecret,
+        clientSecret: process.env.clientSecret,
         siteDefaults: {
             defaultRegenerationInterval: process.env.defaultRegenerationInterval
         },

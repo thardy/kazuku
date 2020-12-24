@@ -8,11 +8,14 @@ import passportGoogleOauth from 'passport-google-oauth';
 const GoogleStrategy = passportGoogleOauth.Strategy;
 import passportLocal from 'passport-local';
 const LocalStrategy = passportLocal.Strategy;
+import passportJwt from 'passport-jwt';
+const JWTstrategy = passportJwt.Strategy;
+const ExtractJWT = passportJwt.ExtractJwt;
 import UserService from '../../users/userService.js';
-import moment from 'moment';
-import bcrypt from 'bcrypt-nodejs';
-import zone from 'zone.js/dist/zone-node.js';
-const SALT_WORK_FACTOR = 10;
+// import moment from 'moment';
+// import bcrypt from 'bcrypt-nodejs';
+// import zone from 'zone.js/dist/zone-node.js';
+// const SALT_WORK_FACTOR = 10;
 
 export default (passport) => {
     let userService = new UserService(database);
@@ -24,6 +27,7 @@ export default (passport) => {
     });
 
     // the "context" parm here comes from the persisted record in mongo session collection (verify)
+    // serializeUser/deserializeUser are just used in passport session usage.  I've moved this to authHelper now that I'm using jwt.
     passport.deserializeUser((context, done) => {
         // Find the user using id
         userService.getById(context.user.id)
@@ -35,6 +39,7 @@ export default (passport) => {
                     logger.log('error', 'Error when deserializing the user: User not found');
                 }
 
+                // Zone current user context is set here
                 const fullContext = { user: user, orgId: context.orgId }; // orgId here is the "activeOrgId", and can be changed by metaAdmins when impersonating different orgs
                 Zone.current.context = fullContext;
                 done(null, fullContext); // fullContext attaches to the request as req.user - we are going to put fullContext into req.user
@@ -99,7 +104,8 @@ export default (passport) => {
 
                     addSocialProfileProperties(newUser, socialLogin, accessToken, refreshToken, profile);
 
-                    req.session.authenticatedUser = newUser;
+                    // getting rid of session - we should probably remove all of this
+                    //req.session.authenticatedUser = newUser;
 
                     // do we really need to get an email for a socially authenticated user?
                     // if so, we'll want to verify the email they provide
@@ -145,53 +151,56 @@ export default (passport) => {
     passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
     // todo: receiving "OAuthStrategy requires a consumerKey option" out of the blue.  Figure that out if you want to use GoogleStrategy
     // passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
+
+    // this is still used with jwt auth
     passport.use('local', new LocalStrategy({
             usernameField: 'email',
             passwordField: 'password',
             passReqToCallback: true
         },
-        function(req, email, password, done) {
-            console.log('inside local strategy');
+        async (req, email, password, done) => {
+            let loginUser = null;
             try {
                 userService.getByEmail(email)
                     .then((user) => {
-                        if (user === null) {
-                            //let err = new APIError(`Email '${email}' not found`, httpStatus.UNAUTHORIZED, true);
-                            return done(null, false, {message: `Email '${email}' not found`});
+                        let promise = Promise.resolve(null);
+                        loginUser = user;
+                        if (user !== null) {
+                            promise = userService.verifyPassword(password, user.password);
                         }
 
-                        userService.verifyPassword(password, user.password)
-                            .then((isMatch) => {
-                                if (isMatch) {
-                                    const context = {
-                                        user: {
-                                            id: user.id,
-                                            email: user.email,
-                                            firstName: user.firstName,
-                                            lastName: user.lastName,
-                                            lastLoggedIn: user.lastLoggedIn
-                                        },
-                                        orgId: user.orgId  // this will be stored in session and can be changed by metaAdmins
-                                    };
-                                    // todo: save new lastLoggedIn date
-                                    // return done(null, {
-                                    //     id: user.id,
-                                    //     email: user.email,
-                                    //     firstName: user.firstName,
-                                    //     lastName: user.lastName,
-                                    //     lastLoggedIn: user.lastLoggedIn
-                                    // });
-                                    // the second parm here is the "context" or first parm in the serializeUser call, it should be whatever we want to store in session
-                                    return done(null, context);
-                                }
-                                else {
-                                    return done(null, false, {message: `Invalid email or password`});
-                                }
-                            })
-                            .catch(err => {
-                                err.message = `ERROR: passport/index.js -> attempted login with email = ${email}.  Message: ${err.message}`;
-                                return done(err);
-                            });
+                        return promise;
+                    })
+                    .then((isMatch) => {
+                        if (isMatch === null) {
+                            return done(null, false, {message: `Email '${email}' not found`});
+                        }
+                        else if (isMatch) {
+                            const context = {
+                                user: {
+                                    id: loginUser.id,
+                                    email: loginUser.email,
+                                    firstName: loginUser.firstName,
+                                    lastName: loginUser.lastName,
+                                    displayName: loginUser.displayName,
+                                    lastLoggedIn: loginUser.lastLoggedIn
+                                },
+                                orgId: loginUser.orgId  // this will be stored in session and can be changed by metaAdmins
+                            };
+                            // todo: save new lastLoggedIn date
+                            // return done(null, {
+                            //     id: loginUser.id,
+                            //     email: loginUser.email,
+                            //     firstName: loginUser.firstName,
+                            //     lastName: loginUser.lastName,
+                            //     lastLoggedIn: loginUser.lastLoggedIn
+                            // });
+                            // the second parm here is the "context" or first parm in the serializeUser call, it should be whatever we want to store in session
+                            return done(null, context, { message: 'Login Successful' });
+                        }
+                        else {
+                            return done(null, false, {message: `Invalid email or password`});
+                        }
                     })
                     .catch(error => {
                         error.message = `ERROR: passport/index.js -> attempted login with email = ${email}.  Message: ${error.message}`;
@@ -203,4 +212,21 @@ export default (passport) => {
             }
         }
     ));
+
+    passport.use(
+        new JWTstrategy(
+            {
+                secretOrKey: config.clientSecret,
+                jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+            },
+            async (token, done) => {
+                // token is our full user context ({ user, orgId }, where orgId is the selected orgContext, not necessarily the orgId of the user)
+                try {
+                    return done(null, token);
+                } catch (error) {
+                    done(error);
+                }
+            }
+        )
+    );
 };

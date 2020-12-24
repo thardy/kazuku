@@ -1,8 +1,8 @@
 import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs';
-import {UserService} from '../../users/user.service';
-import {UserContext} from '../../users/user-context.model';
+import {AuthService} from '../../common/auth/auth.service';
+import {UserContext} from '../../common/auth/user-context.model';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
@@ -17,12 +17,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
     userContext: UserContext = new UserContext();
     navItems;
 
-    constructor(private userService: UserService, private router: Router) {
+    constructor(private userService: AuthService, private router: Router) {
     }
 
     ngOnInit() {
         this.navItems = this.getNavItems();
-        this.userService.currentUserContext
+        this.userService.userContext$
             .pipe(
                 takeUntil(this.ngUnsubscribe)
             )

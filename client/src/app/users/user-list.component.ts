@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {User} from "./user.model";
-import {UserService} from "./user.service";
+import {User} from "../common/auth/user.model";
+import {AuthService} from "../common/auth/auth.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -11,7 +11,7 @@ export class UserListComponent implements OnInit {
 
     users: User[] = [];
 
-    constructor(private userService: UserService, private router: Router) {
+    constructor(private userService: AuthService, private router: Router) {
     }
 
     ngOnInit() {

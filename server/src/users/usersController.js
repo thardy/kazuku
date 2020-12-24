@@ -1,11 +1,13 @@
 'use strict';
 import {database} from '../database/database.js';
 import passport from 'passport';
+import jwt from 'jsonwebtoken';
 import CrudController from '../common/crudController.js';
 import UserService from './userService.js';
 import OrganizationService from '../organizations/organizationService.js';
 import authHelper from '../common/authHelper.js';
 import current from '../common/current.js';
+import config from '../server/config/index.js';
 // const Joi = require('joi');
 
 class UsersController extends CrudController {
@@ -42,7 +44,47 @@ class UsersController extends CrudController {
         app.get(`/api/${this.resourceName}/google`, passport.authenticate('google', { scope : ['profile', 'email'] }));
         app.get(`/api/${this.resourceName}/google/callback`, passport.authenticate('google'), this.afterAuth.bind(this));
 
-        app.post(`/api/${this.resourceName}/login`, passport.authenticate('local'), this.afterAuth.bind(this));
+        app.post(
+            `/api/${this.resourceName}/login`,
+            //passport.authenticate('local'),
+            async (req, res, next) => {
+                passport.authenticate(
+                    'local',
+                    async (err, context, info) => {
+                        try {
+                            if (err || !context) {
+                                const message = info && info.message ? info.message : 'An error occurred on login.';
+                                const error = new Error(message);
+                                return next(error);
+                            }
+
+                            req.login(
+                                context,
+                                { session: false },
+                                async (error) => {
+                                    if (error) return next(error);
+
+                                    // todo: test this
+                                    //  get client working with the token
+                                    //  get server working purely as an api
+                                    const body = { user: context.user, orgId: context.orgId };
+                                    const token = jwt.sign(body, config.clientSecret);
+
+                                    return res.json({ token });
+                                }
+                            );
+                        } catch (error) {
+                            return next(error);
+                        }
+                    }
+                )(req, res, next);
+            },
+            async(req, res, next) => {
+                this.afterAuth(req, res);
+            }
+        );
+
+
         //app.post(`/api/${this.resourceName}/create-social-account`, this.createSocialAccount.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
         app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));

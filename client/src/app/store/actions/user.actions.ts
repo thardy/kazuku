@@ -1,6 +1,6 @@
 import {Action} from '@ngrx/store';
-import {User, UserEmailLoginInformation} from '../../users/user.model';
-import {UserContext} from '../../users/user-context.model';
+import {User, UserEmailLoginInformation} from '../../common/auth/user.model';
+import {UserContext} from '../../common/auth/user-context.model';
 
 export enum UserActionTypes {
     USER_LOGIN = '[User] Login',

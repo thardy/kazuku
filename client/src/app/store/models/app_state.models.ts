@@ -1,5 +1,5 @@
-import {User} from '../../users/user.model';
-import {Organization} from '../../organizations/shared/organization.model';
+import {User} from '../../common/auth/user.model';
+import {Organization} from '../../common/auth/organization.model';
 
 export interface UserState {
     loading: boolean;
