@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
 import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'ngx-schema-form';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
@@ -18,14 +18,14 @@ import {SiteService} from './sites/site.service';
 import {LoginComponent} from './login/login.component';
 import {UserListComponent} from './users/user-list.component';
 import {QueryService} from './queries/query.service';
-import {UserService} from './users/user.service';
+import {AuthService} from './common/auth/auth.service';
 import {SetupComponent} from './setup/setup.component';
 import {SetupService} from './setup/setup.service';
 import {SetupGuardService} from './setup/setup-guard.service';
 import {AuthGuardService} from './common/auth/auth-guard.service';
 import {CustomDataComponent} from './custom-data/custom-data.component';
 import {CustomDataService} from './custom-data/custom-data.service';
-import {UnAuthenticatedInterceptor} from './unauthenticated.interceptor';
+import {UnAuthenticatedResponseInterceptor} from './common/interceptors/unauthenticated-response.interceptor';
 import {HttpService} from './common/http.service';
 import {ContextComponent} from './layout/context/context.component';
 import {AutofocusDirective} from './common/ui/autofocus.directive';
@@ -46,6 +46,7 @@ import {EntityDataModule} from '@ngrx/data';
 import {entityConfig} from './entity-metadata';
 
 import {reducers, effects} from './store';
+import {IdbService} from './common/indexed-db/idb.service';
 
 @NgModule({
     declarations: [
@@ -83,21 +84,41 @@ import {reducers, effects} from './store';
     ],
     providers: [
         {
-            provide: HTTP_INTERCEPTORS, useClass: UnAuthenticatedInterceptor, multi: true,
+            provide: HTTP_INTERCEPTORS, useClass: UnAuthenticatedResponseInterceptor, multi: true,
         },
         HttpService,
         OrganizationService,
         SiteService,
         QueryService,
-        UserService,
+        AuthService,
         SetupService,
         SetupGuardService,
         AuthGuardService,
         CustomDataService,
-        {provide: WidgetRegistry, useClass: DefaultWidgetRegistry}
+        {provide: WidgetRegistry, useClass: DefaultWidgetRegistry},
+        {
+            provide: APP_INITIALIZER,
+            useFactory: idbProviderFactory,
+            deps: [IdbService],
+            multi: true
+        }
     ],
     entryComponents: [],
     bootstrap: [AppComponent]
 })
+
 export class AppModule {
+}
+
+export function idbProviderFactory(provider: IdbService) {
+    // this is the sequence of events we need to complete before initializing the application.
+    //  these things need to happen before ANYTHING else in order to guarantee smooth operation.
+    return () => {
+        return provider.connectToIDB()
+            .then(() => {
+                // if we have a service that needs to use idb before anything else happens, initialize it here (and add as
+                //  a parameter to this factory function as well as to "deps" in the provider above).
+                console.log(`Connected to indexed-db`);
+            });
+    };
 }

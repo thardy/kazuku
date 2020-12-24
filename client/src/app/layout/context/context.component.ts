@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../users/user.service';
+import {AuthService} from '../../common/auth/auth.service';
 import {BaseComponent} from '../../common/base-component';
-import {UserContext} from '../../users/user-context.model';
+import {UserContext} from '../../common/auth/user-context.model';
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {faAtom} from '@fortawesome/free-solid-svg-icons';
 import {Observable} from 'rxjs';
@@ -13,12 +13,12 @@ import {Observable} from 'rxjs';
 export class ContextComponent extends BaseComponent implements OnInit {
     userContext$: Observable<UserContext>;
 
-    constructor(private userService: UserService) {
+    constructor(private userService: AuthService) {
         super();
     }
 
     ngOnInit() {
-        this.userContext$ = this.userService.currentUserContext
+        this.userContext$ = this.userService.userContext$
             .pipe(
                 map(currentUser => {
                     const modifiedUser = {...currentUser, icon: faAtom};

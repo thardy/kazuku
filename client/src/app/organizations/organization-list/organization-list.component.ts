@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Organization} from '../shared/organization.model';
+import {Organization} from '../../common/auth/organization.model';
 import {OrganizationService} from '../shared/organization.service';
 import {Router} from '@angular/router';
-import {UserService} from '../../users/user.service';
+import {AuthService} from '../../common/auth/auth.service';
 import {BaseComponent} from '../../common/base-component';
-import {UserContext} from '../../users/user-context.model';
+import {UserContext} from '../../common/auth/user-context.model';
 import {startWith, takeUntil} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
@@ -14,12 +14,12 @@ import {Observable} from 'rxjs';
 })
 export class OrganizationListComponent extends BaseComponent implements OnInit {
     organizations$: Observable<Organization[]> = this.organizationService.getAll();
-    userContext$: Observable<UserContext> = this.userService.currentUserContext;
+    userContext$: Observable<UserContext> = this.userService.userContext$;
 
     public showHelp = false;
 
     constructor(private organizationService: OrganizationService,
-                private userService: UserService,
+                private userService: AuthService,
                 private router: Router) {
         super();
         this.userContext$.pipe(

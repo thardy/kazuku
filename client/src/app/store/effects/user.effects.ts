@@ -1,15 +1,15 @@
 import {Injectable} from '@angular/core';
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {UserService} from '../../users/user.service';
+import {AuthService} from '../../common/auth/auth.service';
 import * as userActions from '../actions';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
-import {User} from '../../users/user.model';
+import {User} from '../../common/auth/user.model';
 
 @Injectable()
 export class UserEffects {
     constructor(private actions$: Actions,
-                private userService: UserService) {}
+                private userService: AuthService) {}
 
     // @Effect()
     // loginUser$ = this.actions$.pipe(

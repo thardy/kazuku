@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {UserService} from '../users/user.service';
+import {AuthService} from '../common/auth/auth.service';
 import {Subject} from 'rxjs';
-import {User} from '../users/user.model';
+import {User} from '../common/auth/user.model';
 
 import {Router, ActivatedRoute} from '@angular/router';
 import {takeUntil} from 'rxjs/operators';
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private userService: UserService,
+    constructor(private userService: AuthService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private fb: FormBuilder) {
@@ -50,6 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 )
                 .subscribe((result) => {
                         console.log(result);
+                        // todo: fix this to check for valid login - there's no check!
                         if (this.returnUrl) {
                             this.router.navigate([this.returnUrl]);
                         } else {

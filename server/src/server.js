@@ -13,7 +13,7 @@ import passport from 'passport';
 import passportConfig from './server/passport/index.js';
 const passportAuthStrategies = passportConfig(passport); // pass passport for configuration
 import config from './server/config/index.js';
-import session from './server/session/index.js';
+//import session from './server/session/index.js';
 import logger from './server/logger/index.js';
 import routes from './server/routes/index.js';
 import vhost from 'vhost';
@@ -75,9 +75,9 @@ async function startServer(config) {
 
 // sessions has to be used before router is mounted
     main.use(setupAuthZone);
-    main.use(session);
+    //main.use(session);
     main.use(passport.initialize());
-    main.use(passport.session());
+    //main.use(passport.session());
     playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
         app: main,
         path: '/graphql', //`http://kazuku.com:3001/graphql`,

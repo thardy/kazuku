@@ -14,7 +14,7 @@ class UserService extends GenericService {
 
     getById(id) {
         if (arguments.length !== 1) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to UserService.getById'));
+            return Promise.reject(new Error('Incorrect number of arguments passed to AuthService.getById'));
         }
         if (!this.isValidObjectId(id)) {
             return Promise.reject(new TypeError('id is not a valid ObjectId'));
@@ -36,7 +36,7 @@ class UserService extends GenericService {
 
     create(orgId, user) {
         if (arguments.length !== 2) {
-            return Promise.reject(new Error('Incorrect number of arguments passed to UserService.create'));
+            return Promise.reject(new Error('Incorrect number of arguments passed to AuthService.create'));
         }
         user.orgId = orgId;
         let valError = this.validate(user);

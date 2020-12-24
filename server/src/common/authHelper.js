@@ -1,24 +1,40 @@
 'use strict';
 import {database} from '../database/database.js';
 import OrganizationService from '../organizations/organizationService.js';
+import passport from 'passport';
+import UserService from '../users/userService.js';
+import logger from '../server/logger';
 
 const orgService = new OrganizationService(database);
+const userService = new UserService(database);
 
 // A middleware that checks to see if the user is authenticated & logged in
-const isAuthenticatedWithAdminUser = (req, res, next) => {
-    let isAuthenticated = false;
-    const isAuthenticatedWithAdminUser = req.isAuthenticated();
+const isAuthenticatedWithAdminUser = async (req, res, next) => {
+    passport.authenticate('jwt', { session: false }, async (err, context, info) => {
+        if (err) { return next(err); }
+        if (!context) {
+            res.status(401);
+            return res.send('Unauthenticated');
+        }
 
-    //isAuthenticated = isAuthenticatedWithAdminUser ? true : isAuthenticateWithApiConsumer(req);
-    isAuthenticated = isAuthenticatedWithAdminUser;
+        // Zone current user context is set here
+        Zone.current.context = context;
+        req.user = context;
+        return next();
+    })(req, res, next);
 
-    if (isAuthenticated) {
-        next();
-    }
-    else {
-        res.status(401);
-        res.send('Unauthenticated');
-    }
+    // let isAuthenticated = false;
+    // const isAuthenticatedWithAdminUser = req.isAuthenticated();
+
+    // isAuthenticated = isAuthenticatedWithAdminUser;
+    //
+    // if (isAuthenticated) {
+    //     next();
+    // }
+    // else {
+    //     res.status(401);
+    //     res.send('Unauthenticated');
+    // }
 };
 
 const isAuthenticatedWithApiConsumer = async (req, res, next) => {
@@ -33,6 +49,7 @@ const isAuthenticatedWithApiConsumer = async (req, res, next) => {
             const orgId = await orgService.validateRepoAuthToken(orgCode, submittedAuthToken);
             isAuthenticatedWithApiConsumer = !!orgId;
             const fullContext = { user: {firstName: 'Api', lastName: 'Consumer', email:'api_consumer'}, orgId: orgId };
+            // Zone current user context is set here
             Zone.current.context = fullContext;
         }
     }

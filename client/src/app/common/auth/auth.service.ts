@@ -1,28 +1,25 @@
 import {throwError as observableThrowError, Observable, BehaviorSubject} from 'rxjs';
 import {Injectable, Inject} from '@angular/core';
 
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {User} from './user.model';
 import {UserContext} from './user-context.model';
-import {GenericService} from '../common/generic.service';
-import {HttpService} from '../common/http.service';
+import {GenericService} from '../generic.service';
+import {HttpService} from '../http.service';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {LoginUserSuccess} from '../store/actions';
+import {LoginUserSuccess} from '../../store/actions';
 
 @Injectable()
-export class UserService extends GenericService<User> {
-    private _currentUserContext: BehaviorSubject<UserContext>;
-    private dataStore: {  // This is where we will store our data in memory
-        userContext: UserContext
-    };
+export class AuthService extends GenericService<User> {
+    private userContextSubject: BehaviorSubject<UserContext>;
+    userContext$: Observable<UserContext>;
 
     constructor(@Inject(HttpService) http,
                 private store: Store<any>) {
         super('users', http);
-        this.dataStore = {userContext: new UserContext()};
-        this._currentUserContext = <BehaviorSubject<UserContext>>new BehaviorSubject(new UserContext());
-
+        this.userContextSubject = new BehaviorSubject<UserContext>(new UserContext());
+        this.userContext$ = this.userContextSubject.asObservable();
     }
 
     get currentUserContext(): Observable<any> {
@@ -100,6 +97,25 @@ export class UserService extends GenericService<User> {
         this.dataStore.userContext = new UserContext();
         // Send out an empty UserContext to all subscribers
         this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
+    }
+
+    isCallToSecureApi(url: string) {
+        let isProtectedApiUrl = false;
+
+        if (url.startsWith(environment.kazukuApiUrl)) {
+            if (url.startsWith(`${environment.kazukuApiUrl}/users/login`)
+                || url.startsWith(`${environment.kazukuApiUrl}/users/logout`)
+                || url.startsWith(`${environment.kazukuApiUrl}/users/register`)
+                //|| url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingauthcode`)
+                //|| url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingrefreshtoken`)
+            ) {
+                isProtectedApiUrl = false;
+            }
+            else {
+                isProtectedApiUrl = true;
+            }
+        }
+        return isProtectedApiUrl;
     }
 
     handleError(error) {

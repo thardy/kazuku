@@ -1,4 +1,5 @@
 'use strict';
+// DEPRECATED - we are no longer using session
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
 const MongoStore = connectMongo(session);

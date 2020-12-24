@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from './users/user.service';
+import {AuthService} from './common/auth/auth.service';
 
 @Component({
     selector: 'kz-root',
@@ -9,7 +9,7 @@ import {UserService} from './users/user.service';
 export class AppComponent implements OnInit {
     isCollapsed = false;
 
-    constructor(private userService: UserService) {
+    constructor(private userService: AuthService) {
 
     }
 
