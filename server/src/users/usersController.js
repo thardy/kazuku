@@ -164,7 +164,7 @@ class UsersController extends CrudController {
                 console.log(err);
             });
 
-            // grab the new org, just like getUserContext above
+            // grab the new org, just like getAuthenticatedUserFromServer above
             return this.organizationService.getById(req.session.passport.user.orgId)
                 .then((org) => {
                     const userContext = {user: context.user, org: org};
