@@ -8,13 +8,13 @@ import {catchError} from 'rxjs/operators';
 @Injectable()
 export class AuthGuardService implements CanActivate {
 
-    constructor(private userService: AuthService, private router: Router) {
+    constructor(private authService: AuthService, private router: Router) {
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        if (!this.userService.isLoggedIn()) {
+        if (!this.authService.isLoggedIn()) {
             // check for logged-in user.  If we already have a cookie, don't make the user log in again
-            this.userService.getUserContext()
+            this.authService.getAuthenticatedUserFromServer()
                 .pipe(
                     catchError((error: any) => {
                         if (error.status === 401) {
