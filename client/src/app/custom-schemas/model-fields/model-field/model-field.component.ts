@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FieldTypes, FieldTypesUI} from '../../../common/constants/field-types';
+import {FieldTypes, FieldTypesUI} from '../../../common/constants/field-types.constants';
 import {BaseComponent} from '../../../common/base-component';
 import {FieldSettingsComponent} from './field-settings/field-settings.component';
 import {FormControl, FormGroup} from '@angular/forms';

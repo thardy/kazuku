@@ -22,13 +22,12 @@ export class UnAuthenticatedResponseInterceptor implements HttpInterceptor, OnDe
             tap(event => {
             }, err => {
                 if (err instanceof HttpErrorResponse && err.status === 401 || err.status === 403) {
-                    const userService = this.injector.get(AuthService);
+                    const authService = this.injector.get(AuthService);
                     const error = err.status === 401 ? 'Unauthenticated' : 'Unauthorized';
 
                     console.log(`${error} request made to a secure api... logging out.`);
-                    userService.clearClientsideAuth();
-                    window.location.href = `/#/login`;
-                    window.location.reload();
+                    authService.clearClientsideAuth();
+                    authService.navigateToLogin();
                 }
             })
         );

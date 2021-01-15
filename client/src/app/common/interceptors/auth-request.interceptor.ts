@@ -15,10 +15,11 @@ export class AuthRequestInterceptor implements HttpInterceptor {
 
         if (authService.isCallToSecureApi(request.url)) {
             const obs = observableFromPromise(
-                authService.getLiveToken()
-                    .then((token) => {
-                        return token ? Promise.resolve(token) : authService.acquireTokenSilent();
-                    })
+                authService.getCachedTokens()
+                    // todo: put this in as soon as we get refreshTokens working
+                    // .then((token) => {
+                    //     return token ? Promise.resolve(token) : authService.acquireTokenSilent();
+                    // })
                     .then((token) => {
                         modifiedRequest = this.modifyRequest(request, token);
                         return Promise.resolve(modifiedRequest);

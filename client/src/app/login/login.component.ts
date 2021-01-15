@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private userService: AuthService,
+    constructor(private authService: AuthService,
                 private router: Router,
                 private route: ActivatedRoute,
                 private fb: FormBuilder) {
@@ -44,27 +44,22 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loggingIn = true;
         console.log(form);
         if (!form.invalid) {
-            this.userService.login(form.value.userName, form.value.password)
-                .pipe(
-                    takeUntil(this.ngUnsubscribe)
-                )
-                .subscribe((result) => {
-                        console.log(result);
-                        // todo: fix this to check for valid login - there's no check!
-                        if (this.returnUrl) {
+            this.authService.login(form.value.userName, form.value.password)
+                .then((userContext) => {
+                    if (userContext) {
+                        if (userContext && this.returnUrl) {
                             this.router.navigate([this.returnUrl]);
                         } else {
                             this.router.navigate(['dashboard']);
                         }
-                        this.loggingIn = false;
-                    },
-                    (error) => {
-                        this.loggingIn = false;
-                    },
-                    () => {
-                        this.loggingIn = false;
                     }
-                );
+                    // todo: make sure this handles failed logins correctly (is it handled in the service or auth-guard?) brah
+
+                    this.loggingIn = false;
+                })
+                .finally(() => {
+                    this.loggingIn = false;
+                });
         }
     }
 }

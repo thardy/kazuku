@@ -35,10 +35,6 @@ export class OrganizationListComponent extends BaseComponent implements OnInit {
     }
 
     selectOrg(orgId: string) {
-        this.userService.selectOrgContext(orgId)
-            .pipe(
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe();
+        this.userService.selectOrgContext(orgId);
     }
 }

@@ -7,12 +7,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
-// import {TemplateListComponent} from './templates/template-list.component';
-// import {TemplateComponent} from './templates/template.component';
 import {CustomDataListComponent} from './custom-data/custom-data-list.component';
 import {QueryListComponent} from './queries/query-list.component';
 import {QueryComponent} from './queries/query.component';
-// import {TemplateService} from './templates/template.service';
 import {OrganizationService} from './organizations/shared/organization.service';
 import {SiteService} from './sites/site.service';
 import {LoginComponent} from './login/login.component';
@@ -47,6 +44,7 @@ import {entityConfig} from './entity-metadata';
 
 import {reducers, effects} from './store';
 import {IdbService} from './common/indexed-db/idb.service';
+import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
 
 @NgModule({
     declarations: [
@@ -87,10 +85,12 @@ import {IdbService} from './common/indexed-db/idb.service';
             provide: HTTP_INTERCEPTORS, useClass: UnAuthenticatedResponseInterceptor, multi: true,
         },
         HttpService,
+        IdbService,
         OrganizationService,
         SiteService,
         QueryService,
         AuthService,
+        AuthTokenCacheService,
         SetupService,
         SetupGuardService,
         AuthGuardService,
