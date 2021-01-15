@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {User} from "../common/auth/user.model";
-import {AuthService} from "../common/auth/auth.service";
-import {Router} from "@angular/router";
+import {User} from '../common/auth/user.model';
+import {Router} from '@angular/router';
+import {UserService} from './user.service';
 
 @Component({
     selector: 'kz-user-list',
@@ -11,7 +11,7 @@ export class UserListComponent implements OnInit {
 
     users: User[] = [];
 
-    constructor(private userService: AuthService, private router: Router) {
+    constructor(private userService: UserService, private router: Router) {
     }
 
     ngOnInit() {

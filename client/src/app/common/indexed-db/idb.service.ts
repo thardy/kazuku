@@ -19,13 +19,12 @@ export class IdbService {
         console.log(`IdbService connectToIDB()`);
 
         // create instance
-        this.db = new Dexie('FleetMgrDb');
+        this.db = new Dexie('Kazuku');
 
         // define schema
         this.db.version(DB_INITIAL_VERSION).stores({
             // all properties that need to be indexed go here
-            tokenCache: 'id',
-            lookups: 'id',
+            tokenCache: 'id'
         });
         // this.db.version(DB_USER_PREFERENCES_VERSION).stores({
         //     userPreferences: 'email',
@@ -78,6 +77,7 @@ export class IdbService {
 
     async deleteAll(storeName: string) {
         await this.db[storeName].clear();
+        // return this.db[storeName].clear();
     }
 
     async deleteByKey(storeName: string, key) {

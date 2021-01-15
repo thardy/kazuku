@@ -12,32 +12,64 @@ export class AuthGuardService implements CanActivate {
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        let allow = false;
+        // const requiredFeature = route.data ? route.data.feature : null;
+        let promise = Promise.resolve(allow);
+
         if (!this.authService.isLoggedIn()) {
             // check for logged-in user.  If we already have a cookie, don't make the user log in again
-            this.authService.getAuthenticatedUserFromServer()
-                .pipe(
-                    catchError((error: any) => {
-                        if (error.status === 401) {
-                            this.router.navigate(['login']);
-                        }
-
-                        return of(null);
-                    })
-                )
-                .subscribe((userContext) => {
-                    if (!userContext) {
-                        // need to redirect to login screen
-                        this.router.navigateByUrl(`login?returnUrl=${state.url}`);
-                    } else {
-                        // take them where they wanted to go
-                        this.router.navigateByUrl(state.url);
+            promise = this.authService.getAuthenticatedUserFromServer()
+                .then((userContext) => {
+                    if (this.authService.isLoggedIn()) {
+                        // // allow = requiredFeature ? this.authService.isUserAuthorizedForFeature(requiredFeature) : true;
+                        allow = true;
+                        // // take them where they wanted to go
+                        // this.router.navigateByUrl(state.url);
                     }
+                    else {
+                        allow = false;
+                        // // need to redirect to login screen
+                        // this.router.navigateByUrl(`login?returnUrl=${state.url}`);
+                    }
+                    return allow;
+                })
+                .catch((error: any) => {
+                    if (error.status === 401) {
+                        this.authService.navigateToLogin();
+                    }
+
+                    return false;
                 });
 
-            return false;
+                // .pipe(
+                //     catchError((error: any) => {
+                //         if (error.status === 401) {
+                //             this.router.navigate(['login']);
+                //         }
+                //
+                //         return of(null);
+                //     })
+                // )
+                // .subscribe((userContext) => {
+                //     if (!userContext) {
+                //         // need to redirect to login screen
+                //         this.router.navigateByUrl(`login?returnUrl=${state.url}`);
+                //     } else {
+                //         // take them where they wanted to go
+                //         this.router.navigateByUrl(state.url);
+                //     }
+                // });
+
+
+            promise = Promise.resolve(allow);
+        }
+        else {
+            // allow = requiredFeature ? this.authService.isUserAuthorizedForFeature(requiredFeature) : true;
+            allow = true;
+            promise = Promise.resolve(allow);
         }
 
-        return true;
+        return promise;
     }
 
 }

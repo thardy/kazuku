@@ -70,7 +70,21 @@ class UsersController extends CrudController {
                                     const body = { user: context.user, orgId: context.orgId };
                                     const token = jwt.sign(body, config.clientSecret);
 
-                                    return res.json({ token });
+                                    const org = await this.organizationService.getById(context.orgId);
+
+                                    const loginResponse = {
+                                        tokens: {
+                                            accessToken: token,
+                                            refreshToken: 'refreshToken is not implemented yet!'
+                                        },
+                                        userContext: {
+                                            user: context.user,
+                                            org: org
+                                        }
+                                    };
+
+                                    return res.json(loginResponse);
+                                    //return res.json({ token });
                                 }
                             );
                         } catch (error) {
@@ -150,6 +164,7 @@ class UsersController extends CrudController {
             });
     }
 
+    // returns a UserContext containing the newly selected org
     selectOrgContext(req, res, next) {
         const body = req.body;
 
@@ -159,6 +174,7 @@ class UsersController extends CrudController {
             const newOrgId = body.orgId;
 
             // save orgId on session context
+            // todo: we are moving away from session - get rid of this, and determine if we need to do anything in its place
             req.session.passport.user.orgId = newOrgId;
             req.session.save((err) => {
                 console.log(err);

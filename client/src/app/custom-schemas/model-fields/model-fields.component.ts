@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {BaseComponent} from '../../common/base-component';
 import {FormGroup} from '@angular/forms';
-import {FieldTypes} from '../../common/constants/field-types';
+import {FieldTypes} from '../../common/constants/field-types.constants';
 
 @Component({
     selector: 'kz-model-fields',
