@@ -45,6 +45,7 @@ import {entityConfig} from './entity-metadata';
 import {reducers, effects} from './store';
 import {IdbService} from './common/indexed-db/idb.service';
 import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
+import {AuthRequestInterceptor} from './common/interceptors/auth-request.interceptor';
 
 @NgModule({
     declarations: [
@@ -81,9 +82,8 @@ import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
         EntityDataModule.forRoot(entityConfig)
     ],
     providers: [
-        {
-            provide: HTTP_INTERCEPTORS, useClass: UnAuthenticatedResponseInterceptor, multi: true,
-        },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: UnAuthenticatedResponseInterceptor, multi: true },
         HttpService,
         IdbService,
         OrganizationService,
