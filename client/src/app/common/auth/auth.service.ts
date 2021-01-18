@@ -214,7 +214,7 @@ export class AuthService {
                 // check to see if cached accessToken is live (not expired)
                 if (tokenResponse && tokenResponse.accessToken) {
                     const now = Date.now();
-                    const expiresOn = tokenResponse.expiresOn * 1000;
+                    const expiresOn = tokenResponse.expiresOn; // milliseconds since Jan 1, 1970 UTC
                     const isLive = expiresOn > now;
                     if (isLive) {
                         token = tokenResponse.accessToken;

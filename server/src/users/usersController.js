@@ -1,7 +1,6 @@
 'use strict';
 import {database} from '../database/database.js';
 import passport from 'passport';
-import jwt from 'jsonwebtoken';
 import CrudController from '../common/crudController.js';
 import UserService from './userService.js';
 import OrganizationService from '../organizations/organizationService.js';
@@ -58,35 +57,7 @@ class UsersController extends CrudController {
                                 return next(error);
                             }
 
-                            req.login(
-                                context,
-                                { session: false },
-                                async (error) => {
-                                    if (error) return next(error);
-
-                                    // todo: test this
-                                    //  get client working with the token
-                                    //  get server working purely as an api
-                                    const body = { user: context.user, orgId: context.orgId };
-                                    const token = jwt.sign(body, config.clientSecret);
-
-                                    const org = await this.organizationService.getById(context.orgId);
-
-                                    const loginResponse = {
-                                        tokens: {
-                                            accessToken: token,
-                                            refreshToken: 'refreshToken is not implemented yet!'
-                                        },
-                                        userContext: {
-                                            user: context.user,
-                                            org: org
-                                        }
-                                    };
-
-                                    return res.json(loginResponse);
-                                    //return res.json({ token });
-                                }
-                            );
+                            return authHelper.login(req, res, context);
                         } catch (error) {
                             return next(error);
                         }

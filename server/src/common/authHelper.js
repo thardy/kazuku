@@ -4,6 +4,8 @@ import OrganizationService from '../organizations/organizationService.js';
 import passport from 'passport';
 import UserService from '../users/userService.js';
 import logger from '../server/logger';
+import jwt from 'jsonwebtoken';
+import config from '../server/config';
 
 const orgService = new OrganizationService(database);
 const userService = new UserService(database);
@@ -66,7 +68,51 @@ const isAuthenticatedWithApiConsumer = async (req, res, next) => {
     return isAuthenticatedWithApiConsumer;
 };
 
+// generate jwt and send back loginResponse { tokens: {accessToken, refreshToken}, userContext: {user, org}}
+const login = async (req, res, context) => {
+    req.login(
+        context,
+        { session: false },
+        async (error) => {
+            if (error) return next(error);
+
+            // todo: test this
+            //  get client working with the token
+            //  get server working purely as an api
+            const body = { user: context.user, orgId: context.orgId };
+            const expiresIn = 3600; // (seconds) 1 hour expiration on this jwt
+            // generate the jwt (uses jsonwebtoken library)
+            const token = jwt.sign(
+                body,
+                config.clientSecret,
+                {
+                    expiresIn: expiresIn
+                }
+            );
+
+            const org = await orgService.getById(context.orgId);
+
+            const expiresOn = Date.now() + (expiresIn * 1000); // exactly when the token expires (in milliseconds since Jan 1, 1970 UTC)
+            const loginResponse = {
+                tokens: {
+                    accessToken: token,
+                    refreshToken: 'refreshToken is not implemented yet!',
+                    expiresOn: expiresOn
+                },
+                userContext: {
+                    user: context.user,
+                    org: org
+                }
+            };
+
+            return res.json(loginResponse);
+            //return res.json({ token });
+        }
+    );
+};
+
 export default {
     isAuthenticated: isAuthenticatedWithAdminUser,
-    isAuthenticatedForApi: isAuthenticatedWithApiConsumer
+    isAuthenticatedForApi: isAuthenticatedWithApiConsumer,
+    login: login
 };
