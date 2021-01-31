@@ -46,6 +46,7 @@ import {reducers, effects} from './store';
 import {IdbService} from './common/indexed-db/idb.service';
 import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
 import {AuthRequestInterceptor} from './common/interceptors/auth-request.interceptor';
+import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.service';
 
 @NgModule({
     declarations: [
@@ -91,6 +92,7 @@ import {AuthRequestInterceptor} from './common/interceptors/auth-request.interce
         QueryService,
         AuthService,
         AuthTokenCacheService,
+        KazukuAuthProviderService,
         SetupService,
         SetupGuardService,
         AuthGuardService,

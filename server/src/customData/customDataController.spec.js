@@ -37,6 +37,7 @@ describe("ApiTests", function () {
 
     describe("customDataController", function () {
 
+        // todo: fix to handle new jwt auth
         describe("when authorized", function () {
             let authCookie = {};
 

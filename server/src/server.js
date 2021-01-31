@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import passport from 'passport';
 // Setup passport auth strategies
 import passportConfig from './server/passport/index.js';
@@ -73,11 +74,9 @@ async function startServer(config) {
     main.use(express.static(global.appRoot + '/public', {extensions:['html']}));
     main.use(bodyParser.json());
 
-// sessions has to be used before router is mounted
     main.use(setupAuthZone);
-    //main.use(session);
+    main.use(cookieParser());
     main.use(passport.initialize());
-    //main.use(passport.session());
     playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
         app: main,
         path: '/graphql', //`http://kazuku.com:3001/graphql`,
@@ -97,6 +96,11 @@ async function startServer(config) {
 
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
     routes(main);
+    // have all other routes render index.html
+    // main.get('/*', function(req, res, next) {
+    //     // Just send the index.html for other files to support HTML5Mode
+    //     res.sendFile('index.html', { root: global.appRoot + '/public'});
+    // });
 
 // custom 404 handler.  This will prevent html being returned for 404s.
     main.use((req, res, next) => {

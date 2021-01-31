@@ -25,7 +25,7 @@ export class UnAuthenticatedResponseInterceptor implements HttpInterceptor, OnDe
                     const authService = this.injector.get(AuthService);
                     const error = err.status === 401 ? 'Unauthenticated' : 'Unauthorized';
 
-                    console.log(`${error} request made to a secure api... logging out.`);
+                    console.log(`${error} request made to a secure api without a valid token... logging out.`);
                     authService.clearClientsideAuth();
                     authService.navigateToLogin();
                 }

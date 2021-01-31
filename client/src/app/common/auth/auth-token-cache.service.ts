@@ -10,14 +10,14 @@ export class AuthTokenCacheService {
 
     async cacheTokens(tokens) {
         // async/await version
-        //await this.clearCachedTokenResponse();
+        await this.clearCachedTokens();
         await this.idbService.deleteAll(IdbStoreNames.tokenCache);
         const dbItem = this.createSimpleDbItemFromObject(tokens);
         await this.idbService.addItem(IdbStoreNames.tokenCache, dbItem);
         return tokens;
 
         // pure promise version
-        // return this.clearCachedTokenResponse()
+        // return this.clearCachedTokens()
         //     .then((result) => {
         //         // save the tokenResponse to local db (IndexedDB)
         //         return this.createSimpleDbItemFromObject(tokens);
@@ -35,7 +35,7 @@ export class AuthTokenCacheService {
         return this.idbService.getByKey(IdbStoreNames.tokenCache, 1);
     }
 
-    async clearCachedTokenResponse() {
+    async clearCachedTokens() {
         // clear out existing local tokenCache store
         return this.idbService.deleteAll(IdbStoreNames.tokenCache);
     }

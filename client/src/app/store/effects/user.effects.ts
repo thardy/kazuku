@@ -16,7 +16,7 @@ export class UserEffects {
     //     ofType(userActions.UserActionTypes.USER_LOGIN),
     //     switchMap((action: userActions.LoginUser) => {
     //         console.log(action.payload);
-    //         return this.userService.login(action.payload).pipe(
+    //         return this.authService.login(action.payload).pipe(
     //             map((user: User) => new userActions.LoginUserSuccess(user)),
     //             catchError(error => of(new userActions.LoginUserFailure(error)))
     //         );

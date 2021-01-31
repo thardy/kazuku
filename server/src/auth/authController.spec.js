@@ -32,12 +32,13 @@ describe("ApiTests", function () {
         server.close();
     });
 
-    describe("UsersControllerTest", () => {
+    // todo: fix these tests to handle jwt instead of session - they should be failing now
+    describe("AuthControllerTest", () => {
         let authCookie = {};
 
         before(function () {
             return request
-                .post('/api/users/login')
+                .post('/api/auth/login')
                 .send({
                     email: 'admin',
                     password: 'test'
@@ -68,7 +69,7 @@ describe("ApiTests", function () {
                 password: "test"
             };
             return request
-                .post('/api/users')
+                .post('/api/auth')
                 .set('Cookie', [authCookie])
                 .send(newUser)
                 .expect(201)
@@ -82,7 +83,7 @@ describe("ApiTests", function () {
 
         it("should not create a new user if user with same email already exists", () => {
             return request
-                .post('/api/users')
+                .post('/api/auth')
                 .set('Cookie', [authCookie])
                 .send(testHelper.newUser1)
                 .expect(409)
@@ -98,7 +99,7 @@ describe("ApiTests", function () {
                 password: "one"
             };
             return request
-                .post('/api/users/login')
+                .post('/api/auth/login')
                 .set('Cookie', [authCookie])
                 .send(user)
                 .expect(200)
@@ -110,7 +111,7 @@ describe("ApiTests", function () {
 
         it("should return unauthenticated if there is no logged in user", () => {
             return request
-                .get('/api/users/random-number')
+                .get('/api/auth/random-number')
                 .expect(401)
                 .then(result => {
                     result.error.text.should.equal('Unauthenticated');
@@ -126,7 +127,7 @@ describe("ApiTests", function () {
                 password: "one"
             };
             return request
-                .post('/api/users/login')
+                .post('/api/auth/login')
                 .set('Cookie', [authCookie])
                 .send(user)
                 .expect(200)
@@ -136,7 +137,7 @@ describe("ApiTests", function () {
                 .then(user => {
                     console.log("hitting the random-number endpoint...");
                     return request
-                        .get('/api/users/random-number')
+                        .get('/api/auth/random-number')
                         .set('Cookie', [authCookie])
                         .expect(200)
                         .then(result => {

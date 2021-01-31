@@ -50,7 +50,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     }
 
     async logout() {
-        // this.userService.logout()
+        // this.authService.logout()
         //     .pipe(
         //         takeUntil(this.ngUnsubscribe)
         //     )
