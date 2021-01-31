@@ -13,6 +13,7 @@ import {LoginUserSuccess} from '../../store/actions';
 import {AuthTokenCacheService} from './auth-token-cache.service';
 import {LoginResponse} from './login-response.model';
 import {Tokens} from './tokens.model';
+import {KazukuAuthProviderService} from './kazuku-auth-provider.service';
 
 @Injectable()
 export class AuthService {
@@ -23,18 +24,14 @@ export class AuthService {
 
     constructor(private http: HttpService,
                 private store: Store<any>,
-                private authTokenCacheService: AuthTokenCacheService) {
-        this.baseUrl = `${environment.kazukuApiUrl}/users`;
+                private authTokenCacheService: AuthTokenCacheService,
+                private authProvider: KazukuAuthProviderService) {
+        this.baseUrl = `${environment.kazukuApiUrl}/auth`;
         this.userContextSubject = new BehaviorSubject<UserContext>(new UserContext());
         this.userContext$ = this.userContextSubject.asObservable();
     }
 
     login(email: string, password: string) {
-        // todo: need to do the following...
-        //  - we need to cache the token -> this.authTokenCacheService.cacheTokens(tokenResponse)
-        //  - we need to get the user (either from the same response that gave us the token, or we need to make a separate call to get the authenticated userContext
-        //  - consider encapsulating some of this in an authProvider class
-
         let userContext = null;
 
         // let's have login return a LoginResponse { tokens: {accessToken, refreshToken}, userContext }, and getAuthenticatedUser return just a userContext
@@ -44,7 +41,6 @@ export class AuthService {
                 if (loginResponse && loginResponse.tokens) {
                     userContext = loginResponse.userContext;
                     // Cache the accessToken and refresh token in IndexedDb
-                    //cachingPromise = this.cacheTokens(loginResponse.tokens); // will contain accessToken (the live jwt) and a refreshToken (used to get another jwt)
                     cachingPromise = this.authTokenCacheService.cacheTokens(loginResponse.tokens);
                 }
                 return cachingPromise;
@@ -67,33 +63,97 @@ export class AuthService {
     private callLoginApi(email: string, password: string) {
         return this.http.post(`${this.baseUrl}/login`, {email: email, password: password})
             .pipe(
-                map(response => this.extractLoginResponse(response)), // todo: extract the result properly - just use a typed response class (LoginResponse)
+                map(response => this.extractLoginResponse(response)),
                 catchError(error => this.handleError(error))
             ).toPromise();
     }
 
-    private logoutOnServer() {
-        return this.http.get(`${this.baseUrl}/logout`)
-            .pipe(
-                tap((result) => {
-                    // Send out an empty UserContext to all subscribers
-                    this.publishUserContext(new UserContext());
-                }),
-                catchError((error) => this.handleError(error))
-            )
-            .toPromise();
-    }
-
     async logout() {
-        await this.logoutOnServer();
-
-        this.clearClientsideAuth();
-        window.location.href = `/#/login`;
-        window.location.reload();
+        return this.clearClientsideAuth()
+            .then((result) => {
+                this.navigateToLogin();
+            })
+            .catch((error) => {
+                return this.handleError(error);
+            })
+        // window.location.href = `/#/login`;
+        // window.location.reload();
     }
 
-    getAuthenticatedUserFromServer() {
-        //return this.http.get(`${this.baseUrl}/getloggedinuser`)
+    getCurrentAuthContext() {
+        let promise = Promise.resolve(null);
+        let userContext = null;
+
+        // Figure out if we currently have an authorized user logged in
+        if (this.isLoggedIn()) {
+            // we know we are logged in, so just grab the user from our userSubject
+            userContext = this.cloneUserContext();
+            promise = Promise.resolve(userContext);
+        }
+        else {
+            // We don't know if we are logged in - perhaps the user just hit F5, but we may have a live token cached.
+            // Check for existing token.  If we don't have a live token cached, there's no need to ask the server - we know we are not authenticated
+            promise = this.getLiveToken()
+                .then((liveToken) => {
+                    let userContextPromise = Promise.resolve(null);
+                    if (liveToken) {
+                        // we have a live token (jwt), get the currently authenticated userContext from the server
+                        userContextPromise = this.getAuthenticatedUserContextFromServer();
+                    }
+                    else {
+                        userContextPromise = this.acquireTokenSilent();
+                    }
+
+                    return userContextPromise;
+                })
+                .then((userContextOrToken) => {
+                    // we either came in with a user or a token
+                    let newPromise = Promise.resolve(null);
+                    if (userContextOrToken instanceof UserContext) {
+                        // we came in with a userContext - just return it.
+                        newPromise = Promise.resolve(userContextOrToken);
+                    }
+                    else if (userContextOrToken && typeof userContextOrToken === 'string' || userContextOrToken instanceof String) {
+                        // we came in with a freshly refreshed token. Use it to get a user, and return that promise
+                        newPromise = this.getAuthenticatedUserContextFromServer();
+                    }
+                    return newPromise;
+                });
+        }
+
+        return promise;
+
+
+        // ****promise version****
+        // let userPromise = Promise.resolve(null);
+        //
+        // // Figure out if we currently have an authorized user logged in
+        // if (this.isLoggedIn()) {
+        //   // we know we are logged in, so just grab the user from our userSubject
+        //   const user = this.cloneCurrentUser();
+        //   userPromise = Promise.resolve(user);
+        // }
+        // else {
+        //   // todo: I don't know the impact of using await here.  test to make sure this is ok
+        //   // We don't know if we are logged in - perhaps the user just hit F5, but we may have a live token cached.
+        //   // Check for existing token.  If we don't have a live token cached, there's no need to ask the server - we know we are not authenticated
+        //   const liveToken = await this.getLiveToken();
+        //
+        //   if (liveToken) {
+        //     // we have a live token (jwt), get the currently authenticated user from the server
+        //     userPromise = this.getAuthenticatedUserContextFromServer();
+        //   }
+        //   else {
+        //     // we don't have a live token
+        //     this.navigateToLogin();
+        //     userPromise = Promise.resolve(null);
+        //   }
+        // }
+        //
+        // return userPromise;
+    }
+
+    getAuthenticatedUserContextFromServer() {
         return this.http.get(`${this.baseUrl}/getusercontext`)
             .pipe(
                 map(response => this.extractUserContext(response)),
@@ -144,10 +204,20 @@ export class AuthService {
 
         if (clearCachedTokens) {
             // clear token cache
-            //await this.authTokenCacheService.clearCachedTokenResponse();
+            await this.authTokenCacheService.clearCachedTokens();
         }
+    }
 
-        //return this.offlineInfoService.delete(OfflineInfoKeys.lastUser);
+    getCachedRefreshToken() {
+        // get tokenResponse from cache
+        return this.authTokenCacheService.getCachedTokens()
+            .then((tokenResponse) => {
+                let refreshToken = null; // returns null if we don't have a refreshToken cached
+                if (tokenResponse) {
+                    refreshToken = tokenResponse.refreshToken;
+                }
+                return Promise.resolve(refreshToken);
+            });
     }
 
     updateAuthContext(userContext: UserContext, persistLastUser = true) {
@@ -185,11 +255,11 @@ export class AuthService {
         let isProtectedApiUrl = false;
 
         if (url.startsWith(environment.kazukuApiUrl)) {
-            if (url.startsWith(`${environment.kazukuApiUrl}/users/login`)
-                || url.startsWith(`${environment.kazukuApiUrl}/users/logout`)
-                || url.startsWith(`${environment.kazukuApiUrl}/users/register`)
+            if (url.startsWith(`${environment.kazukuApiUrl}/auth/login`)
+                || url.startsWith(`${environment.kazukuApiUrl}/auth/logout`)
+                || url.startsWith(`${environment.kazukuApiUrl}/auth/register`)
                 //|| url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingauthcode`)
-                //|| url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingrefreshtoken`)
+                || url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingrefreshtoken`)
             ) {
                 isProtectedApiUrl = false;
             }
@@ -205,11 +275,44 @@ export class AuthService {
         window.location.reload();
     }
 
-    getCachedTokens() {
+    acquireTokenSilent() {
+        return this.getCachedRefreshToken()
+            .then((refreshToken) => {
+                let promise = Promise.resolve(null);
+                if (refreshToken) {
+                    promise = this.authProvider.requestTokenUsingRefreshToken(refreshToken);
+                }
+                else {
+                    this.navigateToLogin();
+                }
+                return promise;
+            })
+            .then((tokenResponse) => {
+                let promise = Promise.resolve(null);
+                if (tokenResponse && tokenResponse.accessToken) {
+                    // cache the tokenResponse (contains both the accessToken and the refreshToken)
+                    promise = this.authTokenCacheService.cacheTokens(tokenResponse);
+                }
+                return promise;
+            })
+            .then((tokenResponse) => {
+                let token = null;
+                if (tokenResponse) {
+                    token = tokenResponse.accessToken;
+                }
+                return Promise.resolve(token);
+            })
+            .catch((error) => {
+                // this.displayErrorGettingToken(error);
+                this.clearClientsideAuth(false);
+            });
+    }
+
+    getLiveToken() {
         // get tokens from cache
         return this.authTokenCacheService.getCachedTokens()
             .then((tokenResponse) => {
-                let token = null;  // returns null if we don't have a live token cached
+                let accessToken = null;  // returns null if we don't have a live token cached
 
                 // check to see if cached accessToken is live (not expired)
                 if (tokenResponse && tokenResponse.accessToken) {
@@ -217,16 +320,11 @@ export class AuthService {
                     const expiresOn = tokenResponse.expiresOn; // milliseconds since Jan 1, 1970 UTC
                     const isLive = expiresOn > now;
                     if (isLive) {
-                        token = tokenResponse.accessToken;
+                        accessToken = tokenResponse.accessToken;
                     }
                 }
-                return Promise.resolve(token);
+                return Promise.resolve(accessToken);
             });
-    }
-
-    private cacheTokens(tokens: Tokens) {
-        // tokens must have accessToken and refreshToken properties
-        return this.authTokenCacheService.cacheTokens(tokens);
     }
 
     private extractLoginResponse(response: any) {

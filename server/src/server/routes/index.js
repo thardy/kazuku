@@ -1,7 +1,7 @@
 import CustomDataController from '../../customData/customDataController.js';
 import CustomSchemasController from '../../customSchemas/customSchemasController.js';
 import TemplatesController from '../../templates/templatesController.js';
-import UsersController from '../../users/usersController.js';
+import AuthController from '../../auth/authController.js';
 import OrganizationsController from '../../organizations/organizationsController.js';
 import SetupController from '../../setup/setupController.js';
 import SitesController from '../../sites/sitesController.js';
@@ -15,7 +15,7 @@ export default function(app) {
     let customDataController = new CustomDataController(app);
     let customSchemasController = new CustomSchemasController(app);
     let templatesController = new TemplatesController(app);
-    let usersController = new UsersController(app);
+    let authController = new AuthController(app);
     let organizationsController = new OrganizationsController(app);
     let setupController = new SetupController(app);
     let sitesController = new SitesController(app);

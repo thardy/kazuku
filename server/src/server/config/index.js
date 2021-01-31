@@ -17,6 +17,9 @@ if (process.env.NODE_ENV === 'production') {
         databaseName: process.env.databaseName,
         sessionSecret: process.env.sessionSecret,
         clientSecret: process.env.clientSecret,
+        jwtExpirationInSeconds: process.env.jwtExpirationInSeconds,
+        refreshTokenExpirationInDays: process.env.refreshTokenExpirationInDays,
+        deviceIdCookieMaxAgeInDays: process.env.deviceIdCookieMaxAgeInDays,
         siteDefaults: {
             defaultRegenerationInterval: process.env.defaultRegenerationInterval
         },

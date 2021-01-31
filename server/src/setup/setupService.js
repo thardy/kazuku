@@ -4,13 +4,13 @@ import Promise from 'bluebird';
 import config from '../server/config/index.js';
 import {database} from '../database/database.js';
 import OrganizationService from '../organizations/organizationService.js';
-import UserService from '../users/userService.js';
+import AuthService from '../auth/authService.js';
 
 class SetupService {
 
     constructor(database) {
         this.organizationService = new OrganizationService(database);
-        this.userService = new UserService(database);
+        this.authService = new AuthService(database);
     }
 
     initialSetup(setupConfig) {
@@ -28,7 +28,7 @@ class SetupService {
 
         return this.organizationService.create(metaOrg)
             .then((org) => {
-                return this.userService.create(org.id, adminUser);
+                return this.authService.createUser(org.id, adminUser);
             });
     }
 

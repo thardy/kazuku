@@ -34,6 +34,7 @@ describe("ApiTests", function () {
         describe("when authorized", function () {
             let authCookie = {};
 
+            // todo: fix to handle jwt auth
             before(function () {
                 return request
                     .post('/api/users/login')

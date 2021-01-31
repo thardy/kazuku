@@ -5,17 +5,17 @@ const should = chai.Should();
 chai.use(chaiAsPromised);
 import testHelper from '../common/testHelper.js';
 
-import UserService from './userService.js';
+import AuthService from './authService.js';
 import {database} from '../database/database.js';
 
 const testOrgId = testHelper.testOrgId;
 
 describe("AuthService CRUD", function () {
-    let userService = {};
+    let authService = {};
     let existingUser = {};
 
     before(function () {
-        userService = new UserService(database);
+        authService = new AuthService(database);
         let newUser = {
             orgId: testOrgId,
             email: "one@test.com",
@@ -42,17 +42,17 @@ describe("AuthService CRUD", function () {
     });
 
     it("can get user by Id", () => {
-        let getByIdPromise = userService.getById(existingUser.id);
+        let getByIdPromise = authService.getUserById(existingUser.id);
         return getByIdPromise.should.eventually.have.property("email").deep.equal(existingUser.email);
     });
 
     it("can throw error while getting user by Id, if the id is not specified", () => {
-        let getByIdPromise = userService.getById();
-        return getByIdPromise.should.be.rejectedWith('Incorrect number of arguments passed to AuthService.getById');
+        let getByIdPromise = authService.getUserById();
+        return getByIdPromise.should.be.rejectedWith('Incorrect number of arguments passed to AuthService.getUserById');
     });
 
     it("can get user by email", () => {
-        let getByEmailPromise = userService.getByEmail(existingUser.email);
+        let getByEmailPromise = authService.getUserByEmail(existingUser.email);
         return getByEmailPromise.should.eventually.have.property("id").deep.equal(existingUser.id);
     });
 
@@ -62,11 +62,11 @@ describe("AuthService CRUD", function () {
             password: "three"
         };
 
-        let createPromise = userService.create(testOrgId, user);
+        let createPromise = authService.createUser(testOrgId, user);
 
         return createPromise
             .then((doc) => {
-                return userService.getById(doc.id)
+                return authService.getById(doc.id)
                     .then((retrievedDoc) => {
                         expect(retrievedDoc).to.have.property('orgId', testOrgId);
                         expect(retrievedDoc).to.have.property('email', user.email);
@@ -76,16 +76,16 @@ describe("AuthService CRUD", function () {
     });
 
     it("can throw error while creating user, if orgId and user object is not specified", () => {
-        let createPromise = userService.create({});
-        return createPromise.should.be.rejectedWith("Incorrect number of arguments passed to AuthService.create");
+        let createPromise = authService.createUser({});
+        return createPromise.should.be.rejectedWith("Incorrect number of arguments passed to AuthService.createUser");
     });
 
     it("can hash and verify password", () => {
         let password = "test";
-        let hashPasswordPromise = userService.hashPassword(password);
+        let hashPasswordPromise = authService.hashPassword(password);
 
         hashPasswordPromise.then(hashedPassword => {
-          userService.verifyPassword(password, hashedPassword).then(isMatch => {
+          authService.verifyPassword(password, hashedPassword).then(isMatch => {
             expect(isMatch).to.be.true;
           })
         })

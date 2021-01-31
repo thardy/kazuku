@@ -11,14 +11,14 @@ const LocalStrategy = passportLocal.Strategy;
 import passportJwt from 'passport-jwt';
 const JWTstrategy = passportJwt.Strategy;
 const ExtractJWT = passportJwt.ExtractJwt;
-import UserService from '../../users/userService.js';
+import AuthService from '../../auth/authService.js';
 // import moment from 'moment';
 // import bcrypt from 'bcrypt-nodejs';
 // import zone from 'zone.js/dist/zone-node.js';
 // const SALT_WORK_FACTOR = 10;
 
 export default (passport) => {
-    let userService = new UserService(database);
+    let authService = new AuthService(database);
 
     // the "context" parm here comes from the done(null, context) call in our LocalStrategy below
     passport.serializeUser((context, done) => {
@@ -30,10 +30,10 @@ export default (passport) => {
     // serializeUser/deserializeUser are just used in passport session usage.  I've moved this to authHelper now that I'm using jwt.
     passport.deserializeUser((context, done) => {
         // Find the user using id
-        userService.getById(context.user.id)
+        authService.getUserById(context.user.id)
             .then(user => {
                 if (user) {
-                    userService.cleanUser(user);
+                    authService.cleanUser(user);
                 }
                 else {
                     logger.log('error', 'Error when deserializing the user: User not found');
@@ -91,7 +91,7 @@ export default (passport) => {
 
         // If the user is found, return the user data using the done()
         // If the user is not found, create one in the local db and return
-        return userService.findOne(orgId, query)
+        return authService.findOne(orgId, query)
             .then((existingUser) => {
                 if (existingUser) {
                     done(null, existingUser);
@@ -118,7 +118,7 @@ export default (passport) => {
                     //  is still false
                     // return done();
 
-                    return userService.create(orgId, newUser)
+                    return authService.createUser(orgId, newUser)
                         .then(createdUser => {
                             Zone.current.context = {user: newUser, orgId: newUser.orgId };
                             return done(null, createdUser);
@@ -161,12 +161,12 @@ export default (passport) => {
         async (req, email, password, done) => {
             let loginUser = null;
             try {
-                userService.getByEmail(email)
+                authService.getUserByEmail(email)
                     .then((user) => {
                         let promise = Promise.resolve(null);
                         loginUser = user;
                         if (user !== null) {
-                            promise = userService.verifyPassword(password, user.password);
+                            promise = authService.verifyPassword(password, user.password);
                         }
 
                         return promise;
@@ -177,6 +177,7 @@ export default (passport) => {
                         }
                         else if (isMatch) {
                             const context = {
+                                // we basically want everything but the password
                                 user: {
                                     id: loginUser.id,
                                     email: loginUser.email,

@@ -16,6 +16,7 @@ class Database {
         this.organizations = this.db.get('organizations');
         this.sites = this.db.get('sites');
         this.agendaJobs = this.db.get('agendaJobs');
+        this.refreshTokens = this.db.get('refreshTokens');
     }
 
     close() {

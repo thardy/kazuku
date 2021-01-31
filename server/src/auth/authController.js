@@ -2,17 +2,17 @@
 import {database} from '../database/database.js';
 import passport from 'passport';
 import CrudController from '../common/crudController.js';
-import UserService from './userService.js';
+import AuthService from './authService.js';
 import OrganizationService from '../organizations/organizationService.js';
 import authHelper from '../common/authHelper.js';
 import current from '../common/current.js';
 import config from '../server/config/index.js';
 // const Joi = require('joi');
 
-class UsersController extends CrudController {
+class AuthController extends CrudController {
     constructor(app) {
         // let paramValidation = {
-        //     // POST /api/users
+        //     // POST /api/auth
         //     createResource: {
         //         body: {
         //             username: Joi.string().required(),
@@ -20,7 +20,7 @@ class UsersController extends CrudController {
         //         }
         //     },
         //
-        //     // UPDATE /api/users/:userId
+        //     // UPDATE /api/auth/:userId
         //     updateResource: {
         //         body: {
         //             username: Joi.string().required(),
@@ -31,12 +31,12 @@ class UsersController extends CrudController {
         //         }
         //     }
         // };
-        super('users', app, new UserService(database));
+        super('auth', app, new AuthService(database));
         this.organizationService = new OrganizationService(database);
     }
 
     mapRoutes(app) {
-        // GET /api/users/random-number - Sample Protected route,
+        // GET /api/auth/random-number - Sample Protected route,
         app.get(`/api/${this.resourceName}/random-number`, authHelper.isAuthenticated, this.getRandomNumber.bind(this));
         app.get(`/api/${this.resourceName}/facebook`, passport.authenticate('facebook', { scope : 'email' }));
         app.get(`/api/${this.resourceName}/facebook/callback`, passport.authenticate('facebook'), this.afterAuth.bind(this));
@@ -57,7 +57,7 @@ class UsersController extends CrudController {
                                 return next(error);
                             }
 
-                            return authHelper.login(req, res, context);
+                            return this.service.login(req, res, context);
                         } catch (error) {
                             return next(error);
                         }
@@ -72,7 +72,10 @@ class UsersController extends CrudController {
 
         //app.post(`/api/${this.resourceName}/create-social-account`, this.createSocialAccount.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
-        app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));
+        app.get(`/api/${this.resourceName}/requesttokenusingrefreshtoken`, this.requestTokenUsingRefreshToken.bind(this));
+        // app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));
+        // todo: create an AuthController and either move all of this over to it, or just all the auth stuff (leaving only the user crud)
+        //  I'm leaning towards just renaming this AuthController and getting rid of a AuthController.
         app.get(`/api/${this.resourceName}/getusercontext`, authHelper.isAuthenticated, this.getUserContext.bind(this));
         app.put(`/api/${this.resourceName}/selectorgcontext`, authHelper.isAuthenticated, this.selectOrgContext.bind(this));
 
@@ -83,10 +86,11 @@ class UsersController extends CrudController {
         //app.param('userId', userCtrl.load);
     }
 
-    logout(req, res) {
-        req.logOut();
-        res.status(200).json({});
-    }
+    // todo: I think we need to get rid of this endpoint, now that we are using jwt auth - there is no server logout anymore, right?
+    // logout(req, res) {
+    //     req.logOut();
+    //     res.status(200).json({});
+    // }
 
     afterAuth(req, res) {
         const context = req.user;
@@ -107,7 +111,7 @@ class UsersController extends CrudController {
     registerUser(req, res, next) {
         let body = req.body;
 
-        this.service.create(current.context.orgId, body)
+        this.service.createUser(current.context.orgId, body)
             .then((doc) => {
                 return res.status(201).json(doc);
             })
@@ -120,8 +124,23 @@ class UsersController extends CrudController {
                     return res.status(409).json({'errors': ['Duplicate Key Error']});
                 }
 
-                err.message = 'ERROR: {0}Controller -> create({1}, {2}) - {3}'.format(this.resourceName, current.context.orgId, body, err.message);
+                err.message = 'ERROR: {0}Controller -> createUser({1}, {2}) - {3}'.format(this.resourceName, current.context.orgId, body, err.message);
                 return next(err);
+            });
+    }
+
+    requestTokenUsingRefreshToken(req, res, next) {
+        const refreshToken = req.query.refreshToken;
+        const deviceId = this.service.getAndSetDeviceIdCookie(req, res);
+        return this.service.requestTokenUsingRefreshToken(refreshToken, deviceId)
+            .then((tokens) => {
+                if (tokens) {
+                    return res.status(200).json(tokens);
+                }
+                else {
+                    const error = { message: `ERROR: Unable to auth with refreshToken - not found` }
+                    return res.status(404).json(error);
+                }
             });
     }
 
@@ -141,17 +160,18 @@ class UsersController extends CrudController {
 
         // verify currently logged-in user is metaAdmin
         const context = req.user;
-        if (context.user.isMetaAdmin) {
+        if (context.user.isMetaAdmin) { // only MetaAdmin users can select an org
             const newOrgId = body.orgId;
 
             // save orgId on session context
-            // todo: we are moving away from session - get rid of this, and determine if we need to do anything in its place
-            req.session.passport.user.orgId = newOrgId;
-            req.session.save((err) => {
-                console.log(err);
-            });
+            // We are moving away from session - get rid of this, and determine if we need to do anything in its place
+            //  I don't think we need to do anything because the server will no longer keep any state for selectedOrg.
+            // req.session.passport.user.orgId = newOrgId;
+            // req.session.save((err) => {
+            //     console.log(err);
+            // });
 
-            // grab the new org, just like getAuthenticatedUserFromServer above
+            // grab the new org, just like getUserContext above
             return this.organizationService.getById(req.session.passport.user.orgId)
                 .then((org) => {
                     const userContext = {user: context.user, org: org};
@@ -177,4 +197,4 @@ class UsersController extends CrudController {
 
 }
 
-export default UsersController;
+export default AuthController;
