@@ -33,3 +33,4 @@ development.json
 !server/bin/www.js
 server/src/public
 server/src/siteContent
+mongodb/*

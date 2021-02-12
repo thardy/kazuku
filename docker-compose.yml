@@ -1,0 +1,49 @@
+version: '3'
+services:
+  mongo:
+    image: 'mongo:4.4.3'
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongodb:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+      - MONGO_INITDB_DATABASE=kazuku
+#  server:
+#    build:
+#      dockerfile: Dockerfile.dev
+#      context: ./server
+#    volumes:
+#      - /app/node_modules
+#      - ./server:/app
+#    environment:
+#      - KAZUKU_ENV=dev
+#      - HOST_NAME=kazuku.com
+#      - PORT=3001
+#      - SALT_WORK_FACTOR=10
+#      - MONGO_URL=mongodb://localhost:27017/kazuku
+#      - DATABASE_NAME=kazuku
+#      - JOB_TYPES=publishingJobs
+#      - CLIENT_SECRET=c>yXb**cwaP^$$k4Z
+#      - JWT_EXPIRATION=3600
+#      - REFRESH_EXPIRATION=7
+#      - DEVICEID_MAX_AGE=730
+#      - ORG_CACHE=false
+#      - DEFAULT_REGENERATION_INTERVAL=10
+#  client:
+#    build:
+#      dockerfile: Dockerfile.dev
+#      context: ./client
+#    volumes:
+#      - /app/node_modules
+#      - ./client:/app
+#  worker:
+#    build:
+#      dockerfile: Dockerfile.dev
+#      context: ./worker
+#    volumes:
+#      - /app/node_modules
+#      - ./worker:/app
