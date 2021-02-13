@@ -252,22 +252,37 @@ export class AuthService {
     // }
 
     isCallToSecureApi(url: string) {
-        let isProtectedApiUrl = false;
+        const allowedInsecurePaths = [
+            'auth/login',
+            'auth/logout',
+            'auth/register',
+            'auth/requesttokenusingauthcode',
+            'auth/requesttokenusingrefreshtoken',
+            'setup/initialsetup',
+            'setup/setupstate'
+        ];
+        const allowedInsecureUrls = allowedInsecurePaths.map((path) => {
+            return `${environment.kazukuApiUrl}/${path}`;
+        })
+
+        const isAllowedInsecureUrl = this.urlIsInPathList(url, allowedInsecureUrls);
+        const isProtectedApiUrl = !isAllowedInsecureUrl;
+        return isProtectedApiUrl;
+    }
+
+    urlIsInPathList(url, allowedInsecurePathList) {
+        let urlIsInList;
 
         if (url.startsWith(environment.kazukuApiUrl)) {
-            if (url.startsWith(`${environment.kazukuApiUrl}/auth/login`)
-                || url.startsWith(`${environment.kazukuApiUrl}/auth/logout`)
-                || url.startsWith(`${environment.kazukuApiUrl}/auth/register`)
-                //|| url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingauthcode`)
-                || url.startsWith(`${environment.kazukuApiUrl}/auth/requesttokenusingrefreshtoken`)
-            ) {
-                isProtectedApiUrl = false;
-            }
-            else {
-                isProtectedApiUrl = true;
+            for (let i = 0; i < allowedInsecurePathList.length; i++) {
+                if (url.startsWith(allowedInsecurePathList[i])) {
+                    urlIsInList = true;
+                    break;
+                }
             }
         }
-        return isProtectedApiUrl;
+
+        return urlIsInList;
     }
 
     navigateToLogin() {
