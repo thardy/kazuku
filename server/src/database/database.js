@@ -8,6 +8,7 @@ class Database {
     constructor() {
         // connect to the database
         this.db = monk(config.mongoDbUrl);
+
         this.customData = this.db.get('customData');
         this.customSchemas = this.db.get('customSchemas');
         this.templates = this.db.get('templates');

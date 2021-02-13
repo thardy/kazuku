@@ -1,4 +1,16 @@
-// just a running list of all the configurations made to the db. NOT CURRENTLY SETUP TO RUN THIS FILE
+// create kazuku user
+db.createUser(
+    {
+        user: "kazukuUser",
+        pwd: "totallytemporary",
+        roles: [
+            {
+                role: "readWrite",
+                db: "kazuku"
+            }
+        ]
+    }
+);
 
 // ***** CustomData ****************************************
 db.createCollection('customData', {});
