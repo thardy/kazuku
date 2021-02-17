@@ -293,6 +293,7 @@ export class AuthService {
     }
 
     navigateToLogin() {
+        console.log('Navigating to login page');
         window.location.href = `/#/login`;
         window.location.reload();
     }

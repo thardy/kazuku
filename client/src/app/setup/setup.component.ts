@@ -31,6 +31,8 @@ export class SetupComponent implements OnInit, OnDestroy {
 
 
     save(form) {
+        console.log(form);
+        console.log(this.setupConfig);
         this.setupService.initialSetup(this.setupConfig)
             .then((loginResponse) => {
                 return this.authService.handleLoginResponse(loginResponse);
