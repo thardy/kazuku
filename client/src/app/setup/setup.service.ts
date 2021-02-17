@@ -21,7 +21,7 @@ export class SetupService extends GenericService<SetupConfig> {
             .pipe(
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))
-            );
+            ).toPromise();
     }
 
     canWeSetup() {

@@ -13,8 +13,8 @@ class SetupService {
         this.authService = new AuthService(database);
     }
 
-    initialSetup(setupConfig) {
-        if (arguments.length !== 1) {
+    initialSetup(setupConfig, deviceId) {
+        if (arguments.length !== 2) {
             return Promise.reject(new Error('Incorrect number of arguments passed to SetupService.initialSetup'));
         }
         let valError = this.validate(setupConfig);
@@ -25,10 +25,27 @@ class SetupService {
         // todo: extract metaOrg from setupConfig
         let metaOrg = this.extractMetaOrg(setupConfig);
         let adminUser = this.extractAdminUser(setupConfig);
+        let org = null;
+        let user = null;
 
         return this.organizationService.create(metaOrg)
-            .then((org) => {
-                return this.authService.createUser(org.id, adminUser);
+            .then((createdOrg) => {
+                org = createdOrg;
+                return this.authService.createUser(createdOrg.id, adminUser);
+            })
+            .then((createdUser) => {
+                let newTokensPromise = Promise.resolve(null);
+                if (createdUser) {
+                    user = createdUser;
+                    const refreshTokenExpiresOn = this.authService.getExpiresOnFromDays(config.refreshTokenExpirationInDays);
+                    newTokensPromise = this.authService.createNewTokens(createdUser.id, deviceId, refreshTokenExpiresOn);
+                }
+                // todo: handle failure workflow (not sure what to do atm)
+                return newTokensPromise;
+            })
+            .then((tokenResponse) => {
+                const loginResponse = this.authService.getLoginResponse(tokenResponse, user, org);
+                return loginResponse;
             });
     }
 

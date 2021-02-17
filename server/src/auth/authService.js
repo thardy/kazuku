@@ -42,13 +42,7 @@ class AuthService extends GenericService {
 
                 const org = await this.orgService.getById(context.orgId);
 
-                const loginResponse = {
-                    tokens: tokenResponse,
-                    userContext: {
-                        user: context.user,
-                        org: org
-                    }
-                };
+                const loginResponse = this.getLoginResponse(tokenResponse, context.user, org);
 
                 return res.json(loginResponse);
             }
@@ -111,7 +105,6 @@ class AuthService extends GenericService {
         // refreshToken - { token, deviceId, userId, expiresOn, created, createdBy, createdByIp, revoked?, revokedBy? }
         //  not using revoked and revokedBy currently - I'm just deleting refreshTokens by userId and deviceId (there can be only one!!)
         let userId = null;
-        let createdRefreshTokenObject = null;
 
         // look for this particular refreshToken in our database. refreshTokens are assigned to deviceIds,
         //  so they can only be retrieved together.
@@ -125,12 +118,20 @@ class AuthService extends GenericService {
                         // we found an activeRefreshToken, and we know what user it was assigned to
                         //  - create a new refreshToken and persist it to the database
                         // upon refresh, we want to create a new refreshToken maintaining the existing expiresOn expiration
-                        newRefreshTokenPromise = this.createNewRefreshToken(userId, deviceId, activeRefreshToken.expiresOn);
+                        //newRefreshTokenPromise = this.createNewRefreshToken(userId, deviceId, activeRefreshToken.expiresOn);
+                        newRefreshTokenPromise = this.createNewTokens(userId, deviceId, activeRefreshToken.expiresOn);
                     }
                 }
 
                 return newRefreshTokenPromise;
-            })
+            });
+
+    }
+
+    createNewTokens(userId, deviceId, refreshTokenExpiresOn) {
+        let createdRefreshTokenObject = null;
+
+        return this.createNewRefreshToken(userId, deviceId, refreshTokenExpiresOn)
             .then((newRefreshToken) => {
                 let userPromise = Promise.resolve(null);
                 if (newRefreshToken) {
@@ -262,6 +263,17 @@ class AuthService extends GenericService {
             expiresOn: accessTokenExpiresOn // exactly when the token expires (in milliseconds since Jan 1, 1970 UTC)
         }
         return tokenResponse;
+    }
+
+    getLoginResponse(tokenResponse, user, org) {
+        const loginResponse = {
+            tokens: tokenResponse,
+            userContext: {
+                user: user,
+                org: org
+            }
+        };
+        return loginResponse;
     }
 
     validate(doc) {

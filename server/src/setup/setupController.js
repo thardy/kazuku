@@ -4,6 +4,7 @@ import {database} from '../database/database.js';
 import SetupService from './setupService.js';
 import OrganizationService from '../organizations/organizationService.js';
 import apiHelper from '../common/apiHelper.js';
+import AuthService from '../auth/authService';
 
 class SetupController {
 
@@ -11,6 +12,7 @@ class SetupController {
         this.app = app;
         this.setupService = new SetupService(database);
         this.organizationService = new OrganizationService(database);
+        this.authService = new AuthService(database);
 
         this.mapRoutes(app);
     }
@@ -25,7 +27,9 @@ class SetupController {
     initialSetup(req, res, next) {
         let body = req.body;
 
-        this.setupService.initialSetup(body)
+        const deviceId = this.authService.getAndSetDeviceIdCookie(req, res);
+
+        this.setupService.initialSetup(body, deviceId)
             .then((doc) => {
                 return res.status(201).json(doc);
             })
@@ -38,7 +42,7 @@ class SetupController {
                     return res.status(409).json({'errors': ['Duplicate Key Error']});
                 }
 
-                err.message = 'ERROR: SetupController -> create({0}) - {1}'.format(body, err.message);
+                err.message = `ERROR: SetupController -> create(${body}) - ${err.message}`;
                 return next(err);
             });
     }

@@ -236,7 +236,7 @@ class GenericService {
 
     auditForCreate(doc) {
         const now = moment().utc().toDate();
-        const userId = current.context.user.email;
+        const userId = current.context && current.context.current && current.context.current.user ? current.context.user.email : 'system';
         doc.created = now;
         doc.createdBy = userId;
         doc.updated = now;

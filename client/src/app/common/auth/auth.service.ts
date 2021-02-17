@@ -32,19 +32,24 @@ export class AuthService {
     }
 
     login(email: string, password: string) {
+        // let's have login return a LoginResponse { tokens: {accessToken, refreshToken}, userContext }, and getAuthenticatedUser return just a userContext
+        return this.callLoginApi(email, password)
+            .then((loginResponse) => {
+                return this.handleLoginResponse(loginResponse);
+            });
+    }
+
+    handleLoginResponse(loginResponse) {
         let userContext = null;
 
-        // let's have login return a LoginResponse { tokens: {accessToken, refreshToken}, userContext }, and getAuthenticatedUser return just a userContext
-        const loginPromise = this.callLoginApi(email, password)
-            .then((loginResponse: LoginResponse) => {
-                let cachingPromise = Promise.resolve(null);
-                if (loginResponse && loginResponse.tokens) {
-                    userContext = loginResponse.userContext;
-                    // Cache the accessToken and refresh token in IndexedDb
-                    cachingPromise = this.authTokenCacheService.cacheTokens(loginResponse.tokens);
-                }
-                return cachingPromise;
-            })
+        let cachingPromise = Promise.resolve(null);
+        if (loginResponse && loginResponse.tokens) {
+            userContext = loginResponse.userContext;
+            // Cache the accessToken and refresh token in IndexedDb
+            cachingPromise = this.authTokenCacheService.cacheTokens(loginResponse.tokens);
+        }
+
+        return cachingPromise
             .then((cachingResult) => {
                 let updateContextPromise = Promise.resolve(null);
                 if (cachingResult && userContext) {
@@ -56,8 +61,6 @@ export class AuthService {
             .catch((error) => {
                 console.log(error);
             });
-
-        return loginPromise;
     }
 
     private callLoginApi(email: string, password: string) {
@@ -172,6 +175,10 @@ export class AuthService {
             //     ),
             //     catchError(error => this.handleError(error))
             // );
+
+    }
+
+    handleInitialSetup() {
 
     }
 
