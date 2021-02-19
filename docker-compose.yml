@@ -1,6 +1,6 @@
 version: '3'
 services:
-  mongo:
+  mongodb:
     image: 'mongo:4.4.3'
     ports:
       - 27017:27017
@@ -23,9 +23,9 @@ services:
 #      - KAZUKU_ENV=dev
 #      - HOST_NAME=kazuku.com
 #      - PORT=3001
-#      - SALT_WORK_FACTOR=10
-#      - MONGO_URL=mongodb://localhost:27017/kazuku
+#      - MONGODB_URL=mongodb://kazukuUser:totallytemporary@mongodb:27017/kazuku
 #      - DATABASE_NAME=kazuku
+#      - SALT_WORK_FACTOR=10
 #      - JOB_TYPES=publishingJobs
 #      - CLIENT_SECRET=c>yXb**cwaP^$$k4Z
 #      - JWT_EXPIRATION=3600

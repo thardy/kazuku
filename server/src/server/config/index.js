@@ -2,29 +2,39 @@
 import testConfig from './development.json';
 let config = {};
 
-if (process.env.NODE_ENV === 'production') {
-    // Offer production environment variables
+if (process.env.NODE_ENV === 'test') {
+    // todo: test the test env workflow
+    // let testConfig = require('./development.json');
+    testConfig.cache.orgCache = false;
+    config = testConfig;
+}
+else if (!process.env.KAZUKU_ENV) {
+    testConfig.cache.orgCache = false;
+    config = testConfig;
+}
+else {
+    // use environment variables
     // process.env.REDIS_URL :: redis://redistogo:blahblah
-    let redisURI = require('url').parse(process.env.REDIS_URL);
-    let redisPassword = redisURI.auth.split(':')[1];
+    // let redisURI = require('url').parse(process.env.REDIS_URL);
+    // let redisPassword = redisURI.auth.split(':')[1];
 
     config = {
-        env: process.env.NODE_ENV,
-        host: process.env.host || '',
-        hostname: process.env.hostName || '',
-        port: process.env.port,
-        mongoDbUrl: process.env.mongoDbUrl,
-        databaseName: process.env.databaseName,
-        sessionSecret: process.env.sessionSecret,
-        clientSecret: process.env.clientSecret,
-        jwtExpirationInSeconds: process.env.jwtExpirationInSeconds,
-        refreshTokenExpirationInDays: process.env.refreshTokenExpirationInDays,
-        deviceIdCookieMaxAgeInDays: process.env.deviceIdCookieMaxAgeInDays,
+        env: process.env.KAZUKU_ENV,
+        hostname: process.env.HOST_NAME || '',
+        port: process.env.PORT,
+        mongoDbUrl: process.env.MONGODB_URL,
+        databaseName: process.env.DATABASE_NAME,
+        saltWorkFactor: process.env.SALT_WORK_FACTOR,
+        jobTypes: process.env.JOB_TYPES,
+        clientSecret: process.env.CLIENT_SECRET,
+        jwtExpirationInSeconds: process.env.JWT_EXPIRATION,
+        refreshTokenExpirationInDays: process.env.REFRESH_EXPIRATION,
+        deviceIdCookieMaxAgeInDays: process.env.DEVICEID_MAX_AGE,
         siteDefaults: {
-            defaultRegenerationInterval: process.env.defaultRegenerationInterval
+            defaultRegenerationInterval: process.env.DEFAULT_REGENERATION_INTERVAL
         },
         cache: {
-            orgCache: process.env.cache.orgCache || true,
+            orgCache: process.env.ORG_CACHE || true,
         },
         fb: {
             clientID: process.env.fbClientID,
@@ -40,23 +50,23 @@ if (process.env.NODE_ENV === 'production') {
             profileFields: ['id', 'email', 'displayName', 'photos'],
             passReqToCallback: true
         },
-        redis: {
-            host: redisURI.hostname,
-            port: redisURI.port,
-            password: redisPassword
-        }
+        // redis: {
+        //     host: redisURI.hostname,
+        //     port: redisURI.port,
+        //     password: redisPassword
+        // }
     };
 }
-else if (process.env.NODE_ENV === 'test') {
-    // let testConfig = require('./development.json');
-    testConfig.cache.orgCache = false;
-    config = testConfig;
-}
-else {
-    // Offer development variables
-    // let testConfig = require('./development.json');
-    testConfig.cache.orgCache = false;
-    config = testConfig;
-}
+// else if (process.env.NODE_ENV === 'test') {
+//     // let testConfig = require('./development.json');
+//     testConfig.cache.orgCache = false;
+//     config = testConfig;
+// }
+// else {
+//     // Offer development variables
+//     // let testConfig = require('./development.json');
+//     testConfig.cache.orgCache = false;
+//     config = testConfig;
+// }
 
 export default config;
