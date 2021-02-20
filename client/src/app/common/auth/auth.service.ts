@@ -1,26 +1,21 @@
 import {throwError as observableThrowError, Observable, BehaviorSubject, of as observableOf} from 'rxjs';
-import {Injectable, Inject} from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as _ from 'lodash'
-
 import {environment} from '../../../environments/environment';
-import {User} from './user.model';
 import {UserContext} from './user-context.model';
-import {GenericService} from '../generic.service';
 import {HttpService} from '../http.service';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {LoginUserSuccess} from '../../store/actions';
 import {AuthTokenCacheService} from './auth-token-cache.service';
 import {LoginResponse} from './login-response.model';
-import {Tokens} from './tokens.model';
 import {KazukuAuthProviderService} from './kazuku-auth-provider.service';
+import {LoadUserContextFailure, LoadUserContextSuccess} from './store/actions/auth.actions';
 
 @Injectable()
 export class AuthService {
     private baseUrl: string;
     private userContextSubject: BehaviorSubject<UserContext>;
     userContext$: Observable<UserContext>;
-
 
     constructor(private http: HttpService,
                 private store: Store<any>,
@@ -160,8 +155,14 @@ export class AuthService {
         return this.http.get(`${this.baseUrl}/getusercontext`)
             .pipe(
                 map(response => this.extractUserContext(response)),
-                tap((userContext) => this.updateAuthContext(userContext)),
-                catchError(error => this.handleError(error))
+                tap((userContext: UserContext) => {
+                    this.store.dispatch(new LoadUserContextSuccess(userContext));
+                    this.updateAuthContext(userContext);
+                }),
+                catchError((error: any) => {
+                    this.store.dispatch(new LoadUserContextFailure(error));
+                    return this.handleError(error);
+                })
             ).toPromise();
 
             // .pipe(
@@ -363,7 +364,7 @@ export class AuthService {
         return loginResponse;
     }
 
-    private extractUserContext(response: any) {
+    private extractUserContext(response: any): UserContext {
         let result  = null;
         if (response) {
             result = new UserContext(response);

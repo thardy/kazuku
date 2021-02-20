@@ -3,7 +3,6 @@ import {Routes, RouterModule} from '@angular/router';
 import {DashboardComponent} from './dashboard.component';
 import {PageHeaderResolver} from '../shared/resolvers/page-header.resolver';
 
-
 const routes: Routes = [
     {
         path: '',

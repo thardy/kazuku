@@ -47,6 +47,8 @@ import {IdbService} from './common/indexed-db/idb.service';
 import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
 import {AuthRequestInterceptor} from './common/interceptors/auth-request.interceptor';
 import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.service';
+import * as fromAuth from './common/auth/store/reducers/auth.reducer';
+import { AuthEffects } from './common/auth/store/effects/auth.effects';
 
 @NgModule({
     declarations: [
@@ -80,7 +82,9 @@ import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.serv
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
         EffectsModule.forRoot(effects),
         StoreRouterConnectingModule.forRoot(),
-        EntityDataModule.forRoot(entityConfig)
+        EntityDataModule.forRoot(entityConfig),
+        StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
+        EffectsModule.forFeature([AuthEffects])
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true },
