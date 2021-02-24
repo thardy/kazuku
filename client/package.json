@@ -36,6 +36,7 @@
     "@ngrx/store-devtools": "^9.2.0",
     "@swimlane/ngx-datatable": "^17.1.0",
     "core-js": "^3.2.1",
+    "dexie": "^3.0.3",
     "jexl": "^2.1.1",
     "lodash": "^4.17.15",
     "ng-zorro-antd": "^9.3.0",

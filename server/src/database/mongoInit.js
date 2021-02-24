@@ -5,9 +5,9 @@
 // NOTE:  I don't think we're going to use a Pages collection - pages will be represented by Templates with a url property
 //
 // // ***** CustomData ****************************************
-// db.createCollection('customData', {});
-// db.customData.createIndex( { "orgId": 1, "contentType": 1 });
-// db.customData.createIndex( { "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true } ); // created because we will always provide an orgId on lookups, to enforce multi-tenant
+db.createCollection('customData', {});
+db.customData.createIndex( { "orgId": 1, "contentType": 1 });
+db.customData.createIndex( { "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true } ); // created because we will always provide an orgId on lookups, to enforce multi-tenant
 //
 // // sample document
 // var newCustomData = { orgId: 1, contentType: 'blogPost', name: 'My First Blog Post', content: 'Imagine a well written blog here.'};
@@ -15,8 +15,8 @@
 //
 //
 // // ***** CustomSchemas ****************************************
-// db.createCollection('customSchemas', {});
-// db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
+db.createCollection('customSchemas', {});
+db.customSchemas.createIndex( { "orgId": 1, "contentType": 1 }, { unique: true });
 //
 // // sample document - https://github.com/dschnelldavis/angular2-json-schema-form (contentType must be snake-cased (e.g. product_types)
 // var newCustomSchema = {
@@ -46,9 +46,9 @@
 //
 //
 // // ***** Templates ****************************************
-// db.createCollection('templates', {});
+db.createCollection('templates', {});
 // Case-insensitive index
-// db.templates.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
+db.templates.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 //
 // // sample document (nameId must be kebab-cased)
 // var newTemplate = { orgId: 1, siteId: 1, name: '$Test Template1', nameId: 'test-template1', layout: 'master', description: 'cool template   ', template: '#Test Page 1 - Existing',
@@ -59,9 +59,9 @@
 //
 //
 // // ***** Queries ****************************************
-// db.createCollection('queries', {});
+db.createCollection('queries', {});
 // Case-insensitive index (requires MongoDb 3.4)
-// db.queries.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
+db.queries.createIndex( { "orgId": 1, "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 //
 // // sample document (nameId must be kebab-cased)
 // var newQuery = { orgId: 1, siteId: 1, name: '$Test Template1', nameId: 'test-template1', query: 'blah blah', results: [],
@@ -74,10 +74,10 @@
 //
 //
 // // ***** Organizations ****************************************
-// db.createCollection('organizations', {});
+db.createCollection('organizations', {});
 // Case-insensitive index
-// db.organizations.createIndex( { "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
-// db.organizations.createIndex( { "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
+db.organizations.createIndex( { "name": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
+db.organizations.createIndex( { "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
 //
 // // sample document
 // var newOrg = { name: 'Acme Corp', code: 'acme', description: 'A cool company.', statusId: 1, isMetaOrg: false,
@@ -88,9 +88,9 @@
 //
 //
 // // ***** Sites ****************************************
-// db.createCollection('sites', {});
+db.createCollection('sites', {});
 // Case-insensitive index
-// db.sites.createIndex( { "orgId": 1, "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
+db.sites.createIndex( { "orgId": 1, "code": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }} );
 //
 // // sample document
 // var newSite = { orgId: 1, code: 1, name: 'Acme Corp', domainName: 'mydomain.com',
@@ -102,8 +102,8 @@
 //
 //
 // // ***** Users ****************************************
-// db.createCollection('users', {});
-// db.users.createIndex({ "email": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
+db.createCollection('users', {});
+db.users.createIndex({ "email": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
 //
 // //sample document
 // var newUser = { orgId: 1, email: "joe@test.com", password: "lkj234oiulkj", firstName: "Joe", lastName: "Smith", lastLoggedIn: "1/1/2017",

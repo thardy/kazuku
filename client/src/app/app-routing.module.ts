@@ -38,8 +38,16 @@ const APP_ROUTES: Routes = [
         loadChildren: () => import('./content/content.module').then(mod => mod.ContentModule),
         canActivate: [AuthGuardService]
     },
-    {path: 'content/create/:contentType', component: CustomDataComponent, canActivate: [AuthGuardService]},
-    {path: 'content/:contentType/:id', component: CustomDataComponent, canActivate: [AuthGuardService]},
+    {
+        path: 'content/create/:contentType',
+        component: CustomDataComponent,
+        canActivate: [AuthGuardService]
+    },
+    {
+        path: 'content/:contentType/:id',
+        component: CustomDataComponent,
+        canActivate: [AuthGuardService]
+    },
     {
         path: 'sites',
         loadChildren: () => import('./sites/sites.module').then(mod => mod.SitesModule),
@@ -56,14 +64,22 @@ const APP_ROUTES: Routes = [
     // {path: 'pages', component: PageListComponent, canActivate: [AuthGuardService]},
     // {path: 'pages/create', component: PageComponent, canActivate: [AuthGuardService]},
     // {path: 'pages/:nameId', component: PageComponent, canActivate: [AuthGuardService]},
-    {path: 'setup', component: SetupComponent, canActivate: [SetupGuardService]},
+    {
+        path: 'setup',
+        component: SetupComponent,
+        canActivate: [SetupGuardService]
+    },
     {path: 'templates', component: TemplateListComponent, canActivate: [AuthGuardService]},
     {path: 'templates/create', component: TemplateComponent, canActivate: [AuthGuardService]},
     {path: 'templates/:nameId', component: TemplateComponent, canActivate: [AuthGuardService]},
     {path: 'queries', component: QueryListComponent, canActivate: [AuthGuardService]},
     {path: 'queries/create', component: QueryComponent, canActivate: [AuthGuardService]},
     {path: 'queries/:nameId', component: QueryComponent, canActivate: [AuthGuardService]},
-    {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+    {
+        path: '',
+        redirectTo: '/dashboard',
+        pathMatch: 'full'
+    },
 ];
 
 @NgModule({

@@ -142,5 +142,8 @@
     "@schematics/angular:directive": {
       "prefix": "kz"
     }
+  },
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
   }
 }

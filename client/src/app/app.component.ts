@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from './common/auth/auth.service';
+import {Store} from '@ngrx/store';
+import {LoadAuth} from './common/auth/store/actions/auth.actions';
 
 @Component({
     selector: 'kz-root',
@@ -9,14 +11,15 @@ import {AuthService} from './common/auth/auth.service';
 export class AppComponent implements OnInit {
     isCollapsed = false;
 
-    constructor(private userService: AuthService) {
-
+    constructor(private authService: AuthService,
+                private store: Store<any>) {
+        // this.store.dispatch(new LoadAuth());
     }
 
     ngOnInit() {}
 
     logout() {
-        this.userService.logout();
+        this.authService.logout();
     }
 
 }
