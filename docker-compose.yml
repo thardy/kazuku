@@ -1,18 +1,28 @@
 version: '3'
 services:
-  mongodb:
-    image: 'mongo:4.4.3'
-    ports:
-      - 27017:27017
-    restart: unless-stopped
-    volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./mongodb:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
-      - MONGO_INITDB_ROOT_PASSWORD=secret
-      - MONGO_INITDB_DATABASE=kazuku
-#  server:
+#  mongodb:
+#    image: 'mongo:4.4.3'
+#    ports:
+#      - 27017:27017
+#    restart: unless-stopped
+#    volumes:
+#      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+#      - ./mongodb:/data/db
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+#      - MONGO_INITDB_ROOT_PASSWORD=secret
+#      - MONGO_INITDB_DATABASE=kazuku
+#  nginx:
+#    restart: always
+#    build:
+#      dockerfile: Dockerfile.dev
+#      context: ./nginx
+#    ports:
+#      - '4000:80'
+#    depends_on:
+#      - api
+#      - client
+#  api:
 #    build:
 #      dockerfile: Dockerfile.dev
 #      context: ./server
@@ -33,13 +43,13 @@ services:
 #      - DEVICEID_MAX_AGE=730
 #      - ORG_CACHE=false
 #      - DEFAULT_REGENERATION_INTERVAL=10
-#  client:
-#    build:
-#      dockerfile: Dockerfile.dev
-#      context: ./client
-#    volumes:
-#      - /app/node_modules
-#      - ./client:/app
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
 #  worker:
 #    build:
 #      dockerfile: Dockerfile.dev

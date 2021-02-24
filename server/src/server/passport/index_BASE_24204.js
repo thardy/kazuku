@@ -3,9 +3,9 @@ import config from '../config/index.js';
 import logger from '../logger/index.js';
 import {database} from '../../database/database.js';
 import passportFacebook from 'passport-facebook';
-// const FacebookStrategy = passportFacebook.Strategy;
+const FacebookStrategy = passportFacebook.Strategy;
 import passportGoogleOauth from 'passport-google-oauth';
-// const GoogleStrategy = passportGoogleOauth.Strategy;
+const GoogleStrategy = passportGoogleOauth.Strategy;
 import passportLocal from 'passport-local';
 const LocalStrategy = passportLocal.Strategy;
 import passportJwt from 'passport-jwt';
@@ -148,10 +148,7 @@ export default (passport) => {
         authProcessor('google', req, accessToken, refreshToken, profile, done);
     };
 
-    // todo: receiving "uncaughtException: OAuth2Strategy requires a clientID option" - I think it's due to
-    //  no clientID being specified for config.fb.clientID - due to move to ENV variables in Docker
-    //  (development.json has it, but docker-compose.yml does not)
-    // passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
+    passport.use(new FacebookStrategy(config.fb, facebookAuthProcessor));
     // todo: receiving "OAuthStrategy requires a consumerKey option" out of the blue.  Figure that out if you want to use GoogleStrategy
     // passport.use(new GoogleStrategy(config.google, googleAuthProcessor));
 
