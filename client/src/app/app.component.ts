@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from './common/auth/auth.service';
 import {Store} from '@ngrx/store';
-import {LoadAuth} from './common/auth/store/actions/auth.actions';
+// import {LoadAuth} from './common/auth/store/actions/auth.actions';
 
 @Component({
     selector: 'kz-root',
