@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
 
 import {SiteService} from '../sites/site.service';
 import {Site} from '../sites/site.model';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {takeUntil} from 'rxjs/operators';
 
 const systemProperties = ['_id', 'id', 'orgId', 'siteId', 'name', 'nameId', 'url', 'layout', 'description', 'template', 'created', 'createdBy', 'updated', 'updatedBy', 'dependencies', 'regenerate'];

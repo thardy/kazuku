@@ -6,7 +6,7 @@ import {CustomSchemaService} from './custom-schema.service';
 import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
 
 const MANDATORY_FIELDS = ['name'];

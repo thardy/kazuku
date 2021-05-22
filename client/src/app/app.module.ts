@@ -49,6 +49,13 @@ import {AuthRequestInterceptor} from './common/interceptors/auth-request.interce
 import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.service';
 import * as fromAuth from './common/auth/store/reducers/auth.reducer';
 import { AuthEffects } from './common/auth/store/effects/auth.effects';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+import { FormsModule } from '@angular/forms';
+
+registerLocaleData(en);
 
 @NgModule({
     declarations: [
@@ -84,7 +91,8 @@ import { AuthEffects } from './common/auth/store/effects/auth.effects';
         StoreRouterConnectingModule.forRoot(),
         EntityDataModule.forRoot(entityConfig),
         StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
-        EffectsModule.forFeature([AuthEffects])
+        EffectsModule.forFeature([AuthEffects]),
+        FormsModule
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true },
@@ -107,7 +115,8 @@ import { AuthEffects } from './common/auth/store/effects/auth.effects';
             useFactory: idbProviderFactory,
             deps: [IdbService],
             multi: true
-        }
+        },
+        { provide: NZ_I18N, useValue: en_US }
     ],
     entryComponents: [],
     bootstrap: [AppComponent]

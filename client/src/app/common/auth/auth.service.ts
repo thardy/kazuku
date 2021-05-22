@@ -1,6 +1,6 @@
 import {throwError as observableThrowError, Observable, BehaviorSubject, of as observableOf} from 'rxjs';
 import {Injectable} from '@angular/core';
-import * as _ from 'lodash'
+import * as _ from 'lodash-es'
 import {environment} from '../../../environments/environment';
 import {UserContext} from './user-context.model';
 import {HttpService} from '../http.service';
