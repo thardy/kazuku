@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 const DB_INITIAL_VERSION = 1;
 // const DB_USER_PREFERENCES_VERSION = 2;

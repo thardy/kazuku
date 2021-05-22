@@ -6,7 +6,7 @@ import {SiteService} from './site.service';
 import {BaseComponent} from '../common/base-component';
 import {Observable, of} from 'rxjs';
 
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {flatMap, takeUntil} from 'rxjs/operators';
 
 @Component({

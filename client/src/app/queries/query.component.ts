@@ -6,7 +6,7 @@ import {QueryService} from './query.service';
 import {NgForm} from '@angular/forms';
 import {Observable, of} from 'rxjs';
 
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {flatMap, takeUntil} from 'rxjs/operators';
 
 @Component({
