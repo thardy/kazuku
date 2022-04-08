@@ -37,7 +37,7 @@
     "lodash": "^4.17.13",
     "marked": "^0.5.1",
     "memory-cache": "^0.2.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "mongo-rql": "https://github.com/thardy/mongo-rql/tarball/master",
     "mongodb": "^3.3.2",
     "monk": "^6.0.6",
