@@ -22,34 +22,34 @@ services:
 #    depends_on:
 #      - api
 #      - client
-#  api:
-#    build:
-#      dockerfile: Dockerfile.dev
-#      context: ./server
-#    volumes:
-#      - /app/node_modules
-#      - ./server:/app
-#    environment:
-#      - KAZUKU_ENV=dev
-#      - HOST_NAME=kazuku.com
-#      - PORT=3001
-#      - MONGODB_URL=mongodb://kazukuUser:totallytemporary@mongodb:27017/kazuku
-#      - DATABASE_NAME=kazuku
-#      - SALT_WORK_FACTOR=10
-#      - JOB_TYPES=publishingJobs
-#      - CLIENT_SECRET=c>yXb**cwaP^$$k4Z
-#      - JWT_EXPIRATION=3600
-#      - REFRESH_EXPIRATION=7
-#      - DEVICEID_MAX_AGE=730
-#      - ORG_CACHE=false
-#      - DEFAULT_REGENERATION_INTERVAL=10
-#  client:
-#    build:
-#      dockerfile: Dockerfile.dev
-#      context: ./client
-#    volumes:
-#      - /app/node_modules
-#      - ./client:/app
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - KAZUKU_ENV=dev
+      - HOST_NAME=kazuku.com
+      - PORT=3001
+      - MONGODB_URL=mongodb://kazukuUser:totallytemporary@mongodb:27017/kazuku
+      - DATABASE_NAME=kazuku
+      - SALT_WORK_FACTOR=10
+      - JOB_TYPES=publishingJobs
+      - CLIENT_SECRET=c>yXb**cwaP^$$k4Z
+      - JWT_EXPIRATION=3600
+      - REFRESH_EXPIRATION=7
+      - DEVICEID_MAX_AGE=730
+      - ORG_CACHE=false
+      - DEFAULT_REGENERATION_INTERVAL=10
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
 #  worker:
 #    build:
 #      dockerfile: Dockerfile.dev

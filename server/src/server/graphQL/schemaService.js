@@ -6,8 +6,8 @@ import GraphQLObjectId from './graphQLObjectId.js';
 import graphql from 'graphql';
 const {GraphQLSchema, GraphQLObjectType, GraphQLInputObjectType, GraphQLID,
     GraphQLString, GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLList} = graphql;
-import graphqlHelper from './graphql.helper.js';
-const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = graphqlHelper;
+import graphQLHelper from './graphQL.helper.js';
+const {simpleQuery, simpleCreateMutation, simpleUpdateMutation, simpleDeleteMutation} = graphQLHelper;
 
 import apolloServerExpress from 'apollo-server-express';
 const {makeExecutableSchema} = apolloServerExpress;
