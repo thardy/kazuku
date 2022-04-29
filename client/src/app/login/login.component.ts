@@ -10,7 +10,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 @Component({
     selector: 'kz-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.less']
+    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
     loginForm: FormGroup = new FormGroup({
@@ -44,22 +44,22 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loggingIn = true;
         console.log(form);
         if (!form.invalid) {
-            this.authService.login(form.value.userName, form.value.password)
-                .then((userContext) => {
-                    if (userContext) {
-                        if (userContext && this.returnUrl) {
-                            this.router.navigate([this.returnUrl]);
-                        } else {
-                            this.router.navigate(['dashboard']);
-                        }
-                    }
-                    // todo: make sure this handles failed logins correctly (is it handled in the service or auth-guard?) brah
-
-                    this.loggingIn = false;
-                })
-                .finally(() => {
-                    this.loggingIn = false;
-                });
+            // this.authService.login(form.value.userName, form.value.password)
+            //     .then((userContext) => {
+            //         if (userContext) {
+            //             if (userContext && this.returnUrl) {
+            //                 this.router.navigate([this.returnUrl]);
+            //             } else {
+            //                 this.router.navigate(['dashboard']);
+            //             }
+            //         }
+            //         // todo: make sure this handles failed logins correctly (is it handled in the service or auth-guard?) brah
+            //
+            //         this.loggingIn = false;
+            //     })
+            //     .finally(() => {
+            //         this.loggingIn = false;
+            //     });
         }
     }
 }

@@ -27,8 +27,7 @@
               }
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
-              "src/styles.less"
+              "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -90,8 +89,7 @@
               "src/assets/semantic/dist/semantic.js"
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
-              "src/styles.less"
+              "src/styles.scss"
             ],
             "assets": [
               "src/assets",
@@ -138,7 +136,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "kz",
-      "style": "less"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "kz"
