@@ -22,7 +22,7 @@
     "connect-mongoskin": "^0.1.2",
     "debug": "^4.1.0",
     "ejs": "^2.6.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-session": "^1.15.6",
     "front-matter": "^3.0.0",
     "fs-extra": "^7.0.0",
