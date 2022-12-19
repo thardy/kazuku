@@ -66,7 +66,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "kazuku:build"
+            "browserTarget": "kazuku:build",
+            "disableHostCheck": true
           },
           "configurations": {
             "production": {

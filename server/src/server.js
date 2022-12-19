@@ -79,7 +79,7 @@ async function startServer(config) {
     main.use(passport.initialize());
     playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
         app: main,
-        path: '/graphql', //`http://kazuku.com:3001/graphql`,
+        path: '/graphql', //`http://thanosblog.kazuku.com:3001/graphql`,
     });
 
     if (config.env !== 'test') {

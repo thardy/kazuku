@@ -12,17 +12,20 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=mongoadmin
       - MONGO_INITDB_ROOT_PASSWORD=secret
       - MONGO_INITDB_DATABASE=kazuku
-#  nginx:
-#    restart: always
-#    build:
-#      dockerfile: Dockerfile.dev
-#      context: ./nginx
-#    ports:
-#      - '4000:80'
-#    depends_on:
-#      - api
-#      - client
-  server:
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '4000:80'
+    depends_on:
+      - api
+      - client
+
+# calling this api instead of server just to make nginx happy (which uses server as a reserved name)
+  api:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
@@ -31,7 +34,7 @@ services:
       - ./server:/app
     environment:
       - KAZUKU_ENV=dev
-      - HOST_NAME=kazuku.com
+      - HOST_NAME=0.0.0.0
       - PORT=3001
       - MONGODB_URL=mongodb://kazukuUser:totallytemporary@mongodb:27017/kazuku
       - DATABASE_NAME=kazuku
@@ -48,7 +51,9 @@ services:
       dockerfile: Dockerfile.dev
       context: ./client
     volumes:
+      # ensure node_modules in container does not get overwritten by node_modules in client folder
       - /app/node_modules
+      # ensure everything else in client folder is shared with app folder in container
       - ./client:/app
 #  worker:
 #    build:

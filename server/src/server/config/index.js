@@ -1,5 +1,5 @@
 'use strict';
-import testConfig from './development.json';
+import testConfig from './development.json' assert { type: "json" };
 let config = {};
 
 if (process.env.NODE_ENV === 'test') {
