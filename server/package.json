@@ -65,7 +65,7 @@
     "grunt-contrib-jshint": "^2.0.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-mocha-test": "^0.13.3",
-    "mocha": "^7.1.2",
+    "mocha": "^10.2.0",
     "should": "^13.2.3",
     "sinon": "^7.0.0",
     "supertest": "^3.3.0"
