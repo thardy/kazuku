@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import OrganizationService from '../organizations/organizationService';
 import {database} from '../database/database';
+import logger from '../server/logger';
 
 class AuthService extends GenericService {
     constructor(database) {
@@ -214,6 +215,10 @@ class AuthService extends GenericService {
                 expiresIn: config.jwtExpirationInSeconds
             }
         );
+
+        // todo: temporary
+        logger.log('debug', `config.jwtExpirationInSeconds is ${config.jwtExpirationInSeconds}`);
+
         return accessToken;
     };
 

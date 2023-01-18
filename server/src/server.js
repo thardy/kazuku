@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 // Setup passport auth strategies
@@ -77,6 +76,7 @@ async function startServer(config) {
 
     main.use(setupAuthZone);
     main.use(cookieParser());
+    main.use(express.json());
     main.use(passport.initialize());
     playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
         app: main,

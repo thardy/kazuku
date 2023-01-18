@@ -49,7 +49,7 @@ class OrganizationsController extends CrudController {
     }
 
     getByCode(req, res, next) {
-        let orgCode = req.params.name;
+        let orgCode = req.params.code;
         res.set("Content-Type", "application/json");
 
         this.service.getByCode(orgCode)
