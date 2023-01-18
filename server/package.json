@@ -7,7 +7,7 @@
     "start": "node --experimental-json-modules --es-module-specifier-resolution=node ./bin/www.js",
     "dev": "nodemon --experimental-json-modules --es-module-specifier-resolution=node ./bin/www.js",
     "linTest": "NODE_ENV=test ./node_modules/.bin/mocha --grep ApiTests --invert src/**/*.spec.js --timeout 5000 --experimental-json-modules",
-    "winTest": "set NODE_ENV=test&& mocha --grep ApiTests --invert src/**/*.spec.js --timeout 5000 --experimental-json-modules",
+    "winTest": "set NODE_ENV=test&& mocha --grep ApiTests --invert src/**/*.spec.js --timeout 5000 --experimental-json-modules --es-module-specifier-resolution=node",
     "linApiTest": "NODE_ENV=test ./node_modules/.bin/mocha --grep ApiTests src/**/*.spec.js",
     "winApiTest": "set NODE_ENV=test&& ./node_modules/.bin/mocha --grep ApiTests src/**/*.spec.js"
   },
