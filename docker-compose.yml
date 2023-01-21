@@ -30,7 +30,9 @@ services:
       dockerfile: Dockerfile.dev
       context: ./server
     ports:
-      - "3500:3001"
+      - '3500:3001'
+    depends_on:
+      - mongodb
     volumes:
       - /app/node_modules
       - ./server:/app
@@ -40,23 +42,29 @@ services:
       - PORT=3001
       - MONGODB_URL=mongodb://kazukuUser:totallytemporary@mongodb:27017/kazuku
       - DATABASE_NAME=kazuku
+      - CORS_ALLOWED_ORIGIN=http://localhost:3600
       - SALT_WORK_FACTOR=10
       - JOB_TYPES=publishingJobs
       - CLIENT_SECRET=c>yXb**cwaP^$$k4Z
-      - JWT_EXPIRATION=3600
-      - REFRESH_EXPIRATION=7
-      - DEVICEID_MAX_AGE=730
+      - JWT_EXPIRATION_SECONDS=3600
+      - REFRESH_EXPIRATION_DAYS=7
+      - DEVICEID_MAX_AGE_DAYS=730
       - ORG_CACHE=false
       - DEFAULT_REGENERATION_INTERVAL=10
-#  client:
-#    build:
-#      dockerfile: Dockerfile.dev
-#      context: ./client
-#    volumes:
-#      # ensure node_modules in container does not get overwritten by node_modules in client folder
-#      - /app/node_modules
-#      # ensure everything else in client folder is shared with app folder in container
-#      - ./client:/app
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    ports:
+      - '3600:4200'
+    depends_on:
+      - mongodb
+      - api
+    volumes:
+      # ensure node_modules in container does not get overwritten by node_modules in client folder
+      - /app/node_modules
+      # ensure everything else in client folder is shared with app folder in container
+      - ./client:/app
 #  worker:
 #    build:
 #      dockerfile: Dockerfile.dev

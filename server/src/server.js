@@ -77,6 +77,9 @@ async function startServer(config) {
     main.use(setupAuthZone);
     main.use(cookieParser());
     main.use(express.json());
+    main.use(cors({
+        origin: config.corsAllowedOrigin
+    }));
     main.use(passport.initialize());
     playgroundApolloServer.applyGraphQlPlaygroundMiddleware({
         app: main,

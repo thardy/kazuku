@@ -24,12 +24,13 @@ else {
         port: process.env.PORT,
         mongoDbUrl: process.env.MONGODB_URL,
         databaseName: process.env.DATABASE_NAME,
+        corsAllowedOrigin: process.env.CORS_ALLOWED_ORIGIN,
         saltWorkFactor: process.env.SALT_WORK_FACTOR,
         jobTypes: process.env.JOB_TYPES,
         clientSecret: process.env.CLIENT_SECRET,
-        jwtExpirationInSeconds: process.env.JWT_EXPIRATION,
-        refreshTokenExpirationInDays: process.env.REFRESH_EXPIRATION,
-        deviceIdCookieMaxAgeInDays: process.env.DEVICEID_MAX_AGE,
+        jwtExpirationInSeconds: process.env.JWT_EXPIRATION_SECONDS,
+        refreshTokenExpirationInDays: process.env.REFRESH_EXPIRATION_DAYS,
+        deviceIdCookieMaxAgeInDays: process.env.DEVICEID_MAX_AGE_DAYS,
         siteDefaults: {
             defaultRegenerationInterval: process.env.DEFAULT_REGENERATION_INTERVAL
         },

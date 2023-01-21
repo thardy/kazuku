@@ -208,17 +208,16 @@ class AuthService extends GenericService {
     // expiresIn should be in seconds
     generateJwt(payload) {
         // generate the jwt (uses jsonwebtoken library)
+        const jwtExpiryConfig = config.jwtExpirationInSeconds;
+        const jwtExpirationInSeconds = (typeof jwtExpiryConfig === 'string') ? parseInt(jwtExpiryConfig) : jwtExpiryConfig;
+
         const accessToken = jwt.sign(
             payload,
             config.clientSecret,
             {
-                expiresIn: config.jwtExpirationInSeconds
+                expiresIn: jwtExpirationInSeconds
             }
         );
-
-        // todo: temporary
-        logger.log('debug', `config.jwtExpirationInSeconds is ${config.jwtExpirationInSeconds}`);
-
         return accessToken;
     };
 
