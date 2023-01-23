@@ -1,4 +1,7 @@
-<sf-form [schema]="customSchema.jsonSchema" [model]="initialModel" (onChange)="formChanged($event.value)"></sf-form>
+<!-- ngx-schema-form is not working with Angular 14 - need to move to ajsf (https://github.com/hamzahamidi/ajsf), or, if we
+can wait, just use Tim's custom json-schema renderer, which is coming soon -->
+<!--<sf-form [schema]="customSchema.jsonSchema" [model]="initialModel" (onChange)="formChanged($event.value)"></sf-form>-->
+<h3>Need to add a new json-schema form renderer here that works with Angular 14, like ajsf - https://github.com/hamzahamidi/ajsf</h3>
 
 <div class="extra content">
     <button type="submit" class="ui positive button" (click)="save()"

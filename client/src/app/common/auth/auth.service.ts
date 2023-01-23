@@ -229,7 +229,7 @@ export class AuthService {
     }
 
     updateAuthContext(userContext: UserContext, persistLastUser = true) {
-        let observable = observableOf(null);
+        let observable: any = observableOf(null);
 
         if (userContext) {
             this.publishUserContext(userContext);

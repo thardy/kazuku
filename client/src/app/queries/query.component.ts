@@ -38,7 +38,7 @@ export class QueryComponent extends BaseComponent implements OnInit {
                     }
                 })
             )
-            .subscribe((query) => {
+            .subscribe((query: Query) => {
                 if (query) {
                     this.query = query;
                     this.original = Object.assign({}, this.query);

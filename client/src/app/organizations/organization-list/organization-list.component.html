@@ -1,54 +1,54 @@
-<nz-page-header [nzGhost]="false" nzTitle="Organizations" style="margin-bottom: 16px;">
-    <nz-page-header-extra>
-        <i nz-icon nzType="setting" (click)="showHelp = !showHelp"></i>
-    </nz-page-header-extra>
-    <nz-page-header-content *ngIf="showHelp">
-        <div nz-row>
-            <div class="content">
-                <p nz-paragraph>
-                    Ant Design interprets the color system into two levels: a system-level color system and a product-level color system.
-                </p>
-                <p nz-paragraph>
-                    Ant Design's design team preferred to design with the HSB color model, which makes it easier for designers to have a clear
-                    psychological expectation of color when adjusting colors, as well as facilitate communication in teams.
-                </p>
-                <div class="content-link">
-                    <a> <img src="https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg" alt="start" />Quick Start </a>
-                    <a> <img src="https://gw.alipayobjects.com/zos/rmsportal/NbuDUAuBlIApFuDvWiND.svg" alt="info" />Product Info </a>
-                    <a> <img src="https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg" alt="doc" />Product Doc </a>
-                </div>
-            </div>
-        </div>
-    </nz-page-header-content>
-</nz-page-header>
+<!--<nz-page-header [nzGhost]="false" nzTitle="Organizations" style="margin-bottom: 16px;">-->
+<!--    <nz-page-header-extra>-->
+<!--        <i nz-icon nzType="setting" (click)="showHelp = !showHelp"></i>-->
+<!--    </nz-page-header-extra>-->
+<!--    <nz-page-header-content *ngIf="showHelp">-->
+<!--        <div nz-row>-->
+<!--            <div class="content">-->
+<!--                <p nz-paragraph>-->
+<!--                    Ant Design interprets the color system into two levels: a system-level color system and a product-level color system.-->
+<!--                </p>-->
+<!--                <p nz-paragraph>-->
+<!--                    Ant Design's design team preferred to design with the HSB color model, which makes it easier for designers to have a clear-->
+<!--                    psychological expectation of color when adjusting colors, as well as facilitate communication in teams.-->
+<!--                </p>-->
+<!--                <div class="content-link">-->
+<!--                    <a> <img src="https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg" alt="start" />Quick Start </a>-->
+<!--                    <a> <img src="https://gw.alipayobjects.com/zos/rmsportal/NbuDUAuBlIApFuDvWiND.svg" alt="info" />Product Info </a>-->
+<!--                    <a> <img src="https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg" alt="doc" />Product Doc </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </nz-page-header-content>-->
+<!--</nz-page-header>-->
 
-<nz-list [nzDataSource]="(organizations$ | async)" nzSize="large" [nzRenderItem]="defaultItem" [nzFooter]="listFooter">
-<!--    <ng-template #orgListHeader>-->
-<!--        <h4>Organizations</h4>-->
+<!--<nz-list [nzDataSource]="(organizations$ | async)" nzSize="large" [nzRenderItem]="defaultItem" [nzFooter]="listFooter">-->
+<!--&lt;!&ndash;    <ng-template #orgListHeader>&ndash;&gt;-->
+<!--&lt;!&ndash;        <h4>Organizations</h4>&ndash;&gt;-->
+<!--&lt;!&ndash;    </ng-template>&ndash;&gt;-->
+<!--    <ng-template #defaultItem let-organization>-->
+<!--        <nz-list-item [nzContent]="orgName" [nzActions]="[orgActions]">-->
+<!--            <ng-template #orgName>-->
+<!--                <a [routerLink]="['/organizations/' + organization.id]">{{organization.name}}</a>-->
+<!--            </ng-template>-->
+<!--            <ng-template #orgActions>-->
+<!--                <button nz-button-->
+<!--                        [nzSize]="'small'"-->
+<!--                        nzType="link"-->
+<!--                        (click)="selectOrg(organization.id)" [disabled]="!(userContext$ | async)?.user?.isMetaAdmin">-->
+<!--                    <i nz-icon nzType="swap" nzTheme="outline"></i>-->
+<!--                </button>-->
+<!--            </ng-template>-->
+<!--        </nz-list-item>-->
 <!--    </ng-template>-->
-    <ng-template #defaultItem let-organization>
-        <nz-list-item [nzContent]="orgName" [nzActions]="[orgActions]">
-            <ng-template #orgName>
-                <a [routerLink]="['/organizations/' + organization.id]">{{organization.name}}</a>
-            </ng-template>
-            <ng-template #orgActions>
-                <button nz-button
-                        [nzSize]="'small'"
-                        nzType="link"
-                        (click)="selectOrg(organization.id)" [disabled]="!(userContext$ | async)?.user?.isMetaAdmin">
-                    <i nz-icon nzType="swap" nzTheme="outline"></i>
-                </button>
-            </ng-template>
-        </nz-list-item>
-    </ng-template>
 
-    <ng-template #listFooter>
-        <button nz-button nzType="primary" (click)="create()">
-            <i nz-icon nzType="plus-circle" nzTheme="outline"></i>
-            Add
-        </button>
-    </ng-template>
-</nz-list>
+<!--    <ng-template #listFooter>-->
+<!--        <button nz-button nzType="primary" (click)="create()">-->
+<!--            <i nz-icon nzType="plus-circle" nzTheme="outline"></i>-->
+<!--            Add-->
+<!--        </button>-->
+<!--    </ng-template>-->
+<!--</nz-list>-->
 
 <!--<div class="ui middle aligned relaxed divided selection list">-->
 <!--    <ng-container *ngFor="let organization of organizations">-->

@@ -27,7 +27,6 @@
               }
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles.less"
             ],
             "stylePreprocessorOptions": {
@@ -91,22 +90,12 @@
               "src/assets/semantic/dist/semantic.js"
             ],
             "styles": [
-              "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles.less"
             ],
             "assets": [
               "src/assets",
               "src/favicon.ico"
             ]
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "src/tsconfig.json"
-            ],
-            "exclude": []
           }
         }
       }
@@ -121,15 +110,6 @@
           "options": {
             "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "kazuku:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "e2e/tsconfig.json"
-            ],
-            "exclude": []
           }
         }
       }

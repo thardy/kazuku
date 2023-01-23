@@ -1,43 +1,43 @@
 <h4 *ngIf="(orgDetails$ | async)?.id">{{(orgDetails$ | async)?.name}}</h4>
 <h4 *ngIf="!(orgDetails$ | async)?.id">New Organization</h4>
 
-<form nz-form [formGroup]="organizationForm" [nzLayout]="'horizontal'" (ngSubmit)="save()">
+<!--<form nz-form [formGroup]="organizationForm" [nzLayout]="'horizontal'" (ngSubmit)="save()">-->
 
-    <nz-form-item>
-        <nz-form-label nzRequired>Name</nz-form-label>
-        <nz-form-control>
-            <input nz-input
-                   formControlName="name"
-                   id="name"
-                   type="text"
-                   pattern="[\D]*" />
-        </nz-form-control>
-    </nz-form-item>
+<!--    <nz-form-item>-->
+<!--        <nz-form-label nzRequired>Name</nz-form-label>-->
+<!--        <nz-form-control>-->
+<!--            <input nz-input-->
+<!--                   formControlName="name"-->
+<!--                   id="name"-->
+<!--                   type="text"-->
+<!--                   pattern="[\D]*" />-->
+<!--        </nz-form-control>-->
+<!--    </nz-form-item>-->
 
-    <nz-form-item>
-        <nz-form-label nzRequired>Code</nz-form-label>
-        <nz-form-control>
-            <input nz-input formControlName="code" id="code" />
-        </nz-form-control>
-    </nz-form-item>
+<!--    <nz-form-item>-->
+<!--        <nz-form-label nzRequired>Code</nz-form-label>-->
+<!--        <nz-form-control>-->
+<!--            <input nz-input formControlName="code" id="code" />-->
+<!--        </nz-form-control>-->
+<!--    </nz-form-item>-->
 
-    <nz-form-item>
-        <nz-form-label nzRequired>Description</nz-form-label>
-        <nz-form-control>
-            <textarea nz-input formControlName="description" id="description" rows="4"></textarea>
-        </nz-form-control>
-    </nz-form-item>
+<!--    <nz-form-item>-->
+<!--        <nz-form-label nzRequired>Description</nz-form-label>-->
+<!--        <nz-form-control>-->
+<!--            <textarea nz-input formControlName="description" id="description" rows="4"></textarea>-->
+<!--        </nz-form-control>-->
+<!--    </nz-form-item>-->
 
-    <nz-form-item>
-        <nz-form-control>
-<!--            <button nz-button nzType="primary" [disabled]="!organizationForm.valid && organizationForm.touched">Submit</button>-->
-            <button nz-button nzType="primary" [disabled]="true">Submit</button>
-            <button nz-button disabled>Reset</button>
-            <button nz-button nzType="danger" (click)="cancel()">Cancel</button>
-        </nz-form-control>
-    </nz-form-item>
+<!--    <nz-form-item>-->
+<!--        <nz-form-control>-->
+<!--&lt;!&ndash;            <button nz-button nzType="primary" [disabled]="!organizationForm.valid && organizationForm.touched">Submit</button>&ndash;&gt;-->
+<!--            <button nz-button nzType="primary" [disabled]="true">Submit</button>-->
+<!--            <button nz-button disabled>Reset</button>-->
+<!--            <button nz-button nzType="danger" (click)="cancel()">Cancel</button>-->
+<!--        </nz-form-control>-->
+<!--    </nz-form-item>-->
 
-</form>
+<!--</form>-->
 
 
 

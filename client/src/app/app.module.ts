@@ -1,7 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
-import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'ngx-schema-form';
+// import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'ngx-schema-form';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppRoutingModule} from './app-routing.module';
@@ -39,8 +39,6 @@ import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../environments/environment';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
-import {EntityDataModule} from '@ngrx/data';
-import {entityConfig} from './entity-metadata';
 
 import {reducers, effects} from './store';
 import {IdbService} from './common/indexed-db/idb.service';
@@ -49,8 +47,8 @@ import {AuthRequestInterceptor} from './common/interceptors/auth-request.interce
 import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.service';
 import * as fromAuth from './common/auth/store/reducers/auth.reducer';
 import { AuthEffects } from './common/auth/store/effects/auth.effects';
-import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
+// import { NZ_I18N } from 'ng-zorro-antd/i18n';
+// import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
@@ -79,7 +77,7 @@ registerLocaleData(en);
         SharedModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        SchemaFormModule.forRoot(),
+        // SchemaFormModule.forRoot(),
         DashboardModule,
         OrganizationsModule,
         SitesModule,
@@ -89,7 +87,6 @@ registerLocaleData(en);
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
         EffectsModule.forRoot(effects),
         StoreRouterConnectingModule.forRoot(),
-        EntityDataModule.forRoot(entityConfig),
         StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
         EffectsModule.forFeature([AuthEffects]),
         FormsModule
@@ -109,14 +106,14 @@ registerLocaleData(en);
         SetupGuardService,
         AuthGuardService,
         CustomDataService,
-        {provide: WidgetRegistry, useClass: DefaultWidgetRegistry},
+        // {provide: WidgetRegistry, useClass: DefaultWidgetRegistry},
         {
             provide: APP_INITIALIZER,
             useFactory: idbProviderFactory,
             deps: [IdbService],
             multi: true
         },
-        { provide: NZ_I18N, useValue: en_US }
+        // { provide: NZ_I18N, useValue: en_US }
     ],
     entryComponents: [],
     bootstrap: [AppComponent]

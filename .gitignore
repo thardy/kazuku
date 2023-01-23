@@ -23,6 +23,7 @@ _[Uu]pgrade[Rr]eport_[Ff]iles
 *.log
 *.log.*
 *node_modules*
+.angular/
 client/vendor/
 client/vendor/*
 client/vendor/*/*
