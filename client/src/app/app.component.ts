@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from './common/auth/auth.service';
 import {Store} from '@ngrx/store';
+
 // import {LoadAuth} from './common/auth/store/actions/auth.actions';
 
 @Component({
@@ -13,6 +14,7 @@ export class AppComponent implements OnInit {
 
     constructor(private authService: AuthService,
                 private store: Store<any>) {
+        console.log('app component');
         // this.store.dispatch(new LoadAuth());
     }
 

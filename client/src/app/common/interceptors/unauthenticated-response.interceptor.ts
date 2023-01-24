@@ -1,5 +1,5 @@
 import {Injectable, Injector, OnDestroy} from '@angular/core';
-import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse} from '@angular/common/http';
+import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable, Subject} from 'rxjs';
 import {AuthService} from '../auth/auth.service';
 import {tap} from 'rxjs/operators';
@@ -18,6 +18,7 @@ export class UnAuthenticatedResponseInterceptor implements HttpInterceptor, OnDe
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        console.log(req);
         return next.handle(req).pipe(
             tap(event => {
             }, err => {
