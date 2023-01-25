@@ -35,7 +35,7 @@ export class AuthGuardService implements CanActivate {
                          * having access to a specific feature.
                          */
                         console.log('User not logged in...routing to login');
-                        // this.authService.navigateToLogin();
+                        this.authService.navigateToLogin();
                         allow = false;
                     }
 

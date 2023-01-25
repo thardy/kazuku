@@ -326,9 +326,7 @@ export class AuthService {
 
     navigateToLogin() {
         console.log('Navigating to login page');
-        this.router.navigateByUrl('/#/login');
-        // window.location.href = `/#/login`;
-        // window.location.reload();
+        window.location.href = `/#/login`;
     }
 
     acquireTokenSilent() {
@@ -339,7 +337,7 @@ export class AuthService {
                     promise = this.authProvider.requestTokenUsingRefreshToken(refreshToken);
                 } else {
                     console.log('No token found. Routing to login');
-                    // this.navigateToLogin();
+                    this.navigateToLogin();
                 }
                 return promise;
             })

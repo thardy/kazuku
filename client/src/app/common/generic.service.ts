@@ -6,7 +6,6 @@ import JsonUtils from './utils/json-utils';
 import {HttpService} from './http.service';
 import {catchError, map} from 'rxjs/operators';
 
-@Injectable()
 export class GenericService<T extends BaseModel> {
 
     protected baseUrl: string;
