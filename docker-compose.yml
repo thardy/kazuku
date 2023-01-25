@@ -42,7 +42,7 @@ services:
       - PORT=3001
       - MONGODB_URL=mongodb://kazukuUser:totallytemporary@mongodb:27017/kazuku
       - DATABASE_NAME=kazuku
-      - CORS_ALLOWED_ORIGIN=http://localhost:3600
+      - CORS_ALLOWED_ORIGIN=http://localhost:4200
       - SALT_WORK_FACTOR=10
       - JOB_TYPES=publishingJobs
       - CLIENT_SECRET=c>yXb**cwaP^$$k4Z

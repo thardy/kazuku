@@ -7,7 +7,7 @@ import {Store} from '@ngrx/store';
 @Component({
     selector: 'kz-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less']
+    styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
     isCollapsed = false;

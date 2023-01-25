@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable, of as observableOf, throwError as observableThrowError} from 'rxjs';
+import {BehaviorSubject, Observable, of as observableOf, switchMap, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import * as _ from 'lodash-es'
 import {environment} from '../../../environments/environment';
@@ -32,10 +32,13 @@ export class AuthService {
         /**
          * let's have login return a LoginResponse { tokens: {accessToken, refreshToken}, userContext }, and getAuthenticatedUser return just a userContext
          */
-        return this.callLoginApi(email, password)
-            .then((loginResponse) => {
-                return this.handleLoginResponse(loginResponse);
-            });
+        return this.callLoginApi(email, password).pipe(
+            switchMap((response) => this.handleLoginResponse(response))
+        );
+        // return this.callLoginApi(email, password)
+        //     .then((loginResponse) => {
+        //         return this.handleLoginResponse(loginResponse);
+        //     });
     }
 
     handleLoginResponse(loginResponse) {
@@ -66,12 +69,12 @@ export class AuthService {
             });
     }
 
-    private callLoginApi(email: string, password: string) {
+    private callLoginApi(email: string, password: string): Observable<any> {
         return this.http.post(`${this.baseUrl}/login`, {email: email, password: password})
             .pipe(
                 map(response => this.extractLoginResponse(response)),
                 catchError(error => this.handleError(error))
-            ).toPromise();
+            );
     }
 
     async logout() {

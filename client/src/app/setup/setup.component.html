@@ -1,6 +1,58 @@
-<form #theForm="ngForm" (ngSubmit)="save(theForm)" nz-form>
+<div class="container">
+    <h4>Let's go ahead and set the initial password for the admin user...</h4>
+    <p>Admin username/email is simply "admin"</p>
+    <form [formGroup]="setupConfigForm" (ngSubmit)="handleSetup()">
 
-    <p nz-typography>Admin username/email is simply "admin".  Let's go ahead and set the initial password for the admin user...</p>
+        <div class="mb-3">
+            <label class="form-label" for="metaOrgNameInput">Org Name</label>
+            <input class="form-control"
+                   [formControlName]="'metaOrgName'"
+                   id="metaOrgNameInput"
+                   type="text" />
+            <div class="form-text" id="orgNameHelper">All content in Kazuku belongs to organizations, and while Kazuku is
+                capable of hosting many
+                organizations, you don't have to use Kazuku to host multiple organizations. There does need to be one "meta"
+                organization, however - this will be the name of the
+                host organization for this instance of Kazuku. This can simply be the name of your organization or just your
+                name.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="metaOrgCodeInput">Meta Org Code</label>
+            <input class="form-control"
+                   [formControlName]="'metaOrgCode'"
+                   id="metaOrgCodeInput"
+                   type="text"
+                   disabled
+                   readonly />
+            <div id="metaOrgCodeHelper" class="form-text">Every organization has an organization code. For simplicity, the meta org always has a hardwired code of "admin".</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="adminPasswordInput">Admin Password</label>
+            <input class="form-control"
+                   [formControlName]="'adminPassword'"
+                   id="adminPasswordInput"
+                   type="text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="adminPasswordConfirmInput">Admin Password Confirm</label>
+            <input class="form-control"
+                   [formControlName]="'adminPasswordConfirm'"
+                   id="adminPasswordConfirmInput"
+                   type="text" />
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+
+    </form>
+</div>
+
+<!--<form #theForm="ngForm" (ngSubmit)="save(theForm)" nz-form>-->
+
+<!--    <p>Admin username/email is simply "admin".  Let's go ahead and set the initial password for the admin user...</p>-->
 
 <!--    <nz-form-item>-->
 <!--        <nz-form-label nzRequired nzFor="adminPassword">Admin Password</nz-form-label>-->
@@ -51,4 +103,4 @@
 <!--    </nz-form-item>-->
 
 
-</form>
+<!--</form>-->
