@@ -1,21 +1,20 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../common/auth/auth.service';
-import {Subject} from 'rxjs';
+import {finalize, Subject} from 'rxjs';
 import {User} from '../common/auth/user.model';
 
-import {Router, ActivatedRoute} from '@angular/router';
-import {takeUntil} from 'rxjs/operators';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
     selector: 'kz-login',
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.less']
+    styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
     loginForm: FormGroup = new FormGroup({
-        userName: new FormControl(''),
-        password: new FormControl(''),
+        userName: new FormControl('', Validators.required),
+        password: new FormControl('', Validators.required),
         rememberMe: new FormControl(false)
     });
 
@@ -40,12 +39,15 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    login(form) {
-        this.loggingIn = true;
-        console.log(form);
-        if (!form.invalid) {
-            this.authService.login(form.value.userName, form.value.password)
-                .then((userContext) => {
+    login() {
+        console.log(this.loginForm);
+        if (this.loginForm.valid) {
+            this.loggingIn = true;
+            this.authService.login(this.loginForm.value.userName, this.loginForm.value.password)
+                .pipe(
+                    finalize(() => this.loggingIn = false)
+                )
+                .subscribe((userContext) => {
                     if (userContext) {
                         if (userContext && this.returnUrl) {
                             this.router.navigate([this.returnUrl]);
@@ -57,9 +59,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
                     this.loggingIn = false;
                 })
-                .finally(() => {
-                    this.loggingIn = false;
-                });
+        } else {
+            /**
+             * Inform user that the form fields are invalid.
+             */
         }
     }
 

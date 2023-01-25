@@ -1,3 +1,5 @@
+import {FormControl} from "@angular/forms";
+
 export class SetupConfig {
     id: string; // here just to satisfy BaseModel requirement (oh the joys of typed programming forced onto javascript)
     adminPassword: string;
@@ -18,5 +20,12 @@ export class SetupConfig {
         this.metaOrgCode = options.metaOrgCode || '';
     }
 
+}
+
+export interface SetupConfigForm {
+    adminPassword: FormControl<string>;
+    adminPasswordConfirm: FormControl<string>;
+    metaOrgName: FormControl<string>;
+    metaOrgCode: FormControl<string>;
 }
 
