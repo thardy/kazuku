@@ -1,26 +1,23 @@
-<router-outlet></router-outlet>
-
-<!--<nz-layout>-->
-<!--    <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" nzWidth="200px">-->
-<!--        <div class="logo"></div>-->
-<!--        <kz-nav-bar [collapsedSidenav]="isCollapsed"></kz-nav-bar>-->
-<!--    </nz-sider>-->
-<!--    <nz-layout>-->
-<!--        <nz-header>-->
-<!--            <nz-avatar nzIcon="user" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></nz-avatar>-->
-<!--            <i class="trigger" nz-icon nzType="logout" nzTheme="outline" (click)="logout()"></i>-->
-<!--        </nz-header>-->
-<!--        <nz-content>-->
-<!--            <div class="inner-content">-->
-<!--                <router-outlet></router-outlet>-->
-<!--            </div>-->
-<!--        </nz-content>-->
-<!--        <nz-footer>Â©2020 Omega Creations</nz-footer>-->
-<!--    </nz-layout>-->
-<!--</nz-layout>-->
-
-
-<!-- NG-ZORRO -->
-<!--<a href="https://github.com/NG-ZORRO/ng-zorro-antd" target="_blank" style="display: flex;align-items: center;justify-content: center;height: 100%;width: 100%;">
-  <img height="300" src="https://img.alicdn.com/tfs/TB1X.qJJgHqK1RjSZFgXXa7JXXa-89-131.svg">
-</a>-->
+<div class="d-flex h-100">
+    <div class="sidebar">
+        <kz-side-bar></kz-side-bar>
+    </div>
+    <div class="p-3 bg-light flex-grow-1" #content>
+        <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#">Company name</a>
+            <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search"
+                   aria-label="Search">
+            <div class="navbar-nav">
+                <div class="nav-item text-nowrap">
+                    <a class="nav-link px-3" href="#">Sign out</a>
+                </div>
+            </div>
+        </header>
+        <router-outlet></router-outlet>
+    </div>
+</div>

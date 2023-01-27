@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Query} from "./query.model";
-import {QueryService} from "./query.service";
 import {Router} from "@angular/router";
+import {QueryService} from "../query.service";
+import {Query} from "../query.model";
 
 @Component({
     selector: 'kz-query-list',

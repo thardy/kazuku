@@ -35,10 +35,6 @@ export class AuthService {
         return this.callLoginApi(email, password).pipe(
             switchMap((response) => this.handleLoginResponse(response))
         );
-        // return this.callLoginApi(email, password)
-        //     .then((loginResponse) => {
-        //         return this.handleLoginResponse(loginResponse);
-        //     });
     }
 
     handleLoginResponse(loginResponse) {
@@ -351,6 +347,7 @@ export class AuthService {
                      * cache the tokenResponse (contains both the accessToken and the refreshToken)
                      */
                     promise = this.authTokenCacheService.cacheTokens(tokenResponse);
+                    // this.router.navigateByUrl('dashboard');
                 }
                 return promise;
             })
@@ -358,6 +355,7 @@ export class AuthService {
                 let token = null;
                 if (tokenResponse) {
                     token = tokenResponse.accessToken;
+                    // this.router.navigateByUrl('dashboard');
                 }
                 return Promise.resolve(token);
             })

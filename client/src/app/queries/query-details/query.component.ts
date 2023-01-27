@@ -1,13 +1,13 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {BaseComponent} from '../common/base-component';
-import {Query} from './query.model';
-import {QueryService} from './query.service';
 import {NgForm} from '@angular/forms';
-import {Observable, of} from 'rxjs';
+import {of} from 'rxjs';
 
 import * as _ from 'lodash-es';
 import {flatMap, takeUntil} from 'rxjs/operators';
+import {BaseComponent} from "../../common/base-component";
+import {QueryService} from "../query.service";
+import {Query} from "../query.model";
 
 @Component({
     selector: 'kz-query',

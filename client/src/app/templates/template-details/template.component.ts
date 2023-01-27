@@ -1,15 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {FormGroup, FormControl, FormArray, Validators} from '@angular/forms';
-import {Template} from '../templates/template.model';
-import {TemplateService} from '../templates/template.service';
-import {BaseComponent} from '../common/base-component';
-import {Observable} from 'rxjs';
-
-import {SiteService} from '../sites/site.service';
-import {Site} from '../sites/site.model';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash-es';
 import {takeUntil} from 'rxjs/operators';
+import {Site} from "../../sites/site.model";
+import {BaseComponent} from "../../common/base-component";
+import {SiteService} from "../../sites/site.service";
+import {TemplateService} from "../template.service";
+import {Template} from "../template.model";
 
 const systemProperties = ['_id', 'id', 'orgId', 'siteId', 'name', 'nameId', 'url', 'layout', 'description', 'template', 'created', 'createdBy', 'updated', 'updatedBy', 'dependencies', 'regenerate'];
 

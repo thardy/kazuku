@@ -23,6 +23,7 @@ export class AuthGuardService implements CanActivate {
                      * if we weren't logged in before, we might be now (refresh token could have been used)
                      */
                     if (this.authService.isLoggedIn()) {
+                        console.log('allow');
                         //allow = requiredFeature ? this.authService.isUserAuthorizedForFeature(requiredFeature) : true;
                         allow = true;
                         // if (!allow) {
