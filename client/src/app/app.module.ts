@@ -1,15 +1,11 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {APP_INITIALIZER, NgModule} from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
-// import {SchemaFormModule, WidgetRegistry, DefaultWidgetRegistry} from 'ngx-schema-form';
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {NavBarComponent} from './layout/nav-bar/nav-bar.component';
 import {CustomDataListComponent} from './custom-data/custom-data-list.component';
-import {QueryListComponent} from './queries/query-list.component';
-import {QueryComponent} from './queries/query.component';
 import {OrganizationService} from './organizations/shared/organization.service';
 import {SiteService} from './sites/site.service';
 import {LoginComponent} from './login/login.component';
@@ -40,18 +36,17 @@ import {environment} from '../environments/environment';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 
-import {reducers, effects} from './store';
+import {effects, reducers} from './store';
 import {IdbService} from './common/indexed-db/idb.service';
 import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
 import {AuthRequestInterceptor} from './common/interceptors/auth-request.interceptor';
 import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.service';
 import * as fromAuth from './common/auth/store/reducers/auth.reducer';
-import { AuthEffects } from './common/auth/store/effects/auth.effects';
-// import { NZ_I18N } from 'ng-zorro-antd/i18n';
-// import { en_US } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
+import {AuthEffects} from './common/auth/store/effects/auth.effects';
+import {registerLocaleData} from '@angular/common';
 import en from '@angular/common/locales/en';
-import { FormsModule } from '@angular/forms';
+import {FormsModule} from '@angular/forms';
+import {SideBarComponent} from './layout/side-bar/side-bar.component';
 
 registerLocaleData(en);
 
@@ -61,15 +56,14 @@ registerLocaleData(en);
         BaseComponent,
         NavBarComponent,
         CustomDataListComponent,
-        QueryListComponent,
-        QueryComponent,
         LoginComponent,
         UserListComponent,
         SetupComponent,
         CustomDataComponent,
         ContextComponent,
         AutofocusDirective,
-        WorkspaceActionsComponent
+        WorkspaceActionsComponent,
+        SideBarComponent
     ],
     imports: [
         BrowserModule,
@@ -89,7 +83,7 @@ registerLocaleData(en);
         StoreRouterConnectingModule.forRoot(),
         StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
         EffectsModule.forFeature([AuthEffects]),
-        FormsModule
+        FormsModule,
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AuthRequestInterceptor, multi: true },

@@ -1,40 +1,48 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {ContentDashboardComponent} from './container/content-dashboard/content-dashboard.component';
-import {CustomContentListComponent} from './custom-content-list/custom-content-list.component';
-import {ModelListComponent} from './content-models/model-list/model-list.component';
-import {CreateModelComponent} from './content-models/create-model/create-model.component';
-import {ModelDetailsComponent} from './content-models/model-details/model-details.component';
-import {ContentModelDashboardComponent} from './content-models/content-model-dashboard.component';
+import {AuthGuardService} from "../common/auth/auth-guard.service";
+import {CustomDataComponent} from "../custom-data/custom-data.component";
 
 
 const routes: Routes = [
     {
         path: '',
-        component: ContentDashboardComponent
-    },
-    {
-        path: 'list',
-        component: CustomContentListComponent
-    },
-    {
-        path: 'models',
-        component: ContentModelDashboardComponent,
+        component: ContentDashboardComponent,
+        canActivate: [AuthGuardService],
         children: [
             {
-                path: '',
-                component: ModelListComponent
+                path: 'create/:contentType',
+                component: CustomDataComponent,
             },
             {
-                path: 'create',
-                component: CreateModelComponent
+                path: ':contentType/:id',
+                component: CustomDataComponent,
             },
-            {
-                path: ':contentType',
-                component: ModelDetailsComponent
-            }
         ]
     },
+    // {
+    //     path: 'list',
+    //     component: CustomContentListComponent
+    // },
+    // {
+    //     path: 'models',
+    //     component: ContentModelDashboardComponent,
+    //     children: [
+    //         {
+    //             path: '',
+    //             component: ModelListComponent
+    //         },
+    //         {
+    //             path: 'create',
+    //             component: CreateModelComponent
+    //         },
+    //         {
+    //             path: ':contentType',
+    //             component: ModelDetailsComponent
+    //         }
+    //     ]
+    // },
 ];
 
 @NgModule({

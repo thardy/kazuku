@@ -7,23 +7,20 @@ import {CustomSchemaComponent} from './custom-schema.component';
 const routes: Routes = [
     {
         path: '',
-        component: CustomSchemaListComponent
-    },
-    {
-        path: 'content-models',
         component: CustomSchemaListComponent,
-        canActivate: [AuthGuardService]
+        canActivate: [AuthGuardService],
+        children: [
+            {
+                path: 'create',
+                component: CustomSchemaComponent,
+            },
+            {
+                path: ':contentType',
+                component: CustomSchemaComponent,
+            },
+        ]
     },
-    {
-        path: 'content-models/create',
-        component: CustomSchemaComponent,
-        canActivate: [AuthGuardService]
-    },
-    {
-        path: 'content-models/:contentType',
-        component: CustomSchemaComponent,
-        canActivate: [AuthGuardService]
-    },
+
 ];
 
 @NgModule({

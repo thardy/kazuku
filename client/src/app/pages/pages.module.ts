@@ -5,8 +5,8 @@ import {PagesRoutingModule} from './pages-routing.module';
 import {PageListComponent} from './page-list.component';
 import {PageComponent} from './page.component';
 import {SharedModule} from '../shared/shared.module';
-import {TemplateComponent} from '../templates/template.component';
-import {TemplateListComponent} from '../templates/template-list.component';
+import {TemplateComponent} from "../templates/template-details/template.component";
+import {TemplateListComponent} from "../templates/template-list/template-list.component";
 
 @NgModule({
     declarations: [

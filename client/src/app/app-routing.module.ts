@@ -1,80 +1,110 @@
-import {Routes, RouterModule, PreloadAllModules} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
-import {TemplateListComponent} from './templates/template-list.component';
-import {TemplateComponent} from './templates/template.component';
 import {LoginComponent} from './login/login.component';
 import {SetupComponent} from './setup/setup.component';
 import {SetupGuardService} from './setup/setup-guard.service';
 import {AuthGuardService} from './common/auth/auth-guard.service';
-import {QueryListComponent} from './queries/query-list.component';
-import {QueryComponent} from './queries/query.component';
-import {CustomSchemaListComponent} from './custom-schemas/custom-schema-list.component';
-import {CustomSchemaComponent} from './custom-schemas/custom-schema.component';
-import {CustomDataComponent} from './custom-data/custom-data.component';
+import {IconNamesEnum} from "ngx-bootstrap-icons";
+import {faGauge} from "@fortawesome/free-solid-svg-icons/faGauge";
+import {faPlaneDeparture} from "@fortawesome/free-solid-svg-icons/faPlaneDeparture";
+import {faSitemap} from "@fortawesome/free-solid-svg-icons/faSitemap";
+import {faFolder} from "@fortawesome/free-solid-svg-icons/faFolder";
+import {faDatabase} from "@fortawesome/free-solid-svg-icons/faDatabase";
 
-// This is where we setup our routes!
+const iconNames = IconNamesEnum;
+
+/** This is where we setup our routes! **/
 const APP_ROUTES: Routes = [
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
+        data: {
+            includeInSidebar: false
+        }
     },
     {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(mod => mod.DashboardModule),
-        canActivate: [AuthGuardService]
+        canActivate: [AuthGuardService],
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Dashboard',
+            routeIcon: faGauge
+        }
     },
     {
         path: 'organizations',
         loadChildren: () => import('./organizations/organizations.module').then(mod => mod.OrganizationsModule),
-        canActivate: [AuthGuardService]
+        canActivate: [AuthGuardService],
+        data: {
+            includeInSidebar: false,
+        }
     },
     {
         path: 'content-models',
         loadChildren: () => import('./custom-schemas/schema.module').then(mod => mod.SchemaModule),
-        canActivate: [AuthGuardService]
+        canActivate: [AuthGuardService],
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Models',
+            routeIcon: faPlaneDeparture
+        }
     },
     {
         path: 'content',
         loadChildren: () => import('./content/content.module').then(mod => mod.ContentModule),
-        canActivate: [AuthGuardService]
-    },
-    {
-        path: 'content/create/:contentType',
-        component: CustomDataComponent,
-        canActivate: [AuthGuardService]
-    },
-    {
-        path: 'content/:contentType/:id',
-        component: CustomDataComponent,
-        canActivate: [AuthGuardService]
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Content',
+            routeIcon: faGauge
+        }
     },
     {
         path: 'sites',
         loadChildren: () => import('./sites/sites.module').then(mod => mod.SitesModule),
-        canActivate: [AuthGuardService]
+        canActivate: [AuthGuardService],
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Sites',
+            routeIcon: faSitemap
+        }
     },
     {
         path: 'pages',
         loadChildren: () => import('./pages/pages.module').then(mod => mod.PagesModule),
-        canActivate: [AuthGuardService]
+        canActivate: [AuthGuardService],
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Pages',
+            routeIcon: faFolder
+        }
     },
-    // {path: 'sites', component: SiteListComponent, canActivate: [AuthGuardService]},
-    // {path: 'sites/create', component: SiteComponent, canActivate: [AuthGuardService]},
-    // {path: 'sites/:id', component: SiteComponent, canActivate: [AuthGuardService]},
-    // {path: 'pages', component: PageListComponent, canActivate: [AuthGuardService]},
-    // {path: 'pages/create', component: PageComponent, canActivate: [AuthGuardService]},
-    // {path: 'pages/:nameId', component: PageComponent, canActivate: [AuthGuardService]},
     {
         path: 'setup',
         component: SetupComponent,
-        canActivate: [SetupGuardService]
+        canActivate: [SetupGuardService],
+        data: {
+            includeInSidebar: false
+        }
     },
-    {path: 'templates', component: TemplateListComponent, canActivate: [AuthGuardService]},
-    {path: 'templates/create', component: TemplateComponent, canActivate: [AuthGuardService]},
-    {path: 'templates/:nameId', component: TemplateComponent, canActivate: [AuthGuardService]},
-    {path: 'queries', component: QueryListComponent, canActivate: [AuthGuardService]},
-    {path: 'queries/create', component: QueryComponent, canActivate: [AuthGuardService]},
-    {path: 'queries/:nameId', component: QueryComponent, canActivate: [AuthGuardService]},
+    {
+        path: 'templates',
+        loadChildren: () => import('./templates/templates.module').then(m => m.TemplatesModule),
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Templates',
+            routeIcon: faGauge
+        }
+    },
+    {
+        path: 'queries',
+        loadChildren: () => import('./queries/queries.module').then(m => m.QueriesModule),
+        data: {
+            includeInSidebar: true,
+            routeLabel: 'Queries',
+            routeIcon: faDatabase
+        }
+    },
     {
         path: '',
         redirectTo: '/dashboard',
@@ -84,7 +114,7 @@ const APP_ROUTES: Routes = [
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(APP_ROUTES, { useHash: true, relativeLinkResolution: 'legacy' })
+        RouterModule.forRoot(APP_ROUTES, { useHash: true, relativeLinkResolution: 'legacy', onSameUrlNavigation: 'reload' })
     ],
     exports: [
         RouterModule

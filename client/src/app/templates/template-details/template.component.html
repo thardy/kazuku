@@ -1,0 +1,97 @@
+<!--<h2>Template</h2>-->
+<!--<form [formGroup]="form" (ngSubmit)="save(form)" novalidate class="ui form content">-->
+<!--    <div>-->
+<!--        <div class="field">-->
+<!--            <label>Name</label>-->
+<!--            <input type="text"-->
+<!--                   id="name"-->
+<!--                   formControlName="name"-->
+<!--                   (input)="onNameChange($event.target.value)">-->
+<!--        </div>-->
+
+<!--        <div class="field">-->
+<!--            <label>Name Id</label>-->
+<!--            <input type="text"-->
+<!--                   id="nameId"-->
+<!--                   readonly-->
+<!--                   formControlName="nameId">-->
+<!--        </div>-->
+
+<!--        <div class="field">-->
+<!--            <label>Site</label>-->
+<!--            <select class="ui fluid dropdown" formControlName="siteId">-->
+<!--                <option value="undefined" [selected]="template.siteId === undefined">Select a site...</option>-->
+<!--                <option *ngFor="let site of sites" [value]="site.id" [selected]="template.siteId === site.id">-->
+<!--                    {{site.name}}-->
+<!--                </option>-->
+<!--            </select>-->
+<!--        </div>-->
+
+<!--        <div *ngIf="isInPageMode" class="field">-->
+<!--            <label>Url</label>-->
+<!--            <input type="text"-->
+<!--                   pattern="[\D]*"-->
+<!--                   id="url"-->
+<!--                   name="url"-->
+<!--                   formControlName="url">-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash;todo: convert to dropdown and choose from all possible layouts (need to wire up isLayout property on non page templates)&ndash;&gt;-->
+<!--        <div *ngIf="isInPageMode" class="field">-->
+<!--            <label>Layout</label>-->
+<!--            <input type="text"-->
+<!--                   pattern="[\D]*"-->
+<!--                   id="layout"-->
+<!--                   name="layout"-->
+<!--                   formControlName="layout">-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash;todo: wire this up&ndash;&gt;-->
+<!--        <div *ngIf="!isInPageMode" class="field">-->
+<!--            <label>Is Layout</label>-->
+<!--            <input type="checkbox"-->
+<!--                   id="isLayout"-->
+<!--                   name="isLayout"-->
+<!--                   formControlName="isLayout">-->
+<!--        </div>-->
+
+<!--        <div class="field">-->
+<!--            <label>Description</label>-->
+<!--            <textarea type="text" rows="4" cols="50"-->
+<!--                      id="description"-->
+<!--                      formControlName="description">-->
+<!--            </textarea>-->
+<!--        </div>-->
+
+<!--        <h5>Data Properties</h5>-->
+<!--        <div formArrayName="dataProperties">-->
+<!--            <div *ngFor="let dataProperty of form.controls.dataProperties['controls']; let i = index" [formGroupName]="i">-->
+<!--                Name:-->
+<!--                <input type="text"-->
+<!--                       formControlName="name">-->
+<!--                Value:-->
+<!--                <input type="text"-->
+<!--                       formControlName="value">-->
+<!--                <button type="button" class="ui negative button" (click)="deleteDataProperty(i)">Delete</button><br/>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <button type="button" class="ui negative button" (click)="addDataProperty()">Add</button>-->
+
+<!--        <div class="field">-->
+<!--            <label>Template</label>-->
+<!--            <textarea type="text" rows="15" cols="180"-->
+<!--                      id="template"-->
+<!--                      formControlName="template">-->
+<!--            </textarea>-->
+<!--        </div>-->
+
+<!--        <div class="extra content">-->
+<!--            <button type="submit" class="ui positive button" [disabled]="form.invalid"-->
+<!--                    kzAsyncButton [asyncInProgress]="saving" [ngClass]="{'labeled': !saving, 'icon': !saving}">-->
+<!--                Save-->
+<!--            </button>-->
+<!--            <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>-->
+<!--        </div>-->
+
+<!--    </div>-->
+<!--</form>-->
