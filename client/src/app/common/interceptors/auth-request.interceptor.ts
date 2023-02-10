@@ -15,8 +15,10 @@ export class AuthRequestInterceptor implements HttpInterceptor {
 
         if (authService.isCallToSecureApi(request.url)) {
             const obs = observableFromPromise(
-                authService.getLiveToken()
+                authService.getAccessToken()
                     .then((token) => {
+                        // todo: auth - move this out of here and into getAccessToken(). just respond well to not getting a token.
+                        //  I want all token logic to be a black box.
                         return token ? Promise.resolve(token) : authService.acquireTokenSilent();
                     })
                     .then((token) => {

@@ -1,14 +1,14 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {QueriesComponent} from './queries.component';
-import {AuthGuardService} from "../common/auth/auth-guard.service";
+import {KazukuAuthGuardService} from "../common/auth/kazuku-auth-guard.service";
 import {QueryComponent} from "./query-details/query.component";
 
 const routes: Routes = [
     {
         path: '',
         component: QueriesComponent,
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         children: [
             {
                 path: 'create',

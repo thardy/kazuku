@@ -2,8 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {WorkspaceActionItem} from '../../common/models/workspace-actions.model';
 import {WorkspaceActionsService} from './workspace-actions.service';
-import {AuthService} from '../../common/auth/auth.service';
-import {UserContext} from '../../common/auth/user-context.model';
+import {IUserContext} from '../../common/auth/user-context.model';
+import {AuthActions, AuthSelectors} from '../../common/auth/store';
+import {Store} from '@ngrx/store';
 
 @Component({
     selector: 'kz-workspace-actions',
@@ -12,19 +13,19 @@ import {UserContext} from '../../common/auth/user-context.model';
 })
 export class WorkspaceActionsComponent implements OnInit {
     actionItems$: Observable<WorkspaceActionItem[]>;
-    userContext$: Observable<UserContext>;
+    userContext$: Observable<IUserContext>;
 
-    constructor(private userService: AuthService,
-                private actionItemsService: WorkspaceActionsService) {
+    constructor(private actionItemsService: WorkspaceActionsService,
+                private store: Store) {
     }
 
     ngOnInit() {
-        this.userContext$ = this.userService.userContext$;
+        this.userContext$ = this.store.select(AuthSelectors.selectUserContext);
         this.actionItems$ = this.actionItemsService.getActions();
     }
 
     logout() {
-        this.userService.logout();
+        this.store.dispatch(AuthActions.logoutButtonClicked());
     }
 
 }

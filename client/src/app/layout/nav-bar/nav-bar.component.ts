@@ -1,11 +1,10 @@
 import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
-import {AuthService} from '../../common/auth/auth.service';
-import {UserContext} from '../../common/auth/user-context.model';
-import {filter, takeUntil} from 'rxjs/operators';
-import {select, Store} from '@ngrx/store';
-import * as authSelectors from '../../common/auth/store/selectors';
+import {IUserContext} from '../../common/auth/user-context.model';
+import {filter, takeUntil, tap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {AuthActions, AuthSelectors} from '../../common/auth/store';
 
 @Component({
     selector: 'kz-nav-bar',
@@ -13,14 +12,13 @@ import * as authSelectors from '../../common/auth/store/selectors';
     styleUrls: ['./nav-bar.component.less']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-    userContext$: Observable<UserContext> = this.store.pipe(select(authSelectors.getAuthorizedUserContext));
+    userContext$: Observable<IUserContext> = this.store.select(AuthSelectors.selectUserContext);
     @Input() collapsedSidenav: boolean;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     navItems;
 
-    constructor(private authService: AuthService,
-                private store: Store<any>,
+    constructor(private store: Store<any>,
                 private router: Router) {
     }
 
@@ -28,20 +26,22 @@ export class NavBarComponent implements OnInit, OnDestroy {
         this.navItems = this.getNavItems();
 
         this.userContext$.pipe(
-            filter((userContext: UserContext) => userContext !== undefined)
-        ).subscribe((userContext: UserContext) => {
-            const orgsIndex = this.navItems.findIndex((item) => item.name === 'Orgs');
-            if (userContext.user.isMetaAdmin) {
-                // authorized to see organization admin
-                if (orgsIndex === -1) {
-                    // not found so add it
-                    this.navItems.push({name: 'Orgs', destination: 'organizations', icon: 'appstore'});
+            filter((userContext: IUserContext) => userContext.user !== null),
+            tap((userContext: IUserContext) => {
+                const orgsIndex = this.navItems.findIndex((item) => item.name === 'Orgs');
+                if (userContext.user.isMetaAdmin) {
+                    // authorized to see organization admin
+                    if (orgsIndex === -1) {
+                        // not found so add it
+                        this.navItems.push({name: 'Orgs', destination: 'organizations', icon: 'appstore'});
+                    }
+                } else if (orgsIndex !== -1) {
+                    // found but doesn't belong, so remove it
+                    this.navItems.splice(orgsIndex, 1);
                 }
-            } else if (orgsIndex !== -1) {
-                // found but doesn't belong, so remove it
-                this.navItems.splice(orgsIndex, 1);
-            }
-        });
+            }),
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe();
     }
 
     ngOnDestroy() {
@@ -49,8 +49,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    async logout() {
-        await this.authService.logout();
+    logout() {
+        this.store.dispatch(AuthActions.logoutButtonClicked());
     }
 
     getNavItems() {

@@ -15,7 +15,7 @@ import {AuthService} from './common/auth/auth.service';
 import {SetupComponent} from './setup/setup.component';
 import {SetupService} from './setup/setup.service';
 import {SetupGuardService} from './setup/setup-guard.service';
-import {AuthGuardService} from './common/auth/auth-guard.service';
+import {KazukuAuthGuardService} from './common/auth/kazuku-auth-guard.service';
 import {CustomDataComponent} from './custom-data/custom-data.component';
 import {CustomDataService} from './custom-data/custom-data.service';
 import {UnAuthenticatedResponseInterceptor} from './common/interceptors/unauthenticated-response.interceptor';
@@ -34,19 +34,18 @@ import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../environments/environment';
 import {EffectsModule} from '@ngrx/effects';
-import {StoreRouterConnectingModule} from '@ngrx/router-store';
+import {RouterState, StoreRouterConnectingModule} from '@ngrx/router-store';
 
-import {effects, reducers} from './store';
 import {IdbService} from './common/indexed-db/idb.service';
 import {AuthTokenCacheService} from './common/auth/auth-token-cache.service';
 import {AuthRequestInterceptor} from './common/interceptors/auth-request.interceptor';
 import {KazukuAuthProviderService} from './common/auth/kazuku-auth-provider.service';
-import * as fromAuth from './common/auth/store/reducers/auth.reducer';
-import {AuthEffects} from './common/auth/store/effects/auth.effects';
 import {registerLocaleData} from '@angular/common';
 import en from '@angular/common/locales/en';
 import {FormsModule} from '@angular/forms';
 import {SideBarComponent} from './layout/side-bar/side-bar.component';
+import {appReducer, metaReducers} from './store/app.reducer';
+import {AuthEffects} from './common/auth/store/auth.effects';
 
 registerLocaleData(en);
 
@@ -77,12 +76,26 @@ registerLocaleData(en);
         SitesModule,
         PagesModule,
         SchemaModule,
-        StoreModule.forRoot(reducers, {}),
+        StoreModule.forRoot(appReducer, {
+            metaReducers,
+            runtimeChecks: {
+                strictStateImmutability: true,
+                strictActionImmutability: true,
+                strictActionSerializability: true,
+                strictStateSerializability: true,
+            },
+        }),
+        EffectsModule.forRoot([
+            AuthEffects
+        ]),
         StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
-        EffectsModule.forRoot(effects),
-        StoreRouterConnectingModule.forRoot(),
-        StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
-        EffectsModule.forFeature([AuthEffects]),
+        StoreRouterConnectingModule.forRoot({
+            stateKey: 'router',
+            routerState: RouterState.Minimal,
+        }),
+        // todo: ngrx - delete these (modules should handle their own business - root module should not have intelligence about them)
+        // StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducer),
+        // EffectsModule.forFeature([AuthEffects]),
         FormsModule,
     ],
     providers: [
@@ -98,7 +111,7 @@ registerLocaleData(en);
         KazukuAuthProviderService,
         SetupService,
         SetupGuardService,
-        AuthGuardService,
+        KazukuAuthGuardService,
         CustomDataService,
         // {provide: WidgetRegistry, useClass: DefaultWidgetRegistry},
         {

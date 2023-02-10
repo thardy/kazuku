@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable, of as observableOf, switchMap, throwError as observableThrowError} from 'rxjs';
+import {BehaviorSubject, defer, Observable, of as observableOf, switchMap, throwError as observableThrowError} from 'rxjs';
 import {Injectable} from '@angular/core';
 import * as _ from 'lodash-es'
 import {environment} from '../../../environments/environment';
@@ -9,28 +9,27 @@ import {Store} from '@ngrx/store';
 import {AuthTokenCacheService} from './auth-token-cache.service';
 import {LoginResponse} from './login-response.model';
 import {KazukuAuthProviderService} from './kazuku-auth-provider.service';
-import {LoadUserContextFailure, LoadUserContextSuccess} from './store/actions/auth.actions';
-import {Router} from "@angular/router";
+import {IdentityProviderAuthState} from './identity-provider-auth-state.model';
 
 @Injectable()
 export class AuthService {
     private baseUrl: string;
-    private userContextSubject: BehaviorSubject<UserContext>;
-    userContext$: Observable<UserContext>;
+    private identityProviderAuthStateSubject: BehaviorSubject<IdentityProviderAuthState>;
+    authState$: Observable<IdentityProviderAuthState>;
 
     constructor(private http: HttpService,
                 private store: Store<any>,
                 private authTokenCacheService: AuthTokenCacheService,
-                private authProvider: KazukuAuthProviderService,
-                private router: Router) {
+                private authProvider: KazukuAuthProviderService) {
         this.baseUrl = `${environment.kazukuApiUrl}/auth`;
-        this.userContextSubject = new BehaviorSubject<UserContext>(new UserContext());
-        this.userContext$ = this.userContextSubject.asObservable();
+        this.identityProviderAuthStateSubject = new BehaviorSubject<IdentityProviderAuthState>(new IdentityProviderAuthState());
+        this.authState$ = this.identityProviderAuthStateSubject.asObservable();
     }
 
     login(email: string, password: string) {
         /**
-         * let's have login return a LoginResponse { tokens: {accessToken, refreshToken}, userContext }, and getAuthenticatedUser return just a userContext
+         * let's have login return a LoginResponse { tokens: {accessToken, refreshToken}, userContext }, and getUserContext
+         * return just a userContext
          */
         return this.callLoginApi(email, password).pipe(
             switchMap((response) => this.handleLoginResponse(response))
@@ -48,21 +47,28 @@ export class AuthService {
              */
             cachingPromise = this.authTokenCacheService.cacheTokens(loginResponse.tokens);
         }
+        else {
+            // login failed, so make sure we load authState with an empty object
+            const emptyAuthState = new IdentityProviderAuthState();
+            this.publishIdentityProviderAuthState(emptyAuthState);
+        }
 
         return cachingPromise
             .then((cachingResult) => {
-                let updateContextPromise = Promise.resolve(null);
-                if (cachingResult && userContext) {
+                let authState = null;
+                if (cachingResult && loginResponse && loginResponse.tokens && loginResponse.tokens.accessToken) {
+                    const accessToken = loginResponse.tokens.accessToken;
+                    authState = new IdentityProviderAuthState({ isAuthenticated: true, accessToken});
                     /**
-                     * update our in-memory authContext
+                     * update our in-memory authState - we store and are the source of truth for the authState$ just like Okta and Auth0 are
                      */
-                    updateContextPromise = this.updateAuthContext(userContext).toPromise();
+                    this.publishIdentityProviderAuthState(authState);
                 }
-                return updateContextPromise;
-            })
-            .catch((error) => {
-                console.log(error);
+                return authState;
             });
+            // .catch((error) => {
+            //     console.log(error);
+            // });
     }
 
     private callLoginApi(email: string, password: string): Observable<any> {
@@ -73,69 +79,74 @@ export class AuthService {
             );
     }
 
-    async logout() {
-        return this.clearClientsideAuth()
+    logout() {
+        const promise = this.clearClientsideAuth()
             .then((result) => {
-                console.log('User logged out, routing to login');
-                // this.navigateToLogin();
+                this.navigateToLogin();
             })
             .catch((error) => {
                 return this.handleError(error);
-            })
-        // window.location.href = `/#/login`;
-        // window.location.reload();
+            });
+
+        const observable = defer(() => promise)
+        return observable;
     }
 
-    getCurrentAuthContext() {
+    autoAuthenticateIfPossible() {
+        // returns a promise containing a live accessToken, or null.
         let promise = Promise.resolve(null);
-        let userContext = null;
 
         /**
          * Figure out if we currently have an authorized user logged in
          */
-        if (this.isLoggedIn()) {
+        if (this.isAuthenticated()) {
             /**
-             * we know we are logged in, so just grab the user from our userSubject
+             * we know we are logged in, so just grab the authState from our identityProviderAuthStateSubject and get the accessToken
              */
-            userContext = this.cloneUserContext();
-            promise = Promise.resolve(userContext);
+            const authState = this.cloneAuthState();
+            promise = Promise.resolve(authState.accessToken);
         } else {
             /**
              * We don't know if we are logged in - perhaps the user just hit F5, but we may have a live token cached.
              * Check for existing token.  If we don't have a live token cached, there's no need to ask the server - we know we are not authenticated
              */
-            promise = this.getLiveToken()
-                .then((liveToken) => {
-                    let userContextPromise = Promise.resolve(null);
-                    if (liveToken) {
+            promise = this.getAccessToken()
+                .then((accessToken) => {
+                    let accessTokenPromise = Promise.resolve(null);
+                    if (accessToken) {
                         /**
-                         * we have a live token (jwt), get the currently authenticated userContext from the server
+                         * we have a live token (jwt), make sure it is persisted to our identityProviderAuthStateSubject and return it
                          */
-                        userContextPromise = this.getAuthenticatedUserContextFromServer();
+                        const authState = new IdentityProviderAuthState({ isAuthenticated: true, accessToken});
+                        this.publishIdentityProviderAuthState(authState);
+                        accessTokenPromise = Promise.resolve(authState.accessToken);
                     } else {
-                        userContextPromise = this.acquireTokenSilent();
+                        /**
+                         * see if we can silently get a token, using our refreshToken, if we have one.
+                         */
+                        accessTokenPromise = this.acquireTokenSilent();
                     }
 
-                    return userContextPromise;
-                })
-                .then((userContextOrToken) => {
-                    /**
-                     * we either came in with a user or a token
-                     */
-                    let newPromise = Promise.resolve(null);
-                    if (userContextOrToken instanceof UserContext) {
-                        /**
-                         * we came in with a userContext - just return it.
-                         */
-                        newPromise = Promise.resolve(userContextOrToken);
-                    } else if (userContextOrToken && typeof userContextOrToken === 'string' || userContextOrToken instanceof String) {
-                        /**
-                         * we came in with a freshly refreshed token. Use it to get a user, and return that promise
-                         */
-                        newPromise = this.getAuthenticatedUserContextFromServer();
-                    }
-                    return newPromise;
+                    return accessTokenPromise;
                 });
+                // .then((userContextOrToken) => {
+                //     /**
+                //      * we either came in with a user or a token
+                //      */
+                //     let newPromise = Promise.resolve(null);
+                //     if (userContextOrToken instanceof UserContext) {
+                //         /**
+                //          * we came in with a userContext - just return it.
+                //          */
+                //         newPromise = Promise.resolve(userContextOrToken);
+                //     } else if (userContextOrToken && typeof userContextOrToken === 'string' || userContextOrToken instanceof String) {
+                //         /**
+                //          * we came in with a freshly refreshed token. Use it to get a user, and return that promise
+                //          */
+                //         newPromise = this.getAuthenticatedUserContextFromServer();
+                //     }
+                //     return newPromise;
+                // });
         }
 
         return promise;
@@ -145,7 +156,7 @@ export class AuthService {
         // let userPromise = Promise.resolve(null);
         //
         // // Figure out if we currently have an authorized user logged in
-        // if (this.isLoggedIn()) {
+        // if (this.isAuthenticated()) {
         //   // we know we are logged in, so just grab the user from our userSubject
         //   const user = this.cloneCurrentUser();
         //   userPromise = Promise.resolve(user);
@@ -154,7 +165,7 @@ export class AuthService {
         //   // todo: I don't know the impact of using await here.  test to make sure this is ok
         //   // We don't know if we are logged in - perhaps the user just hit F5, but we may have a live token cached.
         //   // Check for existing token.  If we don't have a live token cached, there's no need to ask the server - we know we are not authenticated
-        //   const liveToken = await this.getLiveToken();
+        //   const liveToken = await this.getAccessToken();
         //
         //   if (liveToken) {
         //     // we have a live token (jwt), get the currently authenticated user from the server
@@ -170,68 +181,65 @@ export class AuthService {
         // return userPromise;
     }
 
-    getAuthenticatedUserContextFromServer() {
+    // getAuthenticatedUserContextFromServer() {
+    //     return this.http.get(`${this.baseUrl}/getusercontext`)
+    //         .pipe(
+    //             map(response => this.extractUserContext(response)),
+    //             tap((userContext: UserContext) => {
+    //                 this.store.dispatch(new LoadUserContextSuccess(userContext));
+    //                 this.updateAuthState(userContext);
+    //             }),
+    //             catchError((error: any) => {
+    //                 this.store.dispatch(new LoadUserContextFailure(error));
+    //                 return this.handleError(error);
+    //             })
+    //         ).toPromise();
+    //
+    //     // .pipe(
+    //     //     map(response => <UserContext>this.extractAnyData(response)),
+    //     //     tap(userContext => {
+    //     //             this.store.dispatch(new LoginUserSuccess(userContext));
+    //     //             this.dataStore.userContext = userContext;
+    //     //             // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
+    //     //             this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
+    //     //         }
+    //     //     ),
+    //     //     catchError(error => this.handleError(error))
+    //     // );
+    //
+    // }
+
+    // consider moving this out into a different service, one that does everything not included in actual authentication and will need
+    //  to be called regardless of which identity provider is used (Okta, Auth0, KazukuAuth, etc).
+    getUserContext() {
         return this.http.get(`${this.baseUrl}/getusercontext`)
             .pipe(
                 map(response => this.extractUserContext(response)),
-                tap((userContext: UserContext) => {
-                    this.store.dispatch(new LoadUserContextSuccess(userContext));
-                    this.updateAuthContext(userContext);
-                }),
-                catchError((error: any) => {
-                    this.store.dispatch(new LoadUserContextFailure(error));
-                    return this.handleError(error);
-                })
-            ).toPromise();
-
-        // .pipe(
-        //     map(response => <UserContext>this.extractAnyData(response)),
-        //     tap(userContext => {
-        //             this.store.dispatch(new LoginUserSuccess(userContext));
-        //             this.dataStore.userContext = userContext;
-        //             // subscribers get copies of the user, not the user itself, so any changes they make do not propagate back
-        //             this._currentUserContext.next(Object.assign({}, this.dataStore.userContext));
-        //         }
-        //     ),
-        //     catchError(error => this.handleError(error))
-        // );
-
+                // catchError((error: any) => {
+                //     return this.handleError(error);
+                // })
+            );
     }
 
-    handleInitialSetup() {
-
-    }
-
+    // consider moving this out into a different service, one that does everything not included in actual authentication and will need
+    //  to be called regardless of which identity provider is used (Okta, Auth0, KazukuAuth, etc).
     selectOrgContext(orgId: string) {
-        const userContext = this.cloneUserContext();
-
-        if (userContext.user && userContext.user.isMetaAdmin) {
-            /**
-             * note that we don't return the observable here.  we subscribe ourselves, and if anyone wants the context, they
-             * should subscribe to userContext$.
-             */
-            this.http.put(`${this.baseUrl}/selectorgcontext`, {orgId: orgId})
-                .pipe(
-                    map(response => <UserContext>this.extractUserContext(response)),
-                    tap(newUserContext => {
-                        this.updateAuthContext(newUserContext);
-                    }),
-                    catchError((error) => this.handleError(error))
-                )
-                .subscribe();
-        }
+        return this.http.put(`${this.baseUrl}/selectorgcontext`, {orgId: orgId})
+            .pipe(
+                map(response => <UserContext>this.extractUserContext(response))
+            );
     }
 
-    isLoggedIn() {
-        const userContext = this.cloneUserContext();
-        return Boolean(userContext && userContext.user.email);
+    isAuthenticated() {
+        const authState = this.cloneAuthState();
+        return Boolean(authState && authState.isAuthenticated);
     }
 
     async clearClientsideAuth(clearCachedTokens = true) {
         /**
-         * Send out an empty user to all subscribers
+         * Send out cleared authState to all subscribers
          */
-        this.publishUserContext(new UserContext());
+        this.publishIdentityProviderAuthState(new IdentityProviderAuthState());
 
         if (clearCachedTokens) {
             /**
@@ -258,29 +266,29 @@ export class AuthService {
             });
     }
 
-    updateAuthContext(userContext: UserContext, persistLastUser = true) {
-        let observable: any = observableOf(null);
-
-        if (userContext) {
-            this.publishUserContext(userContext);
-
-            observable = observableOf(userContext);
-            // if (userContext.preferences && userContext.preferences.defaultHomePage) {
-            //     const currentUrl = window.location.href;
-            //
-            //     // don't navigate if we are already on the same page (I don't like having a refresh wipe out my search params in the querystring)
-            //     if (!currentUrl.startsWith(environment.clientUrl.substring(0, environment.clientUrl.length) + '#' + userContext.preferences.defaultHomePage)) {
-            //         this.router.navigate([userContext.preferences.defaultHomePage]);
-            //     }
-            // }
-
-            // if (persistLastUser) {
-            //     this.offlineInfoService.save(OfflineInfoKeys.lastUser, userContext);
-            // }
-        }
-
-        return observable;
-    }
+    // updateAuthState(authState: IdentityProviderAuthState, persistLastUser = true) {
+    //     let observable: any = observableOf(null);
+    //
+    //     if (authState) {
+    //         this.publishIdentityProviderAuthState(authState);
+    //
+    //         observable = observableOf(authState);
+    //         // if (userContext.preferences && userContext.preferences.defaultHomePage) {
+    //         //     const currentUrl = window.location.href;
+    //         //
+    //         //     // don't navigate if we are already on the same page (I don't like having a refresh wipe out my search params in the querystring)
+    //         //     if (!currentUrl.startsWith(environment.clientUrl.substring(0, environment.clientUrl.length) + '#' + userContext.preferences.defaultHomePage)) {
+    //         //         this.router.navigate([userContext.preferences.defaultHomePage]);
+    //         //     }
+    //         // }
+    //
+    //         // if (persistLastUser) {
+    //         //     this.offlineInfoService.save(OfflineInfoKeys.lastUser, userContext);
+    //         // }
+    //     }
+    //
+    //     return observable;
+    // }
 
     // this should only be called from UserPreferenceService when prefs are saved
     // updatePreferencesOnCurrentUser(preferences: UserPreferences) {
@@ -364,9 +372,9 @@ export class AuthService {
             });
     }
 
-    getLiveToken() {
+    getAccessToken() {
         /**
-         * get tokens from cache
+         * get tokens from cache - this only returns a token if it hasn't expired
          */
         return this.authTokenCacheService.getCachedTokens()
             .then((tokenResponse) => {
@@ -416,7 +424,7 @@ export class AuthService {
 
     handleError(error) {
         console.log(error);
-        return observableThrowError(error || 'Server error');
+        return observableThrowError(() => error ?? 'Server error');
     }
 
     /**
@@ -425,12 +433,13 @@ export class AuthService {
      * a value we've already published.
      * @private any
      */
-    private cloneUserContext() {
-        return _.cloneDeep(this.userContextSubject.getValue());
+    private cloneAuthState() {
+        return _.cloneDeep(this.identityProviderAuthStateSubject.getValue());
     }
 
-    private publishUserContext(userContext: UserContext) {
-        this.userContextSubject.next(userContext);
+    private publishIdentityProviderAuthState(authState: IdentityProviderAuthState) {
+        // next updates the current value in the BehaviorSubject and emits it to all subscribers
+        this.identityProviderAuthStateSubject.next(authState);
     }
 
 }

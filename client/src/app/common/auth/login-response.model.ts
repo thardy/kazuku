@@ -13,4 +13,3 @@ export class LoginResponse {
         this.userContext = options.userContext ? new UserContext(options.userContext) : null;
     }
 }
-
