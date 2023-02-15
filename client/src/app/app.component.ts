@@ -55,4 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.cdr.detectChanges();
     }
 
+    logout() {
+        this.store.dispatch(AuthActions.logoutButtonClicked());
+    }
 }

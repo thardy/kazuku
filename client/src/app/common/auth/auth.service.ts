@@ -117,9 +117,7 @@ export class AuthService {
                         /**
                          * we have a live token (jwt), make sure it is persisted to our identityProviderAuthStateSubject and return it
                          */
-                        const authState = new IdentityProviderAuthState({ isAuthenticated: true, accessToken});
-                        this.publishIdentityProviderAuthState(authState);
-                        accessTokenPromise = Promise.resolve(authState.accessToken);
+                        accessTokenPromise = Promise.resolve(accessToken);
                     } else {
                         /**
                          * see if we can silently get a token, using our refreshToken, if we have one.
@@ -128,25 +126,17 @@ export class AuthService {
                     }
 
                     return accessTokenPromise;
-                });
-                // .then((userContextOrToken) => {
-                //     /**
-                //      * we either came in with a user or a token
-                //      */
-                //     let newPromise = Promise.resolve(null);
-                //     if (userContextOrToken instanceof UserContext) {
-                //         /**
-                //          * we came in with a userContext - just return it.
-                //          */
-                //         newPromise = Promise.resolve(userContextOrToken);
-                //     } else if (userContextOrToken && typeof userContextOrToken === 'string' || userContextOrToken instanceof String) {
-                //         /**
-                //          * we came in with a freshly refreshed token. Use it to get a user, and return that promise
-                //          */
-                //         newPromise = this.getAuthenticatedUserContextFromServer();
-                //     }
-                //     return newPromise;
-                // });
+                })
+                .then((accessToken) => {
+                    if ((accessToken)) {
+                        const authState = new IdentityProviderAuthState({ isAuthenticated: true, accessToken});
+                        /** this will cause us to change authState within the authService.  The containing app should respond to that
+                         *  change and retrieve the userContext from the server.
+                         */
+                        this.publishIdentityProviderAuthState(authState);
+                    }
+                    return accessToken;
+                })
         }
 
         return promise;

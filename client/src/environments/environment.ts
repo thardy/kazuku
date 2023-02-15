@@ -5,5 +5,6 @@
 
 export const environment = {
     production: false,
-    kazukuApiUrl: 'http://localhost:3500/api'
+    //kazukuApiUrl: 'http://localhost:3500/api'
+    kazukuApiUrl: '/api'
 };
