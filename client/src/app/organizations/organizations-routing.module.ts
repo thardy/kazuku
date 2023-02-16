@@ -2,13 +2,13 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {OrganizationListComponent} from './organization-list/organization-list.component';
 import {OrganizationComponent} from './organization/organization.component';
-import {AuthGuardService} from '../common/auth/auth-guard.service';
+import {KazukuAuthGuardService} from '../common/auth/kazuku-auth-guard.service';
 
 const routes: Routes = [
     {
         path: '',
         component: OrganizationListComponent,
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         children: [
             {
                 path: 'create',

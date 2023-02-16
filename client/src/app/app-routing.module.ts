@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core';
 import {LoginComponent} from './login/login.component';
 import {SetupComponent} from './setup/setup.component';
 import {SetupGuardService} from './setup/setup-guard.service';
-import {AuthGuardService} from './common/auth/auth-guard.service';
+import {KazukuAuthGuardService} from './common/auth/kazuku-auth-guard.service';
 import {IconNamesEnum} from "ngx-bootstrap-icons";
 import {faGauge} from "@fortawesome/free-solid-svg-icons/faGauge";
 import {faPlaneDeparture} from "@fortawesome/free-solid-svg-icons/faPlaneDeparture";
@@ -25,7 +25,7 @@ const APP_ROUTES: Routes = [
     {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(mod => mod.DashboardModule),
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         data: {
             includeInSidebar: true,
             routeLabel: 'Dashboard',
@@ -35,7 +35,7 @@ const APP_ROUTES: Routes = [
     {
         path: 'organizations',
         loadChildren: () => import('./organizations/organizations.module').then(mod => mod.OrganizationsModule),
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         data: {
             includeInSidebar: false,
         }
@@ -43,7 +43,7 @@ const APP_ROUTES: Routes = [
     {
         path: 'content-models',
         loadChildren: () => import('./custom-schemas/schema.module').then(mod => mod.SchemaModule),
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         data: {
             includeInSidebar: true,
             routeLabel: 'Models',
@@ -62,7 +62,7 @@ const APP_ROUTES: Routes = [
     {
         path: 'sites',
         loadChildren: () => import('./sites/sites.module').then(mod => mod.SitesModule),
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         data: {
             includeInSidebar: true,
             routeLabel: 'Sites',
@@ -72,7 +72,7 @@ const APP_ROUTES: Routes = [
     {
         path: 'pages',
         loadChildren: () => import('./pages/pages.module').then(mod => mod.PagesModule),
-        canActivate: [AuthGuardService],
+        canActivate: [KazukuAuthGuardService],
         data: {
             includeInSidebar: true,
             routeLabel: 'Pages',

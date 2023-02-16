@@ -154,7 +154,7 @@ class AuthController extends CrudController {
             });
     }
 
-    // returns a UserContext containing the newly selected org
+    // returns an UserContext containing the newly selected org
     selectOrgContext(req, res, next) {
         const body = req.body;
 
