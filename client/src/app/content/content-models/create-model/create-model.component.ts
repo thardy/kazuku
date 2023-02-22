@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CustomSchema} from '../../../custom-schemas/custom-schema.model';
-import {BaseComponent} from '../../../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CustomSchemaService} from '../../../custom-schemas/custom-schema.service';
 import {ContentModelService} from '../../content-model.service';

@@ -4,7 +4,7 @@ import {CustomSchema} from '../../../custom-schemas/custom-schema.model';
 import {ActivatedRoute, Params} from '@angular/router';
 import {ContentModelService} from '../../content-model.service';
 import {share, switchMap, tap} from 'rxjs/operators';
-import {BaseComponent} from '../../../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({

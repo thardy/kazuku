@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../../common/auth/auth.service';
-import {BaseComponent} from '../../common/base-component';
-import {IUserContext} from '../../common/auth/user-context.model';
+import {AuthService} from '@common/auth/auth.service';
+import {BaseComponent} from '@common/base-component';
+import {IUserContext} from '@common/auth/user-context.model';
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {faAtom} from '@fortawesome/free-solid-svg-icons';
 import {Observable} from 'rxjs';
-import {AuthSelectors} from '../../common/auth/store';
+import {AuthSelectors} from '@common/auth/store';
 import {Store} from '@ngrx/store';
 
 @Component({

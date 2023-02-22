@@ -6,7 +6,7 @@
                    pattern="[\D]*"
                    name="name"
                    [(ngModel)]="site.name"
-                   (input)="onNameChange($event.target.value)">
+                   (input)="onNameChange($any($event.target).value)">
         </div>
 
         <div class="field">
@@ -21,7 +21,7 @@
             <label>Domain</label>
             <input type="text"
                    name="domain"
-                   [(ngModel)]="site.domainName">
+                   [(ngModel)]="site.domain">
         </div>
 
         <div class="extra content">

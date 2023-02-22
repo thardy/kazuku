@@ -2,7 +2,7 @@ import {throwError as observableThrowError, Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {BaseModel} from './base.model';
-import JsonUtils from './utils/json-utils';
+import JsonUtils from './utils/json.utils';
 import {HttpService} from './http.service';
 import {catchError, map} from 'rxjs/operators';
 
@@ -78,6 +78,6 @@ export class GenericService<T extends BaseModel> {
 
     handleError(error) {
         console.error(error);
-        return observableThrowError(error || 'Server error');
+        return observableThrowError(() => error ?? 'Server error');
     }
 }

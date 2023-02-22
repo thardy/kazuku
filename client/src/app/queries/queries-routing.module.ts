@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {QueriesComponent} from './queries.component';
-import {KazukuAuthGuardService} from "../common/auth/kazuku-auth-guard.service";
+import {KazukuAuthGuardService} from "@common/auth/kazuku-auth-guard.service";
 import {QueryComponent} from "./query-details/query.component";
 
 const routes: Routes = [

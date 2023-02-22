@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../common/auth/auth.service';
-import {User} from '../common/auth/user.model';
+import {AuthService} from '@common/auth/auth.service';
+import {User} from '@common/auth/user.model';
 
 import {ActivatedRoute, Router} from '@angular/router';
-import * as AuthActions from '../common/auth/store/auth.actions';
+import * as AuthActions from '@common/auth/store/auth.actions';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {finalize} from 'rxjs';

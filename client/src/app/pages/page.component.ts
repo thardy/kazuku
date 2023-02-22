@@ -3,7 +3,7 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
 import {Template} from '../templates/template.model';
 import {TemplateService} from '../templates/template.service';
-import {BaseComponent} from '../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {Observable} from 'rxjs';
 
 import {Site} from '../sites/site.model';

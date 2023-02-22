@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ScheduleService} from './schedule.service';
 import {NgForm} from '@angular/forms';
-import {BaseComponent} from '../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({

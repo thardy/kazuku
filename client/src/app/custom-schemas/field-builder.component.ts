@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {BaseComponent} from '../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {FormGroup} from '@angular/forms';
 
 

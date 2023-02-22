@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {SetupService} from './setup.service';
 import {SetupConfig, SetupConfigForm} from './setup-config.model';
 import {Subject} from 'rxjs';
-import {AuthService} from '../common/auth/auth.service';
+import {AuthService} from '@common/auth/auth.service';
 import {FormControl, FormGroup} from "@angular/forms";
 
 

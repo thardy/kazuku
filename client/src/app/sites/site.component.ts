@@ -3,7 +3,7 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
 import {Site} from './site.model';
 import {SiteService} from './site.service';
-import {BaseComponent} from '../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {Observable, of} from 'rxjs';
 
 import * as _ from 'lodash-es';

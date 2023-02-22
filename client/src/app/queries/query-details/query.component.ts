@@ -4,8 +4,8 @@ import {NgForm} from '@angular/forms';
 import {of} from 'rxjs';
 
 import * as _ from 'lodash-es';
-import {flatMap, takeUntil} from 'rxjs/operators';
-import {BaseComponent} from "../../common/base-component";
+import {switchMap, takeUntil} from 'rxjs/operators';
+import {BaseComponent} from "@common/base-component";
 import {QueryService} from "../query.service";
 import {Query} from "../query.model";
 
@@ -28,7 +28,7 @@ export class QueryComponent extends BaseComponent implements OnInit {
     ngOnInit() {
         this.route.params
             .pipe(
-                flatMap((params: Params) => {
+                switchMap((params: Params) => {
                     const nameId = params['nameId'] || '';
                     if (nameId) {
                         this.queryNameId = nameId;
