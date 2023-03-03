@@ -3,11 +3,13 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {Update} from '@ngrx/entity';
+import {AppState} from '../store/app.state';
+import {ISite, Site} from './site.model';
+import {SiteActions} from './store';
 
 @Component({
     selector: 'site-edit',
     templateUrl: './site-edit.component.html',
-    styleUrls: ['./site-edit.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SiteEditComponent implements OnInit {
@@ -27,10 +29,9 @@ export class SiteEditComponent implements OnInit {
 
     ngOnInit(): void {
         const formControls = {
-            firstName: ['', Validators.required],
-            lastName: ['', Validators.required],
-            age: [0, Validators.required],
-            birthdate: [''],
+            name: ['', Validators.required],
+            code: ['', Validators.required],
+            domain: [''],
         };
 
         if (this.mode === 'update') {
@@ -50,13 +51,6 @@ export class SiteEditComponent implements OnInit {
 
     onSave() {
         const formValue = this.form.value;
-        if (formValue && formValue.age) {
-            const age = parseInt(formValue.age, 10);
-            if (age) {
-                formValue.age = age;
-            }
-        }
-
         const mergedSite: ISite = {
             ...this.site,
             ...formValue
@@ -66,26 +60,18 @@ export class SiteEditComponent implements OnInit {
         // ngRx does not allow objects with their own constructors when strict serializability is turned on!!!!!
         const serializableSite = {...site};
 
-        // const update: Update<ISite> = {
-        //   id: site.id,
-        //   changes: serializableSite
-        // };
-
         if (this.mode === 'create') {
-            //this.store.dispatch(SiteActions.createSite({site: serializableSite}));
-            this.store.dispatch(SiteActions.createSite({site: serializableSite}));
+            this.store.dispatch(SiteActions.createSiteButtonClicked({site: serializableSite}));
         }
         else if (this.mode === 'update') {
-            //this.store.dispatch(SiteActions.updateSite({site: serializableSite}));
-            this.store.dispatch(SiteActions.updateSite({site: serializableSite}));
+            this.store.dispatch(SiteActions.updateSiteButtonClicked({site: serializableSite}));
         }
 
         this.formClosed.emit();
     }
 
     onDelete(site: ISite) {
-        //this.store.dispatch(SiteActions.deleteSite({site: {...site}}));
-        this.store.dispatch(SiteActions.deleteSite({site: {...site}}));
+        this.store.dispatch(SiteActions.deleteSiteButtonClicked({site: {...site}}));
     }
 
 }

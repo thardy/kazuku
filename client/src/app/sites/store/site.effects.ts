@@ -1,23 +1,24 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {Store} from '@ngrx/store';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, combineLatestWith, delay, map, switchMap} from 'rxjs/operators';
 import {of as observableOf} from 'rxjs';
 import {SiteService} from '../site.service';
 import {SiteActions} from './index';
 
 @Injectable()
-export class Siteffects {
+export class SiteEffects {
     constructor(private actions$: Actions,
                 private siteService: SiteService,
                 private store: Store) {}
 
-    getUserContextOnAuthentication$ = createEffect(() =>
+    getAllSites$ = createEffect(() =>
         this.actions$.pipe(
             ofType(SiteActions.siteListComponentOpened),
             switchMap((action) => {
                 return this.siteService.getAll()
                     .pipe(
+                        delay(3000),
                         map((sites) => SiteActions.sitesLoaded({ sites })),
                         catchError((error) => {
                             return observableOf(SiteActions.getAllSitesFailed({ error }));
@@ -46,7 +47,6 @@ export class Siteffects {
         this.actions$.pipe(
             ofType(SiteActions.updateSiteButtonClicked),
             switchMap((action) => {
-                // todo: create a helper to handle the Update that NgRx Entities wants (I'd rather our services not have to deal with it)
                 return this.siteService.update(action.site.id, action.site)
                     .pipe(
                         map((site) => {
@@ -64,10 +64,11 @@ export class Siteffects {
         this.actions$.pipe(
             ofType(SiteActions.deleteSiteButtonClicked),
             switchMap((action) => {
-                // todo: create a helper to handle the Update that NgRx Entities wants (I'd rather our services not have to deal with it)
-                return this.siteService.delete(action.site)
+                return this.siteService.delete(action.site.id)
                     .pipe(
-                        map((site) => SiteActions.siteDeleted({ site })),
+                        combineLatestWith(observableOf(action)),
+                        // we return the site from the action because the api doesn't return anything on success
+                        map(([deleteResult, action]) => SiteActions.siteDeleted({ site: action.site })),
                         catchError((error) => {
                             return observableOf(SiteActions.deleteSiteFailed({ error }));
                         })

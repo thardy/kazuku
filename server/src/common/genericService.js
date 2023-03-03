@@ -104,15 +104,19 @@ class GenericService {
         }
 
         conversionService.convertISOStringDateTimesToMongoDates(doc);
+        let insertedDoc;
 
         return this.onBeforeCreate(orgId, doc)
             .then((result) => {
                 return this.collection.insert(doc)
             })
-            .then((doc) => {
-                this.useFriendlyId(doc);
-                return this.onAfterCreate(orgId, doc)
-                    .then(() => { return doc }); // ignore the result of onAfter and return what the original call returned
+            .then((insertResult) => {
+                insertedDoc = insertResult;
+                this.useFriendlyId(insertedDoc);
+                return this.onAfterCreate(orgId, insertedDoc);
+            })
+            .then((afterCreateResult) => {
+                return insertedDoc; // ignore the result of onAfter and return the insertedDoc
             });
     }
 
@@ -133,9 +137,12 @@ class GenericService {
             .then((result) => {
                 return this.collection.update(queryObject, {$set: clone})
             })
-            .then((result) => {
-                return this.onAfterUpdate(orgId, clone)
-                    .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
+            .then((mongoUpdateResult) => {
+                return this.onAfterUpdate(orgId, clone);
+            })
+            .then((afterUpdateResult) => {
+                clone.id = id; // add the friendly string id back to be returned
+                return clone; // ignore the result of onAfter and return what the original call returned
             });
     }
 
@@ -172,8 +179,11 @@ class GenericService {
                 return this.collection.update(mongoQueryObject, {$set: clone});
             })
             .then((result) => {
-                return this.onAfterUpdate(orgId, clone)
-                    .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
+                return this.onAfterUpdate(orgId, clone);
+            })
+            .then((afterUpdateResult) => {
+                clone.id = id; // add the friendly string id back to be returned
+                return clone; // ignore the result of onAfter and return what the original call returned
             });
     }
 
@@ -200,13 +210,18 @@ class GenericService {
         }
 
         let queryObject = { _id: new ObjectId(id), orgId: orgId };
+        let removeResult;
+
         return this.onBeforeDelete(orgId, queryObject)
             .then((result) => {
                 return this.collection.remove(queryObject)
             })
-            .then((result) => {
-                return this.onAfterDelete(orgId, queryObject)
-                    .then(() => { return result }); // ignore the result of onAfter and return what the original call returned
+            .then((mongoRemoveResult) => {
+                removeResult = mongoRemoveResult;
+                return this.onAfterDelete(orgId, queryObject);
+            })
+            .then((afterDeleteResult) => {
+                return removeResult; // ignore the result of onAfter and return what the remove call returned
             });
     }
 
@@ -236,7 +251,8 @@ class GenericService {
 
     auditForCreate(doc) {
         const now = moment().utc().toDate();
-        const userId = current.context && current.context.current && current.context.current.user ? current.context.user.email : 'system';
+        // const userId = current.context && current.context.current && current.context.current.user ? current.context.user.email : 'system';
+        const userId = current.context.user.email;
         doc.created = now;
         doc.createdBy = userId;
         doc.updated = now;
