@@ -4,6 +4,7 @@ import {User} from '@common/auth/user.model';
 
 import {ActivatedRoute, Router} from '@angular/router';
 import * as AuthActions from '@common/auth/store/auth.actions';
+import * as AuthActions from '../common/auth/store/auth.actions';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {finalize} from 'rxjs';
