@@ -4,7 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
 import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {fas} from '@fortawesome/free-solid-svg-icons';
-import {AsyncButtonDirective} from '../common/ui/async-button.directive';
+import {AsyncButtonDirective} from '@common/ui/async-button.directive';
 import {BootstrapModule} from './bootstrap.module';
 import {NgxBootstrapIconsModule} from "ngx-bootstrap-icons";
 import {PageHeaderComponent} from "./components/page-header/page-header.component";

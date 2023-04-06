@@ -1,9 +1,9 @@
 import {Injectable, Inject} from '@angular/core';
 
-import {Organization} from '../../common/auth/organization.model';
+import {Organization} from '@common/auth/organization.model';
 import {catchError, map} from 'rxjs/operators';
-import {GenericService} from '../../common/generic.service';
-import {HttpService} from '../../common/http.service';
+import {GenericService} from '@common/generic.service';
+import {HttpService} from '@common/http.service';
 
 @Injectable()
 export class OrganizationService extends GenericService<Organization> {

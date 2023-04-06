@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CustomSchema} from '../custom-schemas/custom-schema.model';
-import {BaseComponent} from '../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {CustomDataService} from './custom-data.service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {CustomSchemaService} from '../custom-schemas/custom-schema.service';

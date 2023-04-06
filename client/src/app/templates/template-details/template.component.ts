@@ -4,7 +4,7 @@ import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash-es';
 import {takeUntil} from 'rxjs/operators';
 import {Site} from "../../sites/site.model";
-import {BaseComponent} from "../../common/base-component";
+import {BaseComponent} from "@common/base-component";
 import {SiteService} from "../../sites/site.service";
 import {TemplateService} from "../template.service";
 import {Template} from "../template.model";

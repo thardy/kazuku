@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
-import {GenericService} from '../common/generic.service';
-import {HttpService} from '../common/http.service';
+import {GenericService} from '@common/generic.service';
+import {HttpService} from '@common/http.service';
 import {catchError, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 

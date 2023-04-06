@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {ContentDashboardComponent} from './container/content-dashboard/content-dashboard.component';
-import {KazukuAuthGuardService} from "../common/auth/kazuku-auth-guard.service";
+import {KazukuAuthGuardService} from "@common/auth/kazuku-auth-guard.service";
 import {CustomDataComponent} from "../custom-data/custom-data.component";
 
 

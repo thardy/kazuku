@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core';
 import {LoginComponent} from './login/login.component';
 import {SetupComponent} from './setup/setup.component';
 import {SetupGuardService} from './setup/setup-guard.service';
-import {KazukuAuthGuardService} from './common/auth/kazuku-auth-guard.service';
+import {KazukuAuthGuardService} from '@common/auth/kazuku-auth-guard.service';
 import {IconNamesEnum} from "ngx-bootstrap-icons";
 import {faGauge} from "@fortawesome/free-solid-svg-icons/faGauge";
 import {faPlaneDeparture} from "@fortawesome/free-solid-svg-icons/faPlaneDeparture";

@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
-import {GenericService} from '../common/generic.service';
+import {GenericService} from '@common/generic.service';
 import {CustomSchema} from '../custom-schemas/custom-schema.model';
-import {HttpService} from '../common/http.service';
+import {HttpService} from '@common/http.service';
 import {catchError, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 

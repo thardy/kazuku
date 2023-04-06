@@ -1,6 +1,6 @@
 import {throwError as observableThrowError, Observable} from 'rxjs';
 import {Inject, Injectable} from '@angular/core';
-import {HttpService} from '../common/http.service';
+import {HttpService} from '@common/http.service';
 import {environment} from '../../environments/environment';
 import {catchError, map} from 'rxjs/operators';
 import {SitesModule} from '../sites/sites.module';
@@ -40,7 +40,7 @@ export class ScheduleService {
 
     handleError(error) {
         console.error(error);
-        return observableThrowError(error || 'Server error');
+        return observableThrowError(() => error ?? 'Server error');
     }
 
 

@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {BaseComponent} from '../common/base-component';
+import {BaseComponent} from '@common/base-component';
 import {CustomSchema} from './custom-schema.model';
 import {CustomSchemaService} from './custom-schema.service';
 import {NgForm, FormArray, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';

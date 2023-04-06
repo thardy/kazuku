@@ -85,6 +85,6 @@ export class KazukuAuthProviderService implements IAuthProvider {
 
     private handleRequestTokenError(error) {
       console.error(error);
-      return observableThrowError(() => error || 'Server error');
+      return observableThrowError(() => error ?? 'Server error');
     }
 }

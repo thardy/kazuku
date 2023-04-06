@@ -3,8 +3,8 @@ import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs';
 
 
-import {GenericService} from '../common/generic.service';
-import {HttpService} from '../common/http.service';
+import {GenericService} from '@common/generic.service';
+import {HttpService} from '@common/http.service';
 import {catchError, map} from 'rxjs/operators';
 
 @Injectable()

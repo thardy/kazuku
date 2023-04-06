@@ -1,11 +1,11 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, ParamMap, Params, Router} from '@angular/router';
-import {BaseComponent} from '../../common/base-component';
-import {Organization} from '../../common/auth/organization.model';
+import {BaseComponent} from '@common/base-component';
+import {Organization} from '@common/auth/organization.model';
 import {OrganizationService} from '../shared/organization.service';
 import {FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
 import {iif, Observable, of} from 'rxjs';
-import {filter, flatMap, mergeMap, share, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, mergeMap, share, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 @Component({
     selector: 'kz-organization',

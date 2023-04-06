@@ -1,38 +1,13 @@
-<form #form="ngForm" (submit)="save(form)" novalidate class="ui form content">
-    <div>
-        <div class="field">
-            <label>Name</label>
-            <input type="text"
-                   pattern="[\D]*"
-                   name="name"
-                   [(ngModel)]="site.name"
-                   (input)="onNameChange($event.target.value)">
-        </div>
+<div *ngIf="(site$ | async) as site">
+    <h2>This detail page requires no further styling - you cannot improve upon perfection.</h2>
+    <h3>Name</h3>
+    {{site.name}}
+    <h3>Code</h3>
+    {{site.code}}
+    <h3>Domain</h3>
+    {{site.domain}}<br/>
+    <br/>
+    <kz-schedule [siteId]="site.id"></kz-schedule>
+</div>
 
-        <div class="field">
-            <label>Site Code</label>
-            <input type="text"
-                   name="code"
-                   readonly
-                   [ngModel]="site.code">
-        </div>
 
-        <div class="field">
-            <label>Domain</label>
-            <input type="text"
-                   name="domain"
-                   [(ngModel)]="site.domainName">
-        </div>
-
-        <div class="extra content">
-            <button type="submit" class="ui positive button" [disabled]="form.invalid"
-                    kzAsyncButton [asyncInProgress]="saving" [asyncType]="'save'" [ngClass]="{'labeled': !saving, 'icon': !saving}">
-                <i class="checkmark icon"></i> Save
-            </button>
-            <button type="button" class="ui negative button" (click)="cancel(form)">Cancel</button>
-        </div>
-
-    </div>
-</form>
-
-<kz-schedule [siteId]="siteId"></kz-schedule>

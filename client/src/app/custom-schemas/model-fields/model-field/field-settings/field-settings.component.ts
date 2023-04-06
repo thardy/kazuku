@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {BaseComponent} from '../../../../common/base-component';
-import {FieldTypes} from '../../../../common/constants/field-types.constants';
+import {BaseComponent} from '@common/base-component';
+import {FieldTypes} from '@common/constants/field-types.constants';
 import {BasicFieldSettingsComponent} from './basic-field-settings/basic-field-settings.component';
 import {FormGroup} from '@angular/forms';
 import {TabsetComponent} from 'ngx-bootstrap/tabs';

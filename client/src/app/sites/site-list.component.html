@@ -1,13 +1,32 @@
 <h1>Sites</h1>
 
-<div *ngIf="!loading && sites.length <= 0">
-    You haven't added any sites yet.  Add a site!
-</div>
+<ng-container *ngIf="loaded$ | async else loading">
+    <ng-container *ngIf="(sites$ | async) as sites">
+        <div *ngIf="sites.length > 0 else blankSlate">
+            <ul>
+                <li *ngFor="let site of sites">
+                    <a [routerLink]="['/sites/' + site.id]">{{site.name}}</a>
+                    <button (click)="onEdit(site)">Edit</button>
+                    <button (click)="onDelete(site)">Delete</button>
+                </li>
+            </ul>
+        </div>
+    </ng-container>
 
-<ul *ngIf="!loading && sites.length > 0">
-    <li *ngFor="let site of sites">
-        <a [routerLink]="['/sites/' + site.id]">{{site.name}}</a>
-    </li>
-</ul>
+    <ng-template #blankSlate>
+        You haven't added any sites yet.  Add a site!
+    </ng-template>
+</ng-container>
 
-<button class="btn primary" (click)="create()">Add</button>
+<ng-template #loading>
+    <div *ngIf="loading$ | async">
+        loading...
+    </div>
+</ng-template>
+
+<br/>
+<button class="btn primary" (click)="onAdd()">Add</button>
+
+<site-edit *ngIf="editing" [site]="selectedSite" [mode]="'update'" (formClosed)="onFormClosed()"></site-edit>
+
+<site-edit *ngIf="adding" [mode]="'create'" (formClosed)="onFormClosed()"></site-edit>

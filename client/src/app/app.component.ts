@@ -1,11 +1,9 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {AuthService} from './common/auth/auth.service';
+import {AuthService} from '@common/auth/auth.service';
 import {Store} from '@ngrx/store';
 import {SideBarComponent} from "./layout/side-bar/side-bar.component";
-import {AuthActions} from './common/auth/store';
+import {AuthActions} from '@common/auth/store';
 import {tap} from 'rxjs/operators';
-
-// import {LoadAuth} from './common/auth/store/actions/auth.actions';
 
 @Component({
     selector: 'kz-root',

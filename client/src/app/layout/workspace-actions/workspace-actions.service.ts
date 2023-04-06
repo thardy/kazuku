@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {WorkspaceActionItem} from '../../common/models/workspace-actions.model';
+import {WorkspaceActionItem} from '@common/models/workspace-actions.model';
 import {WorkspaceActionItems} from './workspace-action-items';
 
 @Injectable({

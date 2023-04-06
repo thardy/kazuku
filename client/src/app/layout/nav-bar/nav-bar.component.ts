@@ -1,10 +1,10 @@
 import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
-import {IUserContext} from '../../common/auth/user-context.model';
+import {IUserContext} from '@common/auth/user-context.model';
 import {filter, takeUntil, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
-import {AuthActions, AuthSelectors} from '../../common/auth/store';
+import {AuthActions, AuthSelectors} from '@common/auth/store';
 
 @Component({
     selector: 'kz-nav-bar',

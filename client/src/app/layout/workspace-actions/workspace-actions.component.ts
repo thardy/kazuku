@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {WorkspaceActionItem} from '../../common/models/workspace-actions.model';
+import {WorkspaceActionItem} from '@common/models/workspace-actions.model';
 import {WorkspaceActionsService} from './workspace-actions.service';
-import {IUserContext} from '../../common/auth/user-context.model';
-import {AuthActions, AuthSelectors} from '../../common/auth/store';
+import {IUserContext} from '@common/auth/user-context.model';
+import {AuthActions, AuthSelectors} from '@common/auth/store';
 import {Store} from '@ngrx/store';
 
 @Component({

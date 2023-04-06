@@ -83,10 +83,8 @@ class CrudController {
         let body = req.body;
 
         this.service.updateById(current.context.orgId, id, body)
-            .then((result) => {
-                if (result.nModified <= 0) return next();
-
-                return res.status(200).json({});
+            .then((doc) => {
+                return res.status(200).json(doc);
             })
             .catch(err => {
                 if (err.constructor == TypeError) {

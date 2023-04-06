@@ -1,7 +1,7 @@
 // These property names have to match AppState property names
 import {ActionReducerMap, MetaReducer} from '@ngrx/store';
 import {AppState} from './app.state';
-import {authReducer} from '../common/auth/store';
+import {authReducer} from '@common/auth/store';
 
 export const appReducer: ActionReducerMap<AppState> = {
     auth: authReducer,

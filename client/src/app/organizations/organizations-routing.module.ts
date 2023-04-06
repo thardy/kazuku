@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {OrganizationListComponent} from './organization-list/organization-list.component';
 import {OrganizationComponent} from './organization/organization.component';
-import {KazukuAuthGuardService} from '../common/auth/kazuku-auth-guard.service';
+import {KazukuAuthGuardService} from '@common/auth/kazuku-auth-guard.service';
 
 const routes: Routes = [
     {
