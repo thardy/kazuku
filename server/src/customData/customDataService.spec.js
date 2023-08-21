@@ -254,8 +254,8 @@ describe("CustomDataService", function () {
             customDataService = new CustomDataService(database);
             schemaService = new SchemaService(database);
 
-            await pureMongoService.connectDb();
-            const db = pureMongoService.db;
+            const db = await pureMongoService.connectDb();
+            // const db = pureMongoService.db;
 
             await testHelper.setupSchemasForQueryTests();
 

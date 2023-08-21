@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import config from '../server/config/index.js';
 import express from 'express';
-import app from '../server.js';
+import app from '../app.js';
 import supertest from 'supertest';
 const request = supertest(`http://${config.hostname}:${config.port}`);
 import chai from 'chai';
@@ -37,24 +37,28 @@ describe("ApiTests", function () {
 
     describe("customDataController", function () {
 
-        // todo: fix to handle new jwt auth
         describe("when authorized", function () {
             let authCookie = {};
+            let authorizationHeaderValue = '';
 
             before(function () {
                 return request
-                    .post('/api/users/login')
+                    .post('/api/auth/login')
                     .send({
                         email: 'admin',
                         password: 'test'
                     })
                     .expect(200)
                     .then(response => {
-                        // todo: look for the auth cookie
+                        // todo: do we still need authCookie at all (does it even exist?)
                         const cookies = response.header['set-cookie'];
                         if (cookies && cookies.length > 0) {
                             authCookie = cookies[0]
                         }
+                        if (response.body && response.body.tokens && response.body.tokens.accessToken) {
+                            authorizationHeaderValue = `Bearer ${response.body.tokens.accessToken}`;
+                        }
+                        return response;
                     });
             });
 
@@ -77,6 +81,7 @@ describe("ApiTests", function () {
                         return request
                             .get(`/api/customData`)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(200)
                             .then(function (result) {
                                 result.body.length.should.equal(testHelper.existingProducts.length + testHelper.existingDifferentProducts.length);
@@ -92,6 +97,7 @@ describe("ApiTests", function () {
                         return request
                             .get('/api/customData/{0}'.format(testHelper.testProductsContentType))
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(200)
                             .then(function (result) {
                                 result.body.length.should.equal(3);
@@ -107,6 +113,7 @@ describe("ApiTests", function () {
                         return request
                             .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[0].id))
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(200)
                             .then(function (result) {
                                 var product = result.body;
@@ -114,18 +121,20 @@ describe("ApiTests", function () {
                                 product.quantity.should.equal(testHelper.existingProducts[0].quantity);
                             });
                     });
-                    it("should return a 404 for an id that is not found", function () {
+                    it("should return a 204 for an id that is not found", function () {
                         let badId = '111111111111111111111111';
                         return request
                             .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, badId))
                             .set('Cookie', [authCookie])
-                            .expect(404);
+                            .set('Authorization', authorizationHeaderValue)
+                            .expect(204);
                     });
                     it("should return a 400 for an id that is not a valid ObjectId", function () {
                         var badId = "thisisabadid";
                         return request
                             .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, badId))
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(400);
                     });
                 });
@@ -144,6 +153,7 @@ describe("ApiTests", function () {
                         return request
                             .post(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(body)
                             .expect(201)
                             .then(function(result) {
@@ -187,6 +197,7 @@ describe("ApiTests", function () {
                         return request
                             .put(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(body)
                             .expect(200)
                             .then(function(result) {
@@ -194,6 +205,7 @@ describe("ApiTests", function () {
                                 return request
                                     .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id))
                                     .set('Cookie', [authCookie])
+                                    .set('Authorization', authorizationHeaderValue)
                                     .expect(200)
                                     .then(function (result) {
                                         var product = result.body;
@@ -203,7 +215,7 @@ describe("ApiTests", function () {
                                     });
                             });
                     });
-                    it("should return 404 for a non-existent id", function () {
+                    it("should return 204 for a non-existent id", function () {
                         var body = {
                             price: 9.99,
                             quantity: 55
@@ -213,8 +225,9 @@ describe("ApiTests", function () {
                         return request
                             .put(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(body)
-                            .expect(404);
+                            .expect(204);
                     });
                 });
                 describe("delete", function () {
@@ -223,13 +236,15 @@ describe("ApiTests", function () {
                         return request
                             .delete('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(204)
                             .then(function(result) {
                                 // verify customData was deleted
                                 return request
                                     .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
                                     .set('Cookie', [authCookie])
-                                    .expect(404);
+                                    .set('Authorization', authorizationHeaderValue)
+                                    .expect(204);
                             });
                     });
                     it("should return 400 for a invalid ObjectId", function () {
@@ -237,129 +252,139 @@ describe("ApiTests", function () {
                         return request
                             .delete(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(400);
                     });
-                    it("should return 404 for a non-existent id", function () {
+                    it("should return 204 for a non-existent id", function () {
                         var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
                         return request
                             .delete(relativeUrl)
                             .set('Cookie', [authCookie])
-                            .expect(404);
+                            .set('Authorization', authorizationHeaderValue)
+                            .expect(204);
                     });
                 });
             });
 
-            describe("RQL", function () {
-                before(function () {
-                    // Insert some docs to be present before all tests start
-                    return testHelper.setupTestProducts();
-                });
-
-                after(function () {
-                    // Remove everything we created
-                    return testHelper.deleteAllTestProducts();
-                });
-
-                it("can query custom number fields by value", function () {
-                    var query = 'quantity={0}'.format(testHelper.newProduct1.quantity);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(1);
-                            var product = result.body[0];
-                            product.quantity.should.equal(testHelper.newProduct1.quantity);
-                            product.name.should.equal(testHelper.newProduct1.name);
-                        });
-                });
-                it("can query custom number fields greater than value", function () {
-                    var query = 'quantity=gt={0}'.format(90);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(1);
-                            var product = result.body[0];
-                            product.name.should.equal(testHelper.newProduct1.name);
-                        });
-                });
-                it("can query custom number fields greater than value with a sort", function () {
-                    var query = 'price=gt={0}&sort(price)'.format(10.00);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(2);
-                            var product1 = result.body[0];
-                            var product2 = result.body[1];
-                            product1.name.should.equal(testHelper.newProduct3.name);
-                            product2.name.should.equal(testHelper.newProduct2.name);
-                        });
-                });
-                it("can query custom number fields in range", function () {
-                    var query = 'price=ge={0}&price=le={1}&sort(price)'.format(5.50, 20.00);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(2);
-                            var product1 = result.body[0];
-                            var product2 = result.body[1];
-                            product1.name.should.equal(testHelper.newProduct1.name);
-                            product2.name.should.equal(testHelper.newProduct3.name);
-                        });
-                });
-
-                it("can query custom date fields by value", function () {
-                    var findDate = moment(testHelper.newProduct2.created).toISOString(); //'2015-06-10T00:00:00Z';
-                    var query = 'created=date:{0}'.format(findDate);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(1);
-                            var product = result.body[0];
-                            product.name.should.equal(testHelper.newProduct2.name);
-                        });
-                });
-                it("can query custom date fields greater than value", function () {
-                    // todo: RQL gt is not working.  Either fix or switch to another query framework, like GraphQL.
-                    var findDate = '2014-01-01';
-                    var query = 'created=gt=date:{0}&sort(-created)'.format(findDate);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(2);
-                            var product1 = result.body[0];
-                            var product2 = result.body[1];
-                            product1.name.should.equal(testHelper.newProduct2.name);
-                            product2.name.should.equal(testHelper.newProduct3.name);
-                        });
-                });
-                it("can query custom date fields within range", function () {
-                    var startDate = '2015-01-27';
-                    var endDate = '2015-05-20';
-                    var query = 'created=ge=date:{0}&created=le=date:{1}&sort(-created)'.format(startDate, endDate);
-                    return request
-                        .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
-                        .set('Cookie', [authCookie])
-                        .expect(200)
-                        .then(function (result) {
-                            result.body.length.should.equal(2);
-                            var product1 = result.body[0];
-                            var product2 = result.body[1];
-                            product1.name.should.equal(testHelper.newProduct2.name);
-                            product2.name.should.equal(testHelper.newProduct3.name);
-                        });
-                });
-            });
+            // todo: RQL was removed as our query language and replaced with GraphQL. Replace these with GraphQL tests
+            // describe("RQL", function () {
+            //     before(function () {
+            //         // Insert some docs to be present before all tests start
+            //         return testHelper.setupTestProducts();
+            //     });
+            //
+            //     after(function () {
+            //         // Remove everything we created
+            //         return testHelper.deleteAllTestProducts();
+            //     });
+            //
+            //     it("can query custom number fields by value", function () {
+            //         var query = 'quantity={0}'.format(testHelper.newProduct1.quantity);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(1);
+            //                 var product = result.body[0];
+            //                 product.quantity.should.equal(testHelper.newProduct1.quantity);
+            //                 product.name.should.equal(testHelper.newProduct1.name);
+            //             });
+            //     });
+            //     it("can query custom number fields greater than value", function () {
+            //         var query = 'quantity=gt={0}'.format(90);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(1);
+            //                 var product = result.body[0];
+            //                 product.name.should.equal(testHelper.newProduct1.name);
+            //             });
+            //     });
+            //     it("can query custom number fields greater than value with a sort", function () {
+            //         var query = 'price=gt={0}&sort(price)'.format(10.00);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(2);
+            //                 var product1 = result.body[0];
+            //                 var product2 = result.body[1];
+            //                 product1.name.should.equal(testHelper.newProduct3.name);
+            //                 product2.name.should.equal(testHelper.newProduct2.name);
+            //             });
+            //     });
+            //     it("can query custom number fields in range", function () {
+            //         var query = 'price=ge={0}&price=le={1}&sort(price)'.format(5.50, 20.00);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(2);
+            //                 var product1 = result.body[0];
+            //                 var product2 = result.body[1];
+            //                 product1.name.should.equal(testHelper.newProduct1.name);
+            //                 product2.name.should.equal(testHelper.newProduct3.name);
+            //             });
+            //     });
+            //
+            //     it("can query custom date fields by value", function () {
+            //         var findDate = moment(testHelper.newProduct2.created).toISOString(); //'2015-06-10T00:00:00Z';
+            //         var query = 'created=date:{0}'.format(findDate);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(1);
+            //                 var product = result.body[0];
+            //                 product.name.should.equal(testHelper.newProduct2.name);
+            //             });
+            //     });
+            //     it("can query custom date fields greater than value", function () {
+            //         // todo: RQL gt is not working.  Either fix or switch to another query framework, like GraphQL.
+            //         var findDate = '2014-01-01';
+            //         var query = 'created=gt=date:{0}&sort(-created)'.format(findDate);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(2);
+            //                 var product1 = result.body[0];
+            //                 var product2 = result.body[1];
+            //                 product1.name.should.equal(testHelper.newProduct2.name);
+            //                 product2.name.should.equal(testHelper.newProduct3.name);
+            //             });
+            //     });
+            //     it("can query custom date fields within range", function () {
+            //         var startDate = '2015-01-27';
+            //         var endDate = '2015-05-20';
+            //         var query = 'created=ge=date:{0}&created=le=date:{1}&sort(-created)'.format(startDate, endDate);
+            //         return request
+            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .set('Cookie', [authCookie])
+            //             .set('Authorization', authorizationHeaderValue)
+            //             .expect(200)
+            //             .then(function (result) {
+            //                 result.body.length.should.equal(2);
+            //                 var product1 = result.body[0];
+            //                 var product2 = result.body[1];
+            //                 product1.name.should.equal(testHelper.newProduct2.name);
+            //                 product2.name.should.equal(testHelper.newProduct3.name);
+            //             });
+            //     });
+            // });
         });
     });
 });

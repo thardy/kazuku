@@ -101,7 +101,7 @@ class CrudController {
         this.service.delete(current.context.orgId, id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
-                    return res.status(404).json({'errors': ['id not found']});
+                    return res.status(204).json({'errors': ['id not found']});
                 }
 
                 return res.status(204).json({});

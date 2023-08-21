@@ -19,22 +19,35 @@ import SchemaService from '../server/graphQL/schemaService.js';
 //
 // export default agenda;
 
-// This is a good example of how to do an async export - we'll get it to you as soon as it's ready
+
 let callbackList = [];
 let agenda;
 
-(async () => {
-    // connect to the database
-    await pureMongoService.connectDb();
-    agenda = new Agenda({mongo: pureMongoService.db});
-
-    await agenda.start();
-
-    // Call all the modules who asked for agenda when it wasn't ready yet and give it to them
-    for (let i = 0; i < callbackList.length; i++) {
-        callbackList[i](agenda);
-    }
+(() => {
+    pureMongoService.connectDb()
+        .then((db) => {
+            agenda = new Agenda({mongo: db});
+            return agenda.start();
+        })
+        .then((agenda) => {
+            for (let i = 0; i < callbackList.length; i++) {
+                callbackList[i](agenda);
+            }
+        });
 })();
+// This is a good example of how to do an async export - we'll get it to you as soon as it's ready
+// (async () => {
+//     // connect to the database
+//     await pureMongoClient.connectDb();
+//     agenda = new Agenda({mongo: pureMongoClient.db});
+//
+//     await agenda.start();
+//
+//     // Call all the modules who asked for agenda when it wasn't ready yet and give it to them
+//     for (let i = 0; i < callbackList.length; i++) {
+//         callbackList[i](agenda);
+//     }
+// })();
 
 export default (callback) => {
     if (typeof agenda != 'undefined'){

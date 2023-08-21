@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import config from '../server/config/index.js';
-import app from '../server.js';
+import app from '../app.js';
 import supertest from 'supertest';
 const request = supertest(`http://${config.hostname}:${config.port}`);
 import chai from 'chai';
@@ -33,21 +33,24 @@ describe("ApiTests", function () {
 
         describe("when authorized", function () {
             let authCookie = {};
+            let authorizationHeaderValue = '';
 
-            // todo: fix to handle jwt auth
             before(function () {
                 return request
-                    .post('/api/users/login')
+                    .post('/api/auth/login')
                     .send({
                         email: 'admin',
                         password: 'test'
                     })
                     .expect(200)
                     .then(response => {
-                        // todo: look for the auth cookie
+                        // todo: do we still need authCookie at all (does it even exist?)
                         const cookies = response.header['set-cookie'];
                         if (cookies && cookies.length > 0) {
                             authCookie = cookies[0]
+                        }
+                        if (response.body && response.body.tokens && response.body.tokens.accessToken) {
+                            authorizationHeaderValue = `Bearer ${response.body.tokens.accessToken}`;
                         }
                         return response;
                     });
@@ -87,6 +90,7 @@ describe("ApiTests", function () {
                         return request
                             .get('/api/organizations')
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(200)
                             .then(function (result) {
                                 result.body.length.should.be.above(0);
@@ -102,6 +106,7 @@ describe("ApiTests", function () {
                         return request
                             .get(`/api/organizations/${existingOrgs[0].id}`)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(200)
                             .then(function (result) {
                                 let org = result.body;
@@ -109,18 +114,20 @@ describe("ApiTests", function () {
                                 org.code.should.equal(existingOrgs[0].code);
                             });
                     });
-                    it("should return a 404 for an id that is not found", function () {
+                    it("should return a 204 for an id that is not found", function () {
                         let badId = '111111111111111111111111';
                         return request
                             .get(`/api/organizations/${badId}`)
                             .set('Cookie', [authCookie])
-                            .expect(404);
+                            .set('Authorization', authorizationHeaderValue)
+                            .expect(204);
                     });
                     it("should return a 400 for an id that is not a valid ObjectId", function () {
                         let badId = "thisisabadid";
                         return request
                             .get(`/api/organizations/${badId}`)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(400);
                     });
                 });
@@ -132,6 +139,7 @@ describe("ApiTests", function () {
                         return request
                             .post(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(newOrg)
                             .expect(201)
                             .then(function(result) {
@@ -144,22 +152,24 @@ describe("ApiTests", function () {
                     });
 
                     it("should return a 400 for validation error", function () {
-                       // code is required
-                       let invalidOrg = { name: `${testOrgPrefix}My New Controller Org`, description: 'Just a test.', statusId: 2, isMetaOrg: false };
-                       return request
-                           .post('/api/organizations')
-                           .set('Cookie', [authCookie])
-                           .send(invalidOrg)
-                           .expect(400);
-                    });
+                        // code is required
+                        let invalidOrg = { name: `${testOrgPrefix}My New Controller Org`, description: 'Just a test.', statusId: 2, isMetaOrg: false };
+                        return request
+                            .post('/api/organizations')
+                            .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
+                            .send(invalidOrg)
+                            .expect(400);
+                        });
 
                     it("should return a 409 for duplicate key errors", function () {
                         let dupeOrg = { name: `${testOrgPrefix}Dupe Corp`, code: `${testOrgPrefix}acmecorp`, description: 'A cool company.', statusId: 1, isMetaOrg: false };
                         return request
-                           .post('/api/organizations')
+                            .post('/api/organizations')
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(dupeOrg)
-                           .expect(409);
+                            .expect(409);
                     });
                 });
                 describe("update", function () {
@@ -175,6 +185,7 @@ describe("ApiTests", function () {
                         return request
                             .put(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(body)
                             .expect(200)
                             .then(function(result) {
@@ -182,6 +193,7 @@ describe("ApiTests", function () {
                                 return request
                                     .get(`/api/organizations/${existingOrgs[1].id}`)
                                     .set('Cookie', [authCookie])
+                                    .set('Authorization', authorizationHeaderValue)
                                     .expect(200)
                                     .then((result) => {
                                         let org = result.body;
@@ -191,7 +203,7 @@ describe("ApiTests", function () {
                                     });
                             });
                     });
-                    it("should return 404 for a non-existent id", function () {
+                    it("should return 204 for a non-existent id", function () {
                         let body = {
                             description: 'blah',
                             statusId: 1
@@ -200,8 +212,9 @@ describe("ApiTests", function () {
                         return request
                             .put(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .send(body)
-                            .expect(404);
+                            .expect(204);
                     });
                 });
                 describe("delete", function () {
@@ -210,13 +223,15 @@ describe("ApiTests", function () {
                         return request
                             .delete(`/api/organizations/${id}`)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(204)
                             .then((result) => {
                                 // verify org was deleted
                                 return request
                                     .get(`/api/organizations/${id}`)
                                     .set('Cookie', [authCookie])
-                                    .expect(404);
+                                    .set('Authorization', authorizationHeaderValue)
+                                    .expect(204);
                             });
                     });
                     it("should return 400 for a invalid ObjectId", function () {
@@ -224,14 +239,16 @@ describe("ApiTests", function () {
                         return request
                             .delete(relativeUrl)
                             .set('Cookie', [authCookie])
+                            .set('Authorization', authorizationHeaderValue)
                             .expect(400);
                     });
-                    it("should return 404 for a non-existent id", function () {
+                    it("should return 204 for a non-existent id", function () {
                         let relativeUrl = '/api/organizations/111111111111111111111111';
                         return request
                             .delete(relativeUrl)
                             .set('Cookie', [authCookie])
-                            .expect(404);
+                            .set('Authorization', authorizationHeaderValue)
+                            .expect(204);
                     });
                 });
             });

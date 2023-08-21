@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import config from '../server/config/index.js';
 import express from 'express';
-import app from '../server.js';
+import app from '../app.js';
 import supertest from 'supertest';
 const request = supertest(`http://${config.hostname}:${config.port}`);
 import chai from 'chai';
@@ -42,21 +42,24 @@ describe("ApiTests", function () {
 
         describe("when authorized", function () {
             let authCookie = {};
+            let authorizationHeaderValue = '';
 
-            // todo: fix to handle jwt auth
             before(function () {
                 return request
-                    .post('/api/users/login')
+                    .post('/api/auth/login')
                     .send({
                         email: 'admin',
                         password: 'test'
                     })
                     .expect(200)
                     .then(response => {
-                        // todo: look for the auth cookie
+                        // todo: do we still need authCookie at all (does it even exist?)
                         const cookies = response.header['set-cookie'];
                         if (cookies && cookies.length > 0) {
                             authCookie = cookies[0]
+                        }
+                        if (response.body && response.body.tokens && response.body.tokens.accessToken) {
+                            authorizationHeaderValue = `Bearer ${response.body.tokens.accessToken}`;
                         }
                         return response;
                     });
@@ -67,6 +70,7 @@ describe("ApiTests", function () {
                     return request
                         .get('/api/customschemas')
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .expect(200)
                         .then(function (result) {
                             result.body.length.should.equal(2);
@@ -82,18 +86,20 @@ describe("ApiTests", function () {
                     return request
                         .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[0].contentType))
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .expect(200)
                         .then(function (result) {
                             var schema = result.body;
                             schema.should.have.property("jsonSchema").deep.equal(testHelper.existingSchemas[0].jsonSchema);
                         });
                 });
-                it("should return a 404 for a contentType that is not found", function () {
+                it("should return a 204 for a contentType that is not found", function () {
                     var badContentType = "123456789012";
                     return request
                         .get('/api/customschemas/{0}'.format(badContentType))
                         .set('Cookie', [authCookie])
-                        .expect(404);
+                        .set('Authorization', authorizationHeaderValue)
+                        .expect(204);
                 });
             });
             describe("create", function () {
@@ -119,6 +125,7 @@ describe("ApiTests", function () {
                     return request
                         .post(relativeUrl)
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .send(newSchema)
                         .expect(201)
                         .then(function(result) {
@@ -135,6 +142,7 @@ describe("ApiTests", function () {
                     return request
                         .post('/api/customschemas')
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .send(invalidCustomSchema)
                         .expect(400);
                 });
@@ -147,6 +155,7 @@ describe("ApiTests", function () {
                     return request
                         .post('/api/customschemas')
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .send(body)
                         .expect(409);
                 });
@@ -171,6 +180,7 @@ describe("ApiTests", function () {
                     return request
                         .put(relativeUrl)
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .send(updatedSchema)
                         .expect(200)
                         .then(function(result) {
@@ -178,6 +188,7 @@ describe("ApiTests", function () {
                             return request
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
                                 .set('Cookie', [authCookie])
+                                .set('Authorization', authorizationHeaderValue)
                                 .expect(200)
                                 .then(function (result) {
                                     var schema = result.body;
@@ -185,7 +196,7 @@ describe("ApiTests", function () {
                                 });
                         });
                 });
-                it("should return 404 for a non-existent contentType", function () {
+                it("should return 204 for a non-existent contentType", function () {
                     var body = {
                         jsonSchema: {}
                     };
@@ -195,8 +206,9 @@ describe("ApiTests", function () {
                     return request
                         .put(relativeUrl)
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .send(body)
-                        .expect(404);
+                        .expect(204);
                 });
             });
             describe("delete", function () {
@@ -205,21 +217,24 @@ describe("ApiTests", function () {
                     return request
                         .delete('/api/customschemas/{0}'.format(testHelper.existingSchemas[1].contentType))
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .expect(204)
                         .then(function(result) {
                             // verify customData was deleted
                             return request
                                 .get('/api/customschemas/{0}'.format(testHelper.existingSchemas[1]))
                                 .set('Cookie', [authCookie])
-                                .expect(404);
+                                .set('Authorization', authorizationHeaderValue)
+                                .expect(204);
                         });
                 });
-                it("should return 404 for a non-existent contentType", function () {
-                    var relativeUrl = '/api/customData/{0}'.format('nonExistentContentType');
+                it("should return 204 for a non-existent contentType", function () {
+                    var relativeUrl = '/api/customschemas/{0}'.format('nonExistentContentType');
                     return request
                         .delete(relativeUrl)
                         .set('Cookie', [authCookie])
-                        .expect(404);
+                        .set('Authorization', authorizationHeaderValue)
+                        .expect(204);
                 });
             });
         });

@@ -25,7 +25,7 @@ describe("ScheduleService", () => {
     let testSiteId = 1;
 
     before(async () => {
-        await pureMongoService.connectDb();
+        //await pureMongoService.connectDb();
         scheduleService = new SchedulingService();
         orgService = new OrganizationService(database);
         let newOrg1 = {

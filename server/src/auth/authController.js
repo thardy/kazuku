@@ -139,7 +139,7 @@ class AuthController extends CrudController {
                 }
                 else {
                     const error = { message: `ERROR: Unable to auth with refreshToken - not found` }
-                    return res.status(404).json(error);
+                    return res.status(204).json(error);
                 }
             });
     }

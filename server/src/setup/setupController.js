@@ -4,7 +4,7 @@ import {database} from '../database/database.js';
 import SetupService from './setupService.js';
 import OrganizationService from '../organizations/organizationService.js';
 import apiHelper from '../common/apiHelper.js';
-import AuthService from '../auth/authService';
+import AuthService from '../auth/authService.js';
 
 class SetupController {
 

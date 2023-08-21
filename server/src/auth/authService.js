@@ -9,9 +9,9 @@ import config from '../server/config/index.js';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
-import OrganizationService from '../organizations/organizationService';
-import {database} from '../database/database';
-import logger from '../server/logger';
+import OrganizationService from '../organizations/organizationService.js';
+import {database} from '../database/database.js';
+import logger from '../server/logger/index.js';
 
 class AuthService extends GenericService {
     constructor(database) {

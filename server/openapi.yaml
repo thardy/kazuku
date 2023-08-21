@@ -1,0 +1,7 @@
+openapi: 3.1.0
+info:
+  title: Kazuku Api
+  version: 1.0.0
+x-optic-path-ignore:
+  - "**/*.+(ico|png|jpeg|jpg|gif)"
+paths: {}

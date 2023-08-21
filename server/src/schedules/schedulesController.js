@@ -28,7 +28,7 @@ class SchedulesController {
         this.service.getbyOrgAndSite(current.context.orgId, siteId)
             .then((doc) => {
                 if (doc === null) {
-                    return res.status(404).json({'errors': ['id not found']});
+                    return res.status(204).json({'errors': ['id not found']});
                 }
 
                 return res.status(200).send(doc);

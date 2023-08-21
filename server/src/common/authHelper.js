@@ -3,9 +3,9 @@ import {database} from '../database/database.js';
 import OrganizationService from '../organizations/organizationService.js';
 import passport from 'passport';
 import AuthService from '../auth/authService.js';
-import logger from '../server/logger';
+import logger from '../server/logger/index.js';
 import jwt from 'jsonwebtoken';
-import config from '../server/config';
+import config from '../server/config/index.js';
 import crypto from "crypto";
 
 const orgService = new OrganizationService(database);

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import config from '../server/config/index.js';
-import app from '../server.js';
+import app from '../app.js';
 import supertest from 'supertest';
 const request = supertest(`http://${config.hostname}:${config.port}`);
 import chai from 'chai';
@@ -22,6 +22,7 @@ describe("ApiTests", function () {
 
     before(() => {
         // start express server
+        // server(config);
         server = app.listen(config.port, () => {
             console.log(`kazuku server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
         });
@@ -29,12 +30,13 @@ describe("ApiTests", function () {
 
     after(() => {
         // shutdown express server
+        // stopServer();
         server.close();
     });
 
-    // todo: fix these tests to handle jwt instead of session - they should be failing now
     describe("AuthControllerTest", () => {
         let authCookie = {};
+        let authorizationHeaderValue = '';
 
         before(function () {
             return request
@@ -49,6 +51,9 @@ describe("ApiTests", function () {
                     const cookies = response.header['set-cookie'];
                     if (cookies && cookies.length > 0) {
                         authCookie = cookies[0]
+                    }
+                    if (response.body && response.body.tokens && response.body.tokens.accessToken) {
+                        authorizationHeaderValue = `Bearer ${response.body.tokens.accessToken}`;
                     }
                     return response;
                 });
@@ -71,6 +76,7 @@ describe("ApiTests", function () {
             return request
                 .post('/api/auth')
                 .set('Cookie', [authCookie])
+                .set('Authorization', authorizationHeaderValue)
                 .send(newUser)
                 .expect(201)
                 .then(result => {
@@ -85,6 +91,7 @@ describe("ApiTests", function () {
             return request
                 .post('/api/auth')
                 .set('Cookie', [authCookie])
+                .set('Authorization', authorizationHeaderValue)
                 .send(testHelper.newUser1)
                 .expect(409)
                 .then(result => {
@@ -101,11 +108,12 @@ describe("ApiTests", function () {
             return request
                 .post('/api/auth/login')
                 .set('Cookie', [authCookie])
+                .set('Authorization', authorizationHeaderValue)
                 .send(user)
                 .expect(200)
                 .then(result => {
-                    result.body.user.should.have.property('id');
-                    result.body.user.should.have.property("email").deep.equal(user.email);
+                    result.body.userContext.user.should.have.property('id');
+                    result.body.userContext.user.should.have.property("email").deep.equal(user.email);
                 });
         });
 
@@ -118,7 +126,7 @@ describe("ApiTests", function () {
                 });
         });
 
-        xit("should return a user object and a random number I there is a logged in user", () => {
+        xit("should return a user object and a random number i there is a logged in user", () => {
             // todo: Doesn't currently work.  Alter to use something like https://github.com/shaunc/supertest-session-as-promised
             //  in order to use supertest successfully with passport sessions.
             var user = {
@@ -129,6 +137,7 @@ describe("ApiTests", function () {
             return request
                 .post('/api/auth/login')
                 .set('Cookie', [authCookie])
+                .set('Authorization', authorizationHeaderValue)
                 .send(user)
                 .expect(200)
                 .then(result => {
@@ -139,6 +148,7 @@ describe("ApiTests", function () {
                     return request
                         .get('/api/auth/random-number')
                         .set('Cookie', [authCookie])
+                        .set('Authorization', authorizationHeaderValue)
                         .expect(200)
                         .then(result => {
                             console.log("yay got the random number =", result);

@@ -138,11 +138,25 @@ class GenericService {
                 return this.collection.update(queryObject, {$set: clone})
             })
             .then((mongoUpdateResult) => {
-                return this.onAfterUpdate(orgId, clone);
+                let promise;
+                if (mongoUpdateResult && mongoUpdateResult.nModified <= 0) {
+                    // nothing was updated, don't call onAfterUpdate
+                    promise = Promise.resolve(mongoUpdateResult);
+                }
+                else {
+                    promise = this.onAfterUpdate(orgId, clone);
+                }
+                return promise;
             })
-            .then((afterUpdateResult) => {
-                clone.id = id; // add the friendly string id back to be returned
-                return clone; // ignore the result of onAfter and return what the original call returned
+            .then((afterResult) => {
+                if ('nModified' in afterResult) {
+                    // we didn't call onAfterUpdate - we didn't update anything
+                    return afterResult;
+                }
+                else {
+                    clone.id = id; // add the friendly string id back to be returned
+                    return clone; // ignore the result of onAfter and return what the original call returned
+                }
             });
     }
 
@@ -178,12 +192,26 @@ class GenericService {
             .then((result) => {
                 return this.collection.update(mongoQueryObject, {$set: clone});
             })
-            .then((result) => {
-                return this.onAfterUpdate(orgId, clone);
+            .then((mongoUpdateResult) => {
+                let promise;
+                if (mongoUpdateResult && mongoUpdateResult.nModified <= 0) {
+                    // nothing was updated, don't call onAfterUpdate
+                    promise = Promise.resolve(mongoUpdateResult);
+                }
+                else {
+                    promise = this.onAfterUpdate(orgId, clone);
+                }
+                return promise;
             })
-            .then((afterUpdateResult) => {
-                clone.id = id; // add the friendly string id back to be returned
-                return clone; // ignore the result of onAfter and return what the original call returned
+            .then((afterResult) => {
+                if ('nModified' in afterResult) {
+                    // we didn't call onAfterUpdate - we didn't update anything
+                    return afterResult;
+                }
+                else {
+                    clone.id = id; // add the friendly string id back to be returned
+                    return clone; // ignore the result of onAfter and return what the original call returned
+                }
             });
     }
 

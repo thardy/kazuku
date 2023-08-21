@@ -70,7 +70,9 @@ class OrganizationsController extends CrudController {
 
         this.service.getById(id)
             .then((doc) => {
-                if (doc === null) return next();
+                if (doc === null) {
+                    return res.status(204).json({'errors': ['Document not found']});
+                }
 
                 return res.status(200).send(doc);
             })
@@ -111,7 +113,9 @@ class OrganizationsController extends CrudController {
 
         this.service.updateById(id, body)
             .then((result) => {
-                if (result.nModified <= 0) return next();
+                if (result.nModified <= 0) {
+                    return res.status(204).json({'errors': ['Document not found']});
+                }
 
                 return res.status(200).json({});
             })
@@ -130,7 +134,7 @@ class OrganizationsController extends CrudController {
         this.service.delete(id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
-                    return res.status(404).json({'errors': ['id not found']});
+                    return res.status(204).json({'errors': ['id not found']});
                 }
 
                 return res.status(204).json({});

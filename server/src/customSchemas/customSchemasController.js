@@ -31,7 +31,10 @@ class CustomSchemasController extends CrudController {
 
         this.service.getByContentType(current.context.orgId, contentType).
             then((doc) => {
-                if (doc === null) return next();
+                //if (doc === null) return next();
+                if (doc === null) {
+                    return res.status(204).json({'errors': ['Document not found']});
+                }
 
                 return res.status(200).send(doc);
             }).
@@ -52,8 +55,7 @@ class CustomSchemasController extends CrudController {
         this.service.updateByContentType(current.context.orgId, contentType, body).
             then((result) => {
                 if (result.nModified <= 0) {
-                    return res.status(404).
-                        json({'errors': ['Document not found']});
+                    return res.status(204).json({'errors': ['Document not found']});
                 }
 
                 return res.status(200).json({});
@@ -71,7 +73,9 @@ class CustomSchemasController extends CrudController {
         // todo: Add some serious checking here.  Can't delete a schema unless all data for that schema is deleted first.
         this.service.deleteByContentType(current.context.orgId, contentType).
             then((numAffected) => {
-                if (numAffected <= 0) return next();
+                if (numAffected <= 0) {
+                    return res.status(204).json({'errors': ['Document not found']});
+                }
 
                 return res.status(204).json({});
             }).

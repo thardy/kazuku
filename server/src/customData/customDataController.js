@@ -107,7 +107,7 @@ class CustomDataController {
         return this.service.getByTypeAndId(current.context.orgId, contentType, id)
             .then(function (doc) {
                 if (doc === null) {
-                    return res.status(404).json({'errors': ['id not found']});
+                    return res.status(204).json({'errors': ['id not found']});
                 }
 
                 return res.status(200).send(doc);
@@ -152,7 +152,7 @@ class CustomDataController {
         return this.service.updateById(current.context.orgId, id, body)
             .then(function (result) {
                 if (result.nModified <= 0) {
-                    return res.status(404).json({'errors': ['Document not found']});
+                    return res.status(204).json({'errors': ['Document not found']});
                 }
 
                 return res.status(200).json({});
@@ -173,7 +173,7 @@ class CustomDataController {
         return this.service.deleteByTypeAndId(current.context.orgId, contentType, id)
             .then((commandResult) => {
                 if (commandResult.result.n <= 0) {
-                    return res.status(404).json({'errors': ['id not found']});
+                    return res.status(204).json({'errors': ['id not found']});
                 }
 
                 return res.status(204).json({});
