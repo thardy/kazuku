@@ -3,7 +3,7 @@ import config from '../server/config/index.js';
 import express from 'express';
 import app from '../app.js';
 import supertest from 'supertest';
-const request = supertest(`http://${config.hostname}:${config.port}`);
+const request = supertest(`http://${config.testHostname}:${config.testPort}`);
 import chai from 'chai';
 const should = chai.Should();
 const expect = chai.expect;

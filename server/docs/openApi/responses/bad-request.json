@@ -1,0 +1,20 @@
+{
+  "description": "Bad request",
+  "content": {
+    "application/json": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "TODO: Fill this in with an actual error message!"
+          },
+          "item": {
+            "type": "object",
+            "enum": [null]
+          }
+        }
+      }
+    }
+  }
+}

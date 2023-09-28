@@ -1,0 +1,39 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Kazuku API",
+    "description": "API for Kazuku admin interface",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://{host}:{port}",
+      "description": "local server",
+      "variables": {
+        "host": {
+          "default": "localhost",
+          "description": "api running locally"
+        },
+        "port": {
+          "default": "3001"
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "$ref": "./schemas/index.json"
+    },
+    "responses": {
+      "$ref": "./responses/index.json"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "$ref": "./paths/index.json"
+  }
+}

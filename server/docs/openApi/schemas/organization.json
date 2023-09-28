@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "required": ["name", "code"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "statusId": {
+      "type": "number"
+    },
+    "isMetaOrg": {
+      "type": "boolean"
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "createdBy": {
+      "type": "string"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "updatedBy": {
+      "type": "string"
+    }
+  }
+}

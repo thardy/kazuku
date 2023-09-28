@@ -1,0 +1,14 @@
+{
+  "Success": {
+    "$ref": "./success.json"
+  },
+  "InternalServerError": {
+    "$ref": "./internal-server-error.json"
+  },
+  "BadRequest": {
+    "$ref": "./bad-request.json"
+  },
+  "NoContent": {
+    "$ref": "./no-content.json"
+  }
+}

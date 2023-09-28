@@ -2,7 +2,7 @@ import _ from 'lodash';
 import config from '../server/config/index.js';
 import app from '../app.js';
 import supertest from 'supertest';
-const request = supertest(`http://${config.hostname}:${config.port}`);
+const request = supertest(`http://${config.testHostname}:${config.testPort}`);
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);

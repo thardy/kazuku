@@ -4,7 +4,6 @@ let config = {};
 
 if (process.env.NODE_ENV === 'test') {
     // todo: test the test env workflow
-    // let testConfig = require('./development.json');
     testConfig.cache.orgCache = false;
     config = testConfig;
 }
@@ -21,7 +20,9 @@ else {
     config = {
         env: process.env.KAZUKU_ENV,
         hostname: process.env.HOST_NAME || '',
+        testHostname: process.env.TEST_HOST_NAME || '',
         port: process.env.PORT,
+        testPort: process.env.TEST_PORT,
         mongoDbUrl: process.env.MONGODB_URL,
         databaseName: process.env.DATABASE_NAME,
         corsAllowedOrigin: process.env.CORS_ALLOWED_ORIGIN,

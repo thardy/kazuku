@@ -1,0 +1,22 @@
+/organizations:
+  get:
+#    $ref: './organizations/get-all-organizations.yml'
+    summary: Returns all organizations
+    responses:
+      '200':
+        description: An array of organization objects
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../schemas/organization'
+  post:
+    $ref: './organizations/create-organization.yml'
+/organizations/{id}:
+  get:
+    $ref: './organizations/get-organization-by-id.yml'
+  put:
+    $ref: './organizations/update-organization.yml'
+  delete:
+    $ref: './organizations/delete-organization.yml'

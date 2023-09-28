@@ -14,7 +14,7 @@ var testOrgId = '5aad6ee15069c6aa32dea338';
 var testUserId = '5af51f4cf6dd9aae8deaeffa';
 var testSiteId = '5aad6ee15069c6aa32dea339';
 var testProductsContentType = 'test_products';
-var differentTestProductsContentType = 'different_test_products';
+var differentTestProductsContentType = 'different_test_products';  // todo: consider changing these to hyphens (kebab-case), it would look better in a url - figure out why I started with snake-case
 
 let testOrg1 = { _id: new ObjectId(testOrgId), name: 'The Test Org One', code: 'test-org1', isMetaOrg: false, description: 'used in a lot of tests', statusId: 1 };
 let testSite1 = { _id: new ObjectId(testSiteId), orgId: testOrgId, name: 'Test Site One', code: 'test-site1' };
