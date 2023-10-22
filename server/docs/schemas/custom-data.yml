@@ -1,0 +1,20 @@
+title: Custom Data
+type: object
+required:
+  - orgId
+  - contentType
+properties:
+  orgId:
+    type: string
+  contentType:
+    type: string
+  created:
+    type: string
+    format: date
+  createdBy:
+    type: string
+  updated:
+    type: string
+    format: date
+  updatedBy:
+    type: string

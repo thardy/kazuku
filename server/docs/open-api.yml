@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.2
 info:
   title: Kazuku API
   description: API for Kazuku admin interface
@@ -14,6 +14,19 @@ servers:
       port:
         default: 3001
 
+#global security, applied to the whole API. If you need to apply it to just a few operations, add security on the operation level instead
+#paths:
+#  /something:
+#    get:
+#      security:
+#        - bearerAuth: []
+# read about how to declare this security stuff - find some docs
+security:
+  - bearerAuth: []
+
+paths:
+  $ref: './paths/index.yml'
+
 components:
   schemas:
     $ref: './schemas/index.yml'
@@ -24,16 +37,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
-#global security, applied to the whole API. If you need to apply it to just a few operations, add security on the operation level instead
-#paths:
-#  /something:
-#    get:
-#      security:
-#        - bearerAuth: []
-security:
-  - bearerAuth: []
-
-paths:
-  $ref: './paths/index.yml'
-
