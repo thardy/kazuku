@@ -1,0 +1,39 @@
+title: Template
+type: object
+required:
+  - orgId
+  - siteId
+  - name
+  - template
+properties:
+  id:
+    type: string
+  orgId:
+    type: string
+  siteId:
+    type: string
+  name:
+    type: string
+  nameId:
+    type: string
+  layout:
+    type: string
+  description:
+    type: string
+  template:
+    type: string
+  dependencies:
+    type: array
+    items: {}
+  regenerate:
+    type: number
+  created:
+    type: string
+    format: date
+  createdBy:
+    type: string
+  updated:
+    type: string
+    format: date
+  updatedBy:
+    type: string

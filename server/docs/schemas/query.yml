@@ -1,0 +1,36 @@
+title: Query
+type: object
+required:
+  - orgId
+  - siteId
+  - name
+  - query
+properties:
+  orgId:
+    type: string
+  siteId:
+    type: string
+  name:
+    type: string
+  nameId:
+    type: string
+  query:
+    type: string
+  description:
+    type: string
+  results: {}
+  dependencies:
+    type: array
+    items: {}
+  regenerate:
+    type: number
+  created:
+    type: string
+    format: date
+  createdBy:
+    type: string
+  updated:
+    type: string
+    format: date
+  updatedBy:
+    type: string

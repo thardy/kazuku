@@ -12,7 +12,7 @@ servers:
         default: localhost
         description: api running locally
       port:
-        default: 3001
+        default: '3001'
 
 #global security, applied to the whole API. If you need to apply it to just a few operations, add security on the operation level instead
 #paths:
@@ -24,14 +24,232 @@ servers:
 security:
   - bearerAuth: []
 
+tags:
+  - name: organizations
+    description: Organizations are the tenants of Kazuku. Each Organization is completely separate. The MetaOrg has access to all, as administrators.
+  
 paths:
-  $ref: './paths/index.yml'
+  /organizations:
+    get:
+      tags:
+        - organizations
+      summary: Get all organizations
+      description: Get all organizations within this instance of Kazuku
+      operationId: getOrganizations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './schemas/organization.yml'
+    post:
+      tags:
+        - organizations
+      summary: Add a new organization
+      description: Add a new organization
+      operationId: addOrganization
+      requestBody:
+        description: Create a new organization
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/organization.yml'
+        required: true
+      responses:
+        '201':
+          description: successfully created the organization
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/organization.yml'
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+      # security:
+      #   - kazuku_auth:
+      #       - write:organizations
+      #       - read:organizations
+  /organizations/getbyname/{name}:
+    get:
+      tags:
+        - organizations
+      summary: Get organization by name
+      description: Get organization by name
+      operationId: getOrganizationByName
+      parameters:
+        - name: name
+          in: path
+          description: Name of organization to be retrieved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successfuly retrieved organization
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/organization.yml'
+        '204':
+          description: No Content - name not found
+        '500':
+          description: Internal server error
+  /organizations/getbycode/{code}:
+    get:
+      tags:
+        - organizations
+      summary: Get organization by code
+      description: Get organization by code
+      operationId: getOrganizationByCode
+      parameters:
+        - name: code
+          in: path
+          description: Code of organization to be retrieved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successfuly retrieved organization
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/organization.yml'
+        '204':
+          description: No Content - code not found
+        '500':
+          description: Internal server error        
+  /organizations/{id}:
+    get:
+      tags:
+        - organizations
+      summary: Get organization by id
+      description: Get organization by id
+      operationId: getOrganizationById
+      parameters:
+        - name: id
+          in: path
+          description: Id of organization to be retrieved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successfuly retrieved organization
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/organization.yml'
+        '204':
+          description: Id not found
+        '500':
+          description: Internal server error
+    put:
+      tags:
+        - organizations
+      summary: Update an existing organization
+      description: Update an existing organization
+      parameters:
+        - name: id
+          in: path
+          description: Id of organization to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/organization.yml'
+      responses:
+        '200':
+          description: Organization has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/organization.yml'
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - organizations
+      summary: Delete an existing organization
+      description: Delete an existing organization
+      parameters:
+        - name: id
+          in: path
+          description: Id of organization to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization has been successfully deleted
+        '400':
+          description: Id not found
+        '500':
+          description: Internal server error
 
 components:
   schemas:
     $ref: './schemas/index.yml'
   responses:
-    $ref: './responses/index.yml'
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: boolean
+                enum:
+                  - true
+                example: true
+              item:
+                # learn how to substitute a variable in for this reference and use it e.g. Success(Schedule), or somesuch
+                $ref: './schemas/organization.yml'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+    NoContent:
+      description: No Content
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
   securitySchemes:
     bearerAuth:
       type: http

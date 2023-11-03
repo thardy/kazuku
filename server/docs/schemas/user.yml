@@ -1,0 +1,35 @@
+title: User
+type: object
+required:
+  - orgId
+  - email
+  - firstName
+  - lastName
+properties:
+  id:
+    type: string
+  orgId:
+    type: string
+  email:
+    type: string
+  password:
+    type: string
+  firstName:
+    type: string
+  lastName:
+    type: string
+  isMetaAdmin:
+    type: boolean
+  lastLoggedIn:
+    type: string
+    format: date
+  created:
+    type: string
+    format: date
+  createdBy:
+    type: string
+  updated:
+    type: string
+    format: date
+  updatedBy:
+    type: string

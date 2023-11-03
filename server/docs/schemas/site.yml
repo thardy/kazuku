@@ -1,0 +1,29 @@
+title: Site
+type: object
+required:
+  - orgId
+  - code
+  - name
+properties:
+  id:
+    type: string
+  orgId:
+    type: string
+  code:
+    type: string
+  name:
+    type: string
+  domainName:
+    type: string
+  description:
+    type: string
+  created:
+    type: string
+    format: date
+  createdBy:
+    type: string
+  updated:
+    type: string
+    format: date
+  updatedBy:
+    type: string

@@ -1,0 +1,39 @@
+title: Organization
+type: object
+required:
+  - name
+  - code
+properties:
+  id:
+    type: string
+    example: 507f1f77bcf86cd799439011
+  name:
+    type: string
+    example: Acme Corp
+  code:
+    type: string
+    example: acme-corp
+  description:
+    type: string
+    example: We build things, lots of things.
+  statusId:
+    type: number
+    example: 1
+  isMetaOrg:
+    type: boolean
+    example: false
+  created:
+    type: string
+    format: date
+    example: 2023-10-25T18:18:56.000Z
+  createdBy:
+    type: string
+    example: joe@acme.com
+  updated:
+    type: string
+    format: date
+    example: 2023-10-27T08:11:12.000Z
+  updatedBy:
+    type: string
+    example: joe@acme.com
+
