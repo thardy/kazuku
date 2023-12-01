@@ -1,0 +1,93 @@
+get:
+  tags:
+    - custom-data
+  summary: Get custom-data by id
+  description: Get custom-data by id
+  operationId: getCustomDataByContentTypeAndId
+  parameters:
+    - name: contentType
+      in: path
+      description: contentType
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Id of custom-data to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved custom-data
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/custom-data.yml'
+    '204':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+put:
+  tags:
+    - custom-data
+  summary: Update an existing custom-data
+  description: Update an existing custom-data
+  operationId: updateCustomDataByContentTypeAndId
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Id of custom-data to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/custom-data.yml'
+  responses:
+    '200':
+      description: custom-data has been successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/custom-data.yml'
+    '400':
+      description: Invalid request
+    '500':
+      description: Internal server error
+delete:
+  tags:
+    - custom-data
+  summary: Delete an existing custom-data
+  description: Delete an existing custom-data
+  operationId: deleteCustomDataByContentTypeAndId
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Id of custom-data to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: custom-data has been successfully deleted
+    '400':
+      description: Id not found
+    '500':
+      description: Internal server error

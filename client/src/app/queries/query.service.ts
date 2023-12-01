@@ -15,7 +15,7 @@ export class QueryService extends GenericService<Query> {
     }
 
     getByNameId(nameId: string) {
-        return this.http.get(`${this.baseUrl}/getbynameid/${nameId}`)
+        return this.http.get(`${this.baseUrl}/get-by-name-id/${nameId}`)
             .pipe(
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))

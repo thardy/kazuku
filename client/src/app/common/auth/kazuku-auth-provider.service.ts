@@ -36,7 +36,7 @@ export class KazukuAuthProviderService implements IAuthProvider {
 
     // this is the only function we will be using from the start.  The others are all to support oauth (third party login/credential swap)
     requestTokenUsingRefreshToken(refreshToken: string) {
-        return this.http.get(`${this.baseUrl}/requesttokenusingrefreshtoken?refreshToken=${refreshToken}`)
+        return this.http.get(`${this.baseUrl}/request-token-using-refresh-token?refreshToken=${refreshToken}`)
             .pipe(
                 map((data: any) => this.extractTokens(data)),
                 catchError(error => this.handleRequestTokenError(error))

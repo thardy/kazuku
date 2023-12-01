@@ -1,0 +1,79 @@
+get:
+  tags:
+    - queries
+  summary: Get query by id
+  description: Get query by id
+  operationId: getQueryById
+  parameters:
+    - name: id
+      in: path
+      description: Id of query to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved query
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/query.yml'
+    '204':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+put:
+  tags:
+    - queries
+  summary: Update an existing query
+  description: Update an existing query
+  operationId: updateQuery
+  parameters:
+    - name: id
+      in: path
+      description: Id of query to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/query.yml'
+  responses:
+    '200':
+      description: Query has been successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/query.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+delete:
+  tags:
+    - queries
+  summary: Delete an existing query
+  description: Delete an existing query
+  operationId: deleteQuery
+  parameters:
+    - name: id
+      in: path
+      description: Id of query to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Query has been successfully deleted
+    '400':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

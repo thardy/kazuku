@@ -1,0 +1,5 @@
+title: Setup State
+type: object
+properties:
+  setupCompleted:
+    type: boolean  

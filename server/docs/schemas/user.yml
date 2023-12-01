@@ -8,28 +8,40 @@ required:
 properties:
   id:
     type: string
+    example: 602ab341ad965653989771ee
   orgId:
     type: string
+    example: 507f1f77bcf86cd799439011
   email:
     type: string
+    example: joe@acme.com
   password:
     type: string
+    example: $2a$10$Bc.sp4ue3Bauej15aMGZHOJs9bE6MpWIYAY3M0HyPKPiVzY0RWrZC
   firstName:
     type: string
+    example: Joe
   lastName:
     type: string
+    example: Smith
   isMetaAdmin:
     type: boolean
+    example: false
   lastLoggedIn:
     type: string
     format: date
+    example: 2023-02-15T17:45:37.645+0000
   created:
     type: string
     format: date
+    example: 2021-02-15T17:45:25.464Z
   createdBy:
     type: string
+    example: system
   updated:
     type: string
     format: date
+    example: 2022-02-15T17:45:25.464Z
   updatedBy:
     type: string
+    example: system

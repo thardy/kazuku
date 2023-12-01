@@ -1,0 +1,7 @@
+title: UserContext
+type: object
+properties:
+  user:
+    $ref: './user.yml'
+  org:
+    $ref: './organization.yml'

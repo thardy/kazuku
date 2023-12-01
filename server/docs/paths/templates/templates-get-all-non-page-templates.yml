@@ -1,0 +1,15 @@
+get:
+  tags:
+      - templates
+  summary: Get all non-page templates
+  description: Get all non-page templates for this org
+  operationId: getNonPageTemplates
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/template.yml'

@@ -1,0 +1,58 @@
+get:
+  tags:
+      - custom-data
+  summary: Get all custom-data by content-type
+  description: Get all custom-data for this content-type
+  operationId: getCustomDataByContentType
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/custom-data.yml'
+    '401':
+      description: Unauthorized
+post:
+  tags:
+    - custom-data
+  summary: Add a new custom-data of this content-type
+  description: Add a new custom-data of this content-type
+  operationId: addCustomData
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+  requestBody:
+    description: Create a new custom-data
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/custom-data.yml'
+    required: true
+  responses:
+    '201':
+      description: successfully created the custom-data
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/custom-data.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+  

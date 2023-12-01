@@ -12,7 +12,7 @@ import {User} from '@common/auth/user.model';
 export class UserService extends GenericService<User> {
 
     constructor(@Inject(HttpService) http) {
-        super('templates', http);
+        super('users', http);
     }
 
 }

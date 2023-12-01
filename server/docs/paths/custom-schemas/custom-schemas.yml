@@ -1,0 +1,57 @@
+get:
+  tags:
+      - custom-schemas
+  summary: Get all custom-schemas by content-type
+  description: Get all custom-schemas for this content-type
+  operationId: getCustomSchemasByContentType
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/custom-schema.yml'
+    '401':
+      description: Unauthorized
+post:
+  tags:
+    - custom-schemas
+  summary: Add a new custom-schema of this content-type
+  description: Add a new custom-schema of this content-type
+  operationId: addCustomSchema
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+  requestBody:
+    description: Create a new custom-schema
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/custom-schema.yml'
+    required: true
+  responses:
+    '201':
+      description: successfully created the custom-schema
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/custom-schema.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

@@ -14,7 +14,7 @@ export class SetupService extends GenericService<SetupConfig> {
     }
 
     initialSetup(setupConfig: SetupConfig) {
-        return this.http.post(`${this.baseUrl}/initialsetup`, setupConfig)
+        return this.http.post(`${this.baseUrl}/initial-setup`, setupConfig)
             .pipe(
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))
@@ -22,7 +22,7 @@ export class SetupService extends GenericService<SetupConfig> {
     }
 
     canWeSetup() {
-        return this.http.get(`${this.baseUrl}/setupstate`)
+        return this.http.get(`${this.baseUrl}/setup-state`)
             .pipe(
                 map((response: any) => {
                     const setupCompleted = (response && response.data && response.data.setupCompleted) ? response.data.setupCompleted : false;

@@ -1,0 +1,26 @@
+get:
+  tags:
+    - organizations
+  summary: Get organization by name
+  description: Get organization by name
+  operationId: getOrganizationByName
+  parameters:
+    - name: name
+      in: path
+      description: Name of organization to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved organization
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/organization.yml'
+    '204':
+      description: No Content - name not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

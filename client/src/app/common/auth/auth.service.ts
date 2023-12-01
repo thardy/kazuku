@@ -202,7 +202,7 @@ export class AuthService {
     // consider moving this out into a different service, one that does everything not included in actual authentication and will need
     //  to be called regardless of which identity provider is used (Okta, Auth0, KazukuAuth, etc).
     getUserContext() {
-        return this.http.get(`${this.baseUrl}/getusercontext`)
+        return this.http.get(`${this.baseUrl}/get-user-context`)
             .pipe(
                 map(response => this.extractUserContext(response)),
                 // catchError((error: any) => {
@@ -214,7 +214,7 @@ export class AuthService {
     // consider moving this out into a different service, one that does everything not included in actual authentication and will need
     //  to be called regardless of which identity provider is used (Okta, Auth0, KazukuAuth, etc).
     selectOrgContext(orgId: string) {
-        return this.http.put(`${this.baseUrl}/selectorgcontext`, {orgId: orgId})
+        return this.http.put(`${this.baseUrl}/select-org-context`, {orgId: orgId})
             .pipe(
                 map(response => <UserContext>this.extractUserContext(response))
             );
@@ -292,10 +292,10 @@ export class AuthService {
             'auth/login',
             'auth/logout',
             'auth/register',
-            'auth/requesttokenusingauthcode',
-            'auth/requesttokenusingrefreshtoken',
-            'setup/initialsetup',
-            'setup/setupstate'
+            //'auth/request-token-using-authcode',
+            'auth/request-token-using-refresh-token',
+            'setup/initial-setup',
+            'setup/setup-state'
         ];
         const allowedInsecureUrls = allowedInsecurePaths.map((path) => {
             return `${environment.kazukuApiUrl}/${path}`;

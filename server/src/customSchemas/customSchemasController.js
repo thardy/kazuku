@@ -7,7 +7,7 @@ import current from '../common/current.js';
 
 class CustomSchemasController extends CrudController {
     constructor(app) {
-        super('customSchemas', app, new CustomSchemaService(database));
+        super('custom-schemas', app, new CustomSchemaService(database));
     }
 
     mapRoutes(app) {

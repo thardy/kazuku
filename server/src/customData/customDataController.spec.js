@@ -79,7 +79,7 @@ describe("ApiTests", function () {
                 describe("getAll", function () {
                     it("should return all customData for a given org", function () {
                         return request
-                            .get(`/api/customData`)
+                            .get(`/api/custom-data`)
                             .set('Cookie', [authCookie])
                             .set('Authorization', authorizationHeaderValue)
                             .expect(200)
@@ -95,7 +95,7 @@ describe("ApiTests", function () {
                 describe("getAllByContentType", function () {
                     it("should return all customData for a given org and contentType", function () {
                         return request
-                            .get('/api/customData/{0}'.format(testHelper.testProductsContentType))
+                            .get('/api/custom-data/{0}'.format(testHelper.testProductsContentType))
                             .set('Cookie', [authCookie])
                             .set('Authorization', authorizationHeaderValue)
                             .expect(200)
@@ -111,7 +111,7 @@ describe("ApiTests", function () {
                 describe("getByTypeAndId", function () {
                     it("should return a customData for a given org, contentType, and id", function () {
                         return request
-                            .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[0].id))
+                            .get('/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[0].id))
                             .set('Cookie', [authCookie])
                             .set('Authorization', authorizationHeaderValue)
                             .expect(200)
@@ -124,7 +124,7 @@ describe("ApiTests", function () {
                     it("should return a 204 for an id that is not found", function () {
                         let badId = '111111111111111111111111';
                         return request
-                            .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, badId))
+                            .get('/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, badId))
                             .set('Cookie', [authCookie])
                             .set('Authorization', authorizationHeaderValue)
                             .expect(204);
@@ -132,7 +132,7 @@ describe("ApiTests", function () {
                     it("should return a 400 for an id that is not a valid ObjectId", function () {
                         var badId = "thisisabadid";
                         return request
-                            .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, badId))
+                            .get('/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, badId))
                             .set('Cookie', [authCookie])
                             .set('Authorization', authorizationHeaderValue)
                             .expect(400);
@@ -149,7 +149,7 @@ describe("ApiTests", function () {
                             someNum: someNum
                         };
 
-                        var relativeUrl = '/api/customData/{0}'.format(testHelper.testProductsContentType);
+                        var relativeUrl = '/api/custom-data/{0}'.format(testHelper.testProductsContentType);
                         return request
                             .post(relativeUrl)
                             .set('Cookie', [authCookie])
@@ -167,7 +167,7 @@ describe("ApiTests", function () {
 //                it("should return a 400 for validation error", function () {
 //                    var badData = "somethingbadgoeshere";
 //                    return request
-//                        .post('/api/customData/{0}'.format(testHelper.testProductsContentType))
+//                        .post('/api/custom-data/{0}'.format(testHelper.testProductsContentType))
 //                        .send(body)
 //                        .expect(400);
 //                });
@@ -179,7 +179,7 @@ describe("ApiTests", function () {
 //                        contentType: testHelper.testProductsContentType
 //                    };
 //                    return request
-//                        .post('/api/customData/{0}'.format(testHelper.testProductsContentType))
+//                        .post('/api/custom-data/{0}'.format(testHelper.testProductsContentType))
 //                        .send(body)
 //                        .expect(409);
 //                });
@@ -193,7 +193,7 @@ describe("ApiTests", function () {
                             quantity: updatedQuantity
                         };
 
-                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id);
+                        var relativeUrl = '/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id);
                         return request
                             .put(relativeUrl)
                             .set('Cookie', [authCookie])
@@ -203,7 +203,7 @@ describe("ApiTests", function () {
                             .then(function(result) {
                                 // verify customData was updated
                                 return request
-                                    .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id))
+                                    .get('/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, testHelper.existingProducts[2].id))
                                     .set('Cookie', [authCookie])
                                     .set('Authorization', authorizationHeaderValue)
                                     .expect(200)
@@ -221,7 +221,7 @@ describe("ApiTests", function () {
                             quantity: 55
                         };
                         // 557f30402598f1243c14403c
-                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
+                        var relativeUrl = '/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
                         return request
                             .put(relativeUrl)
                             .set('Cookie', [authCookie])
@@ -234,21 +234,21 @@ describe("ApiTests", function () {
                     it("should delete an existing customData document", function () {
                         var id = testHelper.existingProducts[1].id;
                         return request
-                            .delete('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
+                            .delete('/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, id))
                             .set('Cookie', [authCookie])
                             .set('Authorization', authorizationHeaderValue)
                             .expect(204)
                             .then(function(result) {
                                 // verify customData was deleted
                                 return request
-                                    .get('/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, id))
+                                    .get('/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, id))
                                     .set('Cookie', [authCookie])
                                     .set('Authorization', authorizationHeaderValue)
                                     .expect(204);
                             });
                     });
                     it("should return 400 for a invalid ObjectId", function () {
-                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
+                        var relativeUrl = '/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, 123456789012);
                         return request
                             .delete(relativeUrl)
                             .set('Cookie', [authCookie])
@@ -256,7 +256,7 @@ describe("ApiTests", function () {
                             .expect(400);
                     });
                     it("should return 204 for a non-existent id", function () {
-                        var relativeUrl = '/api/customData/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
+                        var relativeUrl = '/api/custom-data/{0}/{1}'.format(testHelper.testProductsContentType, '111111111111111111111111');
                         return request
                             .delete(relativeUrl)
                             .set('Cookie', [authCookie])
@@ -281,7 +281,7 @@ describe("ApiTests", function () {
             //     it("can query custom number fields by value", function () {
             //         var query = 'quantity={0}'.format(testHelper.newProduct1.quantity);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)
@@ -295,7 +295,7 @@ describe("ApiTests", function () {
             //     it("can query custom number fields greater than value", function () {
             //         var query = 'quantity=gt={0}'.format(90);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)
@@ -308,7 +308,7 @@ describe("ApiTests", function () {
             //     it("can query custom number fields greater than value with a sort", function () {
             //         var query = 'price=gt={0}&sort(price)'.format(10.00);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)
@@ -323,7 +323,7 @@ describe("ApiTests", function () {
             //     it("can query custom number fields in range", function () {
             //         var query = 'price=ge={0}&price=le={1}&sort(price)'.format(5.50, 20.00);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)
@@ -340,7 +340,7 @@ describe("ApiTests", function () {
             //         var findDate = moment(testHelper.newProduct2.created).toISOString(); //'2015-06-10T00:00:00Z';
             //         var query = 'created=date:{0}'.format(findDate);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)
@@ -355,7 +355,7 @@ describe("ApiTests", function () {
             //         var findDate = '2014-01-01';
             //         var query = 'created=gt=date:{0}&sort(-created)'.format(findDate);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)
@@ -372,7 +372,7 @@ describe("ApiTests", function () {
             //         var endDate = '2015-05-20';
             //         var query = 'created=ge=date:{0}&created=le=date:{1}&sort(-created)'.format(startDate, endDate);
             //         return request
-            //             .get('/api/customData/{0}?{1}'.format(testHelper.testProductsContentType, query))
+            //             .get('/api/custom-data/{0}?{1}'.format(testHelper.testProductsContentType, query))
             //             .set('Cookie', [authCookie])
             //             .set('Authorization', authorizationHeaderValue)
             //             .expect(200)

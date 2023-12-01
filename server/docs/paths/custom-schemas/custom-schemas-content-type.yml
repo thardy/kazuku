@@ -1,0 +1,97 @@
+get:
+  tags:
+    - custom-schemas
+  summary: Get custom-schema by id
+  description: Get custom-schema by id
+  operationId: getCustomSchemaByContentType
+  parameters:
+    - name: contentType
+      in: path
+      description: contentType
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Id of custom-schema to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved custom-schema
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/custom-schema.yml'
+    '204':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+put:
+  tags:
+    - custom-schemas
+  summary: Update an existing custom-schema
+  description: Update an existing custom-schema
+  operationId: updateCustomSchemaByContentType
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Id of custom-schema to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/custom-schema.yml'
+  responses:
+    '200':
+      description: custom-schema has been successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/custom-schema.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+delete:
+  tags:
+    - custom-schemas
+  summary: Delete an existing custom-schema
+  description: Delete an existing custom-schema
+  operationId: deleteCustomSchemaByContentType
+  parameters:
+    - name: contentType
+      in: path
+      description: ContentType
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Id of custom-schema to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: custom-schema has been successfully deleted
+    '400':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

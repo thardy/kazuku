@@ -1,0 +1,7 @@
+title: Login Response
+type: object
+properties:
+  tokens:
+    $ref: './tokens.yml'
+  userContext:
+    $ref: './user-context.yml'

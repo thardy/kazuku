@@ -1,0 +1,47 @@
+get:
+  tags:
+      - organizations
+  summary: Get all organizations
+  description: Get all organizations within this instance of Kazuku
+  operationId: getOrganizations
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/organization.yml'
+    '401':
+      description: Unauthorized
+post:
+  tags:
+    - organizations
+  summary: Add a new organization
+  description: Add a new organization
+  operationId: addOrganization
+  requestBody:
+    description: Create a new organization
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/organization.yml'
+    required: true
+  responses:
+    '201':
+      description: successfully created the organization
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/organization.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+  # security:
+  #   - kazuku_auth:
+  #       - write:organizations
+  #       - read:organizations

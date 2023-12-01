@@ -1,0 +1,79 @@
+get:
+  tags:
+    - organizations
+  summary: Get organization by id
+  description: Get organization by id
+  operationId: getOrganizationById
+  parameters:
+    - name: id
+      in: path
+      description: Id of organization to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved organization
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/organization.yml'
+    '204':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+put:
+  tags:
+    - organizations
+  summary: Update an existing organization
+  description: Update an existing organization
+  operationId: updateOrganization
+  parameters:
+    - name: id
+      in: path
+      description: Id of organization to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/organization.yml'
+  responses:
+    '200':
+      description: Organization has been successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/organization.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+delete:
+  tags:
+    - organizations
+  summary: Delete an existing organization
+  description: Delete an existing organization
+  operationId: deleteOrganization
+  parameters:
+    - name: id
+      in: path
+      description: Id of organization to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Organization has been successfully deleted
+    '400':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

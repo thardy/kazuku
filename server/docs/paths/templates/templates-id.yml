@@ -1,0 +1,73 @@
+get:
+  tags:
+    - templates
+  summary: Get template by id
+  description: Get template by id
+  operationId: getTemplateById
+  parameters:
+    - name: id
+      in: path
+      description: Id of template to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved template
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/template.yml'
+    '204':
+      description: Id not found
+    '500':
+      description: Internal server error
+put:
+  tags:
+    - templates
+  summary: Update an existing template
+  description: Update an existing template
+  operationId: updateTemplate
+  parameters:
+    - name: id
+      in: path
+      description: Id of template to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/template.yml'
+  responses:
+    '200':
+      description: Template has been successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/template.yml'
+    '400':
+      description: Invalid request
+    '500':
+      description: Internal server error
+delete:
+  tags:
+    - templates
+  summary: Delete an existing template
+  description: Delete an existing template
+  operationId: deleteTemplate
+  parameters:
+    - name: id
+      in: path
+      description: Id of template to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Template has been successfully deleted
+    '400':
+      description: Id not found
+    '500':
+      description: Internal server error

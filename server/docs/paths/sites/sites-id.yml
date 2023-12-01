@@ -1,0 +1,79 @@
+get:
+  tags:
+    - sites
+  summary: Get site by id
+  description: Get site by id
+  operationId: getSiteById
+  parameters:
+    - name: id
+      in: path
+      description: Id of site to be retrieved
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successfully retrieved site
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/site.yml'
+    '204':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+put:
+  tags:
+    - sites
+  summary: Update an existing site
+  description: Update an existing site
+  operationId: updateSite
+  parameters:
+    - name: id
+      in: path
+      description: Id of site to be updated
+      required: true
+      schema:
+        type: string
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/site.yml'
+  responses:
+    '200':
+      description: Site has been successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/site.yml'
+    '400':
+      description: Invalid request
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error
+delete:
+  tags:
+    - sites
+  summary: Delete an existing site
+  description: Delete an existing site
+  operationId: deleteSite
+  parameters:
+    - name: id
+      in: path
+      description: Id of site to be deleted
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Site has been successfully deleted
+    '400':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

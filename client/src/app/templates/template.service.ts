@@ -17,7 +17,7 @@ export class TemplateService extends GenericService<Template> {
     }
 
     getByNameId(nameId: string) {
-        return this.http.get(`${this.baseUrl}/getbynameid/${nameId}`)
+        return this.http.get(`${this.baseUrl}/get-by-name-id/${nameId}`)
             .pipe(
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))
@@ -25,7 +25,7 @@ export class TemplateService extends GenericService<Template> {
     }
 
     getAllPages() {
-        return this.http.get(`${this.baseUrl}/getallpages`)
+        return this.http.get(`${this.baseUrl}/get-all-pages`)
             .pipe(
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))
@@ -33,7 +33,7 @@ export class TemplateService extends GenericService<Template> {
     }
 
     getAllNonPageTemplates() {
-        return this.http.get(`${this.baseUrl}/getallnonpagetemplates`)
+        return this.http.get(`${this.baseUrl}/get-all-non-page-templates`)
             .pipe(
                 map(response => this.extractData(response)),
                 catchError(error => this.handleError(error))

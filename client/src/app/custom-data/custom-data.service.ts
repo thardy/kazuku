@@ -11,7 +11,7 @@ import {catchError, map} from 'rxjs/operators';
 export class CustomDataService extends GenericService<any> {
 
     constructor(@Inject(HttpService) http) {
-        super('customData', http);
+        super('custom-data', http);
     }
 
     getAllByContentType(contentType: string) {

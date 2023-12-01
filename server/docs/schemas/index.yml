@@ -1,14 +1,14 @@
 CustomData:
-  $ref: ./custom-data.json
+  $ref: ./custom-data.yml
 CustomSchema:
-  $ref: ./custom-schema.json
+  $ref: ./custom-schema.yml
 Organization:
-  $ref: ./organization.json
+  $ref: ./organization.yml
 Query:
-  $ref: ./query.json
+  $ref: ./query.yml
 Site:
-  $ref: ./site.json
+  $ref: ./site.yml
 Template:
-  $ref: ./template.json
+  $ref: ./template.yml
 User:
-  $ref: ./user.json
+  $ref: ./user.yml

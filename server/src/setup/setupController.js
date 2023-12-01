@@ -20,8 +20,8 @@ class SetupController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.post(`/api/setup/initialsetup`, this.initialSetup.bind(this));
-        app.get(`/api/setup/setupstate`, this.getSetupState.bind(this));
+        app.post(`/api/setup/initial-setup`, this.initialSetup.bind(this));
+        app.get(`/api/setup/setup-state`, this.getSetupState.bind(this));
     }
 
     initialSetup(req, res, next) {

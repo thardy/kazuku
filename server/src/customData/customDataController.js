@@ -20,12 +20,12 @@ class CustomDataController {
     mapRoutes(app) {
         // Map routes
         // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-        app.get('/api/customData', authHelper.isAuthenticated, this.getAll.bind(this));
-        app.get('/api/customData/:contentType', authHelper.isAuthenticated, this.getAllByContentType.bind(this));
-        app.get('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.getByTypeAndId.bind(this));
-        app.post('/api/customData/:contentType', authHelper.isAuthenticated, this.createByContentType.bind(this));
-        app.put('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.updateByTypeAndId.bind(this));
-        app.delete('/api/customData/:contentType/:id', authHelper.isAuthenticated, this.deleteByTypeAndId.bind(this));
+        app.get('/api/custom-data', authHelper.isAuthenticated, this.getAll.bind(this));
+        app.get('/api/custom-data/:contentType', authHelper.isAuthenticated, this.getAllByContentType.bind(this));
+        app.get('/api/custom-data/:contentType/:id', authHelper.isAuthenticated, this.getByTypeAndId.bind(this));
+        app.post('/api/custom-data/:contentType', authHelper.isAuthenticated, this.createByContentType.bind(this));
+        app.put('/api/custom-data/:contentType/:id', authHelper.isAuthenticated, this.updateByTypeAndId.bind(this));
+        app.delete('/api/custom-data/:contentType/:id', authHelper.isAuthenticated, this.deleteByTypeAndId.bind(this));
     }
 
     getAll(req, res, next) {

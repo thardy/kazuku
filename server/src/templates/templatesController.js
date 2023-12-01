@@ -14,7 +14,7 @@ class TemplatesController extends CrudController {
         // map routes
         app.get(`/api/${this.resourceName}/getallpages`, authHelper.isAuthenticated, this.getAllPages.bind(this));
         app.get(`/api/${this.resourceName}/getallnonpagetemplates`, authHelper.isAuthenticated, this.getAllNonPageTemplates.bind(this));
-        app.get(`/api/${this.resourceName}/getbynameId/:nameId`, authHelper.isAuthenticated, this.getByNameId.bind(this));
+        app.get(`/api/${this.resourceName}/get-by-name-id/:nameId`, authHelper.isAuthenticated, this.getByNameId.bind(this));
 
         // map the base CrudController routes
         super.mapRoutes(app);

@@ -1,11 +1,11 @@
-openapi: 3.0.2
+openapi: 3.0.3
 info:
   title: Kazuku API
   description: API for Kazuku admin interface
   version: 1.0.0
 
 servers:
-  - url: http://{host}:{port}
+  - url: http://{host}:{port}/api
     description: local server
     variables:
       host:
@@ -15,186 +15,82 @@ servers:
         default: '3001'
 
 #global security, applied to the whole API. If you need to apply it to just a few operations, add security on the operation level instead
-#paths:
-#  /something:
-#    get:
-#      security:
-#        - bearerAuth: []
-# read about how to declare this security stuff - find some docs
 security:
-  - bearerAuth: []
-
+  - BearerAuth: []
+  - ApiKeyAuth: []
+  
 tags:
   - name: organizations
     description: Organizations are the tenants of Kazuku. Each Organization is completely separate. The MetaOrg has access to all, as administrators.
+      Every other resource is accessed within the context of the authenticated user's org.  A "get all templates", for example, 
+      means "get all templates within the logged in user's organization". The orgId (the tenantId) is added to all database access automatically for 
+      every resource besides organizations themselves.
+  - name: auth
+  - name: custom-data
+  - name: custom-schemas
+  - name: queries
+  - name: setup
+  - name: sites
+  - name: templates
   
 paths:
+  /auth/register:
+    $ref: './paths/auth/auth-register.yml'
+  /auth/request-token-using-refresh-token:
+    $ref: './paths/auth/auth-request-token-using-refresh-token.yml'
+  /auth/get-user-context:
+    $ref: './paths/auth/auth-get-user-context.yml'
+  /auth/select-org-context:
+    $ref: './paths/auth/auth-select-org-context.yml'
+
+  /custom-data:
+    $ref: './paths/custom-data/custom-data.yml'
+  /custom-data/{contentType}:
+    $ref: './paths/custom-data/custom-data-content-type.yml'
+  /custom-data/{contentType}/{id}:
+    $ref: './paths/custom-data/custom-data-content-type-id.yml'
+  
+  /custom-schemas:
+    $ref: './paths/custom-schemas/custom-schemas.yml'
+  /custom-schemas/{contentType}:
+    $ref: './paths/custom-schemas/custom-schemas-content-type.yml'
+
   /organizations:
-    get:
-      tags:
-        - organizations
-      summary: Get all organizations
-      description: Get all organizations within this instance of Kazuku
-      operationId: getOrganizations
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: './schemas/organization.yml'
-    post:
-      tags:
-        - organizations
-      summary: Add a new organization
-      description: Add a new organization
-      operationId: addOrganization
-      requestBody:
-        description: Create a new organization
-        content:
-          application/json:
-            schema:
-              $ref: './schemas/organization.yml'
-        required: true
-      responses:
-        '201':
-          description: successfully created the organization
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/organization.yml'
-        '400':
-          description: Invalid request
-        '500':
-          description: Internal server error
-      # security:
-      #   - kazuku_auth:
-      #       - write:organizations
-      #       - read:organizations
+    $ref: './paths/organizations/organizations.yml'
   /organizations/getbyname/{name}:
-    get:
-      tags:
-        - organizations
-      summary: Get organization by name
-      description: Get organization by name
-      operationId: getOrganizationByName
-      parameters:
-        - name: name
-          in: path
-          description: Name of organization to be retrieved
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successfuly retrieved organization
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/organization.yml'
-        '204':
-          description: No Content - name not found
-        '500':
-          description: Internal server error
+    $ref: './paths/organizations/organizations-get-by-name.yml'
   /organizations/getbycode/{code}:
-    get:
-      tags:
-        - organizations
-      summary: Get organization by code
-      description: Get organization by code
-      operationId: getOrganizationByCode
-      parameters:
-        - name: code
-          in: path
-          description: Code of organization to be retrieved
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successfuly retrieved organization
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/organization.yml'
-        '204':
-          description: No Content - code not found
-        '500':
-          description: Internal server error        
+    $ref: './paths/organizations/organizations-get-by-code.yml'
   /organizations/{id}:
-    get:
-      tags:
-        - organizations
-      summary: Get organization by id
-      description: Get organization by id
-      operationId: getOrganizationById
-      parameters:
-        - name: id
-          in: path
-          description: Id of organization to be retrieved
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successfuly retrieved organization
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/organization.yml'
-        '204':
-          description: Id not found
-        '500':
-          description: Internal server error
-    put:
-      tags:
-        - organizations
-      summary: Update an existing organization
-      description: Update an existing organization
-      parameters:
-        - name: id
-          in: path
-          description: Id of organization to be updated
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './schemas/organization.yml'
-      responses:
-        '200':
-          description: Organization has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/organization.yml'
-        '400':
-          description: Invalid request
-        '500':
-          description: Internal server error
-    delete:
-      tags:
-        - organizations
-      summary: Delete an existing organization
-      description: Delete an existing organization
-      parameters:
-        - name: id
-          in: path
-          description: Id of organization to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Organization has been successfully deleted
-        '400':
-          description: Id not found
-        '500':
-          description: Internal server error
+    $ref: './paths/organizations/organizations-id.yml'
+
+  /queries:
+    $ref: './paths/queries/queries.yml'
+  /queries/{id}:
+    $ref: './paths/queries/queries-id.yml'
+  /queries/getbynameid/{nameId}:
+    $ref: './paths/queries/queries-get-by-name-id.yml'
+
+  /setup/initial-setup:
+    $ref: './paths/setup/setup-initial-setup.yml'
+  /setup/setup-state:
+    $ref: './paths/setup/setup-setup-state.yml'
+  
+  /sites:
+    $ref: './paths/sites/sites.yml'
+  /sites/{id}:
+    $ref: './paths/sites/sites-id.yml'
+  
+  /templates:
+    $ref: './paths/templates/templates.yml'
+  /templates/get-all-pages:
+    $ref: './paths/templates/templates-get-all-pages.yml'
+  /templates/get-all-non-page-templates:
+    $ref: './paths/templates/templates-get-all-non-page-templates.yml'
+  /templates/{id}:
+    $ref: './paths/templates/templates-id.yml'
+  /templates/get-by-name-id/{nameId}:
+    $ref: './paths/templates/templates-get-by-name-id.yml'
 
 components:
   schemas:
@@ -251,7 +147,11 @@ components:
                 items:
                   type: string
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key

@@ -1,0 +1,19 @@
+get:
+  tags:
+      - auth
+  summary: Get user context
+  description: Get user context
+  operationId: getUserContext
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/user-context.yml'
+    '401':
+      description: Unauthorized
+    
+            
+
+

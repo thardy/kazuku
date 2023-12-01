@@ -1,0 +1,40 @@
+get:
+  tags:
+      - templates
+  summary: Get all templates
+  description: Get all templates for this org
+  operationId: getTemplates
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../schemas/template.yml'
+post:
+  tags:
+    - templates
+  summary: Add a new template
+  description: Add a new template
+  operationId: addTemplate
+  requestBody:
+    description: Create a new template
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/template.yml'
+    required: true
+  responses:
+    '201':
+      description: successfully created the template
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/template.yml'
+    '400':
+      description: Invalid request
+    '500':
+      description: Internal server error
+  

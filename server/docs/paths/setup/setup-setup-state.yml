@@ -1,0 +1,19 @@
+get:
+  tags:
+    - setup
+  summary: Get the setup state for this instance of Kazuku
+  description: Get the setup state for this instance of Kazuku (this does a check in the database for an org with an orgCode of 'admin')
+  operationId: getSetupState
+  responses:
+    '200':
+      description: successfully retrieved template
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/setup-state.yml'
+    '204':
+      description: Id not found
+    '401':
+      description: Unauthorized
+    '500':
+      description: Internal server error

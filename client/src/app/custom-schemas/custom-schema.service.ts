@@ -11,7 +11,7 @@ import {CustomSchema} from './custom-schema.model';
 export class CustomSchemaService extends GenericService<CustomSchema> {
 
     constructor(@Inject(HttpService) http) {
-        super('customSchemas', http);
+        super('custom-schemas', http);
     }
 
     getByContentType(contentType: string): Observable<any> {

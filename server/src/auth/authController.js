@@ -72,12 +72,12 @@ class AuthController extends CrudController {
 
         //app.post(`/api/${this.resourceName}/create-social-account`, this.createSocialAccount.bind(this));
         app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
-        app.get(`/api/${this.resourceName}/requesttokenusingrefreshtoken`, this.requestTokenUsingRefreshToken.bind(this));
+        app.get(`/api/${this.resourceName}/request-token-using-refresh-token`, this.requestTokenUsingRefreshToken.bind(this));
         // app.get(`/api/${this.resourceName}/logout`, authHelper.isAuthenticated, this.logout.bind(this));
         // todo: create an AuthController and either move all of this over to it, or just all the auth stuff (leaving only the user crud)
         //  I'm leaning towards just renaming this AuthController and getting rid of a AuthController.
-        app.get(`/api/${this.resourceName}/getusercontext`, authHelper.isAuthenticated, this.getUserContext.bind(this));
-        app.put(`/api/${this.resourceName}/selectorgcontext`, authHelper.isAuthenticated, this.selectOrgContext.bind(this));
+        app.get(`/api/${this.resourceName}/get-user-context`, authHelper.isAuthenticated, this.getUserContext.bind(this));
+        app.put(`/api/${this.resourceName}/select-org-context`, authHelper.isAuthenticated, this.selectOrgContext.bind(this));
 
         // Map routes
         super.mapRoutes(app); // map the base CrudController routes

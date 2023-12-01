@@ -8,20 +8,28 @@ required:
 properties:
   orgId:
     type: string
+    example: 507f1f77bcf86cd799439011
   name:
     type: string
+    example: Blog Posts
   contentType:
     type: string
+    example: blog-posts
   description:
     type: string
+    example: These are blog posts
   jsonSchema: {}
   created:
     type: string
     format: date
+    example: 2021-02-15T17:45:25.464Z
   createdBy:
     type: string
+    example: joe@acme.com
   updated:
     type: string
     format: date
+    example: 2022-02-15T17:45:25.464Z
   updatedBy:
     type: string
+    example: joe@acme.com

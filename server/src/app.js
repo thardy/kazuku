@@ -12,6 +12,9 @@ const passportAuthStrategies = passportConfig(passport); // pass passport for co
 import config from './server/config/index.js';
 import logger from './server/logger/index.js';
 import routes from './server/routes/index.js';
+import yaml from 'js-yaml';
+import fs from 'fs-extra';
+import swaggerUi from 'swagger-ui-express';
 import CustomApolloServer from './server/graphQL/customApolloServer.js';
 import apolloServerExpress from 'apollo-server-express';
 const {makeExecutableSchema} = apolloServerExpress;
@@ -55,9 +58,9 @@ if (config.env !== 'test') {
     }));
 }
 
-// todo: super temporary!!!
+// todo: super temporary!!! -- BEGIN
 app.get('/', (req, res) => {
-    res.send('Hi');
+    res.send('Hi there!');
 });
 app.get('/api/products', async (req, res) => {
     const products = [
@@ -87,6 +90,14 @@ app.get('/api/products', async (req, res) => {
 
     res.send(products);
 });
+// todo: super temporary!!! -- END
+
+// setup our swagger page
+const openApiSpecPath = path.join(__dirname, '..', 'docs', 'open-api.yml')
+const openApiSpecFile  = fs.readFileSync(openApiSpecPath, 'utf8')
+const swaggerDocument = yaml.load(openApiSpecFile)
+app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 console.log('app.js - about to call routes()'); // todo: deleteme
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor
 routes(app);

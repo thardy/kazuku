@@ -1,0 +1,13 @@
+title: Tokens
+type: object
+properties:
+  accessToken:
+    type: string
+    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjAyYWIzNDFhZDk2NTY1Mzk4OTc3MWVlIiwiZW1haWwiOiJhZG1pbiJ9LCJvcmdJZCI6IjYwMmFiMzM1YWQ5NjU2NTM5ODk3NzFlZCIsImlhdCI6MTcwMTI4NjQ3NCwiZXhwIjoxNzAxMjkwMDc0fQ.CpOQrMTva3zLidJKOhKP6DxgVKEmPsV5wncjSFoyQbU
+  refreshToken:
+    type: string
+    example: 48a2f8682fb4e7bfc098ae890b22ed1bb1241a79ec7367ea9d4c15a8df2fed06e92d52f341a7c321
+  expiresOn:
+    type: integer
+    example: 1701290074546
+    
