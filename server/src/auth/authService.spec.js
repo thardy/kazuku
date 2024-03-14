@@ -66,7 +66,7 @@ describe("AuthService CRUD", function () {
 
         return createPromise
             .then((doc) => {
-                return authService.getById(doc.id)
+                return authService.getById(testOrgId, doc.id)
                     .then((retrievedDoc) => {
                         expect(retrievedDoc).to.have.property('orgId', testOrgId);
                         expect(retrievedDoc).to.have.property('email', user.email);

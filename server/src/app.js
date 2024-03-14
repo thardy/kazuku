@@ -15,6 +15,7 @@ import routes from './server/routes/index.js';
 import yaml from 'js-yaml';
 import fs from 'fs-extra';
 import swaggerUi from 'swagger-ui-express';
+import jsonRefs from 'json-refs';
 import CustomApolloServer from './server/graphQL/customApolloServer.js';
 import apolloServerExpress from 'apollo-server-express';
 const {makeExecutableSchema} = apolloServerExpress;
@@ -93,10 +94,24 @@ app.get('/api/products', async (req, res) => {
 // todo: super temporary!!! -- END
 
 // setup our swagger page
-const openApiSpecPath = path.join(__dirname, '..', 'docs', 'open-api.yml')
-const openApiSpecFile  = fs.readFileSync(openApiSpecPath, 'utf8')
-const swaggerDocument = yaml.load(openApiSpecFile)
-app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const openApiSpecPath = path.join(__dirname, '..', 'docs', 'open-api.yml');
+const openApiSpecFile  = fs.readFileSync(openApiSpecPath, 'utf8');
+const swaggerDocument = yaml.load(openApiSpecFile);
+
+const resolvedSwaggerDocument = await jsonRefs.resolveRefs(swaggerDocument, {
+    location: openApiSpecPath,
+    loaderOptions: {
+        processContent: function (res, callback) {
+            callback(yaml.load(res.text)); // this callback is required to resolve those JSON references
+        }
+    }
+});
+
+app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(resolvedSwaggerDocument.resolved));
+// const openApiSpecPath = path.join(__dirname, '..', 'docs', 'open-api.yml')
+// const openApiSpecFile  = fs.readFileSync(openApiSpecPath, 'utf8')
+// const swaggerDocument = yaml.load(openApiSpecFile)
+// app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 console.log('app.js - about to call routes()'); // todo: deleteme
 // Map the routes - this creates the controllers, and routes are mapped in each controller via the mapRoutes function called in each constructor

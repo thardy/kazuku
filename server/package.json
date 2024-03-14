@@ -36,6 +36,7 @@
     "graphql-to-mongodb": "1.6.5",
     "graphql-tools": "4.0.8",
     "js-yaml": "^4.1.0",
+    "json-refs": "^3.0.15",
     "jsonwebtoken": "9.0.0",
     "liquid-node": "3.0.1",
     "lodash": "4.17.19",
