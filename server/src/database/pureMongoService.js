@@ -4,6 +4,7 @@ import mongoDb from 'mongodb';
 // latest
 class PureMongoService {
     constructor() {
+        this.client = null;
         this.db = null;
         this.cachedPromise = null;
     }
@@ -11,22 +12,23 @@ class PureMongoService {
     // async connectDb() {
     //     // ignore if we've already connected (some tests require me to kick this off independently)
     //     if (!this.db) {
-    //         console.log('pureMongoClient.js - connecting to mongoDb'); // todo: deleteme
+    //         console.log('pureMongoService.js - connecting to mongoDb'); // todo: deleteme
     //         this.client = await mongoDb.MongoClient.connect(config.mongoDbUrl, {useUnifiedTopology: true, useNewUrlParser: true});
     //         console.log('mongoDb connected');
     //
     //         this.db = this.client.db(config.databaseName);
     //         // this.Users = new Users(this.db);
     //     }
-    //     console.log('pureMongoClient.js - returning existing client'); // todo: deleteme
+    //     console.log('pureMongoService.js - returning existing client'); // todo: deleteme
     //     return this.client;
     // }
     connectDb() {
         if (!this.cachedPromise) {
-            console.log('pureMongoClient.js - connecting to mongoDb'); // todo: deleteme
+            console.log('pureMongoService.js - connecting to mongoDb'); // todo: deleteme
             this.cachedPromise = mongoDb.MongoClient.connect(config.mongoDbUrl, {useUnifiedTopology: true, useNewUrlParser: true})
                 .then((client) => {
-                    console.log('pureMongoClient.js - entering then'); // todo: deleteme
+                    console.log('pureMongoService.js - entering then'); // todo: deleteme
+                    this.client = client;
                     this.db = client.db(config.databaseName);
                     console.log('mongoDb connected');
                     return this.db;
@@ -36,16 +38,16 @@ class PureMongoService {
                     this.cachedPromise = undefined;
                 });
         }
-        console.log('pureMongoClient.js - returning the promise'); // todo: deleteme
+        console.log('pureMongoService.js - returning the promise'); // todo: deleteme
         return this.cachedPromise;
 
         // ignore if we've already connected (some tests require me to kick this off independently)
         // let promise = null;
         // if (!this.db) {
-        //     console.log('pureMongoClient.js - connecting to mongoDb'); // todo: deleteme
+        //     console.log('pureMongoService.js - connecting to mongoDb'); // todo: deleteme
         //     promise = mongoDb.MongoClient.connect(config.mongoDbUrl, {useUnifiedTopology: true, useNewUrlParser: true})
         //         .then((client) => {
-        //             console.log('pureMongoClient.js - entering then'); // todo: deleteme
+        //             console.log('pureMongoService.js - entering then'); // todo: deleteme
         //             this.client = client;
         //             this.db = this.client.db(config.databaseName);
         //             console.log('mongoDb connected');
@@ -53,7 +55,7 @@ class PureMongoService {
         //         });
         // }
         // else {
-        //     console.log('pureMongoClient.js - returning existing client'); // todo: deleteme
+        //     console.log('pureMongoService.js - returning existing client'); // todo: deleteme
         //     promise = Promise.resolve(this.client);
         // }
         // return promise;

@@ -10,5 +10,14 @@ pureMongoService.connectDb()
         });
     });
 
+const cleanup = (event) => { // SIGINT is sent for example when you Ctrl+C a running process from the command line.
+    const client = pureMongoService.client;
+    if (client) {
+        client.close(); // Close MongodDB Connection when Process ends
+    }
+    process.exit(); // Exit with default success-code '0'.
+}
 
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
 
