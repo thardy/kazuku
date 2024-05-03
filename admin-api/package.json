@@ -1,0 +1,20 @@
+{
+  "name": "kazuku-admin-api",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "comment": "if below starts acting up - https://stackoverflow.com/questions/37979489/how-to-watch-and-reload-ts-node-when-typescript-files-change",
+    "start": "ts-node-dev --poll src/app.ts"
+  },
+  "author": "Tim Hardy",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
+    "express-validator": "^7.0.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
+}

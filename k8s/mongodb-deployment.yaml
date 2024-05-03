@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kazuku-mongodb
+  template:
+    metadata:
+      labels:
+        app: kazuku-mongodb
+    spec:
+      containers:
+        - name: kazuku-mongodb
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kazuku-mongodb-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: kazuku-mongodb
+  ports:
+    - name: db-port
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

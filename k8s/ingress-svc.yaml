@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+    - host: kazuku.local
+      http:
+        paths:
+          - path: /api/?(.*) # any path beginning with '/api' will get routed to the kazuku-admin-api-svc:3000
+            pathType: Prefix
+            backend:
+              service:
+                name: kazuku-admin-api-svc
+                port:
+                  number: 3000

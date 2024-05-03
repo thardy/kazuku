@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kazuku-admin-api
+  template:
+    metadata:
+      labels:
+        app: kazuku-admin-api
+    spec:
+      containers:
+        - name: kazuku-admin-api
+          image: timhardy/kazuku-admin-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kazuku-admin-api-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: kazuku-admin-api
+  ports:
+    - name: kazuku-admin-api-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

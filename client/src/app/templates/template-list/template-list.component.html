@@ -1,8 +1,0 @@
-<h1>Templates</h1>
-<ul>
-    <li *ngFor="let template of templates">
-        <a [routerLink]="['/templates/' + template.nameId]">{{template.name}}</a>
-    </li>
-</ul>
-
-<button class="btn primary" (click)="create()">Add</button>

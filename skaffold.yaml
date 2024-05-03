@@ -1,0 +1,18 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+manifests:
+  rawYaml:
+    - ./k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: timhardy/kazuku-admin-api
+      context: admin-api  # the folder to look in for the Dockerfile and the sync below
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+

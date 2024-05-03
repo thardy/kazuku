@@ -1,6 +1,0 @@
-<a *ngIf="(userContext$ | async)?.user?.isMetaAdmin" [routerLink]="['/organizations']" class="navbar-brand col-sm-3 col-md-2 mr-0 bg-primary">
-    {{(userContext$ | async).org.name}}
-</a>
-<span *ngIf="!(userContext$ | async)?.user?.isMetaAdmin">
-    {{(userContext$ | async).org.name}}
-</span>

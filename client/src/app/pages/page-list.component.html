@@ -1,8 +1,0 @@
-<h1>Pages</h1>
-<ul>
-    <li *ngFor="let page of pages">
-        <a [routerLink]="['/pages/' + page.nameId]">{{page.name}}</a>
-    </li>
-</ul>
-
-<button class="btn primary" (click)="create()">Add</button>
