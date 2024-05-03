@@ -34,6 +34,7 @@ tags:
   - name: templates
   
 paths:
+  #add /auth/login
   /auth/register:
     $ref: './paths/auth/auth-register.yml'
   /auth/request-token-using-refresh-token:

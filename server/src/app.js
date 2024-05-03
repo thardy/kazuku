@@ -142,6 +142,7 @@ app.use((err, req, res, next) => {
 });
 
 function setupAuthZone(req, res, next) {
+    // look at https://medium.com/@amcdnl/zones-for-nodejs-apis-670281ac5aa5 to modernize this (if we keep it)
     return Zone.current.fork({
         name: 'api'
     })
