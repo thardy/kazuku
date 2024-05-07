@@ -1,7 +1,7 @@
 export interface IGenericApiService<T> {
-  getAll(orgId: string): T[];
-  getById(id: string): T;
-  create(item: T): T;
-  updateById(id: string, item: T): T;
-  deleteById(id: string): void;
+  getAll(orgId: string): Promise<T[]>;
+  getById(id: string): Promise<T>;
+  create(item: T): Promise<T>;
+  updateById(id: string, item: T): Promise<T>;
+  deleteById(id: string): Promise<void>;
 }
