@@ -1,6 +1,7 @@
 import {Express, NextFunction, Request, Response} from 'express';
 import {GenericApiService} from '../services/generic-api.service';
 import {IGenericApiService} from '../services/generic-api-service.interface';
+import {User} from '../models/user.model';
 //import authHelper from '../common/auth-helper.ts';
 //import current from '../common/current.ts';
 
@@ -35,8 +36,8 @@ export abstract class CrudController<T> {
   getAll(req: Request, res: Response, next: NextFunction) {
     res.set('Content-Type', 'application/json');
 
-    //this.service.getAll(req.context.orgId)
-    this.service.getAll('999')
+    // todo: replace with req.context
+    this.service.getAll({user: new User(), orgId: '999'})
       .then((docs) => {
         return res.status(200).json(docs);
       })
@@ -48,26 +49,28 @@ export abstract class CrudController<T> {
 
   }
 
-  // getById(req: Request, res: Response, next: NextFunction) {
-  //   let id = req.params.id;
-  //   res.set('Content-Type', 'application/json');
-  //
-  //   this.service.getById(req.context.orgId, id)
-  //     .then((doc) => {
-  //       if (doc === null) return next();
-  //
-  //       return res.status(200).send(doc);
-  //     })
-  //     .catch(err => {
-  //       if (err.constructor == TypeError) {
-  //         return res.status(400).json({'errors': [err.message]});
-  //       }
-  //
-  //       err.message = `ERROR: ${this.resourceName}Controller -> getById(${req.context.orgId}, ${id}) - ${err.message}`;
-  //       return next(err);
-  //     });
-  // }
-  //
+  getById(req: Request, res: Response, next: NextFunction) {
+    let id = req.params.id;
+    res.set('Content-Type', 'application/json');
+
+    //this.service.getById(req.context.orgId, id)
+    this.service.getById({user: new User(), orgId: '999'}, id)
+      .then((doc) => {
+        if (doc === null) return next();
+
+        return res.status(200).send(doc);
+      })
+      .catch(err => {
+        if (err.constructor == TypeError) {
+          return res.status(400).json({'errors': [err.message]});
+        }
+
+        //err.message = `ERROR: ${this.resourceName}Controller -> getById(${req.context.orgId}, ${id}) - ${err.message}`;
+        err.message = `ERROR: ${this.resourceName}Controller -> getById(${'999'}, ${id}) - ${err.message}`;
+        return next(err);
+      });
+  }
+
   // create(req: Request, res: Response, next: NextFunction) {
   //   let body = req.body;
   //

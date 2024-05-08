@@ -17,10 +17,10 @@ export class User {
   id?: string;
   orgId: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   password?: string;
-  isMetaAdmin: boolean;
+  isMetaAdmin?: boolean;
 
   constructor(options: IUser = {}) {
     this._id = options._id ?? undefined;

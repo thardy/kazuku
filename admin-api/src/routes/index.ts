@@ -1,5 +1,6 @@
 import { Express } from 'express';
 import { AuthController } from '../features/auth/auth.controller';
+import {UsersController} from '../features/users/users.controller';
 
 export default function(app: Express) {
   // each controller has a 'mapRoutes' function that adds its routes to the express app
@@ -12,4 +13,5 @@ export default function(app: Express) {
   // let setupController = new SetupController(app);
   // let sitesController = new SitesController(app);
   // let templatesController = new TemplatesController(app);
+  let usersController = new UsersController(app);
 };
