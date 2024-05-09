@@ -1,5 +1,5 @@
 import { app, setupExpress } from './app';
-import database from './database/database';
+import database from './server/database/database';
 
 const startServer = async () => {
   console.log('Starting kazuku-admin-api server...');

@@ -1,12 +1,8 @@
 import {Express, Request, Response, NextFunction} from 'express';
-import {body, validationResult} from 'express-validator';
 import { CrudController } from '../../common/controllers/crud.controller';
 import { AuthService } from './auth.service';
-import { RequestValidationError } from '../../common/errors/request-validation-error';
-import { DatabaseConnectionError } from '../../common/errors/database-connection-error';
-import {BadRequestError} from '../../common/errors/bad-request-error';
 import {User} from '../../common/models/user.model';
-import database from '../../database/database';
+import database from '../../server/database/database';
 
 // todo: seriously consider not extending CrudController because we don't really use it
 export class AuthController extends CrudController<User> {
@@ -56,32 +52,16 @@ export class AuthController extends CrudController<User> {
 
   }
 
-  async registerUser(req: Request, res: Response, next: NextFunction) {
+  async registerUser(req: Request, res: Response) {
     console.log('in registerUser');
     const userContext = { user: new User(), orgId: '999'}; // todo: pull from req
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new RequestValidationError(errors.array());
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   throw new RequestValidationError(errors.array());
+    // }
 
-    try {
-      const doc = await this.authService.createUser(userContext, req.body);
-      return res.status(201).json(doc);
-    }
-    catch (err) {
-      console.log(`catch in registerUser. err = JSON.stringify(err)`);
-      // todo: make sure these error codes are correct and the format of the errors is correct
-      if (err instanceof TypeError) {
-        return res.status(400).json({'errors': [err.message]});
-      }
-
-      // if (err.code === 11000) {
-      //   return res.status(409).json({'errors': ['Duplicate Key Error']});
-      // }
-
-      //err.message = `ERROR: {this.resourceName}Controller -> createUser({orgId}, {body}) - {err.message}`;
-      return next(err);
-    }
+    const doc = await this.authService.createUser(userContext, req.body);
+    return res.status(201).json(doc);
   }
 
   // registerUser(req: Request, res: Response, next: NextFunction) {

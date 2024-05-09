@@ -33,7 +33,7 @@ export class User {
     this.isMetaAdmin = options.isMetaAdmin || false;
   }
 
-  static validationSchema = Joi.object({
+  static validationSchema = Joi.object().keys({
     orgId: Joi.string(),
     email: Joi.string()
       .email()

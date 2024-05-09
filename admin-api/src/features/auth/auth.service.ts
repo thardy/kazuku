@@ -1,4 +1,4 @@
-import {Db, InsertOneResult} from 'mongodb';
+import {Db, InsertOneResult, AnyError, ObjectId} from 'mongodb';
 import {scrypt, randomBytes} from 'crypto';
 import {promisify} from 'util';
 
@@ -7,8 +7,9 @@ import conversionUtils from '../../common/utils/conversion.utils';
 import {User} from '../../common/models/user.model';
 import Joi from 'joi';
 import {BadRequestError} from '../../common/errors/bad-request-error';
-import {ExistingDocumentError} from '../../common/errors/existing-document-error';
+import {DuplicateKeyError} from '../../common/errors/duplicate-key-error';
 import {IUserContext} from '../../common/models/user-context.interface';
+import {ValidationError} from '../../common/errors/validation-error';
 
 const scryptAsync = promisify(scrypt);
 
@@ -17,61 +18,15 @@ export class AuthService extends GenericApiService<User> {
     super(db, 'users');
   }
 
-  // createUser(userContext: IUserContext, user: User): Promise<User | void> {
-  //   user.orgId = userContext.orgId;
-  //
-  //   console.log(`user = ${JSON.stringify(user)}`);
-  //   const validationResult = User.validationSchema.validate(user);
-  //   if (validationResult?.error) {
-  //     console.log(JSON.stringify(validationResult));
-  //     return Promise.reject(new TypeError(`validation error - ${validationResult.error}`));
-  //   }
-  //
-  //   conversionUtils.convertISOStringDateTimesToJSDates(user);
-  //
-  //   // return this.collection.insertOne(user)
-  //   //   .then((result: InsertOneResult<User>) => {
-  //   //     if (result.insertedId) {
-  //   //       if (user) {
-  //   //         this.useFriendlyId(user);
-  //   //         this.cleanUser(user);
-  //   //       }
-  //   //       return user;
-  //   //     }
-  //   //   })
-  //   //   .catch((err: Error) => {
-  //   //     console.log(`in catch for err ${err.message}`);
-  //   //   });
-  //
-  //
-  //   return this.hashPassword(user.password!)
-  //     .then((hash: string) => {
-  //       user.password = hash;
-  //       return this.onBeforeCreate(userContext, user);
-  //     })
-  //     .then((doc: any) => {
-  //       return this.collection.insertOne(user);
-  //     })
-  //     .then((result: InsertOneResult<User>) => {
-  //       if (result.insertedId) {
-  //         this.useFriendlyId(user);
-  //         this.cleanUser(user);
-  //       }
-  //       return this.onAfterCreate(userContext, user)
-  //         .then(() => {
-  //           return user;
-  //         }); // ignore the result of onAfterCreate and return what the original call returned
-  //     });
-  //
-  // }
   async createUser(userContext: IUserContext, user: User): Promise<User | void> {
+    console.log('in AuthService.createUser'); // todo: delete me
     user.orgId = userContext.orgId;
 
-    console.log(`user = ${JSON.stringify(user)}`);
-    const validationResult = User.validationSchema.validate(user);
+    console.log(`user = ${JSON.stringify(user)}`); // todo: delete me
+    const validationResult = User.validationSchema.validate(user, {abortEarly: false});
     if (validationResult?.error) {
       console.log(`validation error in AuthService.createUser - ${JSON.stringify(validationResult)}`);
-      throw new TypeError(`validation error - ${validationResult.error}`);
+      throw new ValidationError(validationResult.error);
     }
 
     conversionUtils.convertISOStringDateTimesToJSDates(user);
@@ -81,16 +36,38 @@ export class AuthService extends GenericApiService<User> {
     user.password = hash;
 
     const doc = await this.onBeforeCreate(userContext, user);
-    const result = await this.collection.insertOne(user);
 
-    if (result.insertedId) {
-      this.useFriendlyId(user);
-      this.cleanUser(user);
+    try {
+      const result = await this.collection.insertOne(user);
+
+      if (result.insertedId) {
+        this.useFriendlyId(user);
+        this.cleanUser(user);
+      }
+    }
+    catch(err: any) {
+      console.log(`error from insertOne in AuthService.createUser - ${err.message}`);
+      if (err.code === 11000) {
+        throw new DuplicateKeyError('User already exists');
+      }
+      throw new BadRequestError('Error creating user');
     }
 
     await this.onAfterCreate(userContext, user);
     console.log(JSON.stringify(user)); // todo: delete me
     return user; // ignore the result of onAfterCreate and return what the original call returned
+  }
+
+  getUserById(id: string) {
+    if (!this.isValidObjectId(id)) {
+      return Promise.reject(new TypeError('id is not a valid ObjectId'));
+    }
+
+    return this.collection.findOne({_id: new ObjectId(id)})
+      .then((doc) => {
+        this.useFriendlyId(doc);
+        return doc;
+      });
   }
 
   getUserByEmail(email: string) {

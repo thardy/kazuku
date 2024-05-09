@@ -1,0 +1,41 @@
+{
+  "env": "dev",
+  "host": "DEPRECATED-http://localhost:3001",
+  "hostname": "kazuku.com",
+  "testHostname": "localhost",
+  "sessionSecret": "340dc5dfe64e7edc5e8265ac816acd532d13bb267db30fbf",
+  "saltWorkFactor": 10,
+  "port": 3001,
+  "testPort": 3001,
+  "mongoDbUrl": "mongodb://kazukuUser:totallytemporary@localhost:27017/kazuku",
+  "databaseName": "kazuku",
+  "corsAllowedOrigin": "http://localhost:4200",
+  "jobTypes": "publishingJobs",
+  "clientSecret": "c>yXb**cwaP^$k4Z",
+  "jwtExpirationInSeconds": 3600,
+  "refreshTokenExpirationInDays": 7,
+  "deviceIdCookieMaxAgeInDays": 730,
+  "siteDefaults": {
+    "defaultRegenerationInterval": 10
+  },
+  "cache": {
+    "orgCache": true
+  },
+  "fb": {
+    "clientID": "458621337492308",
+    "clientSecret": "d4289e1535a3e0136fe9ca69bb082e0a",
+    "callbackURL": "//localhost:3001/api/users/facebook/callback",
+    "profileFields": ["id", "email", "displayName", "photos"]
+  },
+  "google": {
+    "clientID": "116875420879-nfdjl0alj7sufhoghdvg649kn3ag925v.apps.googleusercontent.com",
+    "clientSecret": "oQ0l5zFtuXZG53QbI7_1scUX",
+    "callbackURL": "//localhost:3001/api/users/google/callback",
+    "profileFields": ["id", "email", "displayName", "photos"]
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "password": ""
+  }
+}

@@ -1,7 +1,7 @@
 import {Express} from 'express';
 import {CrudController} from '../../common/controllers/crud.controller';
 import {SiteService} from './site.service';
-import database from '../../database/database';
+import database from '../../server/database/database';
 
 export class SitesController extends CrudController<any> {
   siteService: SiteService;

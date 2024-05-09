@@ -1,5 +1,5 @@
-// an experiment, on using functional methods to compose a controller instead of classes - giving up on this for now. Classes and OO just
-//  make more sense for this, at least to me.
+// an experiment, on using functional methods to compose a controller instead of using classes - giving up on this for now.
+//  Classes and OO just make more sense for this, at least to me right now.
 // import {Express, Request, Response, NextFunction} from 'express';
 // import IGenericService from '../services/generic-service.interface';
 //

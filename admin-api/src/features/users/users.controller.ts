@@ -1,7 +1,7 @@
 import {CrudController} from '../../common/controllers/crud.controller';
 import {User} from '../../common/models/user.model';
 import {Express} from 'express';
-import database from '../../database/database';
+import database from '../../server/database/database';
 import {UserService} from './user.service';
 
 export class UsersController extends CrudController<User> {
