@@ -2,14 +2,14 @@ import {Db, InsertOneResult, AnyError, ObjectId} from 'mongodb';
 import {scrypt, randomBytes} from 'crypto';
 import {promisify} from 'util';
 
-import {GenericApiService} from '../../common/services/generic-api.service';
-import conversionUtils from '../../common/utils/conversion.utils';
-import {User} from '../../common/models/user.model';
+import {GenericApiService} from '@common/services/generic-api.service';
+import conversionUtils from '@common/utils/conversion.utils';
+import {User} from '@common/models/user.model';
 import Joi from 'joi';
-import {BadRequestError} from '../../common/errors/bad-request-error';
-import {DuplicateKeyError} from '../../common/errors/duplicate-key-error';
-import {IUserContext} from '../../common/models/user-context.interface';
-import {ValidationError} from '../../common/errors/validation-error';
+import {BadRequestError} from '@common/errors/bad-request-error';
+import {DuplicateKeyError} from '@common/errors/duplicate-key-error';
+import {IUserContext} from '@common/models/user-context.interface';
+import {ValidationError} from '@common/errors/validation-error';
 
 const scryptAsync = promisify(scrypt);
 

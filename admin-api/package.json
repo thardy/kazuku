@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "comment": "if below starts acting up - https://stackoverflow.com/questions/37979489/how-to-watch-and-reload-ts-node-when-typescript-files-change",
-    "start": "ts-node-dev --poll src/index.ts"
+    "start": "ts-node-dev --poll src/index.ts",
+    "clean": "rm -rf dist",
+    "tsc": "tsc",
+    "build": "npm-run-all -s clean tsc"
   },
   "author": "Tim Hardy",
   "license": "Apache-2.0",
@@ -15,6 +18,7 @@
     "express-async-errors": "^3.1.1",
     "express-validator": "^7.0.1",
     "joi": "^17.13.1",
+    "module-alias": "^2.2.3",
     "moment": "^2.30.1",
     "mongodb": "^6.6.1",
     "passport": "^0.7.0",
@@ -26,6 +30,13 @@
   "devDependencies": {
     "@types/node": "^20.12.8",
     "@types/passport-jwt": "^4.0.1",
-    "@types/passport-local": "^1.0.38"
+    "@types/passport-local": "^1.0.38",
+    "npm-run-all": "^4.1.5"
+  },
+  "_moduleAliases": {
+    "@root": "./dist",
+    "@common": "./dist/common",
+    "@features": "./dist/features",
+    "@server": "./dist/server"
   }
 }

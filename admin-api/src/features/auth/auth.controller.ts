@@ -1,8 +1,9 @@
 import {Express, Request, Response, NextFunction} from 'express';
-import { CrudController } from '../../common/controllers/crud.controller';
+
+import { CrudController } from '@common/controllers/crud.controller';
 import { AuthService } from './auth.service';
-import {User} from '../../common/models/user.model';
-import database from '../../server/database/database';
+import {User} from '@common/models/user.model';
+import database from '@server/database/database';
 
 // todo: seriously consider not extending CrudController because we don't really use it
 export class AuthController extends CrudController<User> {

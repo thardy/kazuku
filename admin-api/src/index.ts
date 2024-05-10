@@ -1,5 +1,6 @@
-import { app, setupExpress } from './app';
-import database from './server/database/database';
+import 'module-alias/register';
+import { app, setupExpress } from '@root/app';
+import database from '@server/database/database';
 
 const startServer = async () => {
   console.log('Starting kazuku-admin-api server...');
@@ -37,3 +38,4 @@ const cleanup = (event: any) => {
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
 
+// just a test comment

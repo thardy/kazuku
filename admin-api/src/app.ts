@@ -5,7 +5,7 @@ import {json} from 'body-parser';
 
 //import * as passportConfig from './server/passport';
 import routes from './server/routes';
-import {errorHandler} from './middlewares/error-handler';
+import {errorHandler} from '@server/middlewares/error-handler';
 import {NotFoundError} from './common/errors/not-found-error';
 
 const app = express();
