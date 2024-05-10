@@ -16,7 +16,5 @@ export class SitesController extends CrudController<any> {
     super.mapRoutes(app); // map the base CrudController routes
   }
 
-  someFunction() {
-    this.siteService.getAll('1');
-  }
+
 }
