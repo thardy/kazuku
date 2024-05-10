@@ -1,4 +1,4 @@
-import testConfig from './config.local.json' assert { type: "json" };
+import testConfig from './config.local.json';// assert { type: "json" }; // the assert causes - error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'nodenext', or 'preserve'., which causes a ton of other issues
 let config = {};
 
 if (process.env.NODE_ENV === 'test') {
