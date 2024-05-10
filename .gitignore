@@ -31,6 +31,7 @@ client/vendor/*/*
 client/vendor/*/*/*
 client/vendor/*/*/*/*
 env-config.js
+config.local.json
 development.json
 !server/bin/www.js
 server/src/public
