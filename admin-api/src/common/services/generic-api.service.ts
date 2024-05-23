@@ -1,56 +1,110 @@
-import {Db, Collection, ObjectId} from 'mongodb';
+import {Db, Collection, ObjectId, DeleteResult} from 'mongodb';
 import moment from 'moment';
+import Joi from 'joi';
 
-import { IGenericApiService } from './generic-api-service.interface';
+import {IGenericApiService} from './generic-api-service.interface';
 import {IAuditable} from '../models/auditable.interface';
-import {User} from '../models/user.model';
 import {IUserContext} from '../models/user-context.interface';
+import {ValidationError} from '@common/errors/validation.error';
+import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
+import {BadRequestError} from '@common/errors/bad-request.error';
+import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
+import {IdNotFoundError} from '@common/errors/id-not-found.error';
 
-export class GenericApiService<T> implements IGenericApiService<T> {
-    db: Db;
-    protected collection: Collection;
+export class GenericApiService<T extends IMultiTenantEntity> implements IGenericApiService<T> {
+  protected db: Db;
+  protected pluralResourceName: string;
+  protected singularResourceName: string;
+  protected collection: Collection;
 
-    constructor(db: Db, collectionName: string) {
-        this.db = db;
-        this.collection = db.collection(collectionName);
-    }
-
-  // getAll(userContext: IUserContext): Promise<T[]> {
-  //   throw new Error('Method not implemented.');
-  // }
-  // getById(userContext: IUserContext, id: string): Promise<T> {
-  //   throw new Error('Method not implemented.');
-  // }
-  create(userContext: IUserContext, item: T): Promise<T> {
-    throw new Error('Method not implemented.');
-  }
-  updateById(userContext: IUserContext, id: string, item: T): Promise<T> {
-    throw new Error('Method not implemented.');
-  }
-  deleteById(userContext: IUserContext, id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  constructor(db: Db, pluralResourceName: string, singularResourceName: string) {
+    this.db = db;
+    this.pluralResourceName = pluralResourceName;
+    this.singularResourceName = singularResourceName;
+    this.collection = db.collection(pluralResourceName);
   }
 
   async getAll(userContext: IUserContext): Promise<T[]> {
     const cursor = this.collection.find({orgId: userContext.orgId});
-    const docs = await cursor.toArray();
-    let friendlyDocs: any[] = [];
-    docs.forEach((doc) => {
-      //this.useFriendlyId(doc);
-      friendlyDocs.push(doc);
+    const entities = await cursor.toArray();
+    let friendlyEntities: any[] = [];
+    entities.forEach((entity) => {
+      this.useFriendlyId(entity);
+      friendlyEntities.push(entity);
     });
-    return this.transformList(friendlyDocs);
+    // allow derived classes to transform the result
+    return this.transformList(friendlyEntities);
   }
 
   async getById(userContext: IUserContext, id: string): Promise<T> {
     if (!this.isValidObjectId(id)) {
-      return Promise.reject(new TypeError('id is not a valid ObjectId'));
+      throw new BadRequestError('id is not a valid ObjectId');
     }
 
-    let doc = await this.collection.findOne({_id: new ObjectId(id), orgId: userContext.orgId});
-    this.useFriendlyId(doc);
+    let entity = await this.collection.findOne({_id: new ObjectId(id), orgId: userContext.orgId});
+    this.useFriendlyId(entity);
     // allow derived classes to transform the result
-    return this.transformSingle(doc);
+    return this.transformSingle(entity);
+  }
+
+  create(userContext: IUserContext, entity: T): Promise<T> {
+    entity.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+    const validationResult = this.validate(entity);
+    this.handleValidationResult(validationResult, 'GenericApiService.create');
+
+    return this.onBeforeCreate(userContext, entity)
+      .then((result) => {
+        return this.collection.insertOne(entity);
+      })
+      .then((insertResult) => {
+        console.log(`insertResult: ${JSON.stringify(insertResult)}`); // todo: delete me
+        if (insertResult.insertedId) {
+          // todo: make sure the id gets set on the entity - VERIFY!!!
+          this.useFriendlyId(entity);
+          this.transformSingle(entity);
+        }
+        return this.onAfterCreate(userContext, entity);
+      })
+      .then((afterCreateResult) => {
+        return entity; // ignore the result of onAfterCreate and return the created entity
+      })
+      .catch((err) => {
+        console.log(`error in GenericApiService.create - ${err.message}`);
+        if (err.code === 11000) {
+          throw new DuplicateKeyError(`${this.singularResourceName} already exists`);
+        }
+        throw new BadRequestError(`Error creating ${this.singularResourceName}`);
+      });
+  }
+
+  updateById(userContext: IUserContext, id: string, item: T): Promise<T> {
+    throw new Error('Method not implemented.');
+  }
+
+  deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestError('id is not a valid ObjectId');
+    }
+
+    let queryObject = { _id: new ObjectId(id), orgId: userContext.orgId };
+    let deleteOneResult: DeleteResult;
+
+    return this.onBeforeDelete(userContext, queryObject)
+      .then((result) => {
+        return this.collection.deleteOne(queryObject)
+      })
+      .then((result) => {
+        // The deleteOne command returns the following:
+        // { acknowledged: true, deletedCount: 1 }
+        if (result.deletedCount <= 0) {
+          throw new IdNotFoundError();
+        }
+        deleteOneResult = result;
+        return this.onAfterDelete(userContext, queryObject);
+      })
+      .then((afterDeleteResult) => {
+        return deleteOneResult; // ignore the result of onAfter and return what the deleteOne call returned
+      });
   }
 
 //     find(orgId, mongoQueryObject, projection) {
@@ -95,33 +149,6 @@ export class GenericApiService<T> implements IGenericApiService<T> {
 //
 //               // allow derived classes to transform the result
 //               return this.transformSingle(doc);
-//           });
-//     }
-//
-//     create(item: T): Promise<T> {
-//         if (arguments.length !== 2) {
-//             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.create'));
-//         }
-//         doc.orgId = orgId;
-//         let valError = this.validate(doc);
-//         if (valError) {
-//             return Promise.reject(new TypeError(valError));
-//         }
-//
-//         conversionService.convertISOStringDateTimesToMongoDates(doc);
-//         let insertedDoc;
-//
-//         return this.onBeforeCreate(orgId, doc)
-//           .then((result) => {
-//               return this.collection.insert(doc)
-//           })
-//           .then((insertResult) => {
-//               insertedDoc = insertResult;
-//               this.useFriendlyId(insertedDoc);
-//               return this.onAfterCreate(orgId, insertedDoc);
-//           })
-//           .then((afterCreateResult) => {
-//               return insertedDoc; // ignore the result of onAfter and return the insertedDoc
 //           });
 //     }
 //
@@ -220,7 +247,7 @@ export class GenericApiService<T> implements IGenericApiService<T> {
 //           });
 //     }
 
-    // todo: Make Work!!! just started (about four years ago)
+  // todo: Make Work!!! just started (about four years ago)
 //    updateBatch(orgId, updatedDocs) {
 //        if (arguments.length !== 2) {
 //            return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateBatch'));
@@ -234,30 +261,19 @@ export class GenericApiService<T> implements IGenericApiService<T> {
 //        return this.collection.update(mongoQueryObject, {$set: clone});
 //    }
 
-    // deleteById(id: string): Promise<void> {
-    //     if (arguments.length !== 2) {
-    //         return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.delete'));
-    //     }
-    //     if (!this.isValidObjectId(id)) {
-    //         return Promise.reject(new TypeError('id is not a valid ObjectId'));
-    //     }
-    //
-    //     let queryObject = { _id: new ObjectId(id), orgId: orgId };
-    //     let removeResult;
-    //
-    //     return this.onBeforeDelete(orgId, queryObject)
-    //       .then((result) => {
-    //           return this.collection.remove(queryObject)
-    //       })
-    //       .then((mongoRemoveResult) => {
-    //           removeResult = mongoRemoveResult;
-    //           return this.onAfterDelete(orgId, queryObject);
-    //       })
-    //       .then((afterDeleteResult) => {
-    //           return removeResult; // ignore the result of onAfter and return what the remove call returned
-    //       });
-    // }
+  validate(doc: any): Joi.ValidationResult<any> {
+    return {
+      error: undefined,
+      value: undefined
+    };
+  }
 
+  handleValidationResult(validationResult: Joi.ValidationResult, methodName: string): void {
+    if (validationResult?.error) {
+      console.log(`validation error in ${methodName} - ${JSON.stringify(validationResult)}`);
+      throw new ValidationError(validationResult.error);
+    }
+  }
 
   useFriendlyId(doc: any) {
     if (doc && doc._id) {
@@ -276,31 +292,59 @@ export class GenericApiService<T> implements IGenericApiService<T> {
   auditForCreate(userContext: IUserContext, doc: IAuditable) {
     const now = moment().utc().toDate();
     // const userId = current.context && current.context.current && current.context.current.user ? current.context.user.email : 'system';
-    const userId = userContext?.user?.id ?? 'system_GenericApiService.auditForCreate';
+    const userId = userContext?.user?.id ?? 'system';
     doc.created = now;
     doc.createdBy = userId;
     doc.updated = now;
     doc.updatedBy = userId;
   }
+
   auditForUpdate(userContext: IUserContext, doc: IAuditable) {
-    const userId = userContext.user.id;
+    const userId = userContext.user?.id ?? 'system';
     doc.updated = moment().utc().toDate();
     doc.updatedBy = userId;
   }
+
   onBeforeCreate(userContext: IUserContext, doc: any) {
     this.auditForCreate(userContext, doc);
     return Promise.resolve(doc);
   }
+
+  onAfterCreate(userContext: IUserContext, doc: any) {
+    return Promise.resolve(doc);
+  }
+
   onBeforeUpdate(userContext: IUserContext, doc: any) {
     this.auditForUpdate(userContext, doc);
     return Promise.resolve(doc);
   }
-  onAfterCreate(userContext: IUserContext, doc: any) { return Promise.resolve(doc); }
-  onAfterUpdate(userContext: IUserContext, doc: any) { return Promise.resolve(doc); }
-  onBeforeDelete(userContext: IUserContext, doc: any) { return Promise.resolve(doc); }
-  onAfterDelete(userContext: IUserContext, queryObject: any) { return Promise.resolve(queryObject); }
 
-  transformList(list: any[]) { return list; }
-  transformSingle(single: any) { return single; }
+  onAfterUpdate(userContext: IUserContext, doc: any) {
+    return Promise.resolve(doc);
+  }
+
+  onBeforeDelete(userContext: IUserContext, doc: any) {
+    return Promise.resolve(doc);
+  }
+
+  onAfterDelete(userContext: IUserContext, queryObject: any) {
+    return Promise.resolve(queryObject);
+  }
+
+  transformList(list: any[]) {
+    list.forEach((doc) => this.removeMongoId(doc));
+    return list;
+  }
+
+  transformSingle(single: any) {
+    this.removeMongoId(single);
+    return single;
+  }
+
+  private removeMongoId(doc: any) {
+    if (doc && doc._id) {
+      delete doc._id;
+    }
+  }
 
 }

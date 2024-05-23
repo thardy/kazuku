@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "comment": "if below starts acting up - https://stackoverflow.com/questions/37979489/how-to-watch-and-reload-ts-node-when-typescript-files-change",
+    "comment": "if below starts acting up -  https://stackoverflow.com/questions/37979489/how-to-watch-and-reload-ts-node-when-typescript-files-change",
     "start": "ts-node-dev --poll src/index.ts",
     "clean": "rm -rf dist",
     "tsc": "tsc",
@@ -28,15 +28,10 @@
     "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "@types/module-alias": "^2.0.4",
     "@types/node": "^20.12.8",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "npm-run-all": "^4.1.5"
-  },
-  "_moduleAliases": {
-    "@root": "./dist",
-    "@common": "./dist/common",
-    "@features": "./dist/features",
-    "@server": "./dist/server"
   }
 }

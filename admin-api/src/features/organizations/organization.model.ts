@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb';
 import Joi from 'joi';
-import {IAuditable} from '../../common/models/auditable.interface';
+import {IAuditable} from '@common/models/auditable.interface';
 
 export class IOrganization implements IAuditable {
-  _id?: ObjectId;
+  //_id?: ObjectId;
   id?: string;
   name?: string;
   code?: string;
@@ -17,7 +17,7 @@ export class IOrganization implements IAuditable {
 }
 
 export class Organization implements IOrganization {
-  _id?: ObjectId;
+  //_id?: ObjectId;
   id?: string;
   name?: string;
   code?: string;
@@ -30,7 +30,7 @@ export class Organization implements IOrganization {
   updatedBy?: string;
 
   constructor(options: IOrganization = {}) {
-    this._id = options._id ?? undefined;
+    //this._id = options._id ?? undefined;
     this.id = options.id ?? undefined;
     this.name = options.name ?? undefined;
     this.code = options.code ?? undefined;

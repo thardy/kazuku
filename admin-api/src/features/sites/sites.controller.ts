@@ -1,9 +1,10 @@
 import {Express} from 'express';
-import {CrudController} from '../../common/controllers/crud.controller';
+import {ApiController} from '@common/controllers/api.controller';
 import {SiteService} from './site.service';
-import database from '../../server/database/database';
+import database from '@server/database/database';
+import {ISite} from '@features/sites/site.model';
 
-export class SitesController extends CrudController<any> {
+export class SitesController extends ApiController<ISite> {
   siteService: SiteService;
 
   constructor(app: Express) {

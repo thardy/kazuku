@@ -12,6 +12,10 @@ spec:
       labels:
         app: kazuku-admin-api
     spec:
+      initContainers:
+        - name: init-db
+          image: busybox:1.31
+          command: [ 'sh', '-c', 'echo -e "Checking for the availability of MongoDB Server deployment"; while ! nc -z kazuku-mongodb-svc 27017; do sleep 1; printf "-"; done; echo -e "  >> MongoDB Server has started";' ]
       containers:
         - name: kazuku-admin-api
           image: timhardy/kazuku-admin-api

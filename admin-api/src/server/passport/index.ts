@@ -69,7 +69,7 @@
 //         })
 //         .then((isMatch) => {
 //           if (isMatch === null) {
-//             return done(null, false, {message: `Email '${email}' not found`});
+//             return done(null, false, {message: `Email '${email}' not found`}); // todo: change to BadRequestError
 //           }
 //           else if (isMatch) {
 //             const context = {

@@ -11,6 +11,7 @@ else if (!process.env.KAZUKU_ENV) {
   config = testConfig;
 }
 else {
+  console.log('inside config else block');
   config = {
     env: process.env.KAZUKU_ENV,
     hostname: process.env.HOST_NAME || '',

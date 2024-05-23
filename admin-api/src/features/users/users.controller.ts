@@ -1,10 +1,10 @@
-import {CrudController} from '../../common/controllers/crud.controller';
+import {ApiController} from '@common/controllers/api.controller';
 import {User} from '../../common/models/user.model';
 import {Express} from 'express';
 import database from '../../server/database/database';
 import {UserService} from './user.service';
 
-export class UsersController extends CrudController<User> {
+export class UsersController extends ApiController<User> {
   userService: UserService;
 
   constructor(app: Express) {

@@ -1,4 +1,4 @@
-import {CustomError} from './custom-error';
+import {CustomError} from './custom.error';
 import Joi from 'joi';
 
 export class ValidationError extends CustomError {

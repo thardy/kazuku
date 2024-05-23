@@ -1,12 +1,12 @@
 import {Express, Request, Response, NextFunction} from 'express';
 
-import { CrudController } from '@common/controllers/crud.controller';
+import { ApiController } from '@common/controllers/api.controller';
 import { AuthService } from './auth.service';
 import {User} from '@common/models/user.model';
 import database from '@server/database/database';
 
-// todo: seriously consider not extending CrudController because we don't really use it
-export class AuthController extends CrudController<User> {
+// todo: seriously consider not extending ApiController because we don't really use it
+export class AuthController extends ApiController<User> {
   authService: AuthService;
 
   constructor(app: Express) {
@@ -55,19 +55,15 @@ export class AuthController extends CrudController<User> {
 
   async registerUser(req: Request, res: Response) {
     console.log('in registerUser');
-    const userContext = { user: new User(), orgId: '999'}; // todo: pull from req
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //   throw new RequestValidationError(errors.array());
-    // }
+    const user = req.body;
 
-    const doc = await this.authService.createUser(userContext, req.body);
+    const doc = await this.authService.createUser(user);
     return res.status(201).json(doc);
   }
 
   // registerUser(req: Request, res: Response, next: NextFunction) {
   //   console.log('in registerUser');
-  //   const userContext = { user: new User(), orgId: '999'}; // todo: pull from req
+  //   const userContext = { user: new User(), orgId: '999'}; // todo: pull from req.UserContext
   //   const errors = validationResult(req);
   //   if (!errors.isEmpty()) {
   //     throw new RequestValidationError(errors.array());

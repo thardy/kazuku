@@ -2,10 +2,10 @@ import {Express, NextFunction, Request, Response} from 'express';
 import {GenericApiService} from '../services/generic-api.service';
 import {IGenericApiService} from '../services/generic-api-service.interface';
 import {User} from '../models/user.model';
-//import authHelper from '../common/auth-helper.ts';
-//import current from '../common/current.ts';
+import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
+import {isAuthenticated} from '@server/middleware/is-authenticated';
 
-export abstract class CrudController<T> {
+export abstract class ApiController<T extends IMultiTenantEntity> {
   protected app: Express;
   protected service: IGenericApiService<T>;
   protected resourceName: string;
@@ -26,11 +26,11 @@ export abstract class CrudController<T> {
     // app.post(`/api/${this.resourceName}`, authHelper.isAuthenticated, this.create.bind(this));
     // app.put(`/api/${this.resourceName}/:id`, authHelper.isAuthenticated, this.updateById.bind(this));
     // app.delete(`/api/${this.resourceName}/:id`, authHelper.isAuthenticated, this.deleteById.bind(this));
-    app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-    // app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
-    // app.post(`/api/${this.resourceName}`, this.create.bind(this));
+    app.get(`/api/${this.resourceName}`, isAuthenticated, this.getAll.bind(this));
+    app.get(`/api/${this.resourceName}/:id`, isAuthenticated, this.getById.bind(this));
+    app.post(`/api/${this.resourceName}`, isAuthenticated, this.create.bind(this));
     // app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
-    // app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
+    app.delete(`/api/${this.resourceName}/:id`, isAuthenticated, this.deleteById.bind(this));
   }
 
   getAll(req: Request, res: Response, next: NextFunction) {
@@ -71,27 +71,11 @@ export abstract class CrudController<T> {
       });
   }
 
-  // create(req: Request, res: Response, next: NextFunction) {
-  //   let body = req.body;
-  //
-  //   this.service.create(req.context.orgId, body)
-  //     .then((doc) => {
-  //       return res.status(201).json(doc);
-  //     })
-  //     .catch(err => {
-  //       if (err.constructor == TypeError) {
-  //         return res.status(400).json({'errors': [err.message]});
-  //       }
-  //
-  //       if (err.code === 11000) {
-  //         return res.status(409).json({'errors': ['Duplicate Key Error']});
-  //       }
-  //
-  //       err.message = `ERROR: ${this.resourceName}Controller -> create(${req.context.orgId}, ${body}) - ${err.message}`;
-  //       return next(err);
-  //     });
-  // }
-  //
+  async create(req: Request, res: Response, next: NextFunction) {
+    const entity = await this.service.create(req.userContext!, req.body);
+    return res.status(201).json(entity);
+  }
+
   // updateById(req: Request, res: Response, next: NextFunction) {
   //   let id = req.params.id;
   //   let body = req.body;
@@ -110,25 +94,8 @@ export abstract class CrudController<T> {
   //     });
   // }
 
-  // deleteById(req: Request, res: Response, next: NextFunction) {
-  //   let id = req.params.id;
-  //   //this.service.delete(req.context.orgId, id)
-  //   this.service.delete('999', id)
-  //     .then((commandResult) => {
-  //       if (commandResult.result.n <= 0) {
-  //         return res.status(204).json({'errors': ['id not found']});
-  //       }
-  //
-  //       return res.status(204).json({});
-  //     })
-  //     .catch(err => {
-  //       if (err.constructor == TypeError) {
-  //         return res.status(400).json({'errors': [err.message]});
-  //       }
-  //
-  //       //err.message = `ERROR: ${this.resourceName}Controller -> delete(${req.context.orgId}, ${id}) - ${err.message}`;
-  //       err.message = `ERROR: ${this.resourceName}Controller -> delete(${'999'}, ${id}) - ${err.message}`;
-  //       return next(err);
-  //     });
-  // }
+  async deleteById(req: Request, res: Response, next: NextFunction) {
+    const deleteResult = await this.service.deleteById(req.userContext!, req.params.id)
+    return res.status(200).json(deleteResult);
+  }
 }

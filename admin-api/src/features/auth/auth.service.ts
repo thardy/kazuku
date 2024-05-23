@@ -6,35 +6,33 @@ import {GenericApiService} from '@common/services/generic-api.service';
 import conversionUtils from '@common/utils/conversion.utils';
 import {User} from '@common/models/user.model';
 import Joi from 'joi';
-import {BadRequestError} from '@common/errors/bad-request-error';
-import {DuplicateKeyError} from '@common/errors/duplicate-key-error';
+import {BadRequestError} from '@common/errors/bad-request.error';
+import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
 import {IUserContext} from '@common/models/user-context.interface';
-import {ValidationError} from '@common/errors/validation-error';
+import {ValidationError} from '@common/errors/validation.error';
 
 const scryptAsync = promisify(scrypt);
 
 export class AuthService extends GenericApiService<User> {
   constructor(db: Db) {
-    super(db, 'users');
+    super(db, 'users', 'user');
   }
 
-  async createUser(userContext: IUserContext, user: User): Promise<User | void> {
-    console.log('in AuthService.createUser'); // todo: delete me
-    user.orgId = userContext.orgId;
+  async createUser(user: User): Promise<User | void> {
+    // I've decided you don't have to be logged-in to create a user - we'll need to vette exactly what you do need based on the scenario.
+    //  How do users get created? I'm thinking they have to be tied to an org, and if the org is sending us a new user to create, we create it.
+    //  We just need to think about and handle the scenario where someone is logged in and creating other users (do we? - is that a thing?)
+    // user.orgId = userContext.orgId;
 
-    console.log(`user = ${JSON.stringify(user)}`); // todo: delete me
-    const validationResult = User.validationSchema.validate(user, {abortEarly: false});
-    if (validationResult?.error) {
-      console.log(`validation error in AuthService.createUser - ${JSON.stringify(validationResult)}`);
-      throw new ValidationError(validationResult.error);
-    }
+    const validationResult = this.validate(user);
+    this.handleValidationResult(validationResult, 'AuthService.createUser');
 
     conversionUtils.convertISOStringDateTimesToJSDates(user);
 
     const hash = await this.hashPassword(user.password!);
-    console.log(`password hash = ${hash}`); // todo: delete me
     user.password = hash;
 
+    const userContext = { user: new User(), orgId: '999'}; // todo: fix this to figure out where OrgId is coming from - probly just pull from user.orgId
     const doc = await this.onBeforeCreate(userContext, user);
 
     try {
@@ -42,7 +40,7 @@ export class AuthService extends GenericApiService<User> {
 
       if (result.insertedId) {
         this.useFriendlyId(user);
-        this.cleanUser(user);
+        this.transformSingle(user);
       }
     }
     catch(err: any) {
@@ -113,5 +111,9 @@ export class AuthService extends GenericApiService<User> {
   transformSingle(user: User) {
     this.cleanUser(user);
     return user;
+  }
+
+  override validate(doc: User) {
+    return User.validationSchema.validate(doc, {abortEarly: false});
   }
 }

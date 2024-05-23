@@ -1,8 +1,10 @@
 import { ObjectId } from 'mongodb';
 import Joi from 'joi';
+import {IAuditable} from '@common/models/auditable.interface';
+import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
 
-export class IUser {
-  _id?: ObjectId;
+export class IUser implements IAuditable, IMultiTenantEntity {
+  //_id?: ObjectId;
   id?: string;
   orgId?: string;
   email?: string;
@@ -10,10 +12,14 @@ export class IUser {
   lastName?: string;
   password?: string
   isMetaAdmin?: boolean;
+  created?: Date;
+  createdBy?: string;
+  updated?: Date;
+  updatedBy?: string;
 }
 
-export class User {
-  _id?: ObjectId;
+export class User implements IUser {
+  //_id?: ObjectId;
   id?: string;
   orgId: string;
   email: string;
@@ -21,9 +27,13 @@ export class User {
   lastName?: string;
   password?: string;
   isMetaAdmin?: boolean;
+  created?: Date;
+  createdBy?: string;
+  updated?: Date;
+  updatedBy?: string;
 
   constructor(options: IUser = {}) {
-    this._id = options._id ?? undefined;
+    //this._id = options._id ?? undefined;
     this.id = options.id ?? undefined;
     this.orgId = options.orgId ?? '';
     this.email = options.email ?? '';
@@ -34,7 +44,8 @@ export class User {
   }
 
   static validationSchema = Joi.object().keys({
-    orgId: Joi.string(),
+    orgId: Joi.string()
+      .required(),
     email: Joi.string()
       .email()
       .required()
