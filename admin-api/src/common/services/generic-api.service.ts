@@ -1,6 +1,7 @@
-import {Db, Collection, ObjectId, DeleteResult} from 'mongodb';
+import {Db, Collection, ObjectId, DeleteResult, Document, UpdateResult} from 'mongodb';
 import moment from 'moment';
 import Joi from 'joi';
+import * as _ from 'lodash';
 
 import {IGenericApiService} from './generic-api-service.interface';
 import {IAuditable} from '../models/auditable.interface';
@@ -59,7 +60,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
       .then((insertResult) => {
         console.log(`insertResult: ${JSON.stringify(insertResult)}`); // todo: delete me
         if (insertResult.insertedId) {
-          // todo: make sure the id gets set on the entity - VERIFY!!!
+          // mongoDb mutates the entity in insertOne to have an _id property
           this.useFriendlyId(entity);
           this.transformSingle(entity);
         }
@@ -77,8 +78,117 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
       });
   }
 
-  updateById(userContext: IUserContext, id: string, item: T): Promise<T> {
-    throw new Error('Method not implemented.');
+  updateById(userContext: IUserContext, id: string, entity: T): Promise<any> {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestError('id is not a valid ObjectId');
+    }
+
+
+    console.log(`orgId = ${userContext.orgId}`); // todo: delete me
+    console.log(`entityToUpdate: ${JSON.stringify(entity)}`); // todo: delete me
+    let clone = _.clone(entity);
+    delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
+    clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+    if (entity?.orgId && entity?.orgId !== userContext.orgId) {
+      // this should not happen - look into it if it ever does
+      console.log(`entity.orgId: ${entity.orgId} does not match userContext.orgId: ${userContext.orgId} in GenericApiService.updateById`);
+      throw new BadRequestError('entity.orgId does not match userContext.orgId in GenericApiService.updateById');
+    }
+
+    let queryObject = {_id: new ObjectId(id), orgId: userContext.orgId};
+    let updateResult: UpdateResult<Document>;
+    // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+    return this.onBeforeUpdate(userContext, clone)
+      .then((result) => {
+        console.log(`calling updateOne`);
+        return this.collection.updateOne(queryObject, {$set: clone})
+      })
+      .then((mongoUpdateResult) => {
+        updateResult = mongoUpdateResult;
+        console.log(`mongoUpdateResult: ${JSON.stringify(mongoUpdateResult)}`); // todo: delete me
+        let promise;
+        if (mongoUpdateResult && mongoUpdateResult.modifiedCount <= 0) {
+          // nothing was updated, don't call onAfterUpdate
+          promise = Promise.resolve(mongoUpdateResult);
+        }
+        else {
+          promise = this.onAfterUpdate(userContext, clone);
+        }
+        return promise;
+      })
+      .then((afterResult) => {
+        if ('modifiedCount' in afterResult) {
+          // we didn't call onAfterUpdate - we didn't update anything
+          return afterResult;
+        }
+        else {
+          //clone.id = id; // add the friendly string id back to be returned
+          return updateResult; // ignore the result of onAfter and return what the original call returned
+        }
+      });
+  }
+
+  // type the parameters
+  updateByIdWithoutBeforeAndAfter(userContext: IUserContext, id: string, entity: T): Promise<any> {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestError('id is not a valid ObjectId');
+    }
+
+    let clone = _.clone(entity);
+    delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
+    clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+    if (entity?.orgId && entity?.orgId !== userContext.orgId) {
+      // this should not happen - look into it if it ever does
+      console.log(`entity.orgId: ${entity.orgId} does not match userContext.orgId: ${userContext.orgId} in GenericApiService.updateById`);
+      throw new BadRequestError('entity.orgId does not match userContext.orgId in GenericApiService.updateById');
+    }
+
+    let queryObject = { _id: new ObjectId(id), orgId: userContext.orgId };
+    // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+    return this.collection.updateOne(queryObject, {$set: clone})
+      .then((mongoUpdateResult) => {
+        return mongoUpdateResult;
+      });
+  }
+
+  update(userContext: IUserContext, queryObject: any, entity: T): Promise<any> {
+    let clone = _.clone(entity);
+    delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
+    clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+    if (entity?.orgId && entity?.orgId !== userContext.orgId) {
+      // this should not happen - look into it if it ever does
+      console.log(`entity.orgId: ${entity.orgId} does not match userContext.orgId: ${userContext.orgId} in GenericApiService.update`);
+      throw new BadRequestError('entity.orgId does not match userContext.orgId in GenericApiService.update');
+    }
+
+    let updateResult: UpdateResult<Document>;
+    // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
+    return this.onBeforeUpdate(userContext, clone)
+      .then((result) => {
+        return this.collection.updateMany(queryObject, {$set: clone});
+      })
+      .then((mongoUpdateResult) => {
+        updateResult = mongoUpdateResult;
+        let promise;
+        if (mongoUpdateResult && mongoUpdateResult.modifiedCount <= 0) {
+          // nothing was updated, don't call onAfterUpdate
+          promise = Promise.resolve(mongoUpdateResult);
+        }
+        else {
+          promise = this.onAfterUpdate(userContext, clone);
+        }
+        return promise;
+      })
+      .then((afterResult) => {
+        if ('modifiedCount' in afterResult) {
+          // we didn't call onAfterUpdate - we didn't update anything
+          return afterResult;
+        }
+        else {
+          //clone.id = id; // add the friendly string id back to be returned
+          return updateResult; // ignore the result of onAfter and return what the original call returned
+        }
+      });
   }
 
   deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
