@@ -1,22 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from "passport";
 import {IUserContext} from '@common/models/user-context.interface';
-import {User} from '@common/models/user.model';
 import {UnauthenticatedError} from '@common/errors/unauthenticated.error';
 
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
-  req.userContext = { user: new User(), orgId: '999'};
+  //req.userContext = { user: new User(), orgId: '999'};
+  //next();
+  passport.authenticate('jwt', { session: false }, (err: Error | null, userContext: IUserContext, info: any) => {
+    if (err) { return next(err); }
+    if (!userContext) {
+      throw new UnauthenticatedError();
+    }
 
-  next();
-  // passport.authenticate('jwt', { session: false }, (err: Error | null, userContext: IUserContext, info: any) => {
-  //   if (err) { return next(err); }
-  //   if (!userContext) {
-  //     throw new UnauthenticatedError();
-  //   }
-  //
-  //   req.userContext = userContext;
-  //   return next();
-  // })(req, res, next);
+    req.userContext = userContext;
+    return next();
+  })(req, res, next);
 };
 
 // this is how to handle this without passport

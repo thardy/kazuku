@@ -1,7 +1,7 @@
-import {Db, Collection, ObjectId, DeleteResult, Document, UpdateResult} from 'mongodb';
+import {Db, Collection, ObjectId, DeleteResult, Document, UpdateResult, FindOptions} from 'mongodb';
 import moment from 'moment';
 import Joi from 'joi';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import {IGenericApiService} from './generic-api-service.interface';
 import {IAuditable} from '../models/auditable.interface';
@@ -28,7 +28,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   async getAll(userContext: IUserContext): Promise<T[]> {
     const cursor = this.collection.find({orgId: userContext.orgId});
     const entities = await cursor.toArray();
-    let friendlyEntities: any[] = [];
+    const friendlyEntities: any[] = [];
     entities.forEach((entity) => {
       this.useFriendlyId(entity);
       friendlyEntities.push(entity);
@@ -42,94 +42,66 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
-    let entity = await this.collection.findOne({_id: new ObjectId(id), orgId: userContext.orgId});
+    const entity = await this.collection.findOne({_id: new ObjectId(id), orgId: userContext.orgId});
     this.useFriendlyId(entity);
     // allow derived classes to transform the result
     return this.transformSingle(entity);
   }
 
-  create(userContext: IUserContext, entity: T): Promise<T> {
+  async create(userContext: IUserContext, entity: T): Promise<T> {
     entity.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
     const validationResult = this.validate(entity);
     this.handleValidationResult(validationResult, 'GenericApiService.create');
 
-    return this.onBeforeCreate(userContext, entity)
-      .then((result) => {
-        return this.collection.insertOne(entity);
-      })
-      .then((insertResult) => {
-        console.log(`insertResult: ${JSON.stringify(insertResult)}`); // todo: delete me
-        if (insertResult.insertedId) {
-          // mongoDb mutates the entity in insertOne to have an _id property
-          this.useFriendlyId(entity);
-          this.transformSingle(entity);
-        }
-        return this.onAfterCreate(userContext, entity);
-      })
-      .then((afterCreateResult) => {
-        return entity; // ignore the result of onAfterCreate and return the created entity
-      })
-      .catch((err) => {
-        console.log(`error in GenericApiService.create - ${err.message}`);
-        if (err.code === 11000) {
-          throw new DuplicateKeyError(`${this.singularResourceName} already exists`);
-        }
-        throw new BadRequestError(`Error creating ${this.singularResourceName}`);
-      });
+    try {
+      const result = await this.onBeforeCreate(userContext, entity);
+      const insertResult = await this.collection.insertOne(entity);
+      console.log(`insertResult: ${JSON.stringify(insertResult)}`); // todo: delete me
+      if (insertResult.insertedId) {
+        // mongoDb mutates the entity passed into insertOne to have an _id property - we remove it in transformSingle
+        this.useFriendlyId(entity);
+        this.transformSingle(entity);
+      }
+      const afterCreateResult = await this.onAfterCreate(userContext, entity);
+      return entity;
+    }
+    catch (err: any) {
+      console.log(`error in GenericApiService.create - ${err.message}`);
+      if (err.code === 11000) {
+        throw new DuplicateKeyError(`${this.singularResourceName} already exists`);
+      }
+      throw new BadRequestError(`Error creating ${this.singularResourceName}`);
+    }
   }
 
-  updateById(userContext: IUserContext, id: string, entity: T): Promise<any> {
+  async updateById(userContext: IUserContext, id: string, entity: T): Promise<any> {
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
-
-    console.log(`orgId = ${userContext.orgId}`); // todo: delete me
-    console.log(`entityToUpdate: ${JSON.stringify(entity)}`); // todo: delete me
     let clone = _.clone(entity);
     delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
     clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+
     if (entity?.orgId && entity?.orgId !== userContext.orgId) {
-      // this should not happen - look into it if it ever does
-      console.log(`entity.orgId: ${entity.orgId} does not match userContext.orgId: ${userContext.orgId} in GenericApiService.updateById`);
+      // we forced orgId to be the orgId of the logged-in user, but we want to capture the fact that an attempt was made to use a wrong orgId
       throw new BadRequestError('entity.orgId does not match userContext.orgId in GenericApiService.updateById');
     }
 
     let queryObject = {_id: new ObjectId(id), orgId: userContext.orgId};
-    let updateResult: UpdateResult<Document>;
-    // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-    return this.onBeforeUpdate(userContext, clone)
-      .then((result) => {
-        console.log(`calling updateOne`);
-        return this.collection.updateOne(queryObject, {$set: clone})
-      })
-      .then((mongoUpdateResult) => {
-        updateResult = mongoUpdateResult;
-        console.log(`mongoUpdateResult: ${JSON.stringify(mongoUpdateResult)}`); // todo: delete me
-        let promise;
-        if (mongoUpdateResult && mongoUpdateResult.modifiedCount <= 0) {
-          // nothing was updated, don't call onAfterUpdate
-          promise = Promise.resolve(mongoUpdateResult);
-        }
-        else {
-          promise = this.onAfterUpdate(userContext, clone);
-        }
-        return promise;
-      })
-      .then((afterResult) => {
-        if ('modifiedCount' in afterResult) {
-          // we didn't call onAfterUpdate - we didn't update anything
-          return afterResult;
-        }
-        else {
-          //clone.id = id; // add the friendly string id back to be returned
-          return updateResult; // ignore the result of onAfter and return what the original call returned
-        }
-      });
+
+    await this.onBeforeUpdate(userContext, clone);
+    const mongoUpdateResult = await this.collection.updateOne(queryObject, {$set: clone});
+
+    if (mongoUpdateResult?.modifiedCount > 0) {
+      // only call onAfterUpdate if something was updated
+      await this.onAfterUpdate(userContext, clone);
+    }
+
+    return mongoUpdateResult;
   }
 
-  // type the parameters
-  updateByIdWithoutBeforeAndAfter(userContext: IUserContext, id: string, entity: T): Promise<any> {
+  async updateByIdWithoutBeforeAndAfter(userContext: IUserContext, id: string, entity: T): Promise<any> {
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
@@ -137,6 +109,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     let clone = _.clone(entity);
     delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
     clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+
     if (entity?.orgId && entity?.orgId !== userContext.orgId) {
       // this should not happen - look into it if it ever does
       console.log(`entity.orgId: ${entity.orgId} does not match userContext.orgId: ${userContext.orgId} in GenericApiService.updateById`);
@@ -145,217 +118,31 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
 
     let queryObject = { _id: new ObjectId(id), orgId: userContext.orgId };
     // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-    return this.collection.updateOne(queryObject, {$set: clone})
-      .then((mongoUpdateResult) => {
-        return mongoUpdateResult;
-      });
+    const mongoUpdateResult = await this.collection.updateOne(queryObject, {$set: clone});
+    return mongoUpdateResult;
   }
 
-  update(userContext: IUserContext, queryObject: any, entity: T): Promise<any> {
+  async update(userContext: IUserContext, queryObject: any, entity: T): Promise<any> {
     let clone = _.clone(entity);
     delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
     clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
+
     if (entity?.orgId && entity?.orgId !== userContext.orgId) {
       // this should not happen - look into it if it ever does
       console.log(`entity.orgId: ${entity.orgId} does not match userContext.orgId: ${userContext.orgId} in GenericApiService.update`);
       throw new BadRequestError('entity.orgId does not match userContext.orgId in GenericApiService.update');
     }
 
-    let updateResult: UpdateResult<Document>;
+    await this.onBeforeUpdate(userContext, clone);
     // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-    return this.onBeforeUpdate(userContext, clone)
-      .then((result) => {
-        return this.collection.updateMany(queryObject, {$set: clone});
-      })
-      .then((mongoUpdateResult) => {
-        updateResult = mongoUpdateResult;
-        let promise;
-        if (mongoUpdateResult && mongoUpdateResult.modifiedCount <= 0) {
-          // nothing was updated, don't call onAfterUpdate
-          promise = Promise.resolve(mongoUpdateResult);
-        }
-        else {
-          promise = this.onAfterUpdate(userContext, clone);
-        }
-        return promise;
-      })
-      .then((afterResult) => {
-        if ('modifiedCount' in afterResult) {
-          // we didn't call onAfterUpdate - we didn't update anything
-          return afterResult;
-        }
-        else {
-          //clone.id = id; // add the friendly string id back to be returned
-          return updateResult; // ignore the result of onAfter and return what the original call returned
-        }
-      });
-  }
+    const mongoUpdateResult = await this.collection.updateMany(queryObject, {$set: clone});
 
-  deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
-    if (!this.isValidObjectId(id)) {
-      throw new BadRequestError('id is not a valid ObjectId');
+    if (mongoUpdateResult?.modifiedCount > 0) {
+      await this.onAfterUpdate(userContext, clone);
     }
 
-    let queryObject = { _id: new ObjectId(id), orgId: userContext.orgId };
-    let deleteOneResult: DeleteResult;
-
-    return this.onBeforeDelete(userContext, queryObject)
-      .then((result) => {
-        return this.collection.deleteOne(queryObject)
-      })
-      .then((result) => {
-        // The deleteOne command returns the following:
-        // { acknowledged: true, deletedCount: 1 }
-        if (result.deletedCount <= 0) {
-          throw new IdNotFoundError();
-        }
-        deleteOneResult = result;
-        return this.onAfterDelete(userContext, queryObject);
-      })
-      .then((afterDeleteResult) => {
-        return deleteOneResult; // ignore the result of onAfter and return what the deleteOne call returned
-      });
+    return mongoUpdateResult;
   }
-
-//     find(orgId, mongoQueryObject, projection) {
-//         if (arguments.length < 2) { // need at least the first two
-//             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.find'));
-//         }
-//
-//         // Hardwire orgId into every query
-//         mongoQueryObject.orgId = orgId;
-//
-// //        let projection = {
-// //            skip: mongoQuery.skip,
-// //            limit: mongoQuery.limit,
-// //            fields: mongoQuery.projection,
-// //            sort: mongoQuery.sort
-// //        };
-//
-//         return this.collection.find(mongoQueryObject, projection)
-//           .then((docs) => {
-//               let friendlyDocs = [];
-//               _.forEach(docs, (doc) => {
-//                   this.useFriendlyId(doc);
-//                   friendlyDocs.push(doc);
-//               });
-//
-//               // allow derived classes to transform the result
-//               return this.transformList(friendlyDocs);
-//           });
-//     }
-//
-//     findOne(orgId, mongoQueryObject, projection) {
-//         if (arguments.length < 2) { // need at least the first two
-//             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.find'));
-//         }
-//
-//         // Hardwire orgId into every query
-//         mongoQueryObject.orgId = orgId;
-//
-//         return this.collection.findOne(mongoQueryObject, projection)
-//           .then((doc) => {
-//               this.useFriendlyId(doc);
-//
-//               // allow derived classes to transform the result
-//               return this.transformSingle(doc);
-//           });
-//     }
-//
-//     updateById(id: string, item: T): Promise<T> {
-//         if (arguments.length !== 3) {
-//             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateById'));
-//         }
-//         if (!this.isValidObjectId(id)) {
-//             return Promise.reject(new TypeError('id is not a valid ObjectId'));
-//         }
-//         let clone = _.clone(updatedDoc);
-//         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
-//         conversionService.convertISOStringDateTimesToMongoDates(clone);
-//
-//         let queryObject = { _id: new ObjectId(id), orgId: orgId };
-//         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-//         return this.onBeforeUpdate(orgId, clone)
-//           .then((result) => {
-//               return this.collection.update(queryObject, {$set: clone})
-//           })
-//           .then((mongoUpdateResult) => {
-//               let promise;
-//               if (mongoUpdateResult && mongoUpdateResult.nModified <= 0) {
-//                   // nothing was updated, don't call onAfterUpdate
-//                   promise = Promise.resolve(mongoUpdateResult);
-//               }
-//               else {
-//                   promise = this.onAfterUpdate(orgId, clone);
-//               }
-//               return promise;
-//           })
-//           .then((afterResult) => {
-//               if ('nModified' in afterResult) {
-//                   // we didn't call onAfterUpdate - we didn't update anything
-//                   return afterResult;
-//               }
-//               else {
-//                   clone.id = id; // add the friendly string id back to be returned
-//                   return clone; // ignore the result of onAfter and return what the original call returned
-//               }
-//           });
-//     }
-//
-//     // this is necessary for updating regenerate property to 0 without having BeforeUpdate set it to 1
-//     updateByIdWithoutCallingBeforeAndAfterUpdate(orgId, id, updatedDoc) {
-//         if (arguments.length !== 3) {
-//             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.updateById'));
-//         }
-//         if (!this.isValidObjectId(id)) {
-//             return Promise.reject(new TypeError('id is not a valid ObjectId'));
-//         }
-//         let clone = _.clone(updatedDoc);
-//         delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
-//         conversionService.convertISOStringDateTimesToMongoDates(clone);
-//
-//         let queryObject = { _id: new ObjectId(id), orgId: orgId };
-//         // $set causes mongo to only update the properties provided, without it, it will delete any properties not provided
-//         return this.collection.update(queryObject, {$set: clone})
-//     }
-//
-//     update(orgId, mongoQueryObject, updatedDoc) {
-//         if (arguments.length !== 3) {
-//             return Promise.reject(new Error('Incorrect number of arguments passed to GenericService.update'));
-//         }
-//         let clone = _.clone(updatedDoc);
-//         delete clone.id;
-//
-//         conversionService.convertISOStringDateTimesToMongoDates(clone);
-//
-//         mongoQueryObject.orgId = orgId;
-//
-//         return this.onBeforeUpdate(orgId, clone)
-//           .then((result) => {
-//               return this.collection.update(mongoQueryObject, {$set: clone});
-//           })
-//           .then((mongoUpdateResult) => {
-//               let promise;
-//               if (mongoUpdateResult && mongoUpdateResult.nModified <= 0) {
-//                   // nothing was updated, don't call onAfterUpdate
-//                   promise = Promise.resolve(mongoUpdateResult);
-//               }
-//               else {
-//                   promise = this.onAfterUpdate(orgId, clone);
-//               }
-//               return promise;
-//           })
-//           .then((afterResult) => {
-//               if ('nModified' in afterResult) {
-//                   // we didn't call onAfterUpdate - we didn't update anything
-//                   return afterResult;
-//               }
-//               else {
-//                   clone.id = id; // add the friendly string id back to be returned
-//                   return clone; // ignore the result of onAfter and return what the original call returned
-//               }
-//           });
-//     }
 
   // todo: Make Work!!! just started (about four years ago)
 //    updateBatch(orgId, updatedDocs) {
@@ -370,6 +157,55 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
 //        mongoQueryObject.orgId = orgId;
 //        return this.collection.update(mongoQueryObject, {$set: clone});
 //    }
+
+
+  async deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
+    if (!this.isValidObjectId(id)) {
+      throw new BadRequestError('id is not a valid ObjectId');
+    }
+
+    let queryObject = { _id: new ObjectId(id), orgId: userContext.orgId };
+
+    await this.onBeforeDelete(userContext, queryObject);
+    const deleteResult = await this.collection.deleteOne(queryObject);
+
+    // The deleteOne command returns the following:
+    // { acknowledged: true, deletedCount: 1 }
+    if (deleteResult.deletedCount <= 0) {
+      throw new IdNotFoundError();
+    }
+
+    await this.onAfterDelete(userContext, queryObject);
+
+    return deleteResult; // ignore the result of onAfter and return what the deleteOne call returned
+  }
+
+  async find(userContext: IUserContext, mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<T[]> {
+    // Hardwire orgId into every query
+    mongoQueryObject.orgId = userContext.orgId;
+
+    const cursor = this.collection.find(mongoQueryObject, options);
+    const entities = await cursor.toArray();
+    const friendlyEntities: any[] = [];
+    entities.forEach((entity) => {
+      this.useFriendlyId(entity);
+      friendlyEntities.push(entity);
+    });
+
+    // allow derived classes to transform the result
+    return this.transformList(friendlyEntities);
+  }
+
+  async findOne(userContext: IUserContext, mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<T> {
+    // Hardwire orgId into every query
+    mongoQueryObject.orgId = userContext.orgId;
+
+    const entity = await this.collection.findOne(mongoQueryObject, options);
+    this.useFriendlyId(entity);
+
+    // allow derived classes to transform the result
+    return this.transformSingle(entity);
+  }
 
   validate(doc: any): Joi.ValidationResult<any> {
     return {
@@ -399,7 +235,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     return result;
   }
 
-  auditForCreate(userContext: IUserContext, doc: IAuditable) {
+  auditForCreate(userContext: IUserContext | null, doc: IAuditable) {
     const now = moment().utc().toDate();
     // const userId = current.context && current.context.current && current.context.current.user ? current.context.user.email : 'system';
     const userId = userContext?.user?.id ?? 'system';

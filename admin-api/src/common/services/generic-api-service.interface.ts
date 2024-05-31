@@ -1,6 +1,6 @@
 import {IUserContext} from '../models/user-context.interface';
 import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
-import {DeleteResult, Document, UpdateResult} from 'mongodb';
+import {DeleteResult, Document, FindOptions, UpdateResult} from 'mongodb';
 
 export interface IGenericApiService<T extends IMultiTenantEntity> {
   getAll(userContext: IUserContext): Promise<T[]>;
@@ -10,4 +10,6 @@ export interface IGenericApiService<T extends IMultiTenantEntity> {
   updateByIdWithoutBeforeAndAfter(userContext: IUserContext, id: string, item: T): Promise<any>;
   update(userContext: IUserContext, queryObject: any, item: T): Promise<any>;
   deleteById(userContext: IUserContext, id: string): Promise<DeleteResult>;
+  find(userContext: IUserContext, mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<T[]>;
+  findOne(userContext: IUserContext, mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<T>;
 }

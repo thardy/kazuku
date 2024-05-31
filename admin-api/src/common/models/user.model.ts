@@ -10,6 +10,8 @@ export class IUser implements IAuditable, IMultiTenantEntity {
   email?: string;
   firstName?: string;
   lastName?: string;
+  displayName?: string;
+  lastLoggedIn?: Date;
   password?: string
   isMetaAdmin?: boolean;
   created?: Date;
@@ -21,10 +23,12 @@ export class IUser implements IAuditable, IMultiTenantEntity {
 export class User implements IUser {
   //_id?: ObjectId;
   id?: string;
-  orgId: string;
-  email: string;
+  orgId?: string;
+  email?: string;
   firstName?: string;
   lastName?: string;
+  displayName?: string;
+  lastLoggedIn?: Date;
   password?: string;
   isMetaAdmin?: boolean;
   created?: Date;
@@ -35,10 +39,12 @@ export class User implements IUser {
   constructor(options: IUser = {}) {
     //this._id = options._id ?? undefined;
     this.id = options.id ?? undefined;
-    this.orgId = options.orgId ?? '';
-    this.email = options.email ?? '';
+    this.orgId = options.orgId ?? undefined;
+    this.email = options.email ?? undefined;
     this.firstName = options.firstName ?? '';
     this.lastName = options.lastName ?? '';
+    this.displayName = options.displayName ?? '';
+    this.lastLoggedIn = options.lastLoggedIn ?? undefined;
     this.password = options.password ?? '';
     this.isMetaAdmin = options.isMetaAdmin || false;
   }
