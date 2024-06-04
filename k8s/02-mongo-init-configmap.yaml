@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-configmap
+data:
+  mongo-init.js: |
+    // mongo-init.js
+    //
+    //
+    // // ***** CustomData ****************************************
+    db.createCollection('customData', {});
+    db.customData.createIndex({ "orgId": 1, "contentType": 1 }, { unique: true });
+    db.customData.createIndex({ "orgId": 1, "contentType": 1, "_id": 1 }, { unique: true });
+
+
+    // // ***** CustomSchemas ****************************************
+    db.createCollection('customSchemas', {});
+    db.customSchemas.createIndex({ "orgId": 1, "contentType": 1 }, { unique: true });
+
+
+    // // ***** Templates ****************************************
+    db.createCollection('templates', {});
+    // Case-insensitive index
+    db.templates.createIndex({ "orgId": 1, "name": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});
+
+
+    // // ***** Pages ****************************************
+    // NOTE: We've decided against a Pages collection - pages will be represented by templates with a url property
+    
+    
+    // // ***** Queries ****************************************
+    db.createCollection('queries', {});
+    // Case-insensitive index
+    db.queries.createIndex({ "orgId": 1, "name": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});
+
+
+    // // ***** Organizations ****************************************
+    db.createCollection('organizations', {});
+    // Case-insensitive indexes
+    db.organizations.createIndex({ "name": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});
+    db.organizations.createIndex({ "code": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});
+
+
+    // // ***** Sites ****************************************
+    db.createCollection('sites', {});
+    // Case-insensitive index
+    db.sites.createIndex({ "orgId": 1, "code": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});
+
+
+    // // ***** Users ****************************************
+    db.createCollection('users', {});
+    // Case-insensitive index
+    db.users.createIndex({ "email": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});

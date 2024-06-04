@@ -14,7 +14,7 @@ export class SitesController extends ApiController<ISite> {
   }
 
   mapRoutes(app: Express) {
-    super.mapRoutes(app); // map the base CrudController routes
+    super.mapRoutes(app); // map the base ApiController routes
   }
 
 

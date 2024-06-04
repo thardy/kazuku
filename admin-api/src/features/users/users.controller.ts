@@ -15,6 +15,6 @@ export class UsersController extends ApiController<User> {
   }
 
   mapRoutes(app: Express) {
-    super.mapRoutes(app); // map the base CrudController routes
+    super.mapRoutes(app); // map the base ApiController routes
   }
 }

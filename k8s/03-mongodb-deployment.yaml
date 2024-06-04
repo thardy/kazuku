@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kazuku-mongodb
+  template:
+    metadata:
+      labels:
+        app: kazuku-mongodb
+    spec:
+      containers:
+        - name: kazuku-mongodb
+          image: mongo
+          env:
+            - name: MONGO_INITDB_DATABASE # .js files from the below dir will be executed by mongo using the database specified by MONGO_INITDB_DATABASE
+              value: kazuku
+          volumeMounts:
+            - name: mongo-init-volume
+              mountPath: /docker-entrypoint-initdb.d # when a container is started for the first time, it will execute files with
+                                                     #  a .js extension in the /docker-entrypoint-initdb.d directory
+      volumes:
+        - name: mongo-init-volume
+          configMap:
+            name: mongo-init-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kazuku-mongodb-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: kazuku-mongodb
+  ports:
+    - name: db-port
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

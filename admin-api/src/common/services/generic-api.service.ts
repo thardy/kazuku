@@ -22,10 +22,14 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     this.db = db;
     this.pluralResourceName = pluralResourceName;
     this.singularResourceName = singularResourceName;
+    console.log(`GenericApiService constructor - creating collection with pluralResourceName = ${pluralResourceName}`); // todo: delete me
     this.collection = db.collection(pluralResourceName);
   }
 
   async getAll(userContext: IUserContext): Promise<T[]> {
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.getAll');
+    }
     const cursor = this.collection.find({orgId: userContext.orgId});
     const entities = await cursor.toArray();
     const friendlyEntities: any[] = [];
@@ -41,6 +45,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.getById');
+    }
 
     const entity = await this.collection.findOne({_id: new ObjectId(id), orgId: userContext.orgId});
     this.useFriendlyId(entity);
@@ -49,9 +56,12 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async create(userContext: IUserContext, entity: T): Promise<T> {
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.create');
+    }
     entity.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
     const validationResult = this.validate(entity);
-    this.handleValidationResult(validationResult, 'GenericApiService.create');
+    this.handleValidationResult(validationResult, 'GenericApiService.create'); // throws on error
 
     try {
       const result = await this.onBeforeCreate(userContext, entity);
@@ -77,6 +87,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   async updateById(userContext: IUserContext, id: string, entity: T): Promise<any> {
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
+    }
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.updateById');
     }
 
     let clone = _.clone(entity);
@@ -105,6 +118,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.updateByIdWithoutBeforeAndAfter');
+    }
 
     let clone = _.clone(entity);
     delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
@@ -123,6 +139,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async update(userContext: IUserContext, queryObject: any, entity: T): Promise<any> {
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.update');
+    }
     let clone = _.clone(entity);
     delete clone.id;    // id is our friendly, server-only property (not in db). Mongo uses _id, and we don't want to add id to mongo
     clone.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
@@ -163,6 +182,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.deleteById');
+    }
 
     let queryObject = { _id: new ObjectId(id), orgId: userContext.orgId };
 
@@ -181,6 +203,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async find(userContext: IUserContext, mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<T[]> {
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.find');
+    }
     // Hardwire orgId into every query
     mongoQueryObject.orgId = userContext.orgId;
 
@@ -197,6 +222,9 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async findOne(userContext: IUserContext, mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<T> {
+    if (!userContext?.orgId) {
+      throw new BadRequestError('No userContext.orgId found in GenericApiService.findOne');
+    }
     // Hardwire orgId into every query
     mongoQueryObject.orgId = userContext.orgId;
 
@@ -235,7 +263,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     return result;
   }
 
-  auditForCreate(userContext: IUserContext | null, doc: IAuditable) {
+  auditForCreate(userContext: IUserContext | undefined, doc: IAuditable) {
     const now = moment().utc().toDate();
     // const userId = current.context && current.context.current && current.context.current.user ? current.context.user.email : 'system';
     const userId = userContext?.user?.id ?? 'system';
@@ -245,27 +273,27 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     doc.updatedBy = userId;
   }
 
-  auditForUpdate(userContext: IUserContext, doc: IAuditable) {
-    const userId = userContext.user?.id ?? 'system';
+  auditForUpdate(userContext: IUserContext | undefined, doc: IAuditable) {
+    const userId = userContext?.user?.id ?? 'system';
     doc.updated = moment().utc().toDate();
     doc.updatedBy = userId;
   }
 
-  onBeforeCreate(userContext: IUserContext, doc: any) {
+  onBeforeCreate(userContext: IUserContext | undefined, doc: any) {
     this.auditForCreate(userContext, doc);
     return Promise.resolve(doc);
   }
 
-  onAfterCreate(userContext: IUserContext, doc: any) {
+  onAfterCreate(userContext: IUserContext | undefined, doc: any) {
     return Promise.resolve(doc);
   }
 
-  onBeforeUpdate(userContext: IUserContext, doc: any) {
+  onBeforeUpdate(userContext: IUserContext | undefined, doc: any) {
     this.auditForUpdate(userContext, doc);
     return Promise.resolve(doc);
   }
 
-  onAfterUpdate(userContext: IUserContext, doc: any) {
+  onAfterUpdate(userContext: IUserContext | undefined, doc: any) {
     return Promise.resolve(doc);
   }
 

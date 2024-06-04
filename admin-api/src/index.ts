@@ -16,10 +16,7 @@ const startServer = async () => {
   console.log(`inside startServer - process.env.NODE_ENV = ${process.env.NODE_ENV} and process.env.KAZUKU_ENV = ${process.env.KAZUKU_ENV}`); // todo: delete me once we get env stuff working
 
   // ensure we have all required config values
-  // todo: add all required config values to this check
-  if (!config.clientSecret) {
-    throw new Error('config.clientSecret is not defined');
-  }
+  checkForRequiredConfigValues();
 
   try {
     console.log(`config.mongoDbUrl = ${config.mongoDbUrl}. config.databaseName = ${config.databaseName}`);
@@ -39,7 +36,14 @@ const startServer = async () => {
   });
 };
 
-// ***** Shutdown Cleanup *****
+const checkForRequiredConfigValues = () => {
+  // todo: add all required config values to this check
+  if (!config.clientSecret) {
+    throw new Error('config.clientSecret is not defined');
+  }
+}
+
+// ***** Shutdown Cleanup Begin *****
 const cleanup = (event: any) => {
   console.log(`kazuku-admin-api server stopping due to ${event} event. running cleanup...`);
   // clean stuff up here
@@ -54,5 +58,6 @@ const cleanup = (event: any) => {
 // SIGINT is sent for example when you Ctrl+C a running process from the command line.
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
+// ***** Shutdown Cleanup End *****
 
 startServer();

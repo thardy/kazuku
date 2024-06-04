@@ -42,12 +42,15 @@ export class AuthService extends GenericApiService<User> {
       const tokenResponse = new TokenResponse({ accessToken, refreshToken: refreshTokenObject.token, expiresOn: accessTokenExpiresOn });
 
       // we send the org back in the loginResponse
+      console.log(`about to call orgService.getOrgById(${userContext.orgId})`); // todo: delete me
       const org = await this.orgService.getOrgById(userContext.orgId);
+      console.log(`org: ${JSON.stringify(org)}`); // todo: delete me
 
       // todo: save new lastLoggedIn date (non-blocking) - use an event or async call that we don't wait for
       //this.authService.updateLastLoggedIn(user);
 
       loginResponse = new LoginResponse({ tokens: tokenResponse, userContext: { user: userContext.user, org } });
+      console.log(`loginResponse: ${JSON.stringify(loginResponse)}`); // todo: delete me
     }
 
     return loginResponse;
@@ -74,11 +77,11 @@ export class AuthService extends GenericApiService<User> {
       });
   }
 
-  async createUser(userContext: IUserContext, user: User): Promise<User | void> {
-    // I've decided you don't have to be logged-in to create a user - we'll need to vette exactly what you do need based on the scenario.
-    //  How do users get created? I'm thinking they have to be tied to an org, and if the org is sending us a new user to create, we create it.
-    //  We just need to think about and handle the scenario where someone is logged in and creating other users (do we? - is that a thing?)
-    // user.orgId = userContext.orgId;
+  async createUser(userContext: IUserContext | undefined, user: User): Promise<User | void> {
+    // You currently don't have to be logged-in to create a user - we'll need to vette exactly what you do need based on the scenario.
+    // todo: validate that the user.orgId exists - think through the whole user creation process
+    //  I think a user either has to be created by someone with the authorization to do so, or they need to be
+    //  joining an org that has open registration, or else they have some sort of invite to join an org.
 
     const validationResult = this.validate(user);
     this.handleValidationResult(validationResult, 'AuthService.createUser');

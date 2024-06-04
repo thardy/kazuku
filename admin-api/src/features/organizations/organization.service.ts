@@ -10,16 +10,19 @@ import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
 import {ISite, Site} from '@features/sites/site.model';
 import {IdNotFoundError} from '@common/errors/id-not-found.error';
 
-// Implementing as a Singleton to cache all orgs in memory. We also override almost everything because
-//  organizations are the one entity that doesn't use orgIds to manage multi-tenancy. I'm sure it's
-//  possible to refactor out the multi-tenant stuff from GenericApiService and reuse much more here, so
-//  feel free to do so if it can be done cleanly without impact to other services.
+/**
+ * This class is implemented as a Singleton to cache all organizations in memory.
+ * It overrides almost everything because organizations are the one entity that doesn't use orgIds to manage multi-tenancy.
+ * It's possible to refactor out the multi-tenant stuff from GenericApiService and reuse much more here,
+ * so feel free to do so if it can be done cleanly without impact to other services.
+ */
 export class OrganizationService extends GenericApiService<IOrganization> {
   private static instance: OrganizationService;
+  // todo: once we start having thousands of orgs, research using a separate cache mechanism instead of an in-memory cache.
   private orgCache: IOrganization[];
 
   private constructor(db: Db) {
-    super(db, 'organization', 'organizations');
+    super(db, 'organizations', 'organization');
 
     // we will cache all orgs here because we use orgs in a lot of low-level code (e.g. every incoming content-api request!!!)
     this.orgCache = [];
@@ -41,7 +44,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     return this.instance;
   }
 
-  async getAll() {
+  override async getAll() {
     const cursor = this.collection.find({});
     const entities = await cursor.toArray();
     let friendlyEntities: any[] = [];
@@ -54,7 +57,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
   }
 
   // Typescript won't allow an overload that takes one argument instead of two, so we
-  //  have to use a unique method name instead of getById.
+  //  have to use unique method names.
   async getOrgById(id: string){
     let entity;
 
@@ -62,11 +65,14 @@ export class OrganizationService extends GenericApiService<IOrganization> {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
+    console.log(`orgCache: ${JSON.stringify(this.orgCache)}`); // todo: delete me
     if (config.cache.orgCache && this.orgCache?.length > 0) {
       entity = _.find(this.orgCache, {id: id});
     }
     else {
+      console.log(`calling collection.findOne id = ${id}`); // todo: delete me
       entity = await this.collection.findOne({_id: new ObjectId(id)});
+      console.log(`entity: ${JSON.stringify(entity)}`); // todo: delete me
       this.useFriendlyId(entity);
     }
 
@@ -74,37 +80,10 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     return this.transformSingle(entity);
   }
 
-  async getByName(name: string) {
-    let entity;
-
-    if (config.cache.orgCache && this.orgCache?.length > 0) {
-      entity = _.find(this.orgCache, {name: name});
-    }
-    else {
-      entity = await this.collection.findOne({name: name})
-      this.useFriendlyId(entity);
-    }
-
-    return entity;
-  }
-
-  async getByCode(code: string) {
-    let entity;
-
-    if (config.cache.orgCache && this.orgCache?.length > 0) {
-      entity = _.find(this.orgCache, {code: code});
-    }
-    else {
-      entity = await this.collection.findOne({code: code})
-      this.useFriendlyId(entity);
-    }
-
-    return entity;
-  }
-
   async findOne(mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<IOrganization> {
     let entity;
-    if (config.cache.orgCache && this.orgCache && this.orgCache.length > 0) {
+
+    if (config.cache.orgCache && this.orgCache?.length > 0) {
       entity = _.find(this.orgCache, mongoQueryObject);
     }
     else {
@@ -116,7 +95,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     return this.transformSingle(entity);
   }
 
-  async create(userContext: IUserContext, entity: IOrganization): Promise<IOrganization> {
+  override async create(userContext: IUserContext, entity: IOrganization): Promise<IOrganization> {
     const validationResult = this.validate(entity);
     this.handleValidationResult(validationResult, 'OrganizationService.create');
 
@@ -142,7 +121,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     }
   }
 
-  async updateById(userContext: IUserContext, id: string, entity: IOrganization): Promise<any> {
+  override async updateById(userContext: IUserContext, id: string, entity: IOrganization): Promise<any> {
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
@@ -167,7 +146,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     return mongoUpdateResult;
   }
 
-  async deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
+  override async deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
     if (!this.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
