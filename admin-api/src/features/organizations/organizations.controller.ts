@@ -21,10 +21,8 @@ export class OrganizationsController extends ApiController<IOrganization> {
   override mapRoutes(app: Express) {
     super.mapRoutes(app); // map the base ApiController routes
 
-    // todo: add isAuthenticated middleware to these routes!
-    app.get(`/api/${this.resourceName}/getbyname/:name`, this.getByName.bind(this));
-    app.get(`/api/${this.resourceName}/getbycode/:code`, this.getByCode.bind(this));
-
+    app.get(`/api/${this.resourceName}/getbyname/:name`, isAuthenticated, this.getByName.bind(this));
+    app.get(`/api/${this.resourceName}/getbycode/:code`, isAuthenticated, this.getByCode.bind(this));
   }
 
   override async getAll(req: Request, res: Response, next: NextFunction) {

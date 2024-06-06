@@ -9,6 +9,7 @@ import {IUserContext} from '@common/models/user-context.interface';
 import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
 import {ISite, Site} from '@features/sites/site.model';
 import {IdNotFoundError} from '@common/errors/id-not-found.error';
+import entityUtils from '@common/utils/entity.utils';
 
 /**
  * This class is implemented as a Singleton to cache all organizations in memory.
@@ -49,7 +50,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     const entities = await cursor.toArray();
     let friendlyEntities: any[] = [];
     entities.forEach((entity) => {
-      this.useFriendlyId(entity);
+      entityUtils.useFriendlyId(entity);
       friendlyEntities.push(entity);
     });
     // allow derived classes to transform the result
@@ -61,7 +62,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
   async getOrgById(id: string){
     let entity;
 
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
@@ -73,7 +74,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
       console.log(`calling collection.findOne id = ${id}`); // todo: delete me
       entity = await this.collection.findOne({_id: new ObjectId(id)});
       console.log(`entity: ${JSON.stringify(entity)}`); // todo: delete me
-      this.useFriendlyId(entity);
+      entityUtils.useFriendlyId(entity);
     }
 
     // allow derived classes to transform the result
@@ -88,16 +89,17 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     }
     else {
       entity = await this.collection.findOne(mongoQueryObject, options);
-      this.useFriendlyId(entity);
+      entityUtils.useFriendlyId(entity);
     }
 
     // allow derived classes to transform the result
     return this.transformSingle(entity);
   }
 
-  override async create(userContext: IUserContext, entity: IOrganization): Promise<IOrganization> {
+  override async create(userContext: IUserContext | undefined, entity: IOrganization): Promise<IOrganization> {
+    // this is one of the few api functions that does not require a userContext (to handle scenarios like initialSetup)
     const validationResult = this.validate(entity);
-    this.handleValidationResult(validationResult, 'OrganizationService.create');
+    entityUtils.handleValidationResult(validationResult, 'OrganizationService.create');
 
     try {
       const result = await this.onBeforeCreate(userContext, entity);
@@ -106,7 +108,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
       if (insertResult.insertedId) { // presence of an insertedId means the insert was successful
         this.orgCache.push(entity);
         // mongoDb mutates the entity passed into insertOne to have an _id property - we remove it in transformSingle
-        this.useFriendlyId(entity);
+        entityUtils.useFriendlyId(entity);
         this.transformSingle(entity);
       }
       const afterCreateResult = await this.onAfterCreate(userContext, entity);
@@ -122,7 +124,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
   }
 
   override async updateById(userContext: IUserContext, id: string, entity: IOrganization): Promise<any> {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
@@ -147,7 +149,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
   }
 
   override async deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 

@@ -10,6 +10,7 @@ import {BadRequestError} from '@common/errors/bad-request.error';
 import {isAuthenticated} from '@server/middleware/is-authenticated';
 import {OrganizationService} from '@features/organizations/organization.service';
 import {UnauthorizedError} from '@common/errors/unauthorized.error';
+import passwordUtils from '@common/utils/password.utils';
 
 // todo: seriously consider not extending ApiController because we don't really use it
 export class AuthController extends ApiController<User> {
@@ -43,7 +44,7 @@ export class AuthController extends ApiController<User> {
       throw new BadRequestError('Invalid Credentials');
     }
 
-    const passwordsMatch = await this.authService.comparePasswords(user.password!, password);
+    const passwordsMatch = await passwordUtils.comparePasswords(user.password!, password);
     if (!passwordsMatch) {
       throw new BadRequestError('Invalid Credentials');
     }

@@ -43,7 +43,7 @@ const checkForRequiredConfigValues = () => {
   }
 }
 
-// ***** Shutdown Cleanup Begin *****
+// ******** Shutdown Cleanup Begin ********
 const cleanup = (event: any) => {
   console.log(`kazuku-admin-api server stopping due to ${event} event. running cleanup...`);
   // clean stuff up here
@@ -58,6 +58,7 @@ const cleanup = (event: any) => {
 // SIGINT is sent for example when you Ctrl+C a running process from the command line.
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
-// ***** Shutdown Cleanup End *****
+// ******** Shutdown Cleanup End ********
+
 
 startServer();

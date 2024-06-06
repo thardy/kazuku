@@ -1,10 +1,8 @@
 import {Db, InsertOneResult, AnyError, ObjectId, Collection} from 'mongodb';
-import {scrypt, randomBytes} from 'crypto';
-import {promisify} from 'util';
-import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import {Request, Response} from 'express';
 import moment from 'moment';
+import crypto from 'crypto';
 
 import {GenericApiService} from '@common/services/generic-api.service';
 import conversionUtils from '@common/utils/conversion.utils';
@@ -16,8 +14,8 @@ import {LoginResponse} from '@common/models/login-response.model';
 import {TokenResponse} from '@common/models/token-response.model';
 import config from '@server/config';
 import {OrganizationService} from '@features/organizations/organization.service';
-
-const scryptAsync = promisify(scrypt);
+import entityUtils from '@common/utils/entity.utils';
+import passwordUtils from '@common/utils/password.utils';
 
 export class AuthService extends GenericApiService<User> {
   private refreshTokensCollection: Collection;
@@ -57,13 +55,13 @@ export class AuthService extends GenericApiService<User> {
   }
 
   getUserById(id: string) {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       return Promise.reject(new TypeError('id is not a valid ObjectId'));
     }
 
     return this.collection.findOne({_id: new ObjectId(id)})
       .then((doc) => {
-        this.useFriendlyId(doc);
+        entityUtils.useFriendlyId(doc);
         console.log(`getUserById returned ${JSON.stringify(doc)}\n`); // todo: delete me
         return doc;
       });
@@ -72,23 +70,24 @@ export class AuthService extends GenericApiService<User> {
   getUserByEmail(email: string): Promise<IUser> {
     return this.collection.findOne({email: email})
       .then((user: any) => {
-        this.useFriendlyId(user);
+        entityUtils.useFriendlyId(user);
         return user;
       });
   }
 
-  async createUser(userContext: IUserContext | undefined, user: User): Promise<User | void> {
+  async createUser(userContext: IUserContext | undefined, user: User): Promise<User> {
     // You currently don't have to be logged-in to create a user - we'll need to vette exactly what you do need based on the scenario.
     // todo: validate that the user.orgId exists - think through the whole user creation process
     //  I think a user either has to be created by someone with the authorization to do so, or they need to be
-    //  joining an org that has open registration, or else they have some sort of invite to join an org.
+    //  joining an org that has open registration, or else they have some sort of invite to join an org,
+    //  or initialSetup is occurring.
 
     const validationResult = this.validate(user);
-    this.handleValidationResult(validationResult, 'AuthService.createUser');
+    entityUtils.handleValidationResult(validationResult, 'AuthService.createUser');
 
     conversionUtils.convertISOStringDateTimesToJSDates(user);
 
-    const hash = await this.hashPassword(user.password!);
+    const hash = await passwordUtils.hashPassword(user.password!);
     user.password = hash;
 
     await this.onBeforeCreate(userContext, user);
@@ -97,7 +96,7 @@ export class AuthService extends GenericApiService<User> {
       const insertResult = await this.collection.insertOne(user);
 
       if (insertResult.insertedId) {
-        this.useFriendlyId(user);
+        entityUtils.useFriendlyId(user);
         this.transformSingle(user);
       }
     }
@@ -150,7 +149,7 @@ export class AuthService extends GenericApiService<User> {
     }
 
     //  return the new refreshToken and accessToken in a tokenResponse (just like we did in login)
-    let tokenResponse = null;
+    let tokenResponse = undefined;
     if (user && createdRefreshTokenObject) {
       // todo: there's a really good chance this will introduce a bug where selectedOrgContext is lost when using refreshToken
       //  to get a new accessToken because we are hard-coding it to the user's org right here.
@@ -264,20 +263,6 @@ export class AuthService extends GenericApiService<User> {
   getExpiresOnFromDays(expiresInDays: number) {
     // exactly when the token expires (in milliseconds since Jan 1, 1970 UTC)
     return Date.now() + expiresInDays * 24 * 60 * 60 * 1000
-  }
-
-  async hashPassword(password: string): Promise<string> {
-    const salt = randomBytes(8).toString('hex');
-    const buf = (await scryptAsync(password, salt, 64)) as Buffer;
-
-    return `${buf.toString('hex')}.${salt}`;
-  }
-
-  async comparePasswords(storedPassword: string, suppliedPassword: string): Promise<boolean> {
-    const [hashedPassword, salt] = storedPassword.split('.');
-    const buf = (await scryptAsync(suppliedPassword, salt, 64)) as Buffer;
-
-    return buf.toString('hex') === hashedPassword;
   }
 
   cleanUser(user: User) {

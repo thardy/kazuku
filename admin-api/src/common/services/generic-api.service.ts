@@ -11,6 +11,7 @@ import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
 import {BadRequestError} from '@common/errors/bad-request.error';
 import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
 import {IdNotFoundError} from '@common/errors/id-not-found.error';
+import entityUtils from '@common/utils/entity.utils';
 
 export class GenericApiService<T extends IMultiTenantEntity> implements IGenericApiService<T> {
   protected db: Db;
@@ -22,7 +23,6 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     this.db = db;
     this.pluralResourceName = pluralResourceName;
     this.singularResourceName = singularResourceName;
-    console.log(`GenericApiService constructor - creating collection with pluralResourceName = ${pluralResourceName}`); // todo: delete me
     this.collection = db.collection(pluralResourceName);
   }
 
@@ -34,7 +34,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     const entities = await cursor.toArray();
     const friendlyEntities: any[] = [];
     entities.forEach((entity) => {
-      this.useFriendlyId(entity);
+      entityUtils.useFriendlyId(entity);
       friendlyEntities.push(entity);
     });
     // allow derived classes to transform the result
@@ -42,7 +42,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async getById(userContext: IUserContext, id: string): Promise<T> {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
     if (!userContext?.orgId) {
@@ -50,7 +50,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     }
 
     const entity = await this.collection.findOne({_id: new ObjectId(id), orgId: userContext.orgId});
-    this.useFriendlyId(entity);
+    entityUtils.useFriendlyId(entity);
     // allow derived classes to transform the result
     return this.transformSingle(entity);
   }
@@ -61,7 +61,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     }
     entity.orgId = userContext.orgId; // this is an important step - we force orgId to be the orgId of the logged-in user
     const validationResult = this.validate(entity);
-    this.handleValidationResult(validationResult, 'GenericApiService.create'); // throws on error
+    entityUtils.handleValidationResult(validationResult, 'GenericApiService.create'); // throws on error
 
     try {
       const result = await this.onBeforeCreate(userContext, entity);
@@ -69,7 +69,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
       console.log(`insertResult: ${JSON.stringify(insertResult)}`); // todo: delete me
       if (insertResult.insertedId) {
         // mongoDb mutates the entity passed into insertOne to have an _id property - we remove it in transformSingle
-        this.useFriendlyId(entity);
+        entityUtils.useFriendlyId(entity);
         this.transformSingle(entity);
       }
       const afterCreateResult = await this.onAfterCreate(userContext, entity);
@@ -85,7 +85,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async updateById(userContext: IUserContext, id: string, entity: T): Promise<any> {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
     if (!userContext?.orgId) {
@@ -115,7 +115,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   async updateByIdWithoutBeforeAndAfter(userContext: IUserContext, id: string, entity: T): Promise<any> {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
     if (!userContext?.orgId) {
@@ -179,7 +179,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
 
 
   async deleteById(userContext: IUserContext, id: string): Promise<DeleteResult> {
-    if (!this.isValidObjectId(id)) {
+    if (!entityUtils.isValidObjectId(id)) {
       throw new BadRequestError('id is not a valid ObjectId');
     }
     if (!userContext?.orgId) {
@@ -213,7 +213,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     const entities = await cursor.toArray();
     const friendlyEntities: any[] = [];
     entities.forEach((entity) => {
-      this.useFriendlyId(entity);
+      entityUtils.useFriendlyId(entity);
       friendlyEntities.push(entity);
     });
 
@@ -229,7 +229,7 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
     mongoQueryObject.orgId = userContext.orgId;
 
     const entity = await this.collection.findOne(mongoQueryObject, options);
-    this.useFriendlyId(entity);
+    entityUtils.useFriendlyId(entity);
 
     // allow derived classes to transform the result
     return this.transformSingle(entity);
@@ -240,27 +240,6 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
       error: undefined,
       value: undefined
     };
-  }
-
-  handleValidationResult(validationResult: Joi.ValidationResult, methodName: string): void {
-    if (validationResult?.error) {
-      console.log(`validation error in ${methodName} - ${JSON.stringify(validationResult)}`);
-      throw new ValidationError(validationResult.error);
-    }
-  }
-
-  useFriendlyId(doc: any) {
-    if (doc && doc._id) {
-      doc.id = doc._id.toHexString();
-    }
-  }
-
-  isValidObjectId(id: any) {
-    let result = false;
-    if (typeof id === 'string' || id instanceof String) {
-      result = id.match(/^[0-9a-fA-F]{24}$/) ? true : false;
-    }
-    return result;
   }
 
   auditForCreate(userContext: IUserContext | undefined, doc: IAuditable) {
