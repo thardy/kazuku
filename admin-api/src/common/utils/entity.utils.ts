@@ -14,6 +14,12 @@ function useFriendlyId(doc: any) {
   }
 }
 
+function removeMongoId(doc: any) {
+  if (doc && doc._id) {
+    delete doc._id;
+  }
+}
+
 function isValidObjectId(id: any) {
   let result = false;
   if (typeof id === 'string' || id instanceof String) {
@@ -25,5 +31,6 @@ function isValidObjectId(id: any) {
 export default {
   handleValidationResult,
   useFriendlyId,
+  removeMongoId,
   isValidObjectId
 };

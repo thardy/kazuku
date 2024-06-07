@@ -32,7 +32,8 @@
       "^#features/(.*)$": "<rootDir>/src/features/$1",
       "^#server/(.*)$": "<rootDir>/src/server/$1",
       "^#test/(.*)$": "<rootDir>/src/test/$1"
-    }
+    },
+    "modulePathIgnorePatterns": ["<rootDir>/dist/"]
   },
   "dependencies": {
     "@types/express": "^4.17.21",

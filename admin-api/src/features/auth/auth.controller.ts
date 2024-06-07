@@ -3,7 +3,7 @@ import {Express, Request, Response, NextFunction} from 'express';
 import { ApiController } from '#common/controllers/api.controller';
 import { AuthService } from './auth.service';
 import {IUser, User} from '#common/models/user.model';
-import database from '#server/database/database';
+// import database from '#server/database/database';
 import {IUserContext} from '#common/models/user-context.interface';
 import config from '#server/config/config';
 import {BadRequestError} from '#common/errors/bad-request.error';
@@ -11,17 +11,18 @@ import {isAuthenticated} from '#server/middleware/is-authenticated';
 import {OrganizationService} from '#features/organizations/organization.service';
 import {UnauthorizedError} from '#common/errors/unauthorized.error';
 import passwordUtils from '#common/utils/password.utils';
+import {Db} from 'mongodb';
 
 // todo: seriously consider not extending ApiController because we don't really use it
 export class AuthController extends ApiController<User> {
   authService: AuthService;
   private orgService: OrganizationService;
 
-  constructor(app: Express) {
-    const authService = new AuthService(database.db!);
+  constructor(app: Express, db: Db) {
+    const authService = new AuthService(db);
     super('auth', app, authService);
 
-    this.orgService = OrganizationService.getInstance(database.db!);
+    this.orgService = OrganizationService.getInstance(db);
     this.authService = authService;
   }
 
@@ -57,7 +58,6 @@ export class AuthController extends ApiController<User> {
   }
 
   async registerUser(req: Request, res: Response) {
-    console.log('in registerUser');
     const userContext = req.userContext;
     const body = req.body;
 

@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import config from '#server/config/config';
 import passwordUtils from '#common/utils/password.utils';
+import entityUtils from '#common/utils/entity.utils';
 
 let collections: any = {};
 
@@ -209,10 +210,10 @@ async function setupTestUsers() {
 async function createTestOrgs() {
   try {
     const [newOrgs] = await Promise.all([
-      collections.organizations.insert(testOrg1)
+      collections.organizations.insertOne(testOrg1)
     ]);
     testUtils.existingOrgs = newOrgs;
-    _.forEach(testUtils.existingOrgs, (item) => {
+    _.forEach(testUtils.existingOrgs, (item: any) => {
       item.id = item._id.toHexString();
     });
     return newOrgs;
@@ -229,14 +230,18 @@ async function createTestUsers() {
     const hashedAndSaltedPassword = passwordUtils.hashPassword(password);
     newUser1.password = hashedAndSaltedPassword;
 
-    const [newUsers] = await Promise.all([
-      collections.users.insert(newUser1),
+    const [insertResult] = await Promise.all([
+      collections.users.insertOne(newUser1),
     ]);
-    testUtils.existingUsers = newUsers;
-    _.forEach(testUtils.existingUsers, (item) => {
-      item.id = item._id.toHexString();
-    });
-    return newUsers;
+    testUtils.existingUsers = [newUser1];
+
+    if (insertResult.insertedId) {
+      _.forEach(testUtils.existingUsers, (item: any) => {
+        entityUtils.useFriendlyId(item);
+        entityUtils.removeMongoId(item);
+      });
+    }
+    return testUtils.existingUsers;
   }
   catch (error: any) {
     console.log(error);
@@ -246,8 +251,8 @@ async function createTestUsers() {
 
 // function createSchemaForQueryTests() {
 //   return Promise.all([
-//       database.customSchemas.insert(categorySchema),
-//       database.customSchemas.insert(productSchema),
+//       database.customSchemas.insertOne(categorySchema),
+//       database.customSchemas.insertOne(productSchema),
 //     ])
 //     .then((schemas) => {
 //       testHelper.existingSchemas = schemas;
@@ -266,9 +271,9 @@ async function createTestUsers() {
 // function createTestProducts() {
 //   //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
 //   return Promise.all([
-//       database.customData.insert(newProduct1),
-//       database.customData.insert(newProduct2),
-//       database.customData.insert(newProduct3)
+//       database.customData.insertOne(newProduct1),
+//       database.customData.insertOne(newProduct2),
+//       database.customData.insertOne(newProduct3)
 //     ])
 //     .then(function(docs) {
 //       testHelper.existingProducts = docs;
@@ -285,7 +290,7 @@ async function createTestUsers() {
 
 // function createTestSites() {
 //   return Promise.all([
-//       collections.sites.insert(testSite1)
+//       collections.sites.insertOne(testSite1)
 //     ])
 //     .then((docs) => {
 //       testHelper.existingSites = docs;
@@ -303,8 +308,8 @@ async function createTestUsers() {
 // function createDifferentTestProducts() {
 //   //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
 //   return Promise.all([
-//       collections.customData.insert(differentProduct1),
-//       collections.customData.insert(differentProduct2),
+//       collections.customData.insertOne(differentProduct1),
+//       collections.customData.insertOne(differentProduct2),
 //     ])
 //     .then(function(docs) {
 //       testHelper.existingDifferentProducts = docs;
@@ -322,8 +327,8 @@ async function createTestUsers() {
 // function createTestSchemas() {
 //   //var now = moment().format('MMMM Do YYYY, h:mm:ss a');
 //   return Promise.all([
-//       collections.customSchemas.insert(newSchema1),
-//       collections.customSchemas.insert(newSchema2)
+//       collections.customSchemas.insertOne(newSchema1),
+//       collections.customSchemas.insertOne(newSchema2)
 //     ])
 //     .then(function(docs) {
 //       testHelper.existingSchemas = docs;
@@ -339,37 +344,36 @@ async function createTestUsers() {
 // }
 
 function deleteAllTestOrgs() {
-  return collections.organizations.remove({_id: new ObjectId(testOrgId)});
+  return collections.organizations.deleteMany({_id: new ObjectId(testOrgId)});
 }
 
 function deleteAllTestUsers() {
-  return collections.users.remove({orgId: testOrgId});
+  return collections.users.deleteMany({orgId: testOrgId});
 }
 
 // function deleteAllTestSites() {
-//   return collections.sites.remove({orgId: testOrgId});
+//   return collections.sites.deleteMany({orgId: testOrgId});
 // }
 //
 // function deleteAllTestCustomData() {
-//   return collections.customData.remove({orgId: testOrgId});
+//   return collections.customData.deleteMany({orgId: testOrgId});
 // }
 //
 // function deleteAllTestProducts() {
-//   return collections.customData.remove({orgId: testOrgId, contentType: testProductsContentType});
+//   return collections.customData.deleteMany({orgId: testOrgId, contentType: testProductsContentType});
 // }
 //
 // function deleteAllDifferentTestProducts() {
-//   return collections.customData.remove({orgId: testOrgId, contentType: differentTestProductsContentType});
+//   return collections.customData.deleteMany({orgId: testOrgId, contentType: differentTestProductsContentType});
 // }
 //
 // function deleteAllTestCustomSchemas() {
-//   return collections.customSchemas.remove({orgId: testOrgId});
+//   return collections.customSchemas.deleteMany({orgId: testOrgId});
 // }
 
 
 
 const testUtils = {
-  apiUrl: 'http://kazuku.local',
   testOrgId: testOrgId,
   testUserEmail: 'imatest@test.com',
   testUserId: testUserId,
@@ -391,6 +395,7 @@ const testUtils = {
   existingUsers: [] as any[],
   existingOrgs: [] as any[],
   existingSites: [],
+  initialize,
   setupTestOrgs,
   setupTestUsers,
   createTestUsers,

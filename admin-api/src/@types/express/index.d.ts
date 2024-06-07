@@ -4,7 +4,7 @@ declare global{
   namespace Express {
     interface Request {
       userContext?: IUserContext,
-      jwt?: string
+      //jwt?: string
     }
   }
 }

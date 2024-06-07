@@ -1,9 +1,9 @@
 import {ApiController} from '#common/controllers/api.controller';
 import {Express, NextFunction, Request, Response} from 'express';
-import database from '#server/database/database';
 import {IOrganization} from '#common/models/organization.model';
 import {OrganizationService} from '#features/organizations/organization.service';
 import {isAuthenticated} from '#server/middleware/is-authenticated';
+import {Db} from 'mongodb';
 
 /**
  * OrganizationsController is unique, just like its service, because Organizations are not multi-tenant
@@ -12,8 +12,8 @@ import {isAuthenticated} from '#server/middleware/is-authenticated';
 export class OrganizationsController extends ApiController<IOrganization> {
   orgService: OrganizationService;
 
-  constructor(app: Express) {
-    const orgService = OrganizationService.getInstance(database.db!);
+  constructor(app: Express, db: Db) {
+    const orgService = OrganizationService.getInstance(db);
     super('organizations', app, orgService);
     this.orgService = orgService;
   }

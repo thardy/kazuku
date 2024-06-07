@@ -285,19 +285,13 @@ export class GenericApiService<T extends IMultiTenantEntity> implements IGeneric
   }
 
   transformList(list: any[]) {
-    list.forEach((doc) => this.removeMongoId(doc));
+    list.forEach((doc) => entityUtils.removeMongoId(doc));
     return list;
   }
 
   transformSingle(single: any) {
-    this.removeMongoId(single);
+    entityUtils.removeMongoId(single);
     return single;
-  }
-
-  private removeMongoId(doc: any) {
-    if (doc && doc._id) {
-      delete doc._id;
-    }
   }
 
 }

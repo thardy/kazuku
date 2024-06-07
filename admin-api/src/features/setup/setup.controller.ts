@@ -1,9 +1,9 @@
 import {Express, NextFunction, Request, Response} from 'express';
 import {IGenericApiService} from '#common/services/generic-api-service.interface';
-import database from '#server/database/database';
 import {OrganizationService} from '#features/organizations/organization.service';
 import {AuthService} from '#features/auth/auth.service';
 import {SetupService} from '#features/setup/setup.service';
+import {Db} from 'mongodb';
 
 export class SetupController {
   protected app: Express;
@@ -11,11 +11,11 @@ export class SetupController {
   protected orgService: OrganizationService;
   protected authService: AuthService;
 
-  constructor(app: Express) {
+  constructor(app: Express, db: Db) {
     this.app = app;
-    this.setupService = new SetupService(database.db!);
-    this.orgService = OrganizationService.getInstance(database.db!);
-    this.authService = new AuthService(database.db!);
+    this.setupService = new SetupService(db);
+    this.orgService = OrganizationService.getInstance(db);
+    this.authService = new AuthService(db);
 
     this.mapRoutes(app);
   }

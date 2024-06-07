@@ -1,14 +1,14 @@
 import {Express} from 'express';
 import {ApiController} from '#common/controllers/api.controller';
 import {SiteService} from './site.service';
-import database from '#server/database/database';
 import {ISite} from '#features/sites/site.model';
+import {Db} from 'mongodb';
 
 export class SitesController extends ApiController<ISite> {
   siteService: SiteService;
 
-  constructor(app: Express) {
-    const siteService = new SiteService(database.db!);
+  constructor(app: Express, db: Db) {
+    const siteService = new SiteService(db);
     super('sites', app, siteService);
     this.siteService = siteService;
   }

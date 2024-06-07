@@ -3,6 +3,20 @@ import { app } from '#root/app';
 import testUtils from '#test/test.utils';
 
 describe('auth.controller', () => {
+  beforeAll(async () => {
+    await testUtils.setupTestUsers();
+  });
+
+  afterAll(async () => {
+    await testUtils.deleteAllTestUsers()
+  });
+
+  // it('/api/setup/setup-state should return a 200', async () => {
+  //   return request(app)
+  //     .get('/api/setup/setup-state')
+  //     .expect(200);
+  // });
+
   it('/auth/register should return a 201 on successful register', async () => {
     const newUser = {
       orgId: testUtils.testOrgId,

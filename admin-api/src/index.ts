@@ -12,19 +12,23 @@ const startServer = async () => {
   try {
     console.log(`config.mongoDbUrl = ${config.mongoDbUrl}. config.databaseName = ${config.databaseName}`);
     await database.connect(config.mongoDbUrl, config.databaseName);
-    //await database.connect('mongodb://kazuku-mongodb-svc:27017', 'kazuku');
 
     // we need db to be ready before setting up express - all the controllers need it when they get instantiated
-    setupExpress();
+    setupExpress(database.db!);
   }
   catch(err) {
     console.error(err);
   }
 
-  app.listen(3000, () => {
-    //console.log('kazuku-admin-api listening on port 3000!');
-    console.log(`kazuku-admin-api listening on port ${config.port} (${config.env})`);
-  });
+  if (database.db) {
+    app.listen(3000, () => {
+      //console.log('kazuku-admin-api listening on port 3000!');
+      console.log(`kazuku-admin-api listening on port ${config.port} (${config.env})`);
+    });
+  }
+  else {
+    cleanup('DATABASE_CONNECTION_ERROR');
+  }
 };
 
 const checkForRequiredConfigValues = () => {
