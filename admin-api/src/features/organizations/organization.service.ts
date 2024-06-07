@@ -165,7 +165,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     }
 
     // remove from orgCache if delete was successful
-    _.remove(this.orgCache, (org) => org.id === id);
+    _.remove(this.orgCache, (org: any) => org.id === id);
 
     await this.onAfterDelete(userContext, queryObject);
 

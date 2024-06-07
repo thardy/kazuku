@@ -8,7 +8,7 @@ let mongoClient: MongoClient;
 console.log('inside setup.ts');
 
 beforeAll(async () => {
-  const mongo = await  MongoMemoryServer.create();
+  mongo = await  MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
 
   // connect mongodb driver to the in-memory database
