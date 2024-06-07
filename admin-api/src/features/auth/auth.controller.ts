@@ -1,16 +1,16 @@
 import {Express, Request, Response, NextFunction} from 'express';
 
-import { ApiController } from '@common/controllers/api.controller';
+import { ApiController } from '#common/controllers/api.controller';
 import { AuthService } from './auth.service';
-import {IUser, User} from '@common/models/user.model';
-import database from '@server/database/database';
-import {IUserContext} from '@common/models/user-context.interface';
-import config from '@server/config';
-import {BadRequestError} from '@common/errors/bad-request.error';
-import {isAuthenticated} from '@server/middleware/is-authenticated';
-import {OrganizationService} from '@features/organizations/organization.service';
-import {UnauthorizedError} from '@common/errors/unauthorized.error';
-import passwordUtils from '@common/utils/password.utils';
+import {IUser, User} from '#common/models/user.model';
+import database from '#server/database/database';
+import {IUserContext} from '#common/models/user-context.interface';
+import config from '#server/config/config';
+import {BadRequestError} from '#common/errors/bad-request.error';
+import {isAuthenticated} from '#server/middleware/is-authenticated';
+import {OrganizationService} from '#features/organizations/organization.service';
+import {UnauthorizedError} from '#common/errors/unauthorized.error';
+import passwordUtils from '#common/utils/password.utils';
 
 // todo: seriously consider not extending ApiController because we don't really use it
 export class AuthController extends ApiController<User> {

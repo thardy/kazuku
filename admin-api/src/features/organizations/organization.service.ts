@@ -2,14 +2,14 @@ import {GenericApiService} from '../../common/services/generic-api.service';
 import {Db, DeleteResult, Document, FindOptions, ObjectId} from 'mongodb';
 import _ from 'lodash';
 
-import {IOrganization, Organization} from '@common/models/organization.model';
-import config from '@server/config';
-import {BadRequestError} from '@common/errors/bad-request.error';
-import {IUserContext} from '@common/models/user-context.interface';
-import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
-import {ISite, Site} from '@features/sites/site.model';
-import {IdNotFoundError} from '@common/errors/id-not-found.error';
-import entityUtils from '@common/utils/entity.utils';
+import {IOrganization, Organization} from '#common/models/organization.model';
+import config from '#server/config/config';
+import {BadRequestError} from '#common/errors/bad-request.error';
+import {IUserContext} from '#common/models/user-context.interface';
+import {DuplicateKeyError} from '#common/errors/duplicate-key.error';
+import {ISite, Site} from '#features/sites/site.model';
+import {IdNotFoundError} from '#common/errors/id-not-found.error';
+import entityUtils from '#common/utils/entity.utils';
 
 /**
  * This class is implemented as a Singleton to cache all organizations in memory.

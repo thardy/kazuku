@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import Joi from 'joi';
-import {IAuditable} from '@common/models/auditable.interface';
+import {IAuditable} from '#common/models/auditable.interface';
 
 export class IOrganization implements IAuditable {
   id?: string;

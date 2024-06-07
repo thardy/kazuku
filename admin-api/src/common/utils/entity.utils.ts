@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import {ValidationError} from '@common/errors/validation.error';
+import {ValidationError} from '#common/errors/validation.error';
 
 function handleValidationResult(validationResult: Joi.ValidationResult, methodName: string): void {
   if (validationResult?.error) {

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import Joi from 'joi';
-import {IAuditable} from '@common/models/auditable.interface';
-import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
+import {IAuditable} from '#common/models/auditable.interface';
+import {IMultiTenantEntity} from '#common/models/multi-tenant-entity.interface';
 
 export class IUser implements IAuditable, IMultiTenantEntity {
   //_id?: ObjectId;

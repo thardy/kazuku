@@ -7,9 +7,9 @@
 //
 // import config from '../config/index';
 // import database from '../database/database';
-// import {AuthService} from '@features/auth/auth.service';
-// import {OrganizationService} from '@features/organizations/organization.service';
-// import {IUser} from '@common/models/user.model';
+// import {AuthService} from '#features/auth/auth.service';
+// import {OrganizationService} from '#features/organizations/organization.service';
+// import {IUser} from '#common/models/user.model';
 // //import logger from '../logger/index.js';
 //
 // const LocalStrategy = passportLocal.Strategy;

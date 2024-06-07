@@ -1,15 +1,6 @@
-//import 'module-alias/register';
-import moduleAlias from 'module-alias';
-// We need to do this here or else Docker gets confused between dist and src directories
-moduleAlias.addAliases({
-  "@root": `${__dirname}`,
-  "@common": `${__dirname}/common`,
-  "@features": `${__dirname}/features`,
-  "@server": `${__dirname}/server`
-});
-import { app, setupExpress } from '@root/app';
-import database from '@server/database/database';
-import config from '@server/config';
+import { app, setupExpress } from '#root/app';
+import database from '#server/database/database';
+import config from '#server/config/config';
 
 const startServer = async () => {
   console.log('Starting kazuku-admin-api server...');

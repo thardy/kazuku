@@ -1,9 +1,9 @@
-import {ApiController} from '@common/controllers/api.controller';
+import {ApiController} from '#common/controllers/api.controller';
 import {Express, NextFunction, Request, Response} from 'express';
-import database from '@server/database/database';
-import {IOrganization} from '@common/models/organization.model';
-import {OrganizationService} from '@features/organizations/organization.service';
-import {isAuthenticated} from '@server/middleware/is-authenticated';
+import database from '#server/database/database';
+import {IOrganization} from '#common/models/organization.model';
+import {OrganizationService} from '#features/organizations/organization.service';
+import {isAuthenticated} from '#server/middleware/is-authenticated';
 
 /**
  * OrganizationsController is unique, just like its service, because Organizations are not multi-tenant

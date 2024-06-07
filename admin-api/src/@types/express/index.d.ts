@@ -1,4 +1,4 @@
-import {IUserContext} from '@common/models/user-context.interface';
+import {IUserContext} from '#common/models/user-context.interface';
 
 declare global{
   namespace Express {

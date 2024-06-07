@@ -1,5 +1,5 @@
 import {IUserContext} from '../models/user-context.interface';
-import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
+import {IMultiTenantEntity} from '#common/models/multi-tenant-entity.interface';
 import {DeleteResult, Document, FindOptions, UpdateResult} from 'mongodb';
 
 export interface IGenericApiService<T extends IMultiTenantEntity> {

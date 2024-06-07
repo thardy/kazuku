@@ -3,9 +3,9 @@ import cookieParser from 'cookie-parser';
 import 'express-async-errors';
 import {json} from 'body-parser';
 
-import routes from './server/routes';
-import {errorHandler} from '@server/middleware/error-handler';
-import {NotFoundError} from '@common/errors/not-found.error';
+import routes from '#server/routes/routes';
+import {errorHandler} from '#server/middleware/error-handler';
+import {NotFoundError} from '#common/errors/not-found.error';
 
 const app = express();
 

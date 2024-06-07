@@ -1,9 +1,9 @@
 import { Express } from 'express';
-import { AuthController } from '@features/auth/auth.controller';
-import {UsersController} from '@features/users/users.controller';
-import {SitesController} from '@features/sites/sites.controller';
-import {OrganizationsController} from '@features/organizations/organizations.controller';
-import {SetupController} from '@features/setup/setup.controller';
+import { AuthController } from '#features/auth/auth.controller';
+import {UsersController} from '#features/users/users.controller';
+import {SitesController} from '#features/sites/sites.controller';
+import {OrganizationsController} from '#features/organizations/organizations.controller';
+import {SetupController} from '#features/setup/setup.controller';
 
 export default function(app: Express) {
   // each controller has a 'mapRoutes' function that adds its routes to the express app

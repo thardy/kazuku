@@ -1,13 +1,5 @@
-import moduleAlias from 'module-alias';
-// We need to do this here or else Docker gets confused between dist and src directories
-moduleAlias.addAliases({
-  "@root": `${__dirname}`,
-  "@common": `${__dirname}/common`,
-  "@features": `${__dirname}/features`,
-  "@server": `${__dirname}/server`
-});
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { app } from '@root/app';
+import { app } from '#root/app';
 import {MongoClient} from 'mongodb';
 
 let mongo: MongoMemoryServer;

@@ -1,9 +1,9 @@
 import {Express, NextFunction, Request, Response} from 'express';
-import {IGenericApiService} from '@common/services/generic-api-service.interface';
-import database from '@server/database/database';
-import {OrganizationService} from '@features/organizations/organization.service';
-import {AuthService} from '@features/auth/auth.service';
-import {SetupService} from '@features/setup/setup.service';
+import {IGenericApiService} from '#common/services/generic-api-service.interface';
+import database from '#server/database/database';
+import {OrganizationService} from '#features/organizations/organization.service';
+import {AuthService} from '#features/auth/auth.service';
+import {SetupService} from '#features/setup/setup.service';
 
 export class SetupController {
   protected app: Express;

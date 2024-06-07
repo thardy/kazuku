@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import {IUserContext} from '@common/models/user-context.interface';
-import {UnauthenticatedError} from '@common/errors/unauthenticated.error';
+import {IUserContext} from '#common/models/user-context.interface';
+import {UnauthenticatedError} from '#common/errors/unauthenticated.error';
 import jwt from 'jsonwebtoken';
-import config from '@server/config';
-import {IUser} from '@common/models/user.model';
+import config from '#server/config/config';
+import {IUser} from '#common/models/user.model';
 
 // export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
 //   //req.userContext = { user: new User(), orgId: '999'};

@@ -2,8 +2,8 @@ import {Express, NextFunction, Request, Response} from 'express';
 import {GenericApiService} from '../services/generic-api.service';
 import {IGenericApiService} from '../services/generic-api-service.interface';
 import {User} from '../models/user.model';
-import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
-import {isAuthenticated} from '@server/middleware/is-authenticated';
+import {IMultiTenantEntity} from '#common/models/multi-tenant-entity.interface';
+import {isAuthenticated} from '#server/middleware/is-authenticated';
 
 export abstract class ApiController<T extends IMultiTenantEntity> {
   protected app: Express;

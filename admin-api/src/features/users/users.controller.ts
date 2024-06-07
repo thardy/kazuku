@@ -1,4 +1,4 @@
-import {ApiController} from '@common/controllers/api.controller';
+import {ApiController} from '#common/controllers/api.controller';
 import {User} from '../../common/models/user.model';
 import {Express} from 'express';
 import database from '../../server/database/database';

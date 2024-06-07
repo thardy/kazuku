@@ -1,12 +1,12 @@
 import {Db} from 'mongodb';
-import {OrganizationService} from '@features/organizations/organization.service';
-import {AuthService} from '@features/auth/auth.service';
-import config from '@server/config';
-import {ISetupConfig, SetupConfig} from '@features/setup/setup-config.model';
-import {LoginResponse} from '@common/models/login-response.model';
-import {IOrganization, Organization} from '@common/models/organization.model';
-import {IUser, User} from '@common/models/user.model';
-import entityUtils from '@common/utils/entity.utils';
+import {OrganizationService} from '#features/organizations/organization.service';
+import {AuthService} from '#features/auth/auth.service';
+import config from '#server/config/config';
+import {ISetupConfig, SetupConfig} from '#features/setup/setup-config.model';
+import {LoginResponse} from '#common/models/login-response.model';
+import {IOrganization, Organization} from '#common/models/organization.model';
+import {IUser, User} from '#common/models/user.model';
+import entityUtils from '#common/utils/entity.utils';
 
 export class SetupService {
   private orgService: OrganizationService;

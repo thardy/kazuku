@@ -4,18 +4,18 @@ import {Request, Response} from 'express';
 import moment from 'moment';
 import crypto from 'crypto';
 
-import {GenericApiService} from '@common/services/generic-api.service';
-import conversionUtils from '@common/utils/conversion.utils';
-import {IUser, User} from '@common/models/user.model';
-import {BadRequestError} from '@common/errors/bad-request.error';
-import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
-import {IUserContext} from '@common/models/user-context.interface';
-import {LoginResponse} from '@common/models/login-response.model';
-import {TokenResponse} from '@common/models/token-response.model';
-import config from '@server/config';
-import {OrganizationService} from '@features/organizations/organization.service';
-import entityUtils from '@common/utils/entity.utils';
-import passwordUtils from '@common/utils/password.utils';
+import {GenericApiService} from '#common/services/generic-api.service';
+import conversionUtils from '#common/utils/conversion.utils';
+import {IUser, User} from '#common/models/user.model';
+import {BadRequestError} from '#common/errors/bad-request.error';
+import {DuplicateKeyError} from '#common/errors/duplicate-key.error';
+import {IUserContext} from '#common/models/user-context.interface';
+import {LoginResponse} from '#common/models/login-response.model';
+import {TokenResponse} from '#common/models/token-response.model';
+import config from '#server/config/config';
+import {OrganizationService} from '#features/organizations/organization.service';
+import entityUtils from '#common/utils/entity.utils';
+import passwordUtils from '#common/utils/password.utils';
 
 export class AuthService extends GenericApiService<User> {
   private refreshTokensCollection: Collection;

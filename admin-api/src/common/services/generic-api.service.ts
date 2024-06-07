@@ -6,12 +6,12 @@ import _ from 'lodash';
 import {IGenericApiService} from './generic-api-service.interface';
 import {IAuditable} from '../models/auditable.interface';
 import {IUserContext} from '../models/user-context.interface';
-import {ValidationError} from '@common/errors/validation.error';
-import {IMultiTenantEntity} from '@common/models/multi-tenant-entity.interface';
-import {BadRequestError} from '@common/errors/bad-request.error';
-import {DuplicateKeyError} from '@common/errors/duplicate-key.error';
-import {IdNotFoundError} from '@common/errors/id-not-found.error';
-import entityUtils from '@common/utils/entity.utils';
+import {ValidationError} from '#common/errors/validation.error';
+import {IMultiTenantEntity} from '#common/models/multi-tenant-entity.interface';
+import {BadRequestError} from '#common/errors/bad-request.error';
+import {DuplicateKeyError} from '#common/errors/duplicate-key.error';
+import {IdNotFoundError} from '#common/errors/id-not-found.error';
+import entityUtils from '#common/utils/entity.utils';
 
 export class GenericApiService<T extends IMultiTenantEntity> implements IGenericApiService<T> {
   protected db: Db;

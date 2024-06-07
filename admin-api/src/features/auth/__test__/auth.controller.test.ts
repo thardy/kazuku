@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { app } from '@root/app';
-import testUtils from '@root/test/test.utils';
+import { app } from '#root/app';
+import testUtils from '#test/test.utils';
 
 describe('auth.controller', () => {
   it('/auth/register should return a 201 on successful register', async () => {
