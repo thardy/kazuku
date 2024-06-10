@@ -2,6 +2,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import {app, setupExpress} from '#root/app';
 import {Db, MongoClient} from 'mongodb';
 import testUtils from '#test/test.utils';
+import config from '#server/config/config';
 
 let mongo: MongoMemoryServer;
 let mongoClient: MongoClient;
@@ -15,8 +16,9 @@ beforeAll(async () => {
   mongoClient = new MongoClient(mongoUri, {});
   await mongoClient.connect();
 
-  const db = mongoClient.db();
+  const db = mongoClient.db(config.databaseName);
   testUtils.initialize(db);
+  testUtils.createIndexes(db);
   setupExpress(db);
 });
 

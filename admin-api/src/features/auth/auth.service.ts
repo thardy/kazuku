@@ -101,7 +101,6 @@ export class AuthService extends GenericApiService<User> {
       }
     }
     catch(err: any) {
-      console.log(`error from insertOne in AuthService.createUser - ${err.message}`);
       if (err.code === 11000) {
         throw new DuplicateKeyError('User already exists');
       }
@@ -109,7 +108,7 @@ export class AuthService extends GenericApiService<User> {
     }
 
     await this.onAfterCreate(userContext, user);
-    console.log(JSON.stringify(user)); // todo: delete me
+
     return user; // ignore the result of onAfterCreate and return what the original call returned
   }
 

@@ -3,9 +3,9 @@ import {ValidationError} from '#common/errors/validation.error';
 
 function handleValidationResult(validationResult: Joi.ValidationResult, methodName: string): void {
   if (validationResult?.error) {
-  console.log(`validation error in ${methodName} - ${JSON.stringify(validationResult)}`);
-  throw new ValidationError(validationResult.error);
-}
+    //console.log(`validation error in ${methodName} - ${JSON.stringify(validationResult)}`);
+    throw new ValidationError(validationResult.error);
+  }
 }
 
 function useFriendlyId(doc: any) {

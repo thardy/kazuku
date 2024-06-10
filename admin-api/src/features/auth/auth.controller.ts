@@ -3,7 +3,6 @@ import {Express, Request, Response, NextFunction} from 'express';
 import { ApiController } from '#common/controllers/api.controller';
 import { AuthService } from './auth.service';
 import {IUser, User} from '#common/models/user.model';
-// import database from '#server/database/database';
 import {IUserContext} from '#common/models/user-context.interface';
 import config from '#server/config/config';
 import {BadRequestError} from '#common/errors/bad-request.error';

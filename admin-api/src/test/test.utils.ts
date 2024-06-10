@@ -130,6 +130,20 @@ function initialize(db: Db) {
   };
 }
 
+async function createIndexes(db: Db) {
+  // create indexes - keep this in sync with the k8s/02-mongo-init-configmap.yaml that is used for actual deployment
+  //  If we can figure out how to use a single file for both, that would be great.
+  await db.command({
+    createIndexes: "users", indexes: [ { key: { email: 1 }, name: 'email_index', unique: true, collation: { locale: 'en', strength: 1 } }]
+  });
+  await db.command({
+    createIndexes: "organizations", indexes: [
+      { key: { code: 1 }, name: 'code_index', unique: true, collation: { locale: 'en', strength: 1 } },
+      { key: { name: 1 }, name: 'name_index', unique: true, collation: { locale: 'en', strength: 1 } }
+    ]
+  });
+}
+
 function setupTestOrgs() {
   return deleteAllTestOrgs()
     .then((result: any) => {
@@ -139,6 +153,17 @@ function setupTestOrgs() {
       console.log(error);
       throw error;
     });
+}
+
+async function setupTestUsers() {
+  try {
+    const result = await deleteAllTestUsers();
+    return createTestUsers();
+  }
+  catch (error: any) {
+    console.log(error);
+    throw error;
+  }
 }
 
 // function setupTestSites() {
@@ -196,27 +221,20 @@ function setupTestOrgs() {
 //     });
 // }
 
-async function setupTestUsers() {
-  try {
-    const result = await deleteAllTestUsers();
-    return createTestUsers();
-  }
-  catch (error: any) {
-    console.log(error);
-    throw error;
-  }
-}
-
 async function createTestOrgs() {
   try {
-    const [newOrgs] = await Promise.all([
+    const [insertResult] = await Promise.all([
       collections.organizations.insertOne(testOrg1)
     ]);
-    testUtils.existingOrgs = newOrgs;
-    _.forEach(testUtils.existingOrgs, (item: any) => {
-      item.id = item._id.toHexString();
-    });
-    return newOrgs;
+    testUtils.existingOrgs = [testOrg1];
+
+    if (insertResult.insertedId) {
+      _.forEach(testUtils.existingOrgs, (item: any) => {
+        entityUtils.useFriendlyId(item);
+        entityUtils.removeMongoId(item);
+      });
+    }
+    return testUtils.existingOrgs;
   }
   catch (error: any) {
     console.log(error);
@@ -226,8 +244,8 @@ async function createTestOrgs() {
 
 async function createTestUsers() {
   try {
-    const password = "one";
-    const hashedAndSaltedPassword = passwordUtils.hashPassword(password);
+    const password = "testone";
+    const hashedAndSaltedPassword = await passwordUtils.hashPassword(password);
     newUser1.password = hashedAndSaltedPassword;
 
     const [insertResult] = await Promise.all([
@@ -396,6 +414,7 @@ const testUtils = {
   existingOrgs: [] as any[],
   existingSites: [],
   initialize,
+  createIndexes,
   setupTestOrgs,
   setupTestUsers,
   createTestUsers,

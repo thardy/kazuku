@@ -1,6 +1,7 @@
 import { app, setupExpress } from '#root/app';
 import database from '#server/database/database';
 import config from '#server/config/config';
+import testUtils from '#test/test.utils';
 
 const startServer = async () => {
   console.log('Starting kazuku-admin-api server...');
@@ -15,6 +16,9 @@ const startServer = async () => {
 
     // we need db to be ready before setting up express - all the controllers need it when they get instantiated
     setupExpress(database.db!);
+
+    // just a convenience method to manually setup some testing data - do not use in production
+    setupManualTestData(database.db);
   }
   catch(err) {
     console.error(err);
@@ -54,6 +58,12 @@ const cleanup = (event: any) => {
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
 // ******** Shutdown Cleanup End ********
+
+const setupManualTestData = async (db: any) => {
+  testUtils.initialize(db);
+  await testUtils.setupTestOrgs();
+  await testUtils.setupTestUsers();
+};
 
 
 startServer();

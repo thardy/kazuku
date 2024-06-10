@@ -11,23 +11,76 @@ describe('auth.controller', () => {
     await testUtils.deleteAllTestUsers()
   });
 
-  // it('/api/setup/setup-state should return a 200', async () => {
-  //   return request(app)
-  //     .get('/api/setup/setup-state')
-  //     .expect(200);
+  // consider clearing out auth data before each test
+  // beforeEach(async () => {
+  //   await testUtils.deleteAllTestUsers();
   // });
 
-  it('/auth/register should return a 201 on successful register', async () => {
-    const newUser = {
-      orgId: testUtils.testOrgId,
-      email: "test@test.com",
-      password: "test"
-    };
-    return request(app)
-      .post('/api/auth/register')
-      .send(newUser)
-      .expect(201);
+  describe('POST /auth/register', () => {
+    it('should return a 201 on successful register', async () => {
+      const newUser = {
+        orgId: testUtils.testOrgId,
+        email: "test@test.com",
+        password: "test"
+      };
+      return request(app)
+        .post('/api/auth/register')
+        .send(newUser)
+        .expect(201);
+    });
+
+    it('should return a 400 with an invalid email', async () => {
+      const newUser = {
+        orgId: testUtils.testOrgId,
+        email: "test",
+        password: "test"
+      };
+      return request(app)
+        .post('/api/auth/register')
+        .send(newUser)
+        .expect(400);
+    });
+
+    it('should return a 400 with an invalid password', async () => {
+      const newUser = {
+        orgId: testUtils.testOrgId,
+        email: "test@test.com",
+        password: "t"
+      };
+      return request(app)
+        .post('/api/auth/register')
+        .send(newUser)
+        .expect(400);
+    });
+
+    it('should return a 400 with missing email or password', async () => {
+      await request(app)
+        .post('/api/auth/register')
+        .send({ email: "test@test.com" }) // missing password
+        .expect(400);
+
+      await request(app)
+        .post('/api/auth/register')
+        .send({ password: "test" }) // missing email
+        .expect(400);
+    });
+
+    it('should return a 400 if user with duplicate email already exists', async () => {
+      // const usersResponse = await request(app)
+      //   .get('/api/users');
+      // console.log(`users: ${JSON.stringify(usersResponse.body)}`);
+      const newUser = {
+        orgId: testUtils.testOrgId,
+        email: testUtils.newUser1.email, // newUser1 gets created in beforeAll, so we should not be able to use the same email again
+        password: "test"
+      };
+      return request(app)
+        .post('/api/auth/register')
+        .send(newUser)
+        .expect(400);
+    });
   });
+
 });
 
 // it("should create a new user", () => {
@@ -62,7 +115,7 @@ describe('auth.controller', () => {
 //     });
 // });
 //
-// it("should log the user in if correct credentials are given", () => {
+// it("should return an auth token if correct credentials are given", () => {
 //   var user = {
 //     orgId: testHelper.testOrgId,
 //     email: "one@test.com",
@@ -80,7 +133,7 @@ describe('auth.controller', () => {
 //     });
 // });
 //
-// it("should return unauthenticated if there is no logged in user", () => {
+// it("should return unauthenticated for an authenticated route without a valid token", () => {
 //   return request
 //     .get('/api/auth/random-number')
 //     .expect(401)
@@ -88,3 +141,7 @@ describe('auth.controller', () => {
 //       result.error.text.should.equal('Unauthenticated');
 //     });
 // });
+
+// it ("should allow access to authenticated route with valid token", () => {
+//
+// }

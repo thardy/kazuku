@@ -21,17 +21,17 @@ export abstract class ApiController<T extends IMultiTenantEntity> {
   mapRoutes(app: Express) {
     // Map routes
     // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
-    app.get(`/api/${this.resourceName}`, isAuthenticated, this.getAll.bind(this));
-    app.get(`/api/${this.resourceName}/:id`, isAuthenticated, this.getById.bind(this));
-    app.post(`/api/${this.resourceName}`, isAuthenticated, this.create.bind(this));
-    app.put(`/api/${this.resourceName}/:id`, isAuthenticated, this.updateById.bind(this));
-    app.delete(`/api/${this.resourceName}/:id`, isAuthenticated, this.deleteById.bind(this));
+    // app.get(`/api/${this.resourceName}`, isAuthenticated, this.getAll.bind(this));
+    // app.get(`/api/${this.resourceName}/:id`, isAuthenticated, this.getById.bind(this));
+    // app.post(`/api/${this.resourceName}`, isAuthenticated, this.create.bind(this));
+    // app.put(`/api/${this.resourceName}/:id`, isAuthenticated, this.updateById.bind(this));
+    // app.delete(`/api/${this.resourceName}/:id`, isAuthenticated, this.deleteById.bind(this));
     // *** same routes without auth ***
-    // app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
-    // app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
-    // app.post(`/api/${this.resourceName}`, this.create.bind(this));
-    // app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
-    // app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
+    app.get(`/api/${this.resourceName}`, this.getAll.bind(this));
+    app.get(`/api/${this.resourceName}/:id`, this.getById.bind(this));
+    app.post(`/api/${this.resourceName}`, this.create.bind(this));
+    app.put(`/api/${this.resourceName}/:id`, this.updateById.bind(this));
+    app.delete(`/api/${this.resourceName}/:id`, this.deleteById.bind(this));
   }
 
   async getAll(req: Request, res: Response, next: NextFunction) {
