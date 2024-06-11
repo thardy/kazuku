@@ -40,15 +40,12 @@ export class AuthService extends GenericApiService<User> {
       const tokenResponse = new TokenResponse({ accessToken, refreshToken: refreshTokenObject.token, expiresOn: accessTokenExpiresOn });
 
       // we send the org back in the loginResponse
-      console.log(`about to call orgService.getOrgById(${userContext.orgId})`); // todo: delete me
       const org = await this.orgService.getOrgById(userContext.orgId);
-      console.log(`org: ${JSON.stringify(org)}`); // todo: delete me
 
       // todo: save new lastLoggedIn date (non-blocking) - use an event or async call that we don't wait for
       //this.authService.updateLastLoggedIn(user);
 
       loginResponse = new LoginResponse({ tokens: tokenResponse, userContext: { user: userContext.user, org } });
-      console.log(`loginResponse: ${JSON.stringify(loginResponse)}`); // todo: delete me
     }
 
     return loginResponse;

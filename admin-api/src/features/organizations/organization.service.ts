@@ -66,14 +66,15 @@ export class OrganizationService extends GenericApiService<IOrganization> {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
-    console.log(`orgCache: ${JSON.stringify(this.orgCache)}`); // todo: delete me
+    //console.log(`config.cache.orgCache: ${config.cache.orgCache}, orgCache.length: ${this.orgCache?.length}, orgCache: ${JSON.stringify(this.orgCache)}`); // todo: delete me
     if (config.cache.orgCache && this.orgCache?.length > 0) {
       entity = _.find(this.orgCache, {id: id});
+      //console.log(`getOrgById returning entity: ${entity}`); // todo: delete me
     }
     else {
-      console.log(`calling collection.findOne id = ${id}`); // todo: delete me
+      //console.log(`calling collection.findOne id = ${id}`); // todo: delete me
       entity = await this.collection.findOne({_id: new ObjectId(id)});
-      console.log(`entity: ${JSON.stringify(entity)}`); // todo: delete me
+      //console.log(`entity: ${JSON.stringify(entity)}`); // todo: delete me
       entityUtils.useFriendlyId(entity);
     }
 

@@ -11,7 +11,7 @@
     "clean": "rm -rf dist",
     "tsc": "tsc",
     "build": "npm-run-all -s clean tsc",
-    "test": "jest --watchAll --no-cache --detectOpenHandles"
+    "test": "jest --watchAll --no-cache --verbose --detectOpenHandles"
   },
   "imports": {
     "#root/*": "./src/*.ts",

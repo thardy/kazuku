@@ -1,21 +1,29 @@
 import {Db, ObjectId} from 'mongodb';
 import _ from 'lodash';
 import moment from 'moment';
+import {Express} from 'express';
 
 import config from '#server/config/config';
 import passwordUtils from '#common/utils/password.utils';
 import entityUtils from '#common/utils/entity.utils';
+import request from 'supertest';
 
 let collections: any = {};
+let app: Express;
 
 const testOrgId = '5aad6ee15069c6aa32dea338';
-const testUserId = '5af51f4cf6dd9aae8deaeffa';
 const testSiteId = '5aad6ee15069c6aa32dea339';
 const testProductsContentType = 'test-products';
 const differentTestProductsContentType = 'different-test-products';  // todo: consider changing these to hyphens (kebab-case), it would look better in a url - figure out why I started with snake-case
 
 const testOrg1 = { _id: new ObjectId(testOrgId), name: 'The Test Org One', code: 'test-org1', isMetaOrg: false, description: 'used in a lot of tests', statusId: 1 };
 const testSite1 = { _id: new ObjectId(testSiteId), orgId: testOrgId, name: 'Test Site One', code: 'test-site1' };
+
+const testUserId = '5af51f4cf6dd9aae8deaeffa';
+const testUserEmail = 'test@test.com';
+const testUserPassword = 'test';
+const newUser1Email= 'one@test.com';
+const newUser1Password = 'testone';
 
 const categorySchema = {
   "_id" : new ObjectId('5ecfadbbbe699c289e2d2fb5'),
@@ -80,11 +88,6 @@ const differentProduct2 = { orgId: testOrgId, contentType: differentTestProducts
 const testContentType1 = 'testType1';
 const testContentType2 = 'testType2';
 
-const newUser1: any = {
-  orgId: testOrgId,
-  email: "one@test.com"
-};
-
 const newSchema1 = {
   orgId: testOrgId,
   contentType: testContentType1,
@@ -119,7 +122,8 @@ const newSchema2 = {
   }
 };
 
-function initialize(db: Db) {
+function initialize(theApp: Express, db: Db) {
+  app = theApp;
   collections = {
     organizations: db.collection('organizations'),
     users: db.collection('users'),
@@ -144,15 +148,26 @@ async function createIndexes(db: Db) {
   });
 }
 
-function setupTestOrgs() {
-  return deleteAllTestOrgs()
-    .then((result: any) => {
-      return createTestOrgs();
-    })
-    .catch((error: any) => {
-      console.log(error);
-      throw error;
+async function loginWithTestUser() {
+  const response = await request(app)
+    .post('/api/auth/login')
+    .send({
+      email: testUserEmail,
+      password: testUserPassword,
     });
+
+  const authorizationHeaderValue = `Bearer ${response.body?.tokens?.accessToken}`;
+  return authorizationHeaderValue;
+}
+
+async function setupTestOrgs() {
+  try {
+    const result = await deleteAllTestOrgs();
+    return createTestOrgs();
+  } catch (error: any) {
+    console.log(error);
+    throw error;
+  }
 }
 
 async function setupTestUsers() {
@@ -244,14 +259,19 @@ async function createTestOrgs() {
 
 async function createTestUsers() {
   try {
-    const password = "testone";
-    const hashedAndSaltedPassword = await passwordUtils.hashPassword(password);
-    newUser1.password = hashedAndSaltedPassword;
+    const testUser = {
+      orgId: testOrgId,
+      email: testUserEmail,
+      password: testUserPassword,
+      isMetaAdmin: false,
+    };
+    const hashedAndSaltedPassword = await passwordUtils.hashPassword(testUser.password);
+    testUser.password = hashedAndSaltedPassword;
 
     const [insertResult] = await Promise.all([
-      collections.users.insertOne(newUser1),
+      collections.users.insertOne(testUser),
     ]);
-    testUtils.existingUsers = [newUser1];
+    testUtils.existingUsers = [testUser];
 
     if (insertResult.insertedId) {
       _.forEach(testUtils.existingUsers, (item: any) => {
@@ -392,38 +412,41 @@ function deleteAllTestUsers() {
 
 
 const testUtils = {
-  testOrgId: testOrgId,
-  testUserEmail: 'imatest@test.com',
-  testUserId: testUserId,
-  testSiteId: testSiteId,
-  testProductsContentType: testProductsContentType,
-  newProduct1: newProduct1,
-  newProduct2: newProduct2,
-  newProduct3: newProduct3,
-  differentProduct1: differentProduct1,
-  differentProduct2: differentProduct2,
+  testOrgId,
+  testUserId,
+  testUserEmail,
+  testUserPassword,
+  newUser1Email,
+  newUser1Password,
+  testSiteId,
+  testProductsContentType,
+  newProduct1,
+  newProduct2,
+  newProduct3,
+  differentProduct1,
+  differentProduct2,
   existingProducts: [],
   existingDifferentProducts: [],
-  testContentType1: testContentType1,
-  testContentType2: testContentType2,
-  newSchema1: newSchema1,
-  newSchema2: newSchema2,
+  testContentType1,
+  testContentType2,
+  newSchema1,
+  newSchema2,
   existingSchemas: [],
-  newUser1: newUser1,
   existingUsers: [] as any[],
   existingOrgs: [] as any[],
   existingSites: [],
   initialize,
   createIndexes,
+  loginWithTestUser,
   setupTestOrgs,
   setupTestUsers,
-  createTestUsers,
-  deleteAllTestUsers,
   // setupTestSites,
   // setupSchemasForQueryTests,
   // setupTestProducts,
   // setupDifferentTestProducts,
   // createTestProducts,
+  deleteAllTestOrgs,
+  deleteAllTestUsers,
   // deleteAllTestCustomData,
   // deleteAllTestProducts,
   // deleteAllDifferentTestProducts,

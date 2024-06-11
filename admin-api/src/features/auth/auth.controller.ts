@@ -51,7 +51,7 @@ export class AuthController extends ApiController<User> {
 
     const userContext = { user: user, orgId: user.orgId! };
     const deviceId = this.authService.getAndSetDeviceIdCookie(req, res);
-    const loginResponse = this.authService.logUserIn(userContext, deviceId);
+    const loginResponse = await this.authService.logUserIn(userContext, deviceId);
 
     return res.status(200).json(loginResponse);
   }

@@ -1,12 +1,11 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import {app, setupExpress} from '#root/app';
-import {Db, MongoClient} from 'mongodb';
+import {MongoClient} from 'mongodb';
 import testUtils from '#test/test.utils';
 import config from '#server/config/config';
 
 let mongo: MongoMemoryServer;
 let mongoClient: MongoClient;
-let db: Db;
 
 beforeAll(async () => {
   mongo = await  MongoMemoryServer.create();
@@ -17,22 +16,26 @@ beforeAll(async () => {
   await mongoClient.connect();
 
   const db = mongoClient.db(config.databaseName);
-  testUtils.initialize(db);
-  testUtils.createIndexes(db);
+  testUtils.initialize(app, db);
+  await testUtils.createIndexes(db);
+  await testUtils.setupTestOrgs();
+
   setupExpress(db);
 });
 
 beforeEach(async () => {
-  const collections = await mongoClient.db().collections();
+  // const collections = await mongoClient.db().collections();
 
   // todo: change this to be more targeted
   // delete all data in all collections before each test
-  for (let collection of collections) {
-    await collection.deleteMany({});
-  }
+  // for (let collection of collections) {
+  //   await collection.deleteMany({});
+  // }
 });
 
 afterAll(async () => {
+  //await testUtils.deleteAllTestOrgs(); // why bother if we are just going to drop the db?
+
   if (mongoClient) {
     await mongoClient.close();
   }

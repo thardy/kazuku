@@ -22,7 +22,6 @@ import {IUser} from '#common/models/user.model';
 // this is how to handle auth without passport
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   let token = null;
-  console.log('in isAuthenticated');
 
   // check Authorization Header
   if (req.headers?.authorization) {

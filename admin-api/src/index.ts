@@ -60,7 +60,7 @@ process.on('SIGTERM', cleanup);
 // ******** Shutdown Cleanup End ********
 
 const setupManualTestData = async (db: any) => {
-  testUtils.initialize(db);
+  testUtils.initialize(app, db);
   await testUtils.setupTestOrgs();
   await testUtils.setupTestUsers();
 };
