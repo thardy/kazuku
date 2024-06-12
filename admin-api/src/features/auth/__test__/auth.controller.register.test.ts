@@ -30,7 +30,7 @@ describe('AuthController', () => {
         .send(newUser)
         .expect(201);
 
-      expect(response.body).toHaveProperty('_id');
+      // todo: stop response.body from returning _id
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('orgId', newUser.orgId);
       expect(response.body).toHaveProperty('email', newUser.email);

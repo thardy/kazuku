@@ -2,10 +2,9 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import 'express-async-errors';
 import {json} from 'body-parser';
+import {errorHandler, NotFoundError} from '@kazuku-cms/common';
 
 import routes from '#server/routes/routes';
-import {errorHandler} from '#server/middleware/error-handler';
-import {NotFoundError} from '#common/errors/not-found.error';
 import {Db} from 'mongodb';
 
 const app = express();

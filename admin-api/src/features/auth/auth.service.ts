@@ -1,15 +1,11 @@
 import {Db, InsertOneResult, AnyError, ObjectId, Collection} from 'mongodb';
-import jwt from 'jsonwebtoken';
 import {Request, Response} from 'express';
 import moment from 'moment';
 import crypto from 'crypto';
+import {BadRequestError, DuplicateKeyError, IUserContext, IUser, User, jwtService} from '@kazuku-cms/common';
 
 import {GenericApiService} from '#common/services/generic-api.service';
 import conversionUtils from '#common/utils/conversion.utils';
-import {IUser, User} from '#common/models/user.model';
-import {BadRequestError} from '#common/errors/bad-request.error';
-import {DuplicateKeyError} from '#common/errors/duplicate-key.error';
-import {IUserContext} from '#common/models/user-context.interface';
 import {LoginResponse} from '#common/models/login-response.model';
 import {TokenResponse} from '#common/models/token-response.model';
 import config from '#server/config/config';
@@ -211,9 +207,9 @@ export class AuthService extends GenericApiService<User> {
     const jwtExpiryConfig = config.jwtExpirationInSeconds;
     const jwtExpirationInSeconds = (typeof jwtExpiryConfig === 'string') ? parseInt(jwtExpiryConfig) : jwtExpiryConfig;
 
-    const accessToken = jwt.sign(
+    const accessToken = jwtService.sign(
       payload,
-      config.clientSecret,
+      config.commonConfig.clientSecret,
       {
         expiresIn: jwtExpirationInSeconds
       }

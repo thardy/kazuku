@@ -1,9 +1,9 @@
-import {ApiController} from '#common/controllers/api.controller';
 import {Express, NextFunction, Request, Response} from 'express';
-import {IOrganization} from '#common/models/organization.model';
-import {OrganizationService} from '#features/organizations/organization.service';
-import {isAuthenticated} from '#server/middleware/is-authenticated';
 import {Db} from 'mongodb';
+
+import {ApiController} from '#common/controllers/api.controller';
+import {IOrganization, isAuthenticated} from '@kazuku-cms/common';
+import {OrganizationService} from '#features/organizations/organization.service';
 
 /**
  * OrganizationsController is unique, just like its service, because Organizations are not multi-tenant

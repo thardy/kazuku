@@ -1,9 +1,6 @@
 import {Express, NextFunction, Request, Response} from 'express';
-import {GenericApiService} from '../services/generic-api.service';
 import {IGenericApiService} from '../services/generic-api-service.interface';
-import {User} from '../models/user.model';
-import {IMultiTenantEntity} from '#common/models/multi-tenant-entity.interface';
-import {isAuthenticated} from '#server/middleware/is-authenticated';
+import {IMultiTenantEntity, isAuthenticated} from '@kazuku-cms/common';
 
 export abstract class ApiController<T extends IMultiTenantEntity> {
   protected app: Express;
@@ -20,7 +17,7 @@ export abstract class ApiController<T extends IMultiTenantEntity> {
 
   mapRoutes(app: Express) {
     // Map routes
-    // have to bind this because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
+    // have to bind "this" because when express calls the function we tell it to here, it won't have any context and "this" will be undefined in our functions
     app.get(`/api/${this.resourceName}`, isAuthenticated, this.getAll.bind(this));
     app.get(`/api/${this.resourceName}/:id`, isAuthenticated, this.getById.bind(this));
     app.post(`/api/${this.resourceName}`, isAuthenticated, this.create.bind(this));

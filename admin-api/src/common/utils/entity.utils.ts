@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import {ValidationError} from '#common/errors/validation.error';
+import {ValidationError} from '@kazuku-cms/common';
 
 function handleValidationResult(validationResult: Joi.ValidationResult, methodName: string): void {
   if (validationResult?.error) {

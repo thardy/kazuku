@@ -1,4 +1,4 @@
-import testConfig from './config.local.json';// assert { type: "json" }; // the assert causes - error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'nodenext', or 'preserve'., which causes a ton of other issues
+import testConfig from './config.local.json';
 let config = {};
 
 if (process.env.NODE_ENV === 'test') {
@@ -23,7 +23,9 @@ else {
     corsAllowedOrigin: process.env.CORS_ALLOWED_ORIGIN,
     saltWorkFactor: process.env.SALT_WORK_FACTOR,
     jobTypes: process.env.JOB_TYPES,
-    clientSecret: process.env.CLIENT_SECRET,
+    commonConfig: {
+      clientSecret: process.env.CLIENT_SECRET
+    },
     jwtExpirationInSeconds: process.env.JWT_EXPIRATION_SECONDS,
     refreshTokenExpirationInDays: process.env.REFRESH_EXPIRATION_DAYS,
     deviceIdCookieMaxAgeInDays: process.env.DEVICEID_MAX_AGE_DAYS,

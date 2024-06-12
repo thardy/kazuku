@@ -1,5 +1,4 @@
-import {IUserContext} from '../models/user-context.interface';
-import {IMultiTenantEntity} from '#common/models/multi-tenant-entity.interface';
+import {IUserContext, IMultiTenantEntity} from '@kazuku-cms/common';
 import {DeleteResult, Document, FindOptions, UpdateResult} from 'mongodb';
 
 export interface IGenericApiService<T extends IMultiTenantEntity> {

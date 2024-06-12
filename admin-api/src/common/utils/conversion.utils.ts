@@ -1,7 +1,3 @@
-const conversionUtils = {
-  convertISOStringDateTimesToJSDates
-};
-
 function convertISOStringDateTimesToJSDates(objectToConvert: any) {
   var iso8601RegEx = /((((\d{4})(-((0[1-9])|(1[012])))(-((0[1-9])|([12]\d)|(3[01]))))(T((([01]\d)|(2[0123]))((:([012345]\d))((:([012345]\d))(\.(\d+))?)?)?)(Z|([\+\-](([01]\d)|(2[0123]))(:([012345]\d))?)))?)|(((\d{4})((0[1-9])|(1[012]))((0[1-9])|([12]\d)|(3[01])))(T((([01]\d)|(2[0123]))(([012345]\d)(([012345]\d)(\d+)?)?)?)(Z|([\+\-](([01]\d)|(2[0123]))([012345]\d)?)))?))/;
 
@@ -14,5 +10,9 @@ function convertISOStringDateTimesToJSDates(objectToConvert: any) {
     }
   }
 }
+
+const conversionUtils = {
+  convertISOStringDateTimesToJSDates
+};
 
 export default conversionUtils;

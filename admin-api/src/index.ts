@@ -1,3 +1,5 @@
+import {setCommonConfig} from '@kazuku-cms/common';
+
 import { app, setupExpress } from '#root/app';
 import database from '#server/database/database';
 import config from '#server/config/config';
@@ -9,6 +11,7 @@ const startServer = async () => {
 
   // ensure we have all required config values
   checkForRequiredConfigValues();
+  setCommonConfig(config.commonConfig);
 
   try {
     console.log(`config.mongoDbUrl = ${config.mongoDbUrl}. config.databaseName = ${config.databaseName}`);
@@ -17,8 +20,8 @@ const startServer = async () => {
     // we need db to be ready before setting up express - all the controllers need it when they get instantiated
     setupExpress(database.db!);
 
-    // just a convenience method to manually setup some testing data - do not use in production
-    setupManualTestData(database.db);
+    // todo: temporary until we get mongoDb persistent volumes setup - delete as soon as we do
+    await setupManualTestData(database.db);
   }
   catch(err) {
     console.error(err);
@@ -35,11 +38,10 @@ const startServer = async () => {
   }
 };
 
+
 const checkForRequiredConfigValues = () => {
   // todo: add all required config values to this check
-  if (!config.clientSecret) {
-    throw new Error('config.clientSecret is not defined');
-  }
+  if (!config.commonConfig.clientSecret) { throw new Error('config.commonConfig.clientSecret is not defined'); }
 }
 
 // ******** Shutdown Cleanup Begin ********
@@ -60,7 +62,7 @@ process.on('SIGTERM', cleanup);
 // ******** Shutdown Cleanup End ********
 
 const setupManualTestData = async (db: any) => {
-  testUtils.initialize(app, db);
+  testUtils.initialize(db);
   await testUtils.setupTestOrgs();
   await testUtils.setupTestUsers();
 };

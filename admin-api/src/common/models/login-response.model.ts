@@ -1,6 +1,5 @@
-import {IOrganization} from './organization.model';
+import {IOrganization, IUser} from '@kazuku-cms/common';
 import {ITokenResponse} from './token-response.model';
-import {IUser} from './user.model';
 
 export interface ILoginResponse {
   tokens?: ITokenResponse;

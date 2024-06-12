@@ -1,8 +1,9 @@
-import {ApiController} from '#common/controllers/api.controller';
-import {User} from '../../common/models/user.model';
-import {Express} from 'express';
-import {UserService} from './user.service';
 import {Db} from 'mongodb';
+import {Express} from 'express';
+import {User} from '@kazuku-cms/common';
+
+import {ApiController} from '#common/controllers/api.controller';
+import {UserService} from './user.service';
 
 export class UsersController extends ApiController<User> {
   userService: UserService;

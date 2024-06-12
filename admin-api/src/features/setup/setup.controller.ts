@@ -1,9 +1,10 @@
 import {Express, NextFunction, Request, Response} from 'express';
-import {IGenericApiService} from '#common/services/generic-api-service.interface';
+import {Db} from 'mongodb';
+
+// Be very careful referencing across features. Setup feature is a consumer of other features, otherwise avoid referencing other features.
 import {OrganizationService} from '#features/organizations/organization.service';
 import {AuthService} from '#features/auth/auth.service';
 import {SetupService} from '#features/setup/setup.service';
-import {Db} from 'mongodb';
 
 export class SetupController {
   protected app: Express;

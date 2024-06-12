@@ -1,20 +1,17 @@
 import {Db, ObjectId} from 'mongodb';
 import _ from 'lodash';
 import moment from 'moment';
-import {Express} from 'express';
 
 import config from '#server/config/config';
 import passwordUtils from '#common/utils/password.utils';
 import entityUtils from '#common/utils/entity.utils';
-import request from 'supertest';
 
 let collections: any = {};
-let app: Express;
 
 const testOrgId = '5aad6ee15069c6aa32dea338';
 const testSiteId = '5aad6ee15069c6aa32dea339';
 const testProductsContentType = 'test-products';
-const differentTestProductsContentType = 'different-test-products';  // todo: consider changing these to hyphens (kebab-case), it would look better in a url - figure out why I started with snake-case
+const differentTestProductsContentType = 'different-test-products';
 
 const testOrg1 = { _id: new ObjectId(testOrgId), name: 'The Test Org One', code: 'test-org1', isMetaOrg: false, description: 'used in a lot of tests', statusId: 1 };
 const testSite1 = { _id: new ObjectId(testSiteId), orgId: testOrgId, name: 'Test Site One', code: 'test-site1' };
@@ -122,8 +119,7 @@ const newSchema2 = {
   }
 };
 
-function initialize(theApp: Express, db: Db) {
-  app = theApp;
+function initialize(db: Db) {
   collections = {
     organizations: db.collection('organizations'),
     users: db.collection('users'),
@@ -146,18 +142,6 @@ async function createIndexes(db: Db) {
       { key: { name: 1 }, name: 'name_index', unique: true, collation: { locale: 'en', strength: 1 } }
     ]
   });
-}
-
-async function loginWithTestUser() {
-  const response = await request(app)
-    .post('/api/auth/login')
-    .send({
-      email: testUserEmail,
-      password: testUserPassword,
-    });
-
-  const authorizationHeaderValue = `Bearer ${response.body?.tokens?.accessToken}`;
-  return authorizationHeaderValue;
 }
 
 async function setupTestOrgs() {
@@ -437,7 +421,6 @@ const testUtils = {
   existingSites: [],
   initialize,
   createIndexes,
-  loginWithTestUser,
   setupTestOrgs,
   setupTestUsers,
   // setupTestSites,

@@ -1,6 +1,8 @@
 import request from 'supertest';
+
 import { app } from '#root/app';
 import testUtils from '#test/test.utils';
+import testApiUtils from '#test/test-api.utils';
 
 describe('AuthController', () => {
   beforeAll(async () => {
@@ -15,8 +17,7 @@ describe('AuthController', () => {
     const apiEndpoint = '/api/auth/get-user-context';
 
     it('should return a 200, and a valid client userContext when a valid authToken is supplied', async () => {
-      const authorizationHeaderValue = await testUtils.loginWithTestUser();
-      console.log(`authorizationHeaderValue: ${authorizationHeaderValue}`);
+      const authorizationHeaderValue = await testApiUtils.loginWithTestUser();
       const response = await request(app)
         .get(apiEndpoint)
         .set('Authorization', authorizationHeaderValue)
@@ -30,6 +31,9 @@ describe('AuthController', () => {
       const response = await request(app)
         .get(apiEndpoint)
         .expect(401);
+
+      expect(response.body?.errors[0]?.message).toEqual('Unauthenticated');
+      expect(response.body?.user).toEqual(undefined);
     });
 
     // test an expired authToken

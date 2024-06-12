@@ -1,10 +1,9 @@
-import {IUserContext} from '#common/models/user-context.interface';
+import {IUserContext} from '../../../../common/src/models/user-context.interface';
 
 declare global{
   namespace Express {
     interface Request {
       userContext?: IUserContext,
-      //jwt?: string
     }
   }
 }

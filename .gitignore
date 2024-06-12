@@ -34,6 +34,4 @@ env-config.js
 config.local.json
 development.json
 !server/bin/www.js
-server/src/public
-server/src/siteContent
-mongodb/*
+common/

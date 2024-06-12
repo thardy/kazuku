@@ -1,9 +1,7 @@
-import { ObjectId } from 'mongodb';
 import Joi from 'joi';
-import {IAuditable} from '#common/models/auditable.interface';
+import {IAuditable} from '@kazuku-cms/common';
 
 export class ISite implements IAuditable {
-  //_id?: ObjectId;
   id?: string;
   orgId?: string;
   code?: string;
@@ -17,7 +15,6 @@ export class ISite implements IAuditable {
 }
 
 export class Site implements ISite {
-  //_id?: ObjectId;
   id?: string;
   orgId: string;
   code?: string;
@@ -30,7 +27,6 @@ export class Site implements ISite {
   updatedBy?: string;
 
   constructor(options: ISite = {}) {
-    //this._id = options._id ?? undefined;
     this.id = options.id ?? undefined;
     this.orgId = options.orgId ?? '';
     this.code = options.code ?? '';

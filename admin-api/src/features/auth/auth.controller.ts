@@ -1,38 +1,29 @@
 import {Express, Request, Response, NextFunction} from 'express';
-
-import { ApiController } from '#common/controllers/api.controller';
-import { AuthService } from './auth.service';
-import {IUser, User} from '#common/models/user.model';
-import {IUserContext} from '#common/models/user-context.interface';
-import config from '#server/config/config';
-import {BadRequestError} from '#common/errors/bad-request.error';
-import {isAuthenticated} from '#server/middleware/is-authenticated';
-import {OrganizationService} from '#features/organizations/organization.service';
-import {UnauthorizedError} from '#common/errors/unauthorized.error';
-import passwordUtils from '#common/utils/password.utils';
 import {Db} from 'mongodb';
+import {BadRequestError, UnauthorizedError, isAuthenticated} from '@kazuku-cms/common';
 
-// todo: seriously consider not extending ApiController because we don't really use it
-export class AuthController extends ApiController<User> {
+import {OrganizationService} from '#features/organizations/organization.service';
+import passwordUtils from '#common/utils/password.utils';
+import {AuthService} from './auth.service';
+
+export class AuthController {
   authService: AuthService;
   private orgService: OrganizationService;
 
   constructor(app: Express, db: Db) {
     const authService = new AuthService(db);
-    super('auth', app, authService);
-
     this.orgService = OrganizationService.getInstance(db);
     this.authService = authService;
+
+    this.mapRoutes(app);
   }
 
   mapRoutes(app: Express) {
-    //super.mapRoutes(app); // map the base ApiController routes
-
-    app.post(`/api/${this.resourceName}/login`, this.login.bind(this), this.afterAuth.bind(this));
-    app.post(`/api/${this.resourceName}/register`, this.registerUser.bind(this));
-    app.get(`/api/${this.resourceName}/request-token-using-refresh-token`, this.requestTokenUsingRefreshToken.bind(this));
-    app.get(`/api/${this.resourceName}/get-user-context`, isAuthenticated, this.getUserContext.bind(this));
-    app.put(`/api/${this.resourceName}/select-org-context`, isAuthenticated, this.selectOrgContext.bind(this));
+    app.post(`/api/auth/login`, this.login.bind(this), this.afterAuth.bind(this));
+    app.post(`/api/auth/register`, this.registerUser.bind(this));
+    app.get(`/api/auth/request-token-using-refresh-token`, this.requestTokenUsingRefreshToken.bind(this));
+    app.get(`/api/auth/get-user-context`, isAuthenticated, this.getUserContext.bind(this));
+    app.put(`/api/auth/select-org-context`, isAuthenticated, this.selectOrgContext.bind(this));
   }
 
   async login(req: Request, res: Response, next: NextFunction) {

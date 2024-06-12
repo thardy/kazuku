@@ -1,14 +1,11 @@
-import {GenericApiService} from '../../common/services/generic-api.service';
+import {GenericApiService} from '#common/services/generic-api.service';
 import {Db, DeleteResult, Document, FindOptions, ObjectId} from 'mongodb';
 import _ from 'lodash';
+import {IOrganization, IUserContext, Organization} from '@kazuku-cms/common';
+import {BadRequestError, DuplicateKeyError, IdNotFoundError} from '@kazuku-cms/common';
 
-import {IOrganization, Organization} from '#common/models/organization.model';
 import config from '#server/config/config';
-import {BadRequestError} from '#common/errors/bad-request.error';
-import {IUserContext} from '#common/models/user-context.interface';
-import {DuplicateKeyError} from '#common/errors/duplicate-key.error';
-import {ISite, Site} from '#features/sites/site.model';
-import {IdNotFoundError} from '#common/errors/id-not-found.error';
+import {ISite} from '#features/sites/site.model';
 import entityUtils from '#common/utils/entity.utils';
 
 /**
@@ -26,6 +23,8 @@ export class OrganizationService extends GenericApiService<IOrganization> {
     super(db, 'organizations', 'organization');
 
     // we will cache all orgs here because we use orgs in a lot of low-level code (e.g. every incoming content-api request!!!)
+    // Just a reminder - this isn't the content-api anymore, they have been separated into two different services.
+    // todo: justify using this in-memory cache here once we get content-api up and running
     this.orgCache = [];
     this.getAll()
       .then((orgs: IOrganization[]) => {
@@ -58,7 +57,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
   }
 
   // Typescript won't allow an overload that takes one argument instead of two, so we
-  //  have to use unique method names.
+  //  have to use unique method names. Can't do "override async getById(id: string)" because it's not possible.
   async getOrgById(id: string){
     let entity;
 
