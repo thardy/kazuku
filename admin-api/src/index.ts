@@ -1,9 +1,12 @@
+import {Db, MongoClient} from 'mongodb';
 import {setCommonConfig} from '@kazuku-cms/common';
 
 import { app, setupExpress } from '#root/app';
-import database from '#server/database/database';
 import config from '#server/config/config';
 import testUtils from '#test/test.utils';
+
+let mongoClient: MongoClient;
+let db: Db;
 
 const startServer = async () => {
   console.log('Starting kazuku-admin-api server...');
@@ -14,20 +17,23 @@ const startServer = async () => {
   setCommonConfig(config.commonConfig);
 
   try {
-    console.log(`config.mongoDbUrl = ${config.mongoDbUrl}. config.databaseName = ${config.databaseName}`);
-    await database.connect(config.mongoDbUrl, config.databaseName);
+    mongoClient = new MongoClient(config.mongoDbUrl);
+    console.log('connecting to mongoDb...');
+    await mongoClient.connect();
+    db = mongoClient.db(config.databaseName);
+    console.log('...connected to mongoDb!');
 
     // we need db to be ready before setting up express - all the controllers need it when they get instantiated
-    setupExpress(database.db!);
+    setupExpress(db);
 
     // todo: temporary until we get mongoDb persistent volumes setup - delete as soon as we do
-    await setupManualTestData(database.db);
+    await setupManualTestData(db);
   }
   catch(err) {
     console.error(err);
   }
 
-  if (database.db) {
+  if (db!) {
     app.listen(3000, () => {
       //console.log('kazuku-admin-api listening on port 3000!');
       console.log(`kazuku-admin-api listening on port ${config.port} (${config.env})`);
@@ -48,10 +54,9 @@ const checkForRequiredConfigValues = () => {
 const cleanup = (event: any) => {
   console.log(`kazuku-admin-api server stopping due to ${event} event. running cleanup...`);
   // clean stuff up here
-  const client = database.client;
-  if (client) {
+  if (mongoClient) {
     console.log('closing mongodb connection');
-    client.close(); // Close MongodDB Connection when Process ends
+    mongoClient.close(); // Close MongodDB Connection when Process ends
   }
   process.exit(); // Exit with default success-code '0'.
 };

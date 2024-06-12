@@ -3,8 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import config from '#server/config/config';
-import passwordUtils from '#common/utils/password.utils';
-import entityUtils from '#common/utils/entity.utils';
+import { passwordUtils, entityUtils } from '@kazuku-cms/common';
 
 let collections: any = {};
 

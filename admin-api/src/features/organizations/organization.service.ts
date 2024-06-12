@@ -2,11 +2,10 @@ import {GenericApiService} from '#common/services/generic-api.service';
 import {Db, DeleteResult, Document, FindOptions, ObjectId} from 'mongodb';
 import _ from 'lodash';
 import {IOrganization, IUserContext, Organization} from '@kazuku-cms/common';
-import {BadRequestError, DuplicateKeyError, IdNotFoundError} from '@kazuku-cms/common';
+import {BadRequestError, DuplicateKeyError, IdNotFoundError, entityUtils} from '@kazuku-cms/common';
 
 import config from '#server/config/config';
 import {ISite} from '#features/sites/site.model';
-import entityUtils from '#common/utils/entity.utils';
 
 /**
  * This class is implemented as a Singleton to cache all organizations in memory.

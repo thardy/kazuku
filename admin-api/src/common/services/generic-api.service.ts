@@ -2,11 +2,10 @@ import {Db, Collection, ObjectId, DeleteResult, Document, UpdateResult, FindOpti
 import moment from 'moment';
 import Joi from 'joi';
 import _ from 'lodash';
+import {BadRequestError, DuplicateKeyError, IdNotFoundError, entityUtils} from '@kazuku-cms/common';
 
 import {IGenericApiService} from './generic-api-service.interface';
 import {IAuditable, IUserContext, IMultiTenantEntity} from '@kazuku-cms/common';
-import {BadRequestError, DuplicateKeyError, IdNotFoundError} from '@kazuku-cms/common';
-import entityUtils from '#common/utils/entity.utils';
 
 export class GenericApiService<T extends IMultiTenantEntity> implements IGenericApiService<T> {
   protected db: Db;

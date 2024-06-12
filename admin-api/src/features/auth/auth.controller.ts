@@ -1,9 +1,8 @@
 import {Express, Request, Response, NextFunction} from 'express';
 import {Db} from 'mongodb';
-import {BadRequestError, UnauthorizedError, isAuthenticated} from '@kazuku-cms/common';
+import {BadRequestError, UnauthorizedError, isAuthenticated, passwordUtils} from '@kazuku-cms/common';
 
 import {OrganizationService} from '#features/organizations/organization.service';
-import passwordUtils from '#common/utils/password.utils';
 import {AuthService} from './auth.service';
 
 export class AuthController {

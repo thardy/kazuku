@@ -1,12 +1,11 @@
 import {Db} from 'mongodb';
-import {IOrganization, IUser} from '@kazuku-cms/common';
+import {IOrganization, IUser, entityUtils} from '@kazuku-cms/common';
 
 import {OrganizationService} from '#features/organizations/organization.service';
 import {AuthService} from '#features/auth/auth.service';
 import config from '#server/config/config';
 import {ISetupConfig, SetupConfig} from '#features/setup/setup-config.model';
 import {LoginResponse} from '#common/models/login-response.model';
-import entityUtils from '#common/utils/entity.utils';
 
 export class SetupService {
   private orgService: OrganizationService;
