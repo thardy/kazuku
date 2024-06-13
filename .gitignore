@@ -25,11 +25,9 @@ _[Uu]pgrade[Rr]eport_[Ff]iles
 *.log.*
 *node_modules*
 .angular/
-client/vendor/
-client/vendor/*
-client/vendor/*/*
-client/vendor/*/*/*
-client/vendor/*/*/*/*
+.vscode/
+.idea/
+.DS_Store
 env-config.js
 config.local.json
 development.json

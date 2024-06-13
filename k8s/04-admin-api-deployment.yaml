@@ -18,7 +18,7 @@ spec:
           command: [ 'sh', '-c', 'echo -e "Checking for the availability of MongoDB Server deployment"; while ! nc -z kazuku-mongodb-svc 27017; do sleep 1; printf "-"; done; echo -e "  >> MongoDB Server has started";' ]
       containers:
         - name: kazuku-admin-api
-          image: timhardy/kazuku-admin-api
+          image: kazuku/kazuku-admin-api
 ---
 apiVersion: v1
 kind: Service
