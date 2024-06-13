@@ -1,7 +1,9 @@
-name: tests
+name: admin-api-tests
 
 on:
-  pull_request
+  pull_request:
+    paths:
+      - 'admin-api/**'
 
 jobs:
   build:
