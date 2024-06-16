@@ -29,5 +29,13 @@ jobs:
 #      - name: Output Environment Variables
 #        run: |
 #          echo "KAZUKU_ENV: $KAZUKU_ENV"
-      - uses: actions/checkout@v4
-      - run: cd admin-api && npm install && npm run test:ci
+      - name: Get Code
+        uses: actions/checkout@v4
+      - name: Run Tests
+        run: cd admin-api && npm install && npm run test:ci
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-results.json
