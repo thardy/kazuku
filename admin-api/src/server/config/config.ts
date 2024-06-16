@@ -24,7 +24,7 @@ else {
     refreshTokenExpirationInDays: process.env.REFRESH_EXPIRATION_DAYS,
     deviceIdCookieMaxAgeInDays: process.env.DEVICEID_MAX_AGE_DAYS,
     siteDefaults: {
-      defaultRegenerationInterval: process.env.DEFAULT_REGENERATION_INTERVAL
+      defaultRegenerationIntervalInMinutes: process.env.DEFAULT_REGENERATION_INTERVAL_MINUTES
     },
     cache: {
       orgCache: process.env.ORG_CACHE || true,
