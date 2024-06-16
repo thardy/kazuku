@@ -31,7 +31,7 @@ jobs:
 #          echo "KAZUKU_ENV: $KAZUKU_ENV"
       - name: Get Code
         uses: actions/checkout@v4
-      - name: List out directory contents
+      - name: List out directory contents one
         run: ls -la
       - name: Run Tests
         id: run-tests
@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-report
-          path: test-results.json
+          path: ./admin-api/test-results.json
