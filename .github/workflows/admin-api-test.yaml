@@ -12,6 +12,7 @@ jobs:
     env:
       KAZUKU_ENV: ${{ vars.KAZUKU_ENV }}
       DEVICEID_MAX_AGE_DAYS: ${{ vars.DEVICEID_MAX_AGE_DAYS }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
     steps:
       - name: Output Environment Variables
         run: |
