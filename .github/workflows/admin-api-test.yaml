@@ -9,6 +9,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     environment: dev
+    env:
+      KAZUKU_ENV: ${{ variables.KAZUKU_ENV }}
     steps:
       - name: Output Environment Variables
         run: |
