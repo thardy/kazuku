@@ -21,8 +21,7 @@ describe('AuthController', () => {
       const response = await request(app)
         .get(apiEndpoint)
         .set('Authorization', authorizationHeaderValue)
-        //.expect(200);
-        .expect(500) // todo: delete me
+        .expect(200);
 
       expect(response.body?.user?.email).toEqual(testUtils.testUserEmail);
       expect(response.body?.org?.id).toEqual(testUtils.testOrgId);

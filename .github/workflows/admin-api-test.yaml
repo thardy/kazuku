@@ -31,11 +31,13 @@ jobs:
 #          echo "KAZUKU_ENV: $KAZUKU_ENV"
       - name: Get Code
         uses: actions/checkout@v4
+      - name: Npm install
+        run: cd admin-api && npm ci
       - name: List out directory contents one
         run: ls -la
       - name: Run Tests
         id: run-tests
-        run: cd admin-api && npm install && npm run test:ci
+        run: cd admin-api && npm run test:ci
       - name: Upload test report
         if: failure() && steps.run-tests.outcome == 'failure'
         uses: actions/upload-artifact@v4
