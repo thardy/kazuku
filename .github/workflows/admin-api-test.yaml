@@ -10,5 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
+      - name: Output Environment Variables
+        run: |
+          echo "KAZUKU_ENV: $KAZUKU_ENV"
       - uses: actions/checkout@v4
       - run: cd admin-api && npm install && npm run test:ci
