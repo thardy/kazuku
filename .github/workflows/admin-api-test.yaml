@@ -1,4 +1,4 @@
-name: admin-api-tests
+name: admin-api-test
 
 on:
   pull_request:
@@ -8,6 +8,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - uses: actions/checkout@v4
       - run: cd admin-api && npm install && npm run test:ci
