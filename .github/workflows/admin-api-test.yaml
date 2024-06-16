@@ -31,6 +31,8 @@ jobs:
 #          echo "KAZUKU_ENV: $KAZUKU_ENV"
       - name: Get Code
         uses: actions/checkout@v4
+      - name: List out directory contents
+        run: ls -la
       - name: Run Tests
         id: run-tests
         run: cd admin-api && npm install && npm run test:ci
