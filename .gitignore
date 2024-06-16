@@ -33,3 +33,4 @@ config.local.json
 development.json
 !server/bin/www.js
 common/
+test-results.json

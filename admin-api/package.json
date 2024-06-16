@@ -12,7 +12,7 @@
     "tsc": "tsc",
     "build": "npm-run-all -s clean tsc",
     "test": "jest --watchAll --no-cache --verbose",
-    "test:ci": "jest"
+    "test:ci": "jest --json --outputFile=test-results.json"
   },
   "imports": {
     "#root/*": "./src/*.ts",

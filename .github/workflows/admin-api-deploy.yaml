@@ -1,0 +1,21 @@
+name: admin-api-deploy
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'admin-api/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd admin-api && docker build -t kazuku/kazuku-admin-api .
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker push kazuku/kazuku-admin-api
+

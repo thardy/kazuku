@@ -1,17 +1,11 @@
-import testConfig from './config.local.json';
 let config = {};
 
-if (process.env.NODE_ENV === 'test') {
-  // todo: test the test env workflow
-  testConfig.cache.orgCache = false;
-  config = testConfig;
-}
-else if (!process.env.KAZUKU_ENV) {
-  testConfig.cache.orgCache = false;
-  config = testConfig;
+if (!process.env.KAZUKU_ENV || process.env.KAZUKU_ENV === 'local') {
+  const localConfig = require('./config.local.json');
+  localConfig.cache.orgCache = false;
+  config = localConfig;
 }
 else {
-  console.log('inside config else block');
   config = {
     env: process.env.KAZUKU_ENV,
     hostname: process.env.HOST_NAME || '',
@@ -48,24 +42,8 @@ else {
       callbackURL: process.env.host + "/auth/google/callback",
       profileFields: ['id', 'email', 'displayName', 'photos'],
       passReqToCallback: true
-    },
-    // redis: {
-    //     host: redisURI.hostname,
-    //     port: redisURI.port,
-    //     password: redisPassword
-    // }
+    }
   };
 }
-// else if (process.env.NODE_ENV === 'test') {
-//     // let testConfig = require('./development.json');
-//     testConfig.cache.orgCache = false;
-//     config = testConfig;
-// }
-// else {
-//     // Offer development variables
-//     // let testConfig = require('./development.json');
-//     testConfig.cache.orgCache = false;
-//     config = testConfig;
-// }
 
 export default config as any;
