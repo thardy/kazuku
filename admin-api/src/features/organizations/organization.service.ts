@@ -64,8 +64,8 @@ export class OrganizationService extends GenericApiService<IOrganization> {
       throw new BadRequestError('id is not a valid ObjectId');
     }
 
-    //console.log(`config.cache.orgCache: ${config.cache.orgCache}, orgCache.length: ${this.orgCache?.length}, orgCache: ${JSON.stringify(this.orgCache)}`); // todo: delete me
-    if (config.cache.orgCache && this.orgCache?.length > 0) {
+    //console.log(`config.cache.cacheOrgs: ${config.cache.cacheOrgs}, orgCache.length: ${this.orgCache?.length}, orgCache: ${JSON.stringify(this.orgCache)}`); // todo: delete me
+    if (config.cache.cacheOrgs && this.orgCache?.length > 0) {
       entity = _.find(this.orgCache, {id: id});
       //console.log(`getOrgById returning entity: ${entity}`); // todo: delete me
     }
@@ -83,7 +83,7 @@ export class OrganizationService extends GenericApiService<IOrganization> {
   async findOne(mongoQueryObject: any, options?: FindOptions<Document> | undefined): Promise<IOrganization> {
     let entity;
 
-    if (config.cache.orgCache && this.orgCache?.length > 0) {
+    if (config.cache.cacheOrgs && this.orgCache?.length > 0) {
       entity = _.find(this.orgCache, mongoQueryObject);
     }
     else {

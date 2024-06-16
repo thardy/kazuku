@@ -10,12 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     env:
-      KAZUKU_ENV: ${{ vars.KAZUKU_ENV }}
-      DEVICEID_MAX_AGE_DAYS: ${{ vars.DEVICEID_MAX_AGE_DAYS }}
+      # secrets
       CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      # variables
+      CACHE_ORGS: ${{ vars.CACHE_ORGS }}
+      CORS_ALLOWED_ORIGINS: ${{ vars.CORS_ALLOWED_ORIGINS }}
+      DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+      DEFAULT_REGENERATION_INTERVAL_MINUTES: ${{ vars.DEFAULT_REGENERATION_INTERVAL_MINUTES }}
+      DEVICEID_MAX_AGE_DAYS: ${{ vars.DEVICEID_MAX_AGE_DAYS }}
+      HOST_NAME: ${{ vars.HOST_NAME }}
+      JWT_EXPIRATION_SECONDS: ${{ vars.JWT_EXPIRATION_SECONDS }}
+      KAZUKU_ENV: ${{ vars.KAZUKU_ENV }}
+      MONGODB_URL: ${{ vars.MONGODB_URL }}
+      PORT: ${{ vars.PORT }}
+      REFRESH_EXPIRATION_DAYS: ${{ vars.REFRESH_EXPIRATION_DAYS }}
+      SALT_WORK_FACTOR: ${{ vars.SALT_WORK_FACTOR }}
     steps:
-      - name: Output Environment Variables
-        run: |
-          echo "KAZUKU_ENV: $KAZUKU_ENV"
+#      - name: Output Environment Variables
+#        run: |
+#          echo "KAZUKU_ENV: $KAZUKU_ENV"
       - uses: actions/checkout@v4
       - run: cd admin-api && npm install && npm run test:ci
