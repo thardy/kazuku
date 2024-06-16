@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     env:
-      KAZUKU_ENV: ${{ env.KAZUKU_ENV }}
+      KAZUKU_ENV: ${{ vars.KAZUKU_ENV }}
     steps:
       - name: Output Environment Variables
         run: |
