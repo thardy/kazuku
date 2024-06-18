@@ -25,20 +25,17 @@ jobs:
       PORT: ${{ vars.PORT }}
       REFRESH_EXPIRATION_DAYS: ${{ vars.REFRESH_EXPIRATION_DAYS }}
       SALT_WORK_FACTOR: ${{ vars.SALT_WORK_FACTOR }}
-    defaults:
-      run:
-        working-directory: admin-api # this will change the working-directory for every step
     steps:
-      - name: Get Code
+      - name: Get code
         uses: actions/checkout@v4
       - name: Npm install
         working-directory: admin-api
         run: npm ci
-      - name: Run Tests
+      - name: Run tests
         id: run-tests
         working-directory: admin-api
         run: npm run test:ci
-      - name: Upload test report
+      - name: Upload test report on failure
         if: failure() && steps.run-tests.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:

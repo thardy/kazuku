@@ -1,0 +1,21 @@
+name: deploy-k8s-manifests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'k8s/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+#      - name: Set k8s context to GCP
+#        uses: azure/k8s-set-context@v1
+#          with:
+#            kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      - name: Apply k8s manifests in GCP
+        run: kubectl apply -f k8s
