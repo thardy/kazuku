@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
-    - host: kazuku.local
+    - host: kazuku.local # #{HOSTNAME} replace this with a token that gets set in Github Actions
       http:
         paths:
           - path: /api/?(.*) # any path beginning with '/api' will get routed to the kazuku-admin-api-svc:3000

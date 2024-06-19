@@ -3,7 +3,7 @@ name: admin-api-deploy
 on:
   push:
     branches:
-      - master
+      - feature/matrix-rewrite # todo: change to dev once we merge feature/matrix-rewrite into dev
     paths:
       - 'admin-api/**'
 
@@ -14,7 +14,8 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4
       - name: Build docker image
-        run: cd admin-api && docker build -t kazuku/kazuku-admin-api .
+        working-directory: admin-api
+        run: docker build -t kazuku/kazuku-admin-api .
       - name: Login to Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -22,8 +23,8 @@ jobs:
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - name: Push docker image to Docker Hub
         run: docker push kazuku/kazuku-admin-api
-      - name: Deploy to GCP
+      - name: Deploy to Cloud
         run: echo "Deploying to DEV in GCP..."
 #      - name: Rollout deployment on GCP
-#        run: kubectl rollout restart deployment admin-api-deployment # check the naming here
+#        run: kubectl rollout restart deployment admin-api-deployment
 
