@@ -10,7 +10,7 @@ build:
     - image: kazuku/kazuku-admin-api
       context: admin-api  # the folder to look in for the Dockerfile and the sync below
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
         noCache: true
       sync:
         manual:

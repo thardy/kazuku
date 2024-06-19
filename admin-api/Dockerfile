@@ -1,8 +1,31 @@
-FROM node:alpine
+# alwyas use slim and the lastest debian distro offered
+FROM node:20-bookworm-slim@sha256:8d26608b65edb3b0a0e1958a0a5a45209524c4df54bbe21a4ca53548bc97a3a5 as build
+
+EXPOSE 3000
+
+# add user first, then set WORKDIR to set permissions
+USER node
 
 WORKDIR /app
-COPY package.json .
-RUN npm install --omit=dev
-COPY . .
 
-CMD ["npm", "start"]
+# copy in with correct permissions. Using * prevents errors if file is missing
+COPY --chown=node:node package*.json ./
+
+# use ci to only install packages from lock files
+RUN npm ci --omit=dev && npm cache clean --force
+
+# copy files with correct permissions
+COPY --chown=node:node . .
+
+RUN npm run build:prod
+
+
+# use only the built app for production
+FROM node:20-bookworm-slim@sha256:8d26608b65edb3b0a0e1958a0a5a45209524c4df54bbe21a4ca53548bc97a3a5
+EXPOSE 3000
+USER node
+WORKDIR /app
+COPY --chown=node:node --from=build /app/dist ./
+
+# change command to run node directly
+CMD ["node", "./index.js"]

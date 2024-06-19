@@ -11,6 +11,7 @@
     "clean": "rm -rf dist",
     "tsc": "tsc",
     "build": "npm-run-all -s clean tsc",
+    "build:prod": "tsc",
     "test": "jest --watchAll --no-cache --verbose",
     "test:ci": "jest --json --outputFile=test-results.json"
   },

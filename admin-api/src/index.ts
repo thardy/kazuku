@@ -9,7 +9,7 @@ let mongoClient: MongoClient;
 let db: Db;
 
 const startServer = async () => {
-  console.log('Starting kazuku-admin-api server, SUCKA...');
+  console.log('Starting kazuku-admin-api server...');
   console.log(`inside startServer - process.env.NODE_ENV = ${process.env.NODE_ENV} and process.env.KAZUKU_ENV = ${process.env.KAZUKU_ENV}`); // todo: delete me once we get env stuff working
 
   // ensure we have all required config values
@@ -36,7 +36,7 @@ const startServer = async () => {
   if (db!) {
     app.listen(3000, () => {
       //console.log('kazuku-admin-api listening on port 3000!');
-      console.log(`kazuku-admin-api listening on port ${config.port} (${config.env})`);
+      console.log(`kazuku-admin-api listening on port 3000 (${config.env})`);
     });
   }
   else {

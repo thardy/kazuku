@@ -10,8 +10,6 @@ else {
     env: process.env.KAZUKU_ENV,
     hostname: process.env.HOST_NAME ?? '',
     //testHostname: process.env.TEST_HOST_NAME ?? '',
-    port: process.env.PORT,
-    //testPort: process.env.TEST_PORT,
     mongoDbUrl: process.env.MONGODB_URL,
     databaseName: process.env.DATABASE_NAME,
     corsAllowedOrigins: process.env.CORS_ALLOWED_ORIGINS,
