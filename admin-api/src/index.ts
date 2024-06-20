@@ -3,7 +3,7 @@ import {setCommonConfig} from '@kazuku-cms/common';
 
 import { app, setupExpress } from '#root/app';
 import config from '#server/config/config';
-import testUtils from '#test/test.utils';
+// import testUtils from '#test/test.utils';
 
 let mongoClient: MongoClient;
 let db: Db;
@@ -27,7 +27,7 @@ const startServer = async () => {
     setupExpress(db);
 
     // todo: temporary until we get mongoDb persistent volumes setup - delete as soon as we do
-    await setupManualTestData(db);
+    // await setupManualTestData(db);
   }
   catch(err) {
     console.error(err);
@@ -66,11 +66,11 @@ process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
 // ******** Shutdown Cleanup End ********
 
-const setupManualTestData = async (db: any) => {
-  testUtils.initialize(db);
-  await testUtils.setupTestOrgs();
-  await testUtils.setupTestUsers();
-};
+// const setupManualTestData = async (db: any) => {
+//   testUtils.initialize(db);
+//   await testUtils.setupTestOrgs();
+//   await testUtils.setupTestUsers();
+// };
 
 
 startServer();

@@ -1,4 +1,4 @@
-import {IUserContext} from '../../../../common/src/models/user-context.interface';
+import {IUserContext} from '@kazuku-cms/common';
 
 declare global{
   namespace Express {
