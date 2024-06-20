@@ -21,7 +21,7 @@ const startServer = async () => {
     console.log('connecting to mongoDb...');
     await mongoClient.connect();
     db = mongoClient.db(config.databaseName);
-    console.log('...connected to mongoDb!');
+    console.log('...connected to mongoDb');
 
     // we need db to be ready before setting up express - all the controllers need it when they get instantiated
     setupExpress(db);
