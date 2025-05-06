@@ -3,7 +3,7 @@ name: deploy-k8s-manifests
 on:
   push:
     branches:
-      - master
+      - feature/matrix-rewrite # todo: change to dev once we merge feature/matrix-rewrite into dev
     paths:
       - 'k8s/**'
 
@@ -13,9 +13,20 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-#      - name: Set k8s context to GCP
-#        uses: azure/k8s-set-context@v1
-#          with:
-#            kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Authenticate with GCP
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: 'kazuku'
+          workload_identity_provider: 'projects/297600345242/locations/global/workloadIdentityPools/github'
+
+      - name: Get GKE credentials
+        id: 'get-credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: 'my-cluster'
+          location: 'us-central1-a'
+
       - name: Apply k8s manifests in GCP
         run: kubectl apply -f k8s
