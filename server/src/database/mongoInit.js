@@ -104,6 +104,8 @@ db.sites.createIndex( { "orgId": 1, "code": 1 }, { unique: true }, { collation: 
 // // ***** Users ****************************************
 db.createCollection('users', {});
 db.users.createIndex({ "email": 1 }, { unique: true }, { collation: { locale: 'en', strength: 1 }});
+// mongo has changed a bit, so this is the new way to create a unique index
+//db.users.createIndex({ "email": 1 }, { unique: true, collation: { locale: 'en', strength: 1 }});
 //
 // //sample document
 // var newUser = { orgId: 1, email: "joe@test.com", password: "lkj234oiulkj", firstName: "Joe", lastName: "Smith", lastLoggedIn: "1/1/2017",
